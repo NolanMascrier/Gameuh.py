@@ -1,4 +1,4 @@
-name: Build C Wrapper v0.0.7
+name: Build C Wrapper v0.0.8
 
 on:
   push:
@@ -15,23 +15,32 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set file extension
-        run: |
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            echo "EXT=.exe" >> $GITHUB_ENV
-          else
-            echo "EXT=" >> $GITHUB_ENV
-          fi
-
-      - name: Build C wrapper
+      - name: Build on Linux
+        if: matrix.os == 'ubuntu-latest'
         run: |
           cd wrapper
-          gcc launcher.c -o launcher$EXT
+          gcc launcher.c -o launcher
 
-      - name: Upload to GitHub Release
+      - name: Build on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd wrapper
+          gcc launcher.c -o launcher.exe
+
+      - name: Upload to GitHub Release (Linux)
+        if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          files: wrapper/launcher${{ env.EXT }}
+          files: wrapper/launcher
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to GitHub Release (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: wrapper/launcher.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
