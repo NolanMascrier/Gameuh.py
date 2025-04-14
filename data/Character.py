@@ -1,5 +1,5 @@
-from constants import *
-from Fireball import Fireball
+from data.constants import *
+from data.Fireball import Fireball
 
 class Character():
     def __init__(self):

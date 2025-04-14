@@ -1,4 +1,4 @@
-from constants import *
+from data.constants import *
 
 class Sprite:
     """Loads a sprite in memory. A sprite is made of \

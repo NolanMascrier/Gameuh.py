@@ -9,10 +9,10 @@
     #define PATH_SEP "\\"
     #define PYTHON_VENV_CMD "python -m venv Gameuh.py\\venv"
 #else
-    #define PYTHON_PATH "Gameuh.py/venv/bin/python3"
+    #define PYTHON_PATH "./Gameuh.py/venv/bin/python3"
     #define PIP_CMD "Gameuh.py/venv/bin/pip"
     #define PATH_SEP "/"
-    #define PYTHON_VENV_CMD "python3 -m venv Gameuh.py/venv"
+    #define PYTHON_VENV_CMD "/usr/bin/python3 -m venv Gameuh.py/venv"
 #endif
 
 int directory_exists(const char *path)
@@ -43,6 +43,7 @@ int main()
     }
     printf("Creating virtual environment...\n");
     system(PYTHON_VENV_CMD);
+    system("ls -l Gameuh.py/venv/bin/");
     printf("Updating Pip ...\n");
     snprintf(command, sizeof(command), "%s -m ensurepip --upgrade", PYTHON_PATH);
     system(command);

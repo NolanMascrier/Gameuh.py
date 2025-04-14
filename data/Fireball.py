@@ -1,4 +1,4 @@
-from constants import *
+from data.constants import *
 
 class Fireball():
     def __init__(self, x, y, angle):
