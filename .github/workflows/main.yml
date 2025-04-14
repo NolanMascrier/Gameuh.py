@@ -2,8 +2,8 @@ name: Build C Wrapper v0.0.3
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ main ]
+
 
 jobs:
   build-and-release:
