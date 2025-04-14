@@ -1,6 +1,6 @@
-from constants import *
-from Character import Character
-from Sprite import Sprite
+from data.constants import *
+from data.Character import Character
+from data.Sprite import Sprite
 
 SPEED = 4
 PLAYING = True

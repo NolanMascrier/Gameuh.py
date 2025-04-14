@@ -1,0 +1,30 @@
+name: Build C Wrapper
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build C wrapper
+        run: |
+          cd wrapper
+          gcc launcher.c -o launcher${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: launcher-${{ matrix.os }}
+          path: wrapper/launcher${{ matrix.os == 'windows-latest' && '.exe' || '' }}
