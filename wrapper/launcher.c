@@ -41,13 +41,11 @@ int main()
         printf("Pulling latest changes in Gameuh.py...\n");
         system("cd Gameuh.py && git pull");
     }
-    if (!file_exists(PYTHON_PATH)) {
-        printf("Creating virtual environment...\n");
-        system(PYTHON_VENV_CMD);
-        printf("Updating Pip ...\n");
-        snprintf(command, sizeof(command), "%s -m ensurepip --upgrade", PYTHON_PATH);
-        system(command);
-    }
+    printf("Creating virtual environment...\n");
+    system(PYTHON_VENV_CMD);
+    printf("Updating Pip ...\n");
+    snprintf(command, sizeof(command), "%s -m ensurepip --upgrade", PYTHON_PATH);
+    system(command);
     printf("Updating Pip ...\n");
     snprintf(command, sizeof(command), "%s install --upgrade pip", PIP_CMD);
     system(command);
