@@ -57,9 +57,9 @@ if __name__ == "__main__":
     john = Character()
     pygame.init()
     fenetre = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    spri = Sprite("ressources/tiles/Island_24x24.png", 24, 24, 9, 8)
+    spri = Sprite("Gameuh.py/ressources/tiles/Island_24x24.png", 24, 24, 9, 8)
     FONT = pygame.font.SysFont('Comic Sans MS', 11)
-    john.image = pygame.image.load("ressources/dude.png").convert_alpha()
+    john.image = pygame.image.load("Gameuh.py/ressources/dude.png").convert_alpha()
     john.sprite = {K_UP:[john.image.subsurface(x,0,64,64)for x in range(0,576,64)],
                K_LEFT:[john.image.subsurface(x,64,64,64)for x in range(0,576,64)],
                K_DOWN:[john.image.subsurface(x,128,64,64)for x in range(0,576,64)],
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     ]
     john.rect = john.image.get_rect()
     index = 0
-    bg = pygame.image.load("ressources/background.jpg").convert()
+    bg = pygame.image.load("Gameuh.py/ressources/background.jpg").convert()
     while PLAYING:
         y = 0
         yd = 0
