@@ -4,26 +4,26 @@
 #include <sys/stat.h>
 
 #ifdef _WIN32
-    #define PYTHON_PATH "venv\\Scripts\\python.exe"
-    #define GIT_CMD "git"
+    #define PYTHON_PATH "Gameuh.py\\venv\\Scripts\\python.exe"
+    #define PIP_CMD "Gameuh.py\\venv\\Scripts\\pip"
     #define PATH_SEP "\\"
+    #define PYTHON_VENV_CMD "python -m venv Gameuh.py\\venv"
 #else
-    #define PYTHON_PATH "venv/bin/python3"
-    #define GIT_CMD "git"
+    #define PYTHON_PATH "Gameuh.py/venv/bin/python3"
+    #define PIP_CMD "Gameuh.py/venv/bin/pip"
     #define PATH_SEP "/"
+    #define PYTHON_VENV_CMD "python3 -m venv Gameuh.py/venv"
 #endif
 
 int directory_exists(const char *path)
 {
     struct stat stats;
-
     return (stat(path, &stats) == 0 && S_ISDIR(stats.st_mode));
 }
 
 int file_exists(const char *path)
 {
     struct stat stats;
-
     return (stat(path, &stats) == 0);
 }
 
@@ -31,28 +31,25 @@ int main()
 {
     char command[512];
 
-    if (!directory_exists(".git"))
+    if (!directory_exists("Gameuh.py"))
     {
-        printf("Cloning repository...\n");
-        system(GIT_CMD " clone https://github.com/NolanMascrier/Gameuh.py .");
+        printf("Cloning repository into Gameuh.py...\n");
+        system("git clone https://github.com/NolanMascrier/Gameuh.py Gameuh.py");
     }
     else
     {
-        printf("Pulling latest changes...\n");
-        system(GIT_CMD " pull");
+        printf("Pulling latest changes in Gameuh.py...\n");
+        system("cd Gameuh.py && git pull");
     }
     if (!file_exists(PYTHON_PATH))
     {
         printf("Setting up virtual environment...\n");
-        #ifdef _WIN32
-            system("python -m venv venv");
-            system("venv\\Scripts\\pip install -r requirements.txt");
-        #else
-            system("python3 -m venv venv");
-            system("venv/bin/pip install -r requirements.txt");
-        #endif
+        system(PYTHON_VENV_CMD);
+        snprintf(command, sizeof(command), "%s install -r Gameuh.py%crequirements.txt", PIP_CMD, PATH_SEP[0]);
+        system(command);
     }
-    snprintf(command, sizeof(command), "%s main.py", PYTHON_PATH);
+    printf("Launching Python application...\n");
+    snprintf(command, sizeof(command), "%s Gameuh.py%cmain.py", PYTHON_PATH, PATH_SEP[0]);
     system(command);
     return 0;
 }
