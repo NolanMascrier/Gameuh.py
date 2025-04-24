@@ -2,7 +2,7 @@ from data.numerics.Ressource import Ressource
 from data.numerics.Stat import Stat
 from data.numerics.Affliction import Affliction
 from data.Damage import Damage
-from constants import Flags
+from data.constants import Flags
 
 class Creature:
     def __init__(self, name):
