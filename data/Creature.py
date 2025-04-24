@@ -1,6 +1,6 @@
 from numerics.Ressource import Ressource
 from numerics.Stat import Stat
-from Damage import Damage
+from data.Damage import Damage
 
 class Creature:
     def __init__(self, name):
@@ -23,7 +23,10 @@ class Creature:
             "crit_rate": Stat(0.05, "Crit rate"),
             "crit_dmg": Stat(1.5, "Crit Damage"),
             "dodge": Stat(0, "Evasion"),
-            "precision": Stat(0, "Precision")
+            "precision": Stat(0, "Precision"),
+            "item_quant": Stat(0, "Item Quantity"),
+            "item_qual": Stat(0, "Item Rarity"),
+            "speed": Stat(1, "Move Speed")
         }
         self._defenses = {
             "phys": Stat(0, "Physical resistance"),
@@ -44,9 +47,12 @@ class Creature:
             damage (Damage): Source of damage.
         """
         damage = 0
-        for dmg in damage_source.get_damage():
-            damage += damage_source.get_damage()[dmg] * self._defenses[dmg]
-        self._life._value -= damage
+        dmg, pen = damage_source.get_damage()
+        for type in dmg:
+            dmga = float(dmg[type])
+            res = self._defenses[type].get_value() - pen[type]
+            damage += dmga * (1 - res)
+        self._life.modify(-damage)
         
     def heal(self, amount: float):
         """Restores a certain amount of life to
@@ -56,3 +62,77 @@ class Creature:
             amount (float): amount to restore that will be \
             multiplied by the heal factor.
         """
+        value = amount * self._substats["heal_factor"].get_value()
+        self._life.modify(value)
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    @property
+    def life(self):
+        return self._life
+
+    @life.setter
+    def life(self, value):
+        self._life = value
+
+    @property
+    def mana(self):
+        return self._mana
+
+    @mana.setter
+    def mana(self, value):
+        self._mana = value
+
+    @property
+    def exp(self):
+        return self._exp
+
+    @exp.setter
+    def exp(self, value):
+        self._exp = value
+
+    @property
+    def exp_to_next(self):
+        return self._exp_to_next
+
+    @exp_to_next.setter
+    def exp_to_next(self, value):
+        self._exp_to_next = value
+
+    @property
+    def stats(self):
+        return self._stats
+
+    @stats.setter
+    def stats(self, value):
+        self._stats = value
+
+    @property
+    def substats(self):
+        return self._substats
+
+    @substats.setter
+    def substats(self, value):
+        self._substats = value
+
+    @property
+    def defenses(self):
+        return self._defenses
+
+    @defenses.setter
+    def defenses(self, value):
+        self._defenses = value
+
+    @property
+    def buffs(self):
+        return self._buffs
+
+    @buffs.setter
+    def buffs(self, value):
+        self._buffs = value

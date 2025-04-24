@@ -32,7 +32,7 @@ class Ressource:
             final_mults *= multiplier[1]
         for increase in self._incr:
             final_incr += increase[1]
-        return (self._value + final_flats) * final_incr * final_mults
+        return (self._max_value + final_flats) * final_incr * final_mults
 
     def add_flat(self, flat):
         """Adds a flat increase to the max value. Increases must \
@@ -135,6 +135,20 @@ class Ressource:
             if name == buff[0]:
                 self._buffs_multi.remove(buff)
                 break
+
+    def modify(self, value: float):
+        """Increments or decrements the value of the 
+        ressource by a value. Resets to 0 or max should
+        the new value overflows or underflows the limits.
+        
+        Args:
+            value (float): Value of the increment.
+        """
+        self._value += value
+        if self._value > self.get_max_value():
+            self._value = self.get_max_value()
+        elif self._value < 0:
+            self._value = 0
 
     def tick(self):
         """Ticks down all the buffs and debuffs, and
