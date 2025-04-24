@@ -2,13 +2,6 @@ from data.Creature import Creature
 from data.Damage import Damage
 import unittest
 
-bob = Creature("Bob")
-fireball = Damage(10, 1.2, fire=1)
-fireball_pen = Damage(10, 1.2, fire=1, fp=0.25)
-heal = 9999
-
-print("Launching")
-
 class TestingCreatureDamage(unittest.TestCase):
     def test_damage(self):
         bob = Creature("Bob")

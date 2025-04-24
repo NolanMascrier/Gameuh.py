@@ -1,0 +1,7 @@
+[run]
+source = data
+
+[report]
+omit =
+    data/Sprite.py
+    data/Fireball.py

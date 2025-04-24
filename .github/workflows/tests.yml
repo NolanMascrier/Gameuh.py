@@ -1,4 +1,4 @@
-name: Run Python Tests
+name: Python Tests
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
     - name: Run tests with coverage
       run: |
         pip install coverage
-        PYTHONPATH=. coverage run --source=data -m unittest discover -s tests
+        PYTHONPATH=. coverage run --rcfile=.coveragerc --source=data -m unittest discover -s tests
         coverage xml
     
     - name: Upload coverage to Codecov
