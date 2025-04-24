@@ -38,66 +38,25 @@ class Stat:
         for increase in self._incr:
             final_incr += increase[1]
         return (self._value + final_flats) * final_incr * final_mults
-    
-    def add_flat(self, flat):
-        """Adds a flat increase to the stat. Increases must \
-        be a list name/value/duration.   
-        Flat increases are direct modifiers to the value, and \
-        are meant to be increased through gear rather than through \
-        buffs.
-        
-        Args:
-            increase (list): Name of the increase, value and duration.
-        """
-        self._incr.append(flat)
 
-    def remove_flat(self, name):
-        """Removes a flat increase by its name.
+    def _handle_affliction_list(self, target_list, affliction):
+        """Appends the affliction to the corresponding list.
+        If the affliction isn't stackable, the function will
+        check if the affliction already exists. If it does, 
+        it will refresh the duration and value.
         
         Args:
-            name (str): Flat increase to remove."""
-        for flat in self._flats:
-            if name == flat[0]:
-                self._flats.remove(flat)
-                break
-    
-    def add_increase(self, increase):
-        """Adds an increase to the stat. Increases must \
-        be a list name/value/duration.
-        
-        Args:
-            increase (list): Name of the increase, value and duration.
+            traget_list (list): One of the three affliction lists.
+            affliction (Affliction): Affliction to apply.
         """
-        self._incr.append(increase)
-
-    def remove_increase(self, name):
-        """Removes an increase by its name.
-        
-        Args:
-            name (str): Increase to remove."""
-        for increase in self._incr:
-            if name == increase[0]:
-                self._incr.remove(increase)
-                break
-    
-    def add_multiplier(self, mult):
-        """Adds a multiplier to the stat. Multipliers must \
-        be a list name/value/duration.
-        
-        Args:
-            mult (list): Name of the multiplier, value and duration.
-        """
-        self._mults.append(mult)
-    
-    def remove_multi(self, name):
-        """Removes a Multiplier by its name.
-        
-        Args:
-            name (str): Multiplier to remove."""
-        for mult in self._mults:
-            if name == mult[0]:
-                self._mults.remove(mult)
-                break
+        if affliction.stackable:
+            target_list.append(affliction)
+        else:
+            for i, existing_aff in enumerate(target_list):
+                if existing_aff.name == affliction.name:
+                    target_list[i] = affliction
+                    return
+            target_list.append(affliction)
 
     def afflict(self, affliction: Affliction):
         """Adds the debuff to the stat according to its
@@ -106,11 +65,11 @@ class Stat:
         Args:
             affliction (Affliction): affliction to afflict."""
         if Flags.HEX in affliction.flags or Flags.BOON in affliction.flags:
-            self.add_increase(affliction.get())
+            self._handle_affliction_list(self._incr, affliction)
         if Flags.CURSE in affliction.flags or Flags.BLESS in affliction.flags:
-            self.add_multiplier(affliction.get())
+            self._handle_affliction_list(self._mults, affliction)
         if Flags.GEAR in affliction.flags:
-            self.add_flat(affliction.get())
+            self._handle_affliction_list(self._flats, affliction)
     
     def tick(self):
         """Ticks down all increases and multipliers durations.
@@ -118,21 +77,18 @@ class Stat:
         If a duration reaches 0, it'll be deleted. 
         If a duration is negative, it's considered infinite.  
         """
-        for flats in self._flats:
-            if flats[2] > 0:
-                flats[2] -= 1
-            if flats[2] == 0:
-                self.remove_flat(flats[0])
-        for mults in self._mults:
-            if mults[2] > 0:
-                mults[2] -= 1
-            if mults[2] == 0:
-                self.remove_multi(mults[0])
-        for incr in self._incr:
-            if incr[2] > 0:
-                incr[2] -= 1
-            if incr[2] == 0:
-                self.remove_increase(incr[0])
+        for flats in self._flats.copy():
+            flats.tick()
+            if flats.duration == 0:
+                self._flats.remove(flats)
+        for mults in self._mults.copy():
+            mults.tick()
+            if mults.duration == 0:
+                self._mults.remove(mults)
+        for incr in self._incr.copy():
+            incr.tick()
+            if incr.duration == 0:
+                self._incr.remove(incr)
     
     def export(self):
         """Exports the stat data as a JSON list.

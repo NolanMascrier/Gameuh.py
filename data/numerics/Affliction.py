@@ -11,6 +11,7 @@ class Affliction():
         self._flags = flags
         self._stackable = stackable
 
+    @DeprecationWarning
     def get(self):
         """Returns the affliction as a list to use \
         in Stats and ressources.
@@ -19,6 +20,12 @@ class Affliction():
             list : Formatted affliction.
         """
         return [self._name, self._value, self._duration]
+    
+    def tick(self):
+        """Ticks down the timer.
+        """
+        if self._duration > 0:
+            self._duration -= 1
     
     def __eq__(self, other):
         if not isinstance(other, Affliction):

@@ -7,18 +7,18 @@ from data.constants import Flags
 class Creature:
     def __init__(self, name):
         self._name = name
-        self._life = Ressource(100, "Life", 0)
-        self._mana = Ressource(50, "Mana", 5)
         self._exp = 0
         self._exp_to_next = 100
         self._stats = {
+            "life": Ressource(100, "Life", 0),
+            "mana": Ressource(50, "Mana", 5),
+            
             "str": Stat(10, "Strength"),
             "dex": Stat(10, "Dexterity"),
             "int": Stat(10, "Intelligence"),
             "def": Stat(0, "Endurance"),
-            "mdef": Stat(0, "Spirit")
-        }
-        self._substats = {
+            "mdef": Stat(0, "Spirit"),
+
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense"),
             "heal_factor": Stat(1, "Healing Effectivness"),
@@ -28,9 +28,8 @@ class Creature:
             "precision": Stat(0, "Precision"),
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
-            "speed": Stat(1, "Move Speed")
-        }
-        self._defenses = {
+
+            "speed": Stat(1, "Move Speed"),
             "phys": Stat(0, "Physical resistance"),
             "fire": Stat(0, "Fire resistance"),
             "ice": Stat(0, "Ice resistance"),
@@ -52,9 +51,9 @@ class Creature:
         dmg, pen = damage_source.get_damage()
         for type in dmg:
             dmga = float(dmg[type])
-            res = self._defenses[type].get_value() - pen[type]
+            res = self._stats[type].get_value() - pen[type]
             damage += dmga * (1 - res)
-        self._life.modify(-damage)
+        self._stats["life"].modify(-damage)
         
     def heal(self, amount: float):
         """Restores a certain amount of life to
@@ -64,8 +63,8 @@ class Creature:
             amount (float): amount to restore that will be \
             multiplied by the heal factor.
         """
-        value = amount * self._substats["heal_factor"].get_value()
-        self._life.modify(value)
+        value = amount * self._stats["heal_factor"].get_value()
+        self._stats["life"].modify(value)
 
     def afflict(self, affliction: Affliction):
         """Afflicts the creature with an affliction.
@@ -73,12 +72,18 @@ class Creature:
         Args:
             affliction (Affliction): Affliction to afflict.
         """
-        if affliction.stackable:
-            self._buffs.append(affliction)
-            if Flags.DOT in affliction.flags:
-                self._life
-        else:
-            pass
+        self._buffs.append(affliction)
+        for flag in affliction.flags:
+            stat_key = flag.value
+            if stat_key in self._stats:
+                self._stats[stat_key].afflict(affliction)
+
+    def tick(self):
+        """Ticks down all buffs and debuffs."""
+        for buff in self._buffs:
+            buff.tick()
+        for stat in self._stats:
+            stat.tick()
 
     @property
     def name(self):
@@ -87,22 +92,6 @@ class Creature:
     @name.setter
     def name(self, value):
         self._name = value
-
-    @property
-    def life(self):
-        return self._life
-
-    @life.setter
-    def life(self, value):
-        self._life = value
-
-    @property
-    def mana(self):
-        return self._mana
-
-    @mana.setter
-    def mana(self, value):
-        self._mana = value
 
     @property
     def exp(self):
@@ -127,22 +116,6 @@ class Creature:
     @stats.setter
     def stats(self, value):
         self._stats = value
-
-    @property
-    def substats(self):
-        return self._substats
-
-    @substats.setter
-    def substats(self, value):
-        self._substats = value
-
-    @property
-    def defenses(self):
-        return self._defenses
-
-    @defenses.setter
-    def defenses(self, value):
-        self._defenses = value
 
     @property
     def buffs(self):
