@@ -1,7 +1,10 @@
 """Defines a damage source. A damage source is a 
 collection of various multipliers, one for each damage
 type, and one for the initial power of the ability. A
-damage source also has a flat damage."""
+damage source also has a flat damage.
+
+P stands for penetration, ie how much of the
+resistance the damage source shall ignore."""
 
 class Damage():
     def __init__(self, damage, multiplier, phys = 0, fire = 0, ice = 0,\
