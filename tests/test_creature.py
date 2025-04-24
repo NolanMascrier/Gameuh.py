@@ -1,6 +1,6 @@
-from data.Creature import Creature
-from data.Damage import Damage
-from data.numerics.Affliction import Affliction
+from data.creature import Creature
+from data.damage import Damage
+from data.numerics.affliction import Affliction
 from data.constants import Flags
 import unittest
 

@@ -5,7 +5,7 @@ Flat increase also exists, but should only be accessed through gear.
 The actual initial value should only be increased through level up, as it's gonna be
 definitive."""
 
-from data.numerics.Affliction import Affliction
+from data.numerics.affliction import Affliction
 from data.constants import Flags
 
 class Stat:
@@ -71,7 +71,7 @@ class Stat:
             self._handle_affliction_list("_mults", affliction)
         if Flags.GEAR in affliction.flags:
             self._handle_affliction_list("_flats", affliction)
-    
+
     def tick(self):
         """Ticks down all increases and multipliers durations.
         
@@ -87,7 +87,7 @@ class Stat:
         for incr in self._incr.copy():
             if incr.duration == 0:
                 self._incr.remove(incr)
-    
+
     def export(self):
         """Exports the stat data as a JSON list.
         
@@ -101,7 +101,7 @@ class Stat:
             "mults": self._mults
         }
         return export
-    
+
     def import_json(self, json):
         """Reads a JSON list and updates the stat
         according to the data inside.
@@ -123,9 +123,10 @@ class Stat:
                     self._mults = [float(d) for d in json[data]]
                 case _:
                     raise IndexError("Unknown variable.")
-    
+
     @property
-    def value(self):
+    def value(self) -> float:
+        """Returns the current value of the stat."""
         return self._value
 
     @value.setter
@@ -133,7 +134,8 @@ class Stat:
         self._value = value
 
     @property
-    def name(self):
+    def name(self) -> str:
+        """Returns the stat's name."""
         return self._name
 
     @name.setter
@@ -142,6 +144,7 @@ class Stat:
 
     @property
     def flats(self):
+        """Returns the list of the stat's flat increases."""
         return self._flats
 
     @flats.setter
@@ -150,6 +153,7 @@ class Stat:
 
     @property
     def mults(self):
+        """Returns the list of the stat's multiplicative increases."""
         return self._mults
 
     @mults.setter
@@ -158,6 +162,7 @@ class Stat:
 
     @property
     def incr(self):
+        """Returns the list of the stat's additive increases."""
         return self._incr
 
     @incr.setter

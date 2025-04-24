@@ -1,9 +1,7 @@
+from enum import Enum
 import pygame
 from pygame import *
-from time import sleep
-from math import cos, sin, radians
 from pygame.constants import *
-from enum import Enum
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 860
@@ -21,6 +19,7 @@ JAUGE_C = "Gameuh.py/ressources/cd_jauge.png"
 FONT = None
 
 class Flags(Enum):
+    """Flags to use for skills and damage sources."""
     HOT = "heal_over_time"
     DOT = "damage_over_time"
     MHOT = "multiplicative_heal_over_time"

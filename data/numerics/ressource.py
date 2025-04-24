@@ -4,12 +4,24 @@ that can be used, spent, damaged or replenished.
 A ressource can have buffs or debuffs that modify the value 
 each tick. It can also have increases and multipliers."""
 
-from data.numerics.Stat import Stat
-from data.numerics.Affliction import Affliction
+from data.numerics.stat import Stat
+from data.numerics.affliction import Affliction
 from data.constants import Flags
 
 class Ressource(Stat):
-    def __init__(self, val = 100, name = "ressource", refresh = 0.05):
+    """Defines a ressource. A ressource has a maximum \
+    value and can be replenished or spent.
+    
+    Args:
+        val (float, optionnal): Default value of the stat. Defaults \
+        to 100.
+        name (str, optionnal): Name of the ressource. Defaults to \
+        `ressource`.
+        refresh (float, optionnal): Refresh rate of the ressource, ie \
+        the proportion that is restored each tick. Defaults to 5%.
+
+    """
+    def __init__(self, val = 100.0, name = "ressource", refresh = 0.05):
         super().__init__(val, name)
         self._current_value = val
         self._rate = Stat(refresh, "refresh_rate")
@@ -60,9 +72,11 @@ class Ressource(Stat):
             self._current_value = self.get_value()
         elif self._current_value < 0:
             self._current_value = 0
-    
+
     @property
-    def current_value(self):
+    def current_value(self) -> float:
+        """Returns the current value of the ressource, ie the one \
+        that will be spent or restored."""
         return self._current_value
 
     @current_value.setter
@@ -70,7 +84,8 @@ class Ressource(Stat):
         self._current_value = value
 
     @property
-    def rate(self):
+    def rate(self) -> Stat:
+        """Returns the refresh rate of the ressource."""
         return self._rate
 
     @rate.setter
@@ -79,6 +94,7 @@ class Ressource(Stat):
 
     @property
     def buffs(self):
+        """Returns the current buff list."""
         return self._buffs
 
     @buffs.setter
@@ -87,6 +103,8 @@ class Ressource(Stat):
 
     @property
     def buffs_multi(self):
+        """Returns the current multiplicative buff
+        list."""
         return self._buffs_multi
 
     @buffs_multi.setter

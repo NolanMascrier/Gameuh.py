@@ -1,18 +1,26 @@
-from data.numerics.Ressource import Ressource
-from data.numerics.Stat import Stat
-from data.numerics.Affliction import Affliction
-from data.Damage import Damage
-from data.constants import Flags
+"""A creature is the game's main entity, and represents
+both the player and the ennemies alike."""
+
+from data.numerics.ressource import Ressource
+from data.numerics.stat import Stat
+from data.numerics.affliction import Affliction
+from data.damage import Damage
 
 class Creature:
+    """Defines a creature. A creature can be interacted with\
+    and attacked.
+    
+    Args:
+        name (str): Name of the creature."""
     def __init__(self, name):
         self._name = name
+        self._level = 1
         self._exp = 0
         self._exp_to_next = 100
         self._stats = {
             "life": Ressource(100, "Life", 0),
             "mana": Ressource(50, "Mana", 5),
-            
+
             "str": Stat(10, "Strength"),
             "dex": Stat(10, "Dexterity"),
             "int": Stat(10, "Intelligence"),
@@ -39,7 +47,7 @@ class Creature:
             "dark": Stat(0, "Dark resistance")
         }
         self._buffs = []
-        
+
     def damage(self, damage_source: Damage):
         """Deals damage to a creature. Adapts each source
         of damage from the damage to the creature's resistance.
@@ -49,12 +57,12 @@ class Creature:
         """
         damage = 0
         dmg, pen = damage_source.get_damage()
-        for type in dmg:
-            dmga = float(dmg[type])
-            res = self._stats[type].get_value() - pen[type]
+        for dmg_type in dmg:
+            dmga = float(dmg[dmg_type])
+            res = self._stats[dmg_type].get_value() - pen[dmg_type]
             damage += dmga * (1 - res)
         self._stats["life"].modify(-damage)
-        
+
     def heal(self, amount: float):
         """Restores a certain amount of life to
         the creature.
@@ -88,7 +96,8 @@ class Creature:
             self._stats[stat].tick()
 
     @property
-    def name(self):
+    def name(self) -> str:
+        """Returns the creature's name."""
         return self._name
 
     @name.setter
@@ -96,7 +105,17 @@ class Creature:
         self._name = value
 
     @property
-    def exp(self):
+    def level(self) -> int:
+        """Return's the creature's level."""
+        return self._level
+
+    @level.setter
+    def level(self, value):
+        self._level = value
+
+    @property
+    def exp(self) -> int:
+        """Return's the creature's experience."""
         return self._exp
 
     @exp.setter
@@ -104,7 +123,9 @@ class Creature:
         self._exp = value
 
     @property
-    def exp_to_next(self):
+    def exp_to_next(self) -> int:
+        """Return's the creature's needed experience \
+        to level up."""
         return self._exp_to_next
 
     @exp_to_next.setter
@@ -113,6 +134,7 @@ class Creature:
 
     @property
     def stats(self):
+        """Return the creature's stat block."""
         return self._stats
 
     @stats.setter
@@ -121,6 +143,8 @@ class Creature:
 
     @property
     def buffs(self):
+        """Returns the creature's buffs and debuffs
+        list."""
         return self._buffs
 
     @buffs.setter
