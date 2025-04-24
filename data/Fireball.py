@@ -1,7 +1,7 @@
 from data.constants import *
 
 """Stealth py update for the workflow, this file will be deleted
-anyway"""
+anyway."""
 
 class Fireball():
     def __init__(self, x, y, angle):
