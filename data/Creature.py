@@ -1,5 +1,5 @@
-from numerics.Ressource import Ressource
-from numerics.Stat import Stat
+from data.numerics.Ressource import Ressource
+from data.numerics.Stat import Stat
 from data.Damage import Damage
 
 class Creature:

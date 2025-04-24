@@ -4,7 +4,7 @@ that can be used, spent, damaged or replenished.
 A ressource can have buffs or debuffs that modify the value 
 each tick. It can also have increases and multipliers."""
 
-from numerics.Stat import Stat
+from data.numerics.Stat import Stat
 
 class Ressource:
     def __init__(self, val = 100, name = "ressource", refresh = 0.05):
