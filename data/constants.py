@@ -20,7 +20,7 @@ JAUGE_C = "Gameuh.py/ressources/cd_jauge.png"
 
 FONT = None
 
-def Flags(Enum):
+class Flags(Enum):
     HOT = "heal_over_time"
     DOT = "damage_over_time"
     MHOT = "multiplicative_heal_over_time"

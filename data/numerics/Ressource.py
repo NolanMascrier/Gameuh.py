@@ -24,9 +24,9 @@ class Ressource(Stat):
             affliction (Affliction): affliction to afflict."""
         super().afflict(affliction)
         if Flags.DOT in affliction.flags or Flags.HOT in affliction.flags:
-            self._handle_affliction_list(self._buffs, affliction)
+            self._handle_affliction_list("_buffs", affliction)
         if Flags.MDOT in affliction.flags or Flags.MHOT in affliction.flags:
-            self._handle_affliction_list(self._buffs_multi, affliction)
+            self._handle_affliction_list("_buffs_multi", affliction)
 
     def modify(self, value: float):
         """Increments or decrements the value of the 
@@ -50,12 +50,10 @@ class Ressource(Stat):
         super().tick()
         for buff in self._buffs:
             self._current_value += buff.value
-            buff.tick()
             if buff.duration == 0:
                 self._buffs.remove(buff)
         for buff in self._buffs_multi:
             self._current_value += buff.value * self._current_value
-            buff.tick()
             if buff.duration == 0:
                 self._buffs.remove(buff)
         if self._current_value > self.get_value():

@@ -85,7 +85,7 @@ class Creature:
             if buff.duration == 0:
                 self._buffs.remove(buff)
         for stat in self._stats:
-            stat.tick()
+            self._stats[stat].tick()
 
     @property
     def name(self):

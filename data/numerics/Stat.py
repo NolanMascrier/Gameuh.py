@@ -39,16 +39,17 @@ class Stat:
             final_incr += increase[1]
         return (self._value + final_flats) * final_incr * final_mults
 
-    def _handle_affliction_list(self, target_list, affliction):
+    def _handle_affliction_list(self, list_name, affliction):
         """Appends the affliction to the corresponding list.
         If the affliction isn't stackable, the function will
         check if the affliction already exists. If it does, 
         it will refresh the duration and value.
         
         Args:
-            traget_list (list): One of the three affliction lists.
+            list_name (str): Name of the list.
             affliction (Affliction): Affliction to apply.
         """
+        target_list = getattr(self, list_name)
         if affliction.stackable:
             target_list.append(affliction)
         else:
@@ -65,11 +66,11 @@ class Stat:
         Args:
             affliction (Affliction): affliction to afflict."""
         if Flags.HEX in affliction.flags or Flags.BOON in affliction.flags:
-            self._handle_affliction_list(self._incr, affliction)
+            self._handle_affliction_list("_incr", affliction)
         if Flags.CURSE in affliction.flags or Flags.BLESS in affliction.flags:
-            self._handle_affliction_list(self._mults, affliction)
+            self._handle_affliction_list("_mults", affliction)
         if Flags.GEAR in affliction.flags:
-            self._handle_affliction_list(self._flats, affliction)
+            self._handle_affliction_list("_flats", affliction)
     
     def tick(self):
         """Ticks down all increases and multipliers durations.
@@ -78,15 +79,12 @@ class Stat:
         If a duration is negative, it's considered infinite.  
         """
         for flats in self._flats.copy():
-            flats.tick()
             if flats.duration == 0:
                 self._flats.remove(flats)
         for mults in self._mults.copy():
-            mults.tick()
             if mults.duration == 0:
                 self._mults.remove(mults)
         for incr in self._incr.copy():
-            incr.tick()
             if incr.duration == 0:
                 self._incr.remove(incr)
     

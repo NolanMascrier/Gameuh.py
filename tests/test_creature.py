@@ -40,7 +40,7 @@ class TestingCreatureDamage(unittest.TestCase):
 
     def test_affliction(self):
         bob = Creature("Bob")
-        poison = Affliction("poison", 10, 3, [Flags.PHYS, Flags.DOT])
+        poison = Affliction("poison", -10, 3, [Flags.LIFE, Flags.DOT])
         bob.afflict(poison)
         self.assertEqual(len(bob._buffs), 1)
         bob.tick()
@@ -48,7 +48,7 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.tick()
         bob.tick()
         bob.tick()
-        self.assertEqual(bob.stats["life"].current_value, 30)
+        self.assertEqual(bob.stats["life"].current_value, 70)
         self.assertEqual(len(bob._buffs), 0)
 
 if __name__ == '__main__':
