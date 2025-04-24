@@ -10,7 +10,7 @@ from data.constants import Flags
 
 class Ressource(Stat):
     def __init__(self, val = 100, name = "ressource", refresh = 0.05):
-        super().__init__(self, val, name)
+        super().__init__(val, name)
         self._max_value = val
         self._rate = Stat(refresh, "refresh_rate")
         self._buffs = []
