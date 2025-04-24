@@ -27,5 +27,14 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.heal(9999)
         self.assertEqual(bob.life._value, 100.0)
 
+    def test_name(self):
+        bob = Creature("Bob")
+        bob.name = "Jean"
+        self.assertEqual(bob.name, "Jean")
+
+    def test_dot(self):
+        bob = Creature("Bob")
+        dot = ["bobo_feu", 5, 3]
+
 if __name__ == '__main__':
     unittest.main()

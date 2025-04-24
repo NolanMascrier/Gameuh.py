@@ -1,6 +1,8 @@
 from data.numerics.Ressource import Ressource
 from data.numerics.Stat import Stat
+from data.numerics.Affliction import Affliction
 from data.Damage import Damage
+from constants import Flags
 
 class Creature:
     def __init__(self, name):
@@ -64,6 +66,19 @@ class Creature:
         """
         value = amount * self._substats["heal_factor"].get_value()
         self._life.modify(value)
+
+    def afflict(self, affliction: Affliction):
+        """Afflicts the creature with an affliction.
+        
+        Args:
+            affliction (Affliction): Affliction to afflict.
+        """
+        if affliction.stackable:
+            self._buffs.append(affliction)
+            if Flags.DOT in affliction.flags:
+                self._life
+        else:
+            pass
 
     @property
     def name(self):

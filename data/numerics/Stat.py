@@ -5,6 +5,9 @@ Flat increase also exists, but should only be accessed through gear.
 The actual initial value should only be increased through level up, as it's gonna be
 definitive."""
 
+from data.numerics.Affliction import Affliction
+from data.constants import Flags
+
 class Stat:
     """Initialize the stat.
     
@@ -95,6 +98,19 @@ class Stat:
             if name == mult[0]:
                 self._mults.remove(mult)
                 break
+
+    def afflict(self, affliction: Affliction):
+        """Adds the debuff to the stat according to its
+        flag.
+        
+        Args:
+            affliction (Affliction): affliction to afflict."""
+        if Flags.HEX in affliction.flags or Flags.BOON in affliction.flags:
+            self.add_increase(affliction.get())
+        if Flags.CURSE in affliction.flags or Flags.BLESS in affliction.flags:
+            self.add_multiplier(affliction.get())
+        if Flags.GEAR in affliction.flags:
+            self.add_flat(affliction.get())
     
     def tick(self):
         """Ticks down all increases and multipliers durations.
