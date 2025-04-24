@@ -80,8 +80,10 @@ class Creature:
 
     def tick(self):
         """Ticks down all buffs and debuffs."""
-        for buff in self._buffs:
+        for buff in self._buffs.copy():
             buff.tick()
+            if buff.duration == 0:
+                self._buffs.remove(buff)
         for stat in self._stats:
             stat.tick()
 

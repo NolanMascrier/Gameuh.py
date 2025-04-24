@@ -37,8 +37,8 @@ class Ressource(Stat):
             value (float): Value of the increment.
         """
         self._current_value += value
-        if self._current_value > self.get_max_value():
-            self._current_value = self.get_max_value()
+        if self._current_value > self.get_value():
+            self._current_value = self.get_value()
         elif self._current_value < 0:
             self._current_value = 0
 
