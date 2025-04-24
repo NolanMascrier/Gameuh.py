@@ -51,5 +51,22 @@ class TestingCreatureDamage(unittest.TestCase):
         self.assertEqual(bob.stats["life"].current_value, 70)
         self.assertEqual(len(bob._buffs), 0)
 
+    def test_buff(self):
+        bob = Creature("Bob")
+        self.assertEqual(bob.stats["str"].value, 10)
+        potion = Affliction("potion", 0.10, 1, [Flags.STR, Flags.BOON], True)
+        benediction = Affliction("holy smite", 2, 1, [Flags.STR, Flags.BLESS])
+        sword = Affliction("sword", 10, 1, [Flags.STR, Flags.GEAR])
+        bob.afflict(sword)
+        self.assertEqual(bob.stats["str"].get_value(), 20)
+        bob.afflict(sword)
+        self.assertEqual(bob.stats["str"].get_value(), 20)
+        bob.afflict(potion)
+        self.assertEqual(bob.stats["str"].get_value(), 22.0)
+        bob.afflict(potion)
+        self.assertEqual(bob.stats["str"].get_value(), 24.0)
+        bob.afflict(benediction)
+        self.assertEqual(bob.stats["str"].get_value(), 48.0)
+
 if __name__ == '__main__':
     unittest.main()

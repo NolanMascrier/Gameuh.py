@@ -32,12 +32,12 @@ class Stat:
         final_incr = 1
         final_flats = 0
         for flats in self._flats:
-            final_flats += flats[1]
+            final_flats += flats.value
         for multiplier in self._mults:
-            final_mults *= multiplier[1]
+            final_mults *= multiplier.value
         for increase in self._incr:
-            final_incr += increase[1]
-        return (self._value + final_flats) * final_incr * final_mults
+            final_incr += increase.value
+        return round((self._value + final_flats) * final_incr * final_mults, 2)
 
     def _handle_affliction_list(self, list_name, affliction):
         """Appends the affliction to the corresponding list.
