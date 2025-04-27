@@ -10,8 +10,24 @@
 #                                                                              #
 # **************************************************************************** #
 
-all:
-	gcc launcher.c -o launcher
+NAME = launcher
+SRC = launcher.c
 
-.PHONY:
-	all
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+
+ifeq ($(OS),Windows_NT)
+    EXT = .exe
+else
+    EXT =
+endif
+
+all: $(NAME)$(EXT)
+
+$(NAME)$(EXT): $(SRC)
+	$(CC) $(CFLAGS) $(SRC) -o $(NAME)$(EXT)
+
+clean:
+	rm -f $(NAME) $(NAME).exe
+
+.PHONY: all clean

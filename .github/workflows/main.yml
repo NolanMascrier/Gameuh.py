@@ -1,4 +1,4 @@
-name: Build C Wrapper v0.0.8
+name: Build C Wrapper v0.1.0
 
 on:
   push:
@@ -15,24 +15,83 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup environment for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/python-linux.tar.gz -o python-linux.tar.gz
+          tar -xvf python-linux.tar.gz
+          rm python-linux.tar.gz
+          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/git-linux.tar.gz -o git-linux.tar.gz
+          tar -xvf git-linux.tar.gz
+          rm git-linux.tar.gz
+          echo "/bin" >> $GITHUB_PATH
+          ./python3/bin/pip install -r Gameuh.py/requirements.txt
+
+      - name: Setup environment for Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/python-win.zip -o python-win.zip
+          powershell -Command "Expand-Archive -Path python-win.zip -DestinationPath python-win"
+          rm python-win.zip
+          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/git-win.zip -o git-win.zip
+          powershell -Command "Expand-Archive -Path git-win.zip -DestinationPath git-win"
+          rm git-win.zip
+          echo "python-win" >> $GITHUB_PATH
+          echo "git-win" >> $GITHUB_PATH
+          ./python-win/Scripts/pip install -r Gameuh.py/requirements.txt
+
       - name: Build on Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
           cd wrapper
-          gcc launcher.c -o launcher
+          make
 
       - name: Build on Windows
         if: matrix.os == 'windows-latest'
         run: |
           cd wrapper
-          gcc launcher.c -o launcher.exe
+          make
+
+      - name: Insert version into README (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd wrapper
+          sed -i "s/{{VERSION}}/${{ github.ref_name }}/g" README.md
+      
+      - name: Insert version into README (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd wrapper
+          powershell -Command "(Get-Content README.md) -replace '{{VERSION}}', '${{ github.ref_name }}' | Set-Content README.md"
+
+      - name: Package final zip for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mkdir -p dist
+          cp wrapper/launcher dist/
+          cp wrapper/README.md dist/
+          cp -r python3 dist/python3
+          cp -r git dist/git
+          cd dist
+          zip -r ../GameuhWrapper-${{ github.ref_name }}-linux.zip .
+          cd ..
+
+      - name: Package final zip for Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir dist
+          copy wrapper\\README.md dist\\
+          copy wrapper\\launcher.exe dist\\
+          xcopy python-win dist\\python-win\\ /E /I /Y
+          xcopy git-win dist\\git-win\\ /E /I /Y
+          powershell -Command "Compress-Archive -Path dist\\* -DestinationPath GameuhWrapper-${{ github.ref_name }}-windows.zip"
 
       - name: Upload to GitHub Release (Linux)
         if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          files: wrapper/launcher
+          files: GameuhWrapper-${{ github.ref_name }}-linux.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -41,6 +100,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          files: wrapper/launcher.exe
+          files: GameuhWrapper-${{ github.ref_name }}-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
