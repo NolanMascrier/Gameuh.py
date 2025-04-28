@@ -1,4 +1,4 @@
-name: Lint with Badge
+name: Linter (PyLint)
 
 on:
   push:
