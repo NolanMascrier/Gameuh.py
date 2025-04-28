@@ -13,32 +13,34 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup environment for Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
-          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/python-linux.tar.gz -o python-linux.tar.gz
-          tar -xvf python-linux.tar.gz
-          rm python-linux.tar.gz
-          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/git-linux.tar.gz -o git-linux.tar.gz
-          tar -xvf git-linux.tar.gz
-          rm git-linux.tar.gz
-          echo "/bin" >> $GITHUB_PATH
-          ./python3/bin/pip install -r Gameuh.py/requirements.txt
+          sudo apt update
+          sudo apt install -y python3 python3-pip git build-essential
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r Gameuh.py/requirements.txt
 
       - name: Setup environment for Windows
         if: matrix.os == 'windows-latest'
         run: |
-          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/python-win.zip -o python-win.zip
-          powershell -Command "Expand-Archive -Path python-win.zip -DestinationPath python-win"
-          rm python-win.zip
-          curl -L https://github.com/NolanMascrier/embedded-python/releases/download/v0.0.1/git-win.zip -o git-win.zip
-          powershell -Command "Expand-Archive -Path git-win.zip -DestinationPath git-win"
-          rm git-win.zip
-          echo "python-win" >> $GITHUB_PATH
-          echo "git-win" >> $GITHUB_PATH
-          ./python-win/Scripts/pip install -r Gameuh.py/requirements.txt
+          curl -LO https://www.python.org/ftp/python/3.12.2/python-3.12.2-embed-amd64.zip
+          powershell -Command "Expand-Archive -Path python-3.12.2-embed-amd64.zip -DestinationPath python-win"
+          rm python-3.12.2-embed-amd64.zip
+
+          echo "import site" >> python-win/python312._pth
+          echo "import os; os.environ['PYTHONPATH'] = ''" >> python-win/python312._pth
+
+          curl -LO https://github.com/git-for-windows/git/releases/download/v2.44.0.windows.1/PortableGit-2.44.0-64-bit.7z.exe
+          mkdir git-win
+          7z x PortableGit-2.44.0-64-bit.7z.exe -ogit-win
+          rm PortableGit-2.44.0-64-bit.7z.exe
+
+          ./python-win/python.exe -m ensurepip
+          ./python-win/python.exe -m pip install --upgrade pip
+          ./python-win/python.exe -m pip install -r Gameuh.py/requirements.txt
 
       - name: Build on Linux
         if: matrix.os == 'ubuntu-latest'
@@ -70,8 +72,6 @@ jobs:
           mkdir -p dist
           cp wrapper/launcher dist/
           cp wrapper/README.md dist/
-          cp -r python3 dist/python3
-          cp -r git dist/git
           cd dist
           zip -r ../GameuhWrapper-${{ github.ref_name }}-linux.zip .
           cd ..
@@ -91,7 +91,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          files: GameuhWrapper-${{ github.ref_name }}-linux.zip
+          files: Game-${{ github.ref_name }}-linux.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -100,6 +100,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          files: GameuhWrapper-${{ github.ref_name }}-windows.zip
+          files: Game-${{ github.ref_name }}-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
