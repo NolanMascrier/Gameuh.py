@@ -7,7 +7,7 @@
 #define GITHUB_REPO "https://github.com/NolanMascrier/Gameuh.py"
 #ifdef _WIN32
     #define PYTHON_PATH "python-win\\python.exe"
-    #define PIP_CMD "python-win\\Scripts\\pip"
+    #define PIP_CMD "python-win\\Scripts\\python.exe -m pip"
     #define GIT_CMD "git-win\\bin\\git.exe"
     #define PATH_SEP "\\"
     #define VENV_PYTHON "Gameuh.py\\venv\\Scripts\\python.exe"
@@ -15,7 +15,7 @@
     #define PYTHON_VENV_CMD "python-win\\python.exe -m venv Gameuh.py\\venv"
 #else
     #define PYTHON_PATH "python3"
-    #define PIP_CMD "python3 -m pip"
+    #define PIP_CMD "Gameuh.py/venv/bin/python3 -m pip"
     #define GIT_CMD "git"
     #define PATH_SEP "/"
     #define VENV_PYTHON "Gameuh.py/venv/bin/python3"
