@@ -26,19 +26,15 @@ jobs:
       - name: Setup environment for Windows
         if: matrix.os == 'windows-latest'
         run: |
-          curl -LO https://www.python.org/ftp/python/3.12.2/python-3.12.2-embed-amd64.zip
-          powershell -Command "Expand-Archive -Path python-3.12.2-embed-amd64.zip -DestinationPath python-win"
-          rm python-3.12.2-embed-amd64.zip
-
-          echo "import site" >> python-win/python312._pth
-          echo "import os; os.environ['PYTHONPATH'] = ''" >> python-win/python312._pth
+          curl -LO https://www.nuget.org/api/v2/package/python/3.12.2
+          7z x 3.12.2 -opython-win
+          rm 3.12.2
 
           curl -LO https://github.com/git-for-windows/git/releases/download/v2.44.0.windows.1/PortableGit-2.44.0-64-bit.7z.exe
           mkdir git-win
           7z x PortableGit-2.44.0-64-bit.7z.exe -ogit-win
           rm PortableGit-2.44.0-64-bit.7z.exe
 
-          ./python-win/python.exe -m ensurepip
           ./python-win/python.exe -m pip install --upgrade pip
           ./python-win/python.exe -m pip install -r requirements.txt
 
