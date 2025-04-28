@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 
 #ifdef _WIN32
+    #define GITHUB_REPO "https:\\\\github.com\\NolanMascrier\\Gameuh.py"
     #define PYTHON_PATH "Gameuh.py\\python-win\\python.exe"
     #define PIP_CMD "Gameuh.py\\python-win\\Scripts\\pip"
     #define GIT_CMD "Gameuh.py\\git-win\\bin\\git.exe"
@@ -12,9 +13,10 @@
     #define VENV_PATH "Gameuh.py\\venv"
     #define PYTHON_VENV_CMD "Gameuh.py\\python-win\\python.exe -m venv Gameuh.py\\venv"
 #else
-    #define PYTHON_PATH "./Gameuh.py/python-linux/bin/python3"
-    #define PIP_CMD "./Gameuh.py/python-linux/bin/pip"
-    #define GIT_CMD "./Gameuh.py/git-linux/bin/git"
+    #define GITHUB_REPO "https://github.com/NolanMascrier/Gameuh.py"
+    #define PYTHON_PATH "python3"
+    #define PIP_CMD "python3 -m pip"
+    #define GIT_CMD "git"
     #define PATH_SEP "/"
     #define VENV_PYTHON "Gameuh.py/venv/bin/python3"
     #define VENV_PATH "Gameuh.py/venv"
@@ -43,7 +45,7 @@ int main()
     if (!directory_exists("Gameuh.py"))
     {
         printf("Cloning repository into Gameuh.py...\n");
-        snprintf(command, sizeof(command), "%s clone https://github.com/NolanMascrier/Gameuh.py Gameuh.py", GIT_CMD);
+        snprintf(command, sizeof(command), "%s clone %s Gameuh.py", GIT_CMD, GITHUB_REPO);
         run_or_exit(command, "Failed to clone repository.");
     }
     else

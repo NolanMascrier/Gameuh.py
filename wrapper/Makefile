@@ -13,7 +13,7 @@
 BIN = launcher
 CFLAGS += -std=c99 -O2
 
-SRC = main.c
+SRC = launcher.c
 OBJ = $(SRC:.c=.o)
 
 ifeq ($(OS),Windows_NT)
