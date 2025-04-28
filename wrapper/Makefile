@@ -29,7 +29,7 @@ else
 endif
 
 $(BIN):
-	$(CC) $(SRC) $(CFLAGS) -o $(BIN) $(LIBS)
+	$(CC) $(SRC) $(CFLAGS) -o $(BIN)
 
 clean:
 	rm -f $(BIN) $(OBJS)
