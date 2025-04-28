@@ -15,6 +15,7 @@ CFLAGS += -std=c99 -O2
 
 SRC = launcher.c
 OBJ = $(SRC:.c=.o)
+CC = gcc
 
 ifeq ($(OS),Windows_NT)
 BIN := $(BIN).exe
@@ -32,7 +33,11 @@ $(BIN):
 	$(CC) $(SRC) $(CFLAGS) -o $(BIN)
 
 clean:
-	rm -f $(BIN) $(OBJS)
+	ifeq ($(OS),Windows_NT)
+		del /f /q $(BIN) $(OBJ) 2>nul || exit 0
+	else
+		rm -f $(BIN) $(OBJ)
+	endif
 
 re: clean $(BIN)
 
