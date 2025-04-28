@@ -20,7 +20,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y python3 python3-pip git build-essential
-          sudo apt install libsdl2-dev
+          sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+          sudo apt install -y libglew-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
 
@@ -39,6 +40,15 @@ jobs:
 
           python-win\python.exe -m pip install --upgrade pip
           python-win\python.exe -m pip install -r requirements.txt
+
+          curl -LO https://github.com/libsdl-org/SDL/releases/download/release-2.30.2/SDL2-devel-2.30.2-VC.zip
+          7z x SDL2-devel-2.30.2-VC.zip -oSDL2
+          copy SDL2\SDL2-2.30.2\lib\x64\SDL2.dll .
+          curl -LO https://sourceforge.net/projects/glew/files/glew/2.2.0/glew-2.2.0-win32.zip
+          7z x glew-2.2.0-win32.zip -oglew
+          copy glew\glew-2.2.0\bin\Release\x64\glew32.dll .
+          rm SDL2-devel-2.30.2-VC.zip
+          rm glew-2.2.0-win32.zip
 
       - name: Build on Linux
         if: matrix.os == 'ubuntu-latest'

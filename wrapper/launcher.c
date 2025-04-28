@@ -3,8 +3,9 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#define REPO_DIR "Gameuh.py"
+#define GITHUB_REPO "https://github.com/NolanMascrier/Gameuh.py"
 #ifdef _WIN32
-    #define GITHUB_REPO "https:\\\\github.com\\NolanMascrier\\Gameuh.py"
     #define PYTHON_PATH "Gameuh.py\\python-win\\python.exe"
     #define PIP_CMD "Gameuh.py\\python-win\\Scripts\\pip"
     #define GIT_CMD "Gameuh.py\\git-win\\bin\\git.exe"
@@ -13,7 +14,6 @@
     #define VENV_PATH "Gameuh.py\\venv"
     #define PYTHON_VENV_CMD "Gameuh.py\\python-win\\python.exe -m venv Gameuh.py\\venv"
 #else
-    #define GITHUB_REPO "https://github.com/NolanMascrier/Gameuh.py"
     #define PYTHON_PATH "python3"
     #define PIP_CMD "python3 -m pip"
     #define GIT_CMD "git"
@@ -51,7 +51,11 @@ int main()
     else
     {
         printf("Pulling latest changes in Gameuh.py...\n");
-        snprintf(command, sizeof(command), "cd Gameuh.py && %s pull", GIT_CMD);
+        #ifdef _WIN32
+            snprintf(command, sizeof(command), "%s -C Gameuh.py pull", GIT_CMD);
+        #else
+            snprintf(command, sizeof(command), "cd Gameuh.py && %s pull", GIT_CMD);
+        #endif
         run_or_exit(command, "Failed to pull latest changes.");
     }
     if (!directory_exists(VENV_PATH))
