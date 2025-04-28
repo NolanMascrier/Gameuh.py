@@ -35,8 +35,8 @@ jobs:
           7z x PortableGit-2.44.0-64-bit.7z.exe -ogit-win
           rm PortableGit-2.44.0-64-bit.7z.exe
 
-          python-win\\python.exe -m pip install --upgrade pip
-          python-win\\python.exe -m pip install -r requirements.txt
+          python-win\python.exe -m pip install --upgrade pip
+          python-win\python.exe -m pip install -r requirements.txt
 
       - name: Build on Linux
         if: matrix.os == 'ubuntu-latest'
