@@ -29,7 +29,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           choco install -y msys2
-          set PATH=C:\tools\msys64\usr\bin;%PATH%
+          $env:PATH = "C:\tools\msys64\usr\bin;$env:PATH"
           pacman --noconfirm -Syuu
           pacman --noconfirm -S mingw-w64-x86_64-gcc mingw-w64-x86_64-make
           curl -LO https://www.nuget.org/api/v2/package/python/3.12.2
