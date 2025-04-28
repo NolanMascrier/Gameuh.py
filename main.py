@@ -1,3 +1,4 @@
+from time import sleep
 from data.constants import *
 from data.Character import Character
 from data.Sprite import Sprite
