@@ -2,3 +2,8 @@
 
 # Gameuh.py
 A python rewrite of my favourite University project, a small incremental dungeon crawler.
+
+# Launching the game
+You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
+
+You can also download the releases version; Linux version assumes you already have up-to-date `git` and `python3` installation. Windows version comes with a prepackaged git and python.

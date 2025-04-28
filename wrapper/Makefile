@@ -10,24 +10,30 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = launcher
-SRC = launcher.c
+BIN = launcher
+CFLAGS += -std=c99 -O2
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+SRC = main.c
+OBJ = $(SRC:.c=.o)
 
 ifeq ($(OS),Windows_NT)
-    EXT = .exe
+BIN := $(BIN).exe
+LIBS = -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lm -lGLU32
 else
-    EXT =
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Darwin)
+		LIBS = -lSDL2 -framework OpenGL -lm
+	else
+		LIBS = -lSDL2 -lGL -lm -lGLU
+	endif
 endif
 
-all: $(NAME)$(EXT)
-
-$(NAME)$(EXT): $(SRC)
-	$(CC) $(CFLAGS) $(SRC) -o $(NAME)$(EXT)
+$(BIN):
+	$(CC) $(SRC) $(CFLAGS) -o $(BIN) $(LIBS)
 
 clean:
-	rm -f $(NAME) $(NAME).exe
+	rm -f $(BIN) $(OBJS)
 
-.PHONY: all clean
+re: clean $(BIN)
+
+.PHONY: $(BIN) clean re
