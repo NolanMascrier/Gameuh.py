@@ -70,7 +70,7 @@ jobs:
           cp wrapper/launcher dist/
           cp wrapper/README.md dist/
           cd dist
-          zip -r ../GameuhWrapper-${{ github.ref_name }}-linux.zip .
+          zip -r ../Game-${{ github.ref_name }}-linux.zip .
           cd ..
 
       - name: Package final zip for Windows
@@ -81,7 +81,7 @@ jobs:
           copy wrapper\\launcher.exe dist\\
           xcopy python-win dist\\python-win\\ /E /I /Y
           xcopy git-win dist\\git-win\\ /E /I /Y
-          powershell -Command "Compress-Archive -Path dist\\* -DestinationPath GameuhWrapper-${{ github.ref_name }}-windows.zip"
+          powershell -Command "Compress-Archive -Path dist\\* -DestinationPath Game-${{ github.ref_name }}-windows.zip"
 
       - name: Upload to GitHub Release (Linux)
         if: matrix.os == 'ubuntu-latest'
