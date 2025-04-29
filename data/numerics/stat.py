@@ -69,8 +69,24 @@ class Stat:
             self._handle_affliction_list("_incr", affliction)
         if Flags.CURSE in affliction.flags or Flags.BLESS in affliction.flags:
             self._handle_affliction_list("_mults", affliction)
-        if Flags.GEAR in affliction.flags:
+        if Flags.FLAT in affliction.flags:
             self._handle_affliction_list("_flats", affliction)
+
+    def remove_affliction(self, affliction: Affliction):
+        """Removes an affliction.
+        
+        Args:
+            affliction (Afflicton): Affliction to remove.
+        """
+        for afflic in self._incr.copy():
+            if afflic == affliction:
+                self._incr.remove(afflic)
+        for afflic in self._mults.copy():
+            if afflic == affliction:
+                self._mults.remove(afflic)
+        for afflic in self._flats.copy():
+            if afflic == affliction:
+                self._flats.remove(afflic)
 
     def tick(self):
         """Ticks down all increases and multipliers durations.
@@ -123,6 +139,19 @@ class Stat:
                     self._mults = [float(d) for d in json[data]]
                 case _:
                     raise IndexError("Unknown variable.")
+
+    def gather_afflictions(self) -> list:
+        """Gather all buffs and debuffs as a list. \
+        Usefull for display purpose.
+        
+        Returns:
+            list: List of afflictions.
+        """
+        result = []
+        result.extend(self._flats)
+        result.extend(self._incr)
+        result.extend(self._mults)
+        return result
 
     @property
     def value(self) -> float:

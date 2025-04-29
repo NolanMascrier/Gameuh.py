@@ -1,7 +1,6 @@
 """An item is something that can be held by
 characters and used."""
 
-from data.creature import Creature
 from data.constants import Flags
 
 class Item():
@@ -17,9 +16,11 @@ class Item():
         affixes (list, optionnal): List of the item's affixes,\
         aka its effects. Defaults to [].
     """
-    def __init__(self, name, max_held = 64, flags = None, affixes = None):
+    def __init__(self, name, price, power, max_held = 64, flags = None, affixes = None):
         self._name = name
         self._max_held = max_held
+        self._price = price
+        self._power = power
         if flags is None:
             self._flags = []
         else:
@@ -29,12 +30,17 @@ class Item():
         else:
             self._affixes = affixes
 
-    def on_use(self, target: Creature):
+    def on_use(self, target):
         """Uses the item on the creature."""
         if Flags.GEAR in self._flags:
-            pass
+            return
+        if Flags.CONSUMABLE in self._flags:
+            if Flags.LIFE in self._flags:
+                target.heal(self._power)
+            if Flags.MANA in self._flags:
+                target.restore_mana(self._power)
         else:
-            pass
+            return
 
     @property
     def name(self):
@@ -44,6 +50,24 @@ class Item():
     @name.setter
     def name(self, value):
         self._name = value
+
+    @property
+    def price(self):
+        """Returns the item's price."""
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        self._price = value
+
+    @property
+    def power(self):
+        """Return the item's power."""
+        return self._power
+
+    @power.setter
+    def power(self, value):
+        self._power = value
 
     @property
     def max_held(self) -> int:
@@ -62,3 +86,12 @@ class Item():
     @flags.setter
     def flags(self, value):
         self._flags = value
+
+    @property
+    def affixes(self):
+        """Returns the item's affixes."""
+        return self._affixes
+
+    @affixes.setter
+    def affixes(self, value):
+        self._affixes = value

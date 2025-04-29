@@ -40,6 +40,20 @@ class Ressource(Stat):
         if Flags.MDOT in affliction.flags or Flags.MHOT in affliction.flags:
             self._handle_affliction_list("_buffs_multi", affliction)
 
+    def remove_affliction(self, affliction: Affliction):
+        """Removes an affliction.
+        
+        Args:
+            affliction (Afflicton): Affliction to remove.
+        """
+        super().remove_affliction(affliction)
+        for afflic in self._buffs.copy():
+            if afflic == affliction:
+                self._buffs.remove(afflic)
+        for afflic in self._buffs_multi.copy():
+            if afflic == affliction:
+                self._buffs_multi.remove(afflic)
+
     def modify(self, value: float):
         """Increments or decrements the value of the 
         ressource by a value. Resets to 0 or max should
@@ -72,6 +86,18 @@ class Ressource(Stat):
             self._current_value = self.get_value()
         elif self._current_value < 0:
             self._current_value = 0
+
+    def gather_afflictions(self) -> list:
+        """Gather all buffs and debuffs as a list. \
+        Usefull for display purpose.
+        
+        Returns:
+            list: List of afflictions.
+        """
+        result = super().gather_afflictions()
+        result.extend(self._buffs)
+        result.extend(self._buffs_multi)
+        return result
 
     @property
     def current_value(self) -> float:

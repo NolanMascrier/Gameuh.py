@@ -2,7 +2,18 @@ from data.creature import Creature
 from data.damage import Damage
 from data.numerics.affliction import Affliction
 from data.constants import Flags
+from data.numerics.affix import Affix
+from data.item import Item
 import unittest
+
+def print_gear(c: Creature):
+    print("############")
+    for it in c.gear:
+        if it == "ring":
+            print(f"Left ring: {None if c.gear[it]['left'] is None else c.gear[it]['left'].name}")
+            print(f"Left ring: {None if c.gear[it]['right'] is None else c.gear[it]['right'].name}")
+        else:
+            print(f"{it} = {None if c.gear[it] is None else c.gear[it].name}")
 
 class TestingCreatureDamage(unittest.TestCase):
     def test_damage(self):
@@ -56,7 +67,7 @@ class TestingCreatureDamage(unittest.TestCase):
         self.assertEqual(bob.stats["str"].value, 10)
         potion = Affliction("potion", 0.10, 1, [Flags.STR, Flags.BOON], True)
         benediction = Affliction("holy smite", 2, 1, [Flags.STR, Flags.BLESS])
-        sword = Affliction("sword", 10, 1, [Flags.STR, Flags.GEAR])
+        sword = Affliction("sword", 10, 1, [Flags.STR, Flags.FLAT])
         bob.afflict(sword)
         self.assertEqual(bob.stats["str"].get_value(), 20)
         bob.afflict(sword)
@@ -77,6 +88,18 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.grant_experience(100000)
         self.assertGreater(bob.level, 3)
         self.assertLess(bob.exp, bob.exp_to_next)
+
+    def test_equip(self):
+        bob = Creature("Bob")
+        self.assertEqual(bob.stats["str"].get_value(), 10)
+        aff = Affix("def", 10, [Flags.STR, Flags.FLAT])
+        armor = Item("Bob's armor", 999, 0, 1, [Flags.GEAR, Flags.ARMOR], [aff])
+        bob.equip(Flags.ARMOR, armor)
+        self.assertEqual(bob.stats["str"].get_value(), 20)
+        self.assertEqual(bob.gear["armor"], armor)
+        bob.unequip(Flags.ARMOR)
+        self.assertEqual(bob.stats["str"].get_value(), 10)
+        self.assertEqual(bob.gear["armor"], None)
 
 if __name__ == '__main__':
     unittest.main()

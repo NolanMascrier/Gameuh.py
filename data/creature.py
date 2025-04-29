@@ -32,6 +32,7 @@ class Creature:
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense"),
             "heal_factor": Stat(1, "Healing Effectivness"),
+            "mana_efficiency": Stat(1, "Mana Efficiency"),
             "crit_rate": Stat(0.05, "Crit rate"),
             "crit_dmg": Stat(1.5, "Crit Damage"),
             "dodge": Stat(0, "Evasion"),
@@ -51,6 +52,7 @@ class Creature:
         self._gear = {
             "helm": None,
             "hands": None,
+            "armor": None,
             "belt": None,
             "boots": None,
             "weapon": None,
@@ -90,17 +92,60 @@ class Creature:
         value = amount * self._stats["heal_factor"].get_value()
         self._stats["life"].modify(value)
 
+    def consume_mana(self, cost: float):
+        """Comsumes mana from a creature. Consumed mana is\
+        reduced by the creature's mana efficiency.
+        
+        Args:
+            cost (float): Amount to consume.
+        """
+        value = cost * self._stats["mana_efficiency"].get_value()
+        self._stats["mana"].modify(value)
+
+    def restore_mana(self, amount: float):
+        """Restores a certain amount of mana to
+        the creature.
+        
+        Args:
+            amount (float): amount to restore that will be \
+            multiplied by the mana efficiency.
+        """
+        mod = self._stats["mana_efficiency"].get_value()
+        value = amount * (1 + (1 - mod))
+        if value <= 0:
+            value = 0
+        self._stats["mana"].modify(value)
+
     def afflict(self, affliction: Affliction):
         """Afflicts the creature with an affliction.
         
         Args:
             affliction (Affliction): Affliction to afflict.
         """
-        self._buffs.append(affliction)
         for flag in affliction.flags:
             stat_key = flag.value
             if stat_key in self._stats:
                 self._stats[stat_key].afflict(affliction)
+        if affliction.stackable:
+            self._buffs.append(affliction)
+        else:
+            for i, existing_aff in enumerate(self._buffs):
+                if existing_aff.name == affliction.name:
+                    self._buffs[i] = affliction
+                    return
+            self._buffs.append(affliction)
+
+    def remove_affliction(self, affliction: Affliction):
+        """Removes an affliction from the character.
+        
+        Args:
+            affliction (Affliction): Affliction to remove.
+        """
+        for d in self._buffs.copy():
+            if d == affliction:
+                self._buffs.remove(d)
+        for st in self._stats:
+            self._stats[st].remove_affliction(affliction)
 
     def tick(self):
         """Ticks down all buffs and debuffs."""
@@ -153,7 +198,8 @@ class Creature:
                 self._gear["ring"]["right"] = item
         else:
             self._gear[slot.value] = item
-        #TODO: Adds the gear affixes to buffs
+        for affix in item.affixes:
+            self.afflict(affix.as_affliction())
         return old
 
     def unequip(self, slot: Flags, left_hand = False) -> Item | None:
@@ -180,7 +226,9 @@ class Creature:
                 self._gear["ring"]["right"] = None
         item = self._gear[slot.value]
         self._gear[slot.value] = None
-        #TODO: Remove the gear affixes from buffs
+        if item is not None:
+            for affix in item.affixes :
+                self.remove_affliction(affix.as_affliction())
         return item
 
     @property
