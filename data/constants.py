@@ -1,3 +1,5 @@
+"""Stores the project's constants."""
+
 from enum import Enum
 import pygame
 from pygame import *
@@ -28,6 +30,7 @@ class Flags(Enum):
     LIFE = "life"
     STUN = "stun"
     GEAR = "gear"
+    CONSUMABLE = "consumable"
     HEX = "hex" #additive malus
     BOON = "boon" #additive bonus
     CURSE = "curse" #multiplictive malus
@@ -44,3 +47,12 @@ class Flags(Enum):
     ENERG = "energy"
     LIGHT = "light"
     DARK = "dark"
+    HELM = "helm"
+    HANDS = "hands"
+    BELT = "belt"
+    BOOTS = "boots"
+    WEAPON = "weapon"
+    OFFHAND = "off_hand"
+    RELIC = "relic"
+    AMULET = "amulet"
+    RING = "ring"

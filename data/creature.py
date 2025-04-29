@@ -5,6 +5,8 @@ from data.numerics.ressource import Ressource
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.damage import Damage
+from data.constants import Flags
+from data.item import Item
 
 class Creature:
     """Defines a creature. A creature can be interacted with\
@@ -45,6 +47,20 @@ class Creature:
             "energy": Stat(0, "Energy resistance"),
             "light": Stat(0, "Light resistance"),
             "dark": Stat(0, "Dark resistance")
+        }
+        self._gear = {
+            "helm": None,
+            "hands": None,
+            "belt": None,
+            "boots": None,
+            "weapon": None,
+            "off_hand": None,
+            "relic": None,
+            "amulet": None,
+            "ring": {
+                "left": None,
+                "right": None
+            }
         }
         self._buffs = []
 
@@ -94,6 +110,78 @@ class Creature:
                 self._buffs.remove(buff)
         for stat in self._stats:
             self._stats[stat].tick()
+
+    def on_level_up(self):
+        """Does an action on level up. Empty by
+        default, function to overide for player
+        characters."""
+
+    def grant_experience(self, amount:int):
+        """Grants a creature experience, leveling it up if needed.
+        
+        Args:
+            amount (int): amount of experience won.
+        """
+        final_amount = self._stats["exp_mult"].value * amount
+        self._exp += final_amount
+        while self._exp >= self._exp_to_next:
+            self._exp -= self._exp_to_next
+            self._exp_to_next *= 1.2
+            self._level += 1
+            self.on_level_up()
+
+    def equip(self, slot: Flags, item: Item, left_hand = False) -> Item | None:
+        """Equips an item in the slot. Returns the
+        equipped item if the slot is already occupied.
+        
+        Args:
+            slot (Flags):Flag of the slot to equip.
+            item (Item): Item to equip. The item needs the GEAR flag !
+            left_hand (bool, optionnal): If the slot is\
+            a ring, `True` will indicate the left ring\
+            and `False` the right ring. Defaults to `False`.
+        """
+        if item is None or Flags.GEAR not in item.flags:
+            return None
+        if slot.value not in self._gear:
+            return None
+        old = self.unequip(slot, left_hand)
+        if slot == Flags.RING:
+            if left_hand:
+                self._gear["ring"]["left"] = item
+            else:
+                self._gear["ring"]["right"] = item
+        else:
+            self._gear[slot.value] = item
+        #TODO: Adds the gear affixes to buffs
+        return old
+
+    def unequip(self, slot: Flags, left_hand = False) -> Item | None:
+        """Removes an item from the user's gear, and returns it.
+        
+        Args:
+            slot (Flags): Flag of the slot to empty.
+            left_hand (bool, optionnal): If the slot is\
+            a ring, `True` will indicate the left ring\
+            and `False` the right ring. Defaults to `False`.
+        
+        Returns:
+            item: Item removed. `None` if the slot was\
+            empty.
+        """
+        if slot.value not in self._gear:
+            return None
+        if slot == Flags.RING:
+            if left_hand:
+                item = self._gear["ring"]["left"]
+                self._gear["ring"]["left"] = None
+            else:
+                item = self._gear["ring"]["right"]
+                self._gear["ring"]["right"] = None
+        item = self._gear[slot.value]
+        self._gear[slot.value] = None
+        #TODO: Remove the gear affixes from buffs
+        return item
 
     @property
     def name(self) -> str:
@@ -150,3 +238,12 @@ class Creature:
     @buffs.setter
     def buffs(self, value):
         self._buffs = value
+
+    @property
+    def gear(self):
+        """Returns the creature's gear."""
+        return self._gear
+
+    @gear.setter
+    def gear(self, value):
+        self._gear = value

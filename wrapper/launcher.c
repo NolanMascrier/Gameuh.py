@@ -13,6 +13,7 @@
     #define VENV_PYTHON "Gameuh.py\\venv\\Scripts\\python.exe"
     #define VENV_PATH "Gameuh.py\\venv"
     #define PYTHON_VENV_CMD "python-win\\python.exe -m venv Gameuh.py\\venv"
+    #define LAUNCH_GAME "python-win\\python.exe Gameuh.py\\main.py"
 #else
     #define PYTHON_PATH "python3"
     #define PIP_CMD "Gameuh.py/venv/bin/python3 -m pip"
@@ -20,7 +21,8 @@
     #define PATH_SEP "/"
     #define VENV_PYTHON "Gameuh.py/venv/bin/python3"
     #define VENV_PATH "Gameuh.py/venv"
-    #define PYTHON_VENV_CMD "./Gameuh.py/python-linux/bin/python3 -m venv Gameuh.py/venv"
+    #define PYTHON_VENV_CMD "python3 -m venv Gameuh.py/venv"
+    #define LAUNCH_GAME "Gameuh.py/venv/bin/python3 Gameuh.py/main.py"
 #endif
 
 int directory_exists(const char *path)
@@ -37,6 +39,7 @@ void run_or_exit(const char *cmd, const char *error_message)
         exit(EXIT_FAILURE);
     }
 }
+
 
 int main()
 {
@@ -77,7 +80,7 @@ int main()
     snprintf(command, sizeof(command), "%s install -r Gameuh.py%crequirements.txt", PIP_CMD, PATH_SEP[0]);
     run_or_exit(command, "Failed to install Python dependencies.");
     printf("Launching Python application...\n");
-    snprintf(command, sizeof(command), "%s Gameuh.py%cmain.py", VENV_PYTHON, PATH_SEP[0]);
+    snprintf(command, sizeof(command), "%s", LAUNCH_GAME);
     run_or_exit(command, "Failed to launch the application.");
 
     return (0);

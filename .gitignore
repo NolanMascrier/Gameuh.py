@@ -1,5 +1,9 @@
 launcher
+__pycache__
+__pycache__/
 */__pycache__
 */__pycache__/
+*/*/__pycache__
+*/*/__pycache__/
 /Gameuh.py/wrapper/python/
 /Gameuh.py/wrapper/git/

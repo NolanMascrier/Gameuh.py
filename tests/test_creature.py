@@ -68,5 +68,15 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.afflict(benediction)
         self.assertEqual(bob.stats["str"].get_value(), 48.0)
 
+    def test_level_up(self):
+        bob = Creature("Bob")
+        self.assertEqual(bob.level, 1)
+        self.assertEqual(bob.exp, 0)
+        bob.grant_experience(100)
+        self.assertEqual(bob.level, 2)
+        bob.grant_experience(100000)
+        self.assertGreater(bob.level, 3)
+        self.assertLess(bob.exp, bob.exp_to_next)
+
 if __name__ == '__main__':
     unittest.main()
