@@ -101,5 +101,20 @@ class TestingCreatureDamage(unittest.TestCase):
         self.assertEqual(bob.stats["str"].get_value(), 10)
         self.assertEqual(bob.gear["armor"], None)
 
+    def test_mana(self):
+        bob = Creature("Bob")
+        self.assertEqual(bob.stats["mana"].current_value, 50)
+        bob.consume_mana(20)
+        self.assertEqual(bob.stats["mana"].current_value, 30)
+        bob.restore_mana(20)
+        self.assertEqual(bob.stats["mana"].current_value, 50)
+        bob.restore_mana(50)
+        self.assertEqual(bob.stats["mana"].current_value, 50)
+        bob.consume_mana(30)
+        bob.tick()
+        self.assertEqual(bob.stats["mana"].current_value, 22.5)
+        bob.consume_mana(999999)
+        self.assertEqual(bob.stats["mana"].current_value, 0)
+
 if __name__ == '__main__':
     unittest.main()

@@ -21,7 +21,6 @@ JAUGE_C = "Gameuh.py/ressources/cd_jauge.png"
 
 FONT = None
 
-LANGUAGE_SELECTOR = "EN_us"
 LANGUAGE = None
 
 def change_language(lang):
@@ -31,14 +30,15 @@ def change_language(lang):
         lang (str): Name of the language. Must correspond\
         to a file in ressources/locales.
     """
-    global LANGUAGE
     try:
-        with open(f"Gameuh.py/ressources/locales/{lang}.json", mode = 'r',\
+        with open(f"{lang}.json", mode = 'r',\
                 encoding="utf-8") as file:
             data = file.read()
-            LANGUAGE = json.loads(data)
+            langfile = json.loads(data)
     except FileNotFoundError:
         print("File not found, language unchanged.")
+        langfile = None
+    return langfile
 
 class Flags(Enum):
     """Flags to use for skills and damage sources."""

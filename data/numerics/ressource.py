@@ -72,7 +72,7 @@ class Ressource(Stat):
         """Ticks down all the buffs and debuffs, and
         also replenish the ressource.
         """
-        self._current_value += self._current_value * self._rate.get_value()
+        self._current_value += self.get_value() * self._rate.get_value()
         super().tick()
         for buff in self._buffs:
             self._current_value += buff.value

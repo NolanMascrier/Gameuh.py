@@ -21,7 +21,7 @@ class Creature:
         self._exp_to_next = 100
         self._stats = {
             "life": Ressource(100, "Life", 0),
-            "mana": Ressource(50, "Mana", 5),
+            "mana": Ressource(50, "Mana"),
 
             "str": Stat(10, "Strength"),
             "dex": Stat(10, "Dexterity"),
@@ -100,7 +100,7 @@ class Creature:
             cost (float): Amount to consume.
         """
         value = cost * self._stats["mana_efficiency"].get_value()
-        self._stats["mana"].modify(value)
+        self._stats["mana"].modify(-value)
 
     def restore_mana(self, amount: float):
         """Restores a certain amount of mana to
