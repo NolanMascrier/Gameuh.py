@@ -8,6 +8,7 @@
 #ifdef _WIN32
     #define PYTHON_PATH "python-win\\python.exe"
     #define PIP_CMD "python-win\\python.exe -m pip"
+    #define ENSURE_PIP ""
     #define GIT_CMD "git-win\\bin\\git.exe"
     #define PATH_SEP "\\"
     #define VENV_PYTHON "Gameuh.py\\venv\\Scripts\\python.exe"
