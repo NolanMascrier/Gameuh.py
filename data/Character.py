@@ -1,69 +1,72 @@
 from data.constants import *
 from data.Fireball import Fireball
+from data.physics.hitbox import HitBox
 
 class Character():
     def __init__(self):
         self._x = 50
         self._y = 50
+        self._hitbox = (0, 0)
         self._rect = None
         self._sprite = None
         self._image = None
         self._direction = K_DOWN
         self._index = 0
-        self._speed = 4
+        self._speed = 12
+        self._box = HitBox(self._x, self._y, 70, 25)
         self._hitbox = (10, 15)
+        self._hitbox_size = (30, 70)
         self._cooldown = 0
         self._max_cooldown = 2
         self._life = 100
         self._mana = 100
 
+    def get_hitbox(self):
+        x = self._x + self._hitbox[0]
+        y = self._y + self._hitbox[1]
+        return (x, y)
+
     def get_pos(self):
         return (self._x, self._y)
-    
+
     def get_sprite(self):
         return self._sprite[self._direction][self._index]
-    
+
     def tick(self):
+        self._box.move((self._x, self._y))
         if self._cooldown > 0:
             self._cooldown -= 1
         if self.cooldown <= 0 and self._mana < 100:
             self.mana += 0.1
 
     def shoot_fireball(self):
-        orig_x = self._x + self._hitbox[0]
-        orig_y = self._y + self._hitbox[1]
+        orig_x = self.left()
+        orig_y = self.top() + self._box.height / 2
         if self._cooldown <= 0 and self._mana >= 10:
-            if self._direction == K_DOWN:
-                fire = Fireball(orig_x, orig_y, 90)
-            elif self._direction == K_UP:
-                fire = Fireball(orig_x, orig_y, 270)
-            elif self._direction == K_RIGHT:
-                fire = Fireball(orig_x, orig_y, 0)
-            elif self._direction == K_LEFT:
-                fire = Fireball(orig_x, orig_y, 180)
+            fire = Fireball(orig_x, orig_y, 0, len=32, height=32)
             PROJECTILE_TRACKER.append(fire)
-            self._cooldown = 20
-            self._max_cooldown = 20
-            self._mana -= 5
+            self._cooldown = 5
+            self._max_cooldown = 5
+            self._mana -= 2
 
     def action(self, keys):
         """"""
-        if keys[K_LEFT]:
+        if keys[K_LEFT] or keys[K_a]:
             if self.left() >= self._speed:
                 self._x -= self._speed
                 self._direction = K_LEFT
                 self._index = (self._index+1) % 4
-        if keys[K_RIGHT]:
+        if keys[K_RIGHT] or keys[K_d]:
             if self.right() <= SCREEN_WIDTH - self._speed:
                 self._x += self._speed
                 self._direction = K_RIGHT
                 self._index = (self._index+1) % 4
-        if keys[K_UP]:
+        if keys[K_UP] or keys[K_w]:
             if self.top() >= self._speed:
                 self._y -= self._speed
                 self._direction = K_UP
                 self._index = (self._index+1) % 4
-        if keys[K_DOWN]:
+        if keys[K_DOWN] or keys[K_s]:
             if self.bottom() <= SCREEN_HEIGHT - self._speed:
                 self._y += self._speed
                 self._direction = K_DOWN
@@ -72,16 +75,16 @@ class Character():
             self.shoot_fireball()
 
     def top(self):
-        return self._y
-    
+        return self._box.top
+
     def bottom(self):
-        return self._y + self._hitbox[1]
+        return self._box.bottom
 
     def left(self):
-        return self._x
+        return self._box.left
     
     def right(self):
-        return self._x + self._hitbox[0]
+        return self._box.right
 
     @property
     def x(self):
@@ -154,3 +157,11 @@ class Character():
     @mana.setter
     def mana(self, value):
         self._mana = value
+    
+    @property
+    def hitbox_size(self):
+        return self._hitbox_size
+
+    @hitbox_size.setter
+    def hitbox_size(self, value):
+        self._hitbox_size = value

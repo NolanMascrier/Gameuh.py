@@ -1,3 +1,5 @@
+"""Sprite image file."""
+
 from data.constants import *
 
 class Sprite:
@@ -87,6 +89,3 @@ class Sprite:
     @set.setter
     def set(self, value):
         self._set = value
-
-
-    
