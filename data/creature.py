@@ -39,15 +39,35 @@ class Creature:
             "precision": Stat(0, "Precision"),
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
-
             "speed": Stat(1, "Move Speed"),
+            
+            "melee_dmg": Stat(0, "Melee Damage"),
+            "spell_dmg": Stat(0, "Spell Damage"),
+            "ranged_dmg": Stat(0, "Ranged Damage"),
+
             "phys": Stat(0, "Physical resistance"),
             "fire": Stat(0, "Fire resistance"),
             "ice": Stat(0, "Ice resistance"),
             "elec": Stat(0, "Electric resistance"),
             "energy": Stat(0, "Energy resistance"),
             "light": Stat(0, "Light resistance"),
-            "dark": Stat(0, "Dark resistance")
+            "dark": Stat(0, "Dark resistance"),
+            
+            "phys_dmg": Stat(0, "Physical resistance"),
+            "fire_dmg": Stat(0, "Fire resistance"),
+            "ice_dmg": Stat(0, "Ice resistance"),
+            "elec_dmg": Stat(0, "Electric resistance"),
+            "energy_dmg": Stat(0, "Energy resistance"),
+            "light_dmg": Stat(0, "Light resistance"),
+            "dark_dmg": Stat(0, "Dark resistance"),
+            
+            "phys_pen": Stat(0, "Physical resistance penetration"),
+            "fire_pen": Stat(0, "Fire resistance penetration"),
+            "ice_pen": Stat(0, "Ice resistance penetration"),
+            "elec_pen": Stat(0, "Electric resistance penetration"),
+            "energy_pen": Stat(0, "Energy resistance penetration"),
+            "light_pen": Stat(0, "Light resistance penetration"),
+            "dark_pen": Stat(0, "Dark resistance penetration")
         }
         self._gear = {
             "helm": None,
@@ -65,6 +85,7 @@ class Creature:
             }
         }
         self._buffs = []
+        self._abilities = []
 
     def damage(self, damage_source: Damage):
         """Deals damage to a creature. Adapts each source
@@ -295,3 +316,12 @@ class Creature:
     @gear.setter
     def gear(self, value):
         self._gear = value
+
+    @property
+    def abilities(self):
+        """Returns the creature's abilities."""
+        return self._abilities
+
+    @abilities.setter
+    def abilities(self, value):
+        self._abilities = value
