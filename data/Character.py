@@ -13,7 +13,7 @@ class Character():
         self._direction = K_DOWN
         self._index = 0
         self._speed = 12
-        self._box = HitBox(self._x, self._y, 70, 25)
+        self._box = HitBox(self._x + 30, self._y + 10, 25, 70)
         self._hitbox = (10, 15)
         self._hitbox_size = (30, 70)
         self._cooldown = 0
@@ -33,7 +33,11 @@ class Character():
         return self._sprite[self._direction][self._index]
 
     def tick(self):
-        self._box.move((self._x, self._y))
+        self._box.move((self._x + 50, self._y + 30))
+        if self._life > 100:
+            self._life = 100
+        if self._mana > 100:
+            self._mana = 100
         if self._cooldown > 0:
             self._cooldown -= 1
         if self.cooldown <= 0 and self._mana < 100:

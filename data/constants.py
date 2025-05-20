@@ -9,7 +9,9 @@ from pygame.constants import *
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 960
 PROJECTILE_TRACKER = []
+ENNEMY_TRACKER = []
 TEXT_TRACKER = []
+POWER_UP_TRACKER = []
 
 FIREBALL_IMAGE = "ressources/fire.png"
 UI_JAUGE = "ressources/ui_main.png"
@@ -25,6 +27,13 @@ JAUGE_BOSS = "ressources/life_boss.png"
 FONT = None
 
 LANGUAGE = None
+
+SYSTEM = {
+    "font": None
+}
+
+WAVE_TIMER = USEREVENT+4
+TICKER_TIMER = USEREVENT+5
 
 def change_language(lang):
     """Changes the system's language.
@@ -98,6 +107,11 @@ class Flags(Enum):
     RELIC = "relic"
     AMULET = "amulet"
     RING = "ring"
+    ITEM = "items"
+    GOLD = "gold"
     #Flags for projectiles
     BOUNCE = "bounce"
     CURVE = "curve"
+    #Flags for ennemies
+    SHOOTER = "shooter"
+    CHASER = "chaser"

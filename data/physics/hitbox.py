@@ -27,17 +27,17 @@ class HitBox():
             return False
         if self.left > other.right or self.right < other.left:
             return False
-        if self.top > other.bottom or self.bottom < other.bottom:
+        if self.top > other.bottom or self.bottom < other.top:
             return False
         if self.left < other.right and self.top < other.bottom:
             return True
-        if self.right < other.left and self.bottom < other.right:
+        if self.right < other.left and self.bottom < other.top:
             return True
         return False
 
     def get_rect(self) -> tuple:
         """Return's the hitbox as a rect tuple."""
-        return (self._x, self._y, self._height, self._width)
+        return (self._x, self._y, self._width, self._height)
 
     def move(self, pos: tuple):
         """Moves the box to a new position."""
@@ -99,3 +99,11 @@ class HitBox():
     @height.setter
     def height(self, value):
         self._height = value
+
+    @property
+    def center(self):
+        """Returns the x;y position of the box's
+        center."""
+        x = self.left + (self._width / 2)
+        y = self.top + (self._height / 2)
+        return (x, y)
