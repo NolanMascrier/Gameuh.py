@@ -13,14 +13,14 @@ from data.generator import Generator
 
 SPEED = 4
 PLAYING = True
-PLAYER = (50, 50)
+PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
 
 shoot_da_bouncy = False
 bouncies = 0
 
-def draw_ui(char, bg, ui, fenetre, boss_here = False, boss = 1, boss_max = 1):
+def draw_ui(char, bg, ui, boss_here = False, boss = 1, boss_max = 1):
     cd = (char.cooldown + 0.001) / char.max_cooldown * 176
     mana = char.mana / 100 * 176
     life = char.life / 100 * 176
@@ -34,22 +34,22 @@ def draw_ui(char, bg, ui, fenetre, boss_here = False, boss = 1, boss_max = 1):
     m = pygame.transform.scale(ui[5], (mana, 40))
     c = pygame.transform.scale(ui[6], (cd, 40))
     #jauges
-    fenetre.blit(l, (posL[0] + 24, posL[1]))
-    fenetre.blit(m, (posM[0] + 24, posM[1]))
-    fenetre.blit(c, (posC[0] + 24, posC[1]))
+    SYSTEM["windows"].blit(l, (posL[0] + 24, posL[1]))
+    SYSTEM["windows"].blit(m, (posM[0] + 24, posM[1]))
+    SYSTEM["windows"].blit(c, (posC[0] + 24, posC[1]))
     if boss_here:
         b = pygame.transform.scale(ui[7], (boss, 80))
         bb = pygame.transform.scale(ui[8], (1000, 80))
-        fenetre.blit(bb, (100, SCREEN_HEIGHT - 100))
-        fenetre.blit(b, (100, SCREEN_HEIGHT - 100))
+        SYSTEM["windows"].blit(bb, (100, SCREEN_HEIGHT - 100))
+        SYSTEM["windows"].blit(b, (100, SCREEN_HEIGHT - 100))
     #fluff
-    fenetre.blit(ui[0], posL)
-    fenetre.blit(ui[0], posM)
-    fenetre.blit(ui[0], posC)
+    SYSTEM["windows"].blit(ui[0], posL)
+    SYSTEM["windows"].blit(ui[0], posM)
+    SYSTEM["windows"].blit(ui[0], posC)
     #icons
-    fenetre.blit(ui[1], posL)
-    fenetre.blit(ui[2], posM)
-    fenetre.blit(ui[3], posC)
+    SYSTEM["windows"].blit(ui[1], posL)
+    SYSTEM["windows"].blit(ui[2], posM)
+    SYSTEM["windows"].blit(ui[3], posC)
 
 def move_boss(boss_cord, img, gen, laz):
     global shoot_da_bouncy, bouncies
@@ -86,15 +86,15 @@ def explode(target, img1, img2):
             pu.flags.append(Flags.LIFE)
         POWER_UP_TRACKER.append(pu)
 
-def draw_hitbox(box, fenetre, color):
+def draw_hitbox(box, color):
     s = pygame.Surface((box.width, box.height))
     s.set_alpha(128)
     s.fill(color)
-    fenetre.blit(s, (box.x, box.y))
+    SYSTEM["windows"].blit(s, (box.x, box.y))
     s = pygame.Surface((4, 4))
     s.set_alpha(255)
     s.fill(color)
-    fenetre.blit(s, box.center)
+    SYSTEM["windows"].blit(s, box.center)
 
 def spawn_enemies(image, attack_anim):
     to_spawn = random.randint(3, 10)
@@ -127,7 +127,8 @@ if __name__ == "__main__":
     pygame.time.set_timer(WAVE_TIMER, 2000)
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
-    fenetre = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    flags = pygame.SCALED|pygame.FULLSCREEN
+    SYSTEM["windows"] = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
     spri = Sprite("ressources/tiles/Island_24x24.png", 24, 24, 9, 8)
     fnt_txt = pygame.font.SysFont('ressources/dmg.ttf', 30)
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
@@ -196,13 +197,13 @@ if __name__ == "__main__":
 
     while PLAYING:
         frame += 0.2
-        fenetre.blit(parallaxes[0], (0, 0))
+        SYSTEM["windows"].blit(parallaxes[0], (0, 0))
         for i in range(4):
             diff_x[i] = (diff_x[i] + speeds[i] * SPEED_FACTOR) % SCREEN_WIDTH
         for layer in range(4):
             for y in range(0, 2):
                 x = int((y * SCREEN_WIDTH) - diff_x[layer])
-                fenetre.blit(parallaxes[layer + 1], (x, 0))
+                SYSTEM["windows"].blit(parallaxes[layer + 1], (x, 0))
 
         if boss_cord[0] < destination[0]:
             boss_cord[0] += 10
@@ -213,10 +214,10 @@ if __name__ == "__main__":
         if boss_cord[1] > destination[1]:
             boss_cord[1] -= 10
 
-        fenetre.blit(john.image, john.get_pos())
+        SYSTEM["windows"].blit(john.image, john.get_pos())
         if boss_here:
             boss_hitbox.move((boss_cord[0] + 20, boss_cord[1] + 80))
-            fenetre.blit(boss_anim[int(frame) % 6], (boss_cord[0], boss_cord[1]))
+            SYSTEM["windows"].blit(boss_anim[int(frame) % 6], (boss_cord[0], boss_cord[1]))
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -240,29 +241,27 @@ if __name__ == "__main__":
                         PROJECTILE_TRACKER.append(sh)
                         bouncies -= 1
 
-        if boss_here:
-            draw_hitbox(boss_hitbox, fenetre, 0xFF0000)
-        #draw_hitbox(john._box, fenetre, 0x00FF00)
+        #if boss_here:
+        #    draw_hitbox(boss_hitbox, 0xFF0000)
+        #draw_hitbox(john._box, 0x00FF00)
 
         keys = pygame.key.get_pressed()
         john.action(keys)
         john.tick()
         for bubble in POWER_UP_TRACKER.copy():
             bubble.tick(john)
-            fenetre.blit(bubble.get_image(), (bubble.x, bubble.y))
+            SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
             if bubble.flagged_for_deletion:
                 POWER_UP_TRACKER.remove(bubble)
         for baddie in ENNEMY_TRACKER.copy():
-            fenetre.blit(baddie.get_image(), (baddie.x, baddie.y))
+            SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
             baddie.tick(john)
             if baddie._creature.stats["life"].current_value <= 0:
                 explode(baddie, manaorb_anim, lifeorb_anim)
                 ENNEMY_TRACKER.remove(baddie)
-            #draw_hitbox(baddie.hitbox, fenetre, 0xFF00A2)
         for proj in PROJECTILE_TRACKER.copy():
             proj.tick(john)
-            #draw_hitbox(proj.box, fenetre, 0x0000FF)
-            fenetre.blit(proj.get_image(), proj.get_pos())
+            SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
             if boss_here:
                 if not proj.evil and proj.box.is_colliding(boss_hitbox):
                     boss_life -= proj.power
@@ -280,10 +279,10 @@ if __name__ == "__main__":
             sfc.set_alpha(txt[3])
             txt[3] -= 5
             txt[2] -= 3
-            fenetre.blit(sfc, (txt[1], txt[2]))
+            SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
             if txt[3] < 10:
                 TEXT_TRACKER.remove(txt)
-        draw_ui(john, bg, ui, fenetre, False, boss_life, boss_max)
+        draw_ui(john, bg, ui, boss_here, boss_life, boss_max)
         pygame.display.update()
         sleep(0.016)
         john.image = char_anim[int(frame) % 9]

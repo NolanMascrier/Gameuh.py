@@ -6,8 +6,12 @@ import pygame
 from pygame import *
 from pygame.constants import *
 
+ROOT = "/"
+#ROOT = "Gameuh.py/"
+RESSOURCES = f"{ROOT}/ressources"
+
 SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 960
+SCREEN_HEIGHT = 720
 PROJECTILE_TRACKER = []
 ENNEMY_TRACKER = []
 TEXT_TRACKER = []
@@ -28,12 +32,17 @@ FONT = None
 
 LANGUAGE = None
 
-SYSTEM = {
-    "font": None
-}
-
-WAVE_TIMER = USEREVENT+4
-TICKER_TIMER = USEREVENT+5
+#Game states
+MENU_MAIN = 0
+MENU_OPTIONS = 1
+MENU_START = 2
+MENU_LOAD = 3
+MENU_SAVE = 4
+GAME_LEVEL = 5
+GAME_MAP = 6
+GAME_SHOP = 7
+GAME_INVENTORY = 8
+GAME_EQUIP = 9
 
 def change_language(lang):
     """Changes the system's language.
@@ -51,6 +60,26 @@ def change_language(lang):
         print("File not found, language unchanged.")
         langfile = None
     return langfile
+
+SYSTEM = {
+    "font": None,
+    "options": {
+        "screen_width": 1280,
+        "screen_height": 720,
+        "resolutions": [(1138, 640), (1280, 720), (1600, 900), (1920, 1080)],
+        "fullscreen": False,
+        "vsync": False,
+        "lang_selec": "EN-en",
+        "lang": change_language("EN_us")
+    },
+    "game_state": None,
+    "windows": None
+}
+
+WAVE_TIMER = USEREVENT+4
+TICKER_TIMER = USEREVENT+5
+
+
 
 class Flags(Enum):
     """Flags to use for skills and damage sources."""
