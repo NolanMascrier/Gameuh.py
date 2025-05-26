@@ -6,9 +6,9 @@ import pygame
 from pygame import *
 from pygame.constants import *
 
-ROOT = "/"
+ROOT = ""
 #ROOT = "Gameuh.py/"
-RESSOURCES = f"{ROOT}/ressources"
+RESSOURCES = f"{ROOT}ressources"
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720

@@ -34,17 +34,20 @@ class Animation():
 
     def __sequencer(self):
         """Automatically cuts the image into frames."""
-        frame_per_line = self._base_image.width / self._lines
+        frame_per_line = int(self._base_image.width / self._frame_x)
+        max_frame = 0
         for line in range(self._lines):
             sequence = [self._base_image.extracts(index * self._frame_x, \
                                                 line * self._frame_y,\
                                                 self._frame_x, self._frame_y)\
                 for index in range(0, frame_per_line)]
             self._sequence.extend(sequence)
+            max_frame += len(sequence) - 1
+        self._frame_max = max_frame
 
     def get_image(self) -> Image:
         """Returns the current image of the sequence."""
-        return self._sequence[int(self._current_frame)]
+        return self._sequence[int(self._current_frame)].image
 
     def tick(self):
         """Advance the sequence."""
@@ -61,9 +64,9 @@ class Animation():
         Args:
             deg (float): degrees to rotate the sequence.
         """
-        self._base_image.rotate(deg)
-        self._sequence.clear()
-        self.__sequencer()
+        for frame in self._sequence:
+            frame.rotate(deg)
+        return self
 
     def scale(self, height: float, width: float):
         """Scales up or down the sequence.
@@ -72,9 +75,9 @@ class Animation():
             height (float): New height of the sequence.
             width (float): New width of the sequence
         """
-        self._base_image.scale(height, width)
-        self._sequence.clear()
-        self.__sequencer()
+        for frame in self._sequence:
+            frame.scale(height, width)
+        return self
 
     def flip(self, vertical: bool, horizontal: bool):
         """Flips the sequence.
@@ -83,6 +86,6 @@ class Animation():
             vertical (bool): Flip the sequence on the y axis.
             horizontal (bool): Flip the sequence on the x axis.
         """
-        self._base_image.flip(vertical, horizontal)
-        self._sequence.clear()
-        self.__sequencer()
+        for frame in self._sequence:
+            frame.flip(vertical, horizontal)
+        return self

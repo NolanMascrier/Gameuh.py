@@ -10,6 +10,7 @@ from data.creature import Creature
 from data.game.enemy import Enemy
 from data.game.pickup import PickUp
 from data.generator import Generator
+from data.image.animation import Animation
 
 SPEED = 4
 PLAYING = True
@@ -132,10 +133,7 @@ if __name__ == "__main__":
     spri = Sprite("ressources/tiles/Island_24x24.png", 24, 24, 9, 8)
     fnt_txt = pygame.font.SysFont('ressources/dmg.ttf', 30)
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
-    char = pygame.image.load("ressources/witch.png").convert_alpha()
-    char_anim = [pygame.transform.scale(char.subsurface(x, 0, 64, 64), (128, 128))
-                 for x in range(0, 576, 64)]
-    john.image = char_anim[0]
+    john.image = Animation("witch.png", 64, 64, frame_rate = 0.25).scale(128, 128)
     ui = [
         pygame.transform.scale(pygame.image.load(UI_JAUGE).convert_alpha(), (200, 40)),
         pygame.transform.scale(pygame.image.load(UI_JAUGE_L).convert_alpha(), (200, 40)),
@@ -147,7 +145,7 @@ if __name__ == "__main__":
         pygame.transform.scale(pygame.image.load(JAUGE_BOSS).convert_alpha(), (176, 40)),
         pygame.transform.scale(pygame.image.load(JAUGE_BOSS_BACK).convert_alpha(), (176, 40))
     ]
-    john.rect = john.image.get_rect()
+    #john.rect = john.image.get_rect()
     index = 0
     bg = pygame.image.load("ressources/parallax_field.png").convert_alpha()
     parallaxes = [
@@ -214,7 +212,7 @@ if __name__ == "__main__":
         if boss_cord[1] > destination[1]:
             boss_cord[1] -= 10
 
-        SYSTEM["windows"].blit(john.image, john.get_pos())
+        SYSTEM["windows"].blit(john.image.get_image(), john.get_pos())
         if boss_here:
             boss_hitbox.move((boss_cord[0] + 20, boss_cord[1] + 80))
             SYSTEM["windows"].blit(boss_anim[int(frame) % 6], (boss_cord[0], boss_cord[1]))
@@ -285,7 +283,7 @@ if __name__ == "__main__":
         draw_ui(john, bg, ui, boss_here, boss_life, boss_max)
         pygame.display.update()
         sleep(0.016)
-        john.image = char_anim[int(frame) % 9]
+        john.image.tick()
         if frame >= 60:
             frame -= 60
     pygame.quit()
