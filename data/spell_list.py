@@ -9,7 +9,8 @@ from data.image.animation import Animation
 from data.numerics.affliction import Affliction
 
 FIREBOLT = Damage(2, 1.5, fire=1, flags=[Flags.SPELL])
-DARKBOLT = Damage(1, 0.9, dark=1, flags=[Flags.SPELL])
+DARKBOLT = Damage(2, 1, dark=1, flags=[Flags.SPELL])
+VOIDBOLT = Damage(1, 0.1, dark=1, flags=[Flags.SPELL])
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 CHARGE = Damage(3, 1, phys=1, flags=[Flags.MELEE])
 
@@ -137,8 +138,8 @@ def generate_spell_list():
     icebolt_proj_img = Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     voidbolt_proj_img = Animation("pew.png", 13, 13, frame_rate=0.25)
     firebolt = Spell("Firebolt", firebolt_icon, firebolt_proj_img, FIREBOLT, 2, cooldown=0.5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
-    icebolt = Spell("Ice lance", icebolt_icon, icebolt_proj_img, ICEBOLT, 50, cooldown=10, projectiles=3, delay=0.5, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
-    voidolt = Spell("Voidbolt", voidbolt_icon, voidbolt_proj_img, DARKBOLT, 1, cooldown=0.1, projectiles = 3, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
+    icebolt = Spell("Ice lance", icebolt_icon, icebolt_proj_img, ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
+    voidolt = Spell("Voidbolt", voidbolt_icon, voidbolt_proj_img, VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
     elementalfury = Spell("Elemental Fury", elefury_icon, None, None, 20, 0, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["icebolt"] = icebolt
