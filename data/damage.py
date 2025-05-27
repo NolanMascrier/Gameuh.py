@@ -46,10 +46,17 @@ class Damage():
         Defaults to 0.
         dp (float, optionnal): Darkness penetration factor.\
         Defaults to 0.
+        is_crit (bool, optionnal): Whether or not the hit is \
+        critical. Defaults to False.
+        crit_mult (float, optionnal): Critical multiplier of the\
+        damage source. Defaults to 1.5.
+        Flags (list, optionnal): List of the damage source flags\
+        ie Melee, Ranged or Spell. Defaults to None.
     """
     def __init__(self, damage, multiplier, phys = 0, fire = 0, ice = 0,\
                 elec = 0, energ = 0, light = 0, dark = 0, pp = 0, fp = 0, \
-                ip = 0, ep = 0, enp = 0, lp = 0, dp = 0):
+                ip = 0, ep = 0, enp = 0, lp = 0, dp = 0, is_crit = False, \
+                crit_mult = 1.5, flags = None):
         self._base = damage
         self._coeff = multiplier
         self._types = {
@@ -70,6 +77,12 @@ class Damage():
             "light": lp,
             "dark": dp
         }
+        self._is_crit = is_crit
+        self._crit_mult = crit_mult
+        if flags is None or not isinstance(flags, list):
+            self._flags = []
+        else:
+            self._flags = flags
 
     def get_damage(self):
         """Returns the computed damage.
@@ -126,3 +139,22 @@ class Damage():
     @penetration.setter
     def penetration(self, value):
         self._penetration = value
+
+    @property
+    def flags(self):
+        """Returns the damage source's flags."""
+        return self._flags
+
+    @flags.setter
+    def flags(self, value):
+        self._flags = value
+
+    @property
+    def is_crit(self):
+        """Returns whether or not the damage is critical."""
+        return self._is_crit
+
+    @property
+    def crit_mult(self):
+        """Returns the critical multiplier of the damage."""
+        return self._crit_mult

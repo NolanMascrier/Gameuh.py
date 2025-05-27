@@ -7,8 +7,8 @@ from math import atan2, pi
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.constants import Flags, PROJECTILE_TRACKER, TEXT_TRACKER, SYSTEM
-#TODO: Replace with real projectile code
-from data.Fireball import Fireball
+from data.spell_list import *
+from data.projectile import Projectile
 
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
@@ -26,6 +26,7 @@ class Enemy():
         self._power = power
         self._counter = 0
         self._projectile = projectile
+        self._immune = []
 
     def tick(self, player):
         """Ticks down the entity."""
@@ -42,17 +43,22 @@ class Enemy():
         if self._counter >= self._timer:
             self._counter -= self._timer
         for proj in PROJECTILE_TRACKER.copy():
-            if not proj.evil and proj.box.is_colliding(self._entity.hitbox):
-                #self._creature.damage() ...
-                self._creature.stats["life"].current_value -= proj.power
-                text = SYSTEM["font"].render(f'{proj.power}', False, (255, 30, 30))
-                TEXT_TRACKER.append([text, proj.x, proj.y, 255])
-                PROJECTILE_TRACKER.remove(proj)
+            if not proj.evil and proj.hitbox.is_colliding(self._entity.hitbox):
+                if proj in self._immune:
+                    return
+                dmg, crit = self.creature.damage(proj.damage)
+                SYSTEM["text_generator"].generate_damage_text(self.x, self.y, (255, 30, 30), crit, dmg)
+                if Flags.PIERCING not in proj.behaviours:
+                    PROJECTILE_TRACKER.remove(proj)
+                else:
+                    self._immune.append(proj)
 
     def attack(self, player):
         """Shoots a projectile toward the player."""
-        angle = 90 - atan2(player._box.center[0] - self._entity.x, player._box.center[1] - self._entity.y) * 180 / pi
-        proj = Fireball(self._entity.x, self._entity.y, angle, True, self._power, image=self._projectile, animated=True, max_frame=4)
+        angle = 90 - atan2(player.hitbox.center[0] - self._entity.x,\
+                           player.hitbox.center[1] - self._entity.y) * 180 / pi
+        proj = Projectile(self._entity.x, self._entity.y, angle, SYSTEM["images"]["energyball"],\
+                          DARKBOLT, self._creature, True)
         PROJECTILE_TRACKER.append(proj)
 
     def get_image(self):

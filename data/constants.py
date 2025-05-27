@@ -63,6 +63,8 @@ def change_language(lang):
 
 SYSTEM = {
     "font": None,
+    "font_crit": None,
+    "text_generator": None,
     "options": {
         "screen_width": 1280,
         "screen_height": 720,
@@ -73,7 +75,15 @@ SYSTEM = {
         "lang": change_language("EN_us")
     },
     "game_state": None,
-    "windows": None
+    "windows": None,
+    "images": {
+        "fireball": None,
+        "energyball": None,
+        "character": None
+    },
+    "spells": {
+
+    }
 }
 
 WAVE_TIMER = USEREVENT+4
@@ -139,8 +149,17 @@ class Flags(Enum):
     ITEM = "items"
     GOLD = "gold"
     #Flags for projectiles
+    PROJECTILE = "projectile"
     BOUNCE = "bounce"
     CURVE = "curve"
+    ACCELERATE = "accelerate"
+    DELAYED = "delayed"
+    PIERCING = "piercing"
+    #Flags for spells
+    BARRAGE = "barrage"
+    SPREAD = "spread"
+    CHANNELED = "channeled"
+    BUFF = "buff"
     #Flags for ennemies
     SHOOTER = "shooter"
     CHASER = "chaser"

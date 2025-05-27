@@ -11,6 +11,7 @@ class Image():
     Args:
         uri (str): URI pointing to the image in /ressources/"""
     def __init__(self, uri = None):
+        self._uri = uri
         try:
             self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
         except FileNotFoundError:
@@ -68,6 +69,10 @@ class Image():
         subsurface.width = width
         subsurface.height = height
         return subsurface
+
+    def clone(self):
+        """Returns a deep copy of the image."""
+        return Image(self._uri)
 
     @property
     def image(self) -> pygame.Surface:

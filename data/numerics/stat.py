@@ -37,7 +37,7 @@ class Stat:
             final_mults *= multiplier.value
         for increase in self._incr:
             final_incr += increase.value
-        return round((self._value + final_flats) * final_incr * final_mults, 2)
+        return round((self._value + final_flats) * final_incr * final_mults, 4)
 
     def _handle_affliction_list(self, list_name, affliction):
         """Appends the affliction to the corresponding list.

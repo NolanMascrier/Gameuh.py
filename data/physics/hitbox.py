@@ -44,6 +44,11 @@ class HitBox():
         self._x = pos[0]
         self._y = pos[1]
 
+    def move_center(self, pos: tuple):
+        """Moves the box's center to a new position."""
+        self._x = pos[0] - self._width / 2
+        self._y = pos[1] - self._height / 2
+
     @property
     def left(self):
         """Return's the box's leftmost x."""

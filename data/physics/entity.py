@@ -1,6 +1,8 @@
 """An entity is something that physically exists in the game
 world. It has a position, an image and an hitbox."""
 
+from data.image.animation import Animation
+
 class Entity():
     """Defines an entity.
     
@@ -15,30 +17,21 @@ class Entity():
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
-    def __init__(self, x, y, image, hitbox, frame_rate = 0.25, move_speed = 1):
+    def __init__(self, x, y, image: Animation, hitbox, move_speed = 1):
         self._x = x
         self._y = y
         self._image = image
-        if isinstance(image, list):
-            self._animated = True
-            self._max_frame = len(image)
-        else:
-            self._animated = False
-            self._max_frame = 1
         self._hitbox = hitbox
-        self._frame_rate = frame_rate
-        self._frame = 0
         self._move_speed = move_speed
 
     def tick(self, player):
         """Ticks down the entity. Does nothing by default and needs
         to be overriden."""
+        self._image.tick()
 
     def get_image(self):
         """Returns the current image."""
-        if self._animated:
-            return self._image[int(self._frame) % self._max_frame]
-        return self._image
+        return self._image.get_image()
 
     def move(self, pos):
         """Moves the entity toward the x;y position."""
@@ -50,7 +43,13 @@ class Entity():
             self._y += self._move_speed
         if self._y > pos[1]:
             self._y -= self._move_speed
-        self._hitbox.move((self._x, self._y))
+        self._hitbox.move_center(self.center)
+
+    def displace(self, pos):
+        """Moves the entity toward the x;y position."""
+        self.x = pos[0]
+        self.y = pos[1]
+        self._hitbox.move_center(self.center)
 
     @property
     def x(self):
@@ -89,10 +88,17 @@ class Entity():
         self._hitbox = value
 
     @property
-    def frame_rate(self):
-        """Returns the entity's frame rate."""
-        return self._frame_rate
+    def move_speed(self):
+        """Returns the entity's move speed."""
+        return self._move_speed
 
-    @frame_rate.setter
-    def frame_rate(self, value):
-        self._frame_rate = value
+    @move_speed.setter
+    def move_speed(self, value):
+        self._move_speed = value
+
+    @property
+    def center(self):
+        """Returns the entity's center."""
+        x = self._x + self._image.width / 2
+        y = self._y + self._image.height / 2
+        return (x, y)

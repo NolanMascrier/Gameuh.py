@@ -39,7 +39,7 @@ class Affliction():
         """Ticks down the timer.
         """
         if self._duration > 0:
-            self._duration -= 1
+            self._duration -= 0.016
 
     def __eq__(self, other):
         if not isinstance(other, Affliction):

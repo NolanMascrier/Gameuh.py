@@ -1,5 +1,5 @@
 from data.constants import *
-from data.Fireball import Fireball
+from data.projectile import Projectile
 from data.physics.hitbox import HitBox
 from math import atan2, pi
 
@@ -32,7 +32,7 @@ class Generator():
             self._tock += 0.016
             self._duration -= 0.016
             while self._tock >= self._delay:
-                proj = Fireball(self._x - 16, self._y + 8, 180, True, self._power, speed=30, image=self._proj_img, animated=True)
+                proj = Projectile(self._x - 16, self._y + 8, 180, True, self._power, speed=30, image=self._proj_img, animated=True)
                 PROJECTILE_TRACKER.append(proj)
                 self._tock -= self._delay
             if self._tock >= self._duration:

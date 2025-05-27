@@ -1,11 +1,12 @@
 """A creature is the game's main entity, and represents
 both the player and the ennemies alike."""
 
+import random
 from data.numerics.ressource import Ressource
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.damage import Damage
-from data.constants import Flags
+from data.constants import Flags, SYSTEM
 from data.item import Item
 
 class Creature:
@@ -21,7 +22,7 @@ class Creature:
         self._exp_to_next = 100
         self._stats = {
             "life": Ressource(100, "Life", 0),
-            "mana": Ressource(50, "Mana"),
+            "mana": Ressource(50, "Mana", 0.001),
 
             "str": Stat(10, "Strength"),
             "dex": Stat(10, "Dexterity"),
@@ -40,10 +41,11 @@ class Creature:
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
             "speed": Stat(1, "Move Speed"),
-            
-            "melee_dmg": Stat(0, "Melee Damage"),
-            "spell_dmg": Stat(0, "Spell Damage"),
-            "ranged_dmg": Stat(0, "Ranged Damage"),
+            "cast_speed": Stat(1, "Cast Speed"),
+
+            "melee_dmg": Stat(1, "Melee Damage"),
+            "spell_dmg": Stat(1, "Spell Damage"),
+            "ranged_dmg": Stat(1, "Ranged Damage"),
 
             "phys": Stat(0, "Physical resistance"),
             "fire": Stat(0, "Fire resistance"),
@@ -52,15 +54,15 @@ class Creature:
             "energy": Stat(0, "Energy resistance"),
             "light": Stat(0, "Light resistance"),
             "dark": Stat(0, "Dark resistance"),
-            
-            "phys_dmg": Stat(0, "Physical resistance"),
-            "fire_dmg": Stat(0, "Fire resistance"),
-            "ice_dmg": Stat(0, "Ice resistance"),
-            "elec_dmg": Stat(0, "Electric resistance"),
-            "energy_dmg": Stat(0, "Energy resistance"),
-            "light_dmg": Stat(0, "Light resistance"),
-            "dark_dmg": Stat(0, "Dark resistance"),
-            
+
+            "phys_dmg": Stat(1, "Physical damage"),
+            "fire_dmg": Stat(1, "Fire damage"),
+            "ice_dmg": Stat(1, "Ice damage"),
+            "elec_dmg": Stat(1, "Electric damage"),
+            "energy_dmg": Stat(1, "Energy damage"),
+            "light_dmg": Stat(1, "Light damage"),
+            "dark_dmg": Stat(1, "Dark damage"),
+
             "phys_pen": Stat(0, "Physical resistance penetration"),
             "fire_pen": Stat(0, "Fire resistance penetration"),
             "ice_pen": Stat(0, "Ice resistance penetration"),
@@ -87,9 +89,47 @@ class Creature:
         self._buffs = []
         self._abilities = []
 
-    def damage(self, damage_source: Damage):
+    def recalculate_damage(self, damage_source: Damage) -> Damage:
+        """Takes a raw damage source (ie from a spell) and applies the creature's
+        own multipliers to it."""
+        crit_roll = random.uniform(0, 1)
+        crit = bool(crit_roll <= self._stats["crit_rate"].get_value())
+        flat = damage_source.base
+        flags = damage_source.flags
+        if Flags.MELEE in flags:
+            flat *= self._stats["melee_dmg"].get_value()
+        if Flags.RANGED in flags:
+            flat *= self._stats["ranged_dmg"].get_value()
+        if Flags.SPELL in flags:
+            flat *= self._stats["spell_dmg"].get_value()
+        multi = damage_source.coeff
+        dmg = damage_source.types
+        pen = damage_source.penetration
+        phys = dmg["phys"] * self._stats["phys_dmg"].get_value()
+        fire = dmg["fire"] * self._stats["fire_dmg"].get_value()
+        ice = dmg["ice"] * self._stats["ice_dmg"].get_value()
+        elec = dmg["elec"] * self._stats["elec_dmg"].get_value()
+        energ = dmg["energy"] * self._stats["energy_dmg"].get_value()
+        light = dmg["light"] * self._stats["light_dmg"].get_value()
+        dark = dmg["dark"] * self._stats["dark_dmg"].get_value()
+
+        pp = pen["phys"] + self._stats["phys_pen"].get_value()
+        fp = pen["fire"] + self._stats["fire_pen"].get_value()
+        ip = pen["ice"] + self._stats["ice_pen"].get_value()
+        ep = pen["elec"] + self._stats["elec_pen"].get_value()
+        enp = pen["energy"] + self._stats["energy_pen"].get_value()
+        lp = pen["light"] + self._stats["light_pen"].get_value()
+        dp = pen["dark"] + self._stats["dark_pen"].get_value()
+
+        return Damage(flat, multi, phys, fire, ice, elec, energ, light, dark, \
+                      pp, fp, ip, ep, enp, lp, dp, crit,\
+                      self._stats["crit_dmg"].get_value(), flags)
+
+
+    def damage(self, damage_source: Damage) -> float:
         """Deals damage to a creature. Adapts each source
         of damage from the damage to the creature's resistance.
+        Returns the final damage as a float for display purpose.
         
         Args:
             damage (Damage): Source of damage.
@@ -100,7 +140,10 @@ class Creature:
             dmga = float(dmg[dmg_type])
             res = self._stats[dmg_type].get_value() - pen[dmg_type]
             damage += dmga * (1 - res)
+        if damage_source.is_crit:
+            damage *= damage_source.crit_mult
         self._stats["life"].modify(-damage)
+        return round(damage, 2), damage_source.is_crit
 
     def heal(self, amount: float):
         """Restores a certain amount of life to

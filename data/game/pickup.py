@@ -46,7 +46,7 @@ class PickUp():
             self._delay -= 1
             self._position += self._velocity
             return
-        desired = pygame.math.Vector2(player._box.center) - self._position
+        desired = pygame.math.Vector2(player.hitbox.center) - self._position
         distance = desired.length()
         if distance < self._arrival_threshold:
             self._velocity *= 0.9
@@ -70,12 +70,12 @@ class PickUp():
 
     def tick(self, player):
         """Ticks down the pickup"""
-        if self._hitbox.is_colliding(player._box):
+        if self._hitbox.is_colliding(player.hitbox):
             if Flags.LIFE in self._flags:
-                player.life += self._value
+                player.creature.stats["life"].current_value += self._value
                 self.generate_text(0xFF0000)
             if Flags.MANA in self._flags:
-                player.mana += self._value
+                player.creature.stats["mana"].current_value += self._value
                 self.generate_text(0x00FF00)
             if Flags.GOLD in self._flags:
                 pass #TODO

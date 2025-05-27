@@ -1,5 +1,6 @@
 """An animation is a sequence of images."""
 
+import pygame
 from data.image.image import Image
 
 class Animation():
@@ -19,9 +20,12 @@ class Animation():
         loops (bool, optionnal): Wether or not the animation should loop.\
         defaults to True.
     """
-    def __init__(self, uri: str, frame_x: int, frame_y: int, lines = 1,\
+    def __init__(self, uri: str|Image, frame_x: int, frame_y: int, lines = 1,\
                 frame_rate = 1, frame_max = -1, loops = True):
-        self._base_image = Image(uri)
+        if isinstance(uri, Image):
+            self._base_image = uri
+        else:
+            self._base_image = Image(uri)
         self._frame_x = frame_x
         self._frame_y = frame_y
         self._frame_rate = frame_rate
@@ -31,6 +35,10 @@ class Animation():
         self._sequence = []
         self.__sequencer()
         self._current_frame = 0
+        #
+        self._scaled = (frame_x, frame_y)
+        self._flipped = (False, False)
+        self._rotated = 0
 
     def __sequencer(self):
         """Automatically cuts the image into frames."""
@@ -45,7 +53,7 @@ class Animation():
             max_frame += len(sequence) - 1
         self._frame_max = max_frame
 
-    def get_image(self) -> Image:
+    def get_image(self) -> pygame.Surface:
         """Returns the current image of the sequence."""
         return self._sequence[int(self._current_frame)].image
 
@@ -64,6 +72,7 @@ class Animation():
         Args:
             deg (float): degrees to rotate the sequence.
         """
+        self._rotated = deg
         for frame in self._sequence:
             frame.rotate(deg)
         return self
@@ -75,6 +84,7 @@ class Animation():
             height (float): New height of the sequence.
             width (float): New width of the sequence
         """
+        self._scaled = (height, width)
         for frame in self._sequence:
             frame.scale(height, width)
         return self
@@ -86,6 +96,31 @@ class Animation():
             vertical (bool): Flip the sequence on the y axis.
             horizontal (bool): Flip the sequence on the x axis.
         """
+        self._flipped = (vertical, horizontal)
         for frame in self._sequence:
             frame.flip(vertical, horizontal)
         return self
+
+    def clone(self):
+        """Returns a deep clone of the animation."""
+        return Animation(
+            self._base_image,
+            self._frame_x,
+            self._frame_y,
+            self._lines,
+            self._frame_rate,
+            self._frame_max,
+            self._loops
+        ).flip(self._flipped[0], self._flipped[1])\
+        .rotate(self._rotated)\
+        .scale(self._scaled[0], self._scaled[1])
+
+    @property
+    def width(self):
+        """Returns the sequence's frame width."""
+        return self._frame_x
+
+    @property
+    def height(self):
+        """Returns the sequence's frame height."""
+        return self._frame_y

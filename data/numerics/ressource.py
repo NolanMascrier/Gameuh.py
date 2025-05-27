@@ -73,7 +73,6 @@ class Ressource(Stat):
         also replenish the ressource.
         """
         self._current_value += self.get_value() * self._rate.get_value()
-        super().tick()
         for buff in self._buffs:
             self._current_value += buff.value
             if buff.duration == 0:
