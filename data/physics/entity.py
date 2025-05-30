@@ -1,6 +1,7 @@
 """An entity is something that physically exists in the game
 world. It has a position, an image and an hitbox."""
 
+from data.constants import *
 from data.image.animation import Animation
 
 class Entity():
@@ -23,11 +24,13 @@ class Entity():
         self._image = image
         self._hitbox = hitbox
         self._move_speed = move_speed
+        self._keys = []
 
-    def tick(self, player):
+    def tick(self, character, speed_mod = 1):
         """Ticks down the entity. Does nothing by default and needs
         to be overriden."""
         self._image.tick()
+        self._move_speed = character.creature.stats["speed"].c_value * speed_mod
 
     def get_image(self):
         """Returns the current image."""
@@ -45,10 +48,31 @@ class Entity():
             self._y -= self._move_speed
         self._hitbox.move_center(self.center)
 
-    def displace(self, pos):
+    def displace(self, pos, keys):
         """Moves the entity toward the x;y position."""
         self.x = pos[0]
         self.y = pos[1]
+        self._hitbox.move_center(self.center)
+        self._keys = keys
+
+    def dash(self, distance):
+        """dash a certain distance depending on the last input keys."""
+        if self._keys[K_LEFT] or self._keys[K_a]:
+            if self._x - distance < 0:
+                distance = distance - self._x
+            self._x -= distance
+        if self._keys[K_RIGHT] or self._keys[K_d]:
+            if self._x + distance > SCREEN_WIDTH:
+                distance = self._x + distance - SCREEN_WIDTH
+            self._x += distance
+        if self._keys[K_UP] or self._keys[K_w]:
+            if self._y - distance < 0:
+                distance = distance - self._y
+            self._y -= distance
+        if self._keys[K_DOWN] or self._keys[K_s]:
+            if self._y + distance > SCREEN_HEIGHT:
+                distance = self._y + distance - SCREEN_HEIGHT
+            self._y += distance
         self._hitbox.move_center(self.center)
 
     @property

@@ -49,6 +49,13 @@ class HitBox():
         self._x = pos[0] - self._width / 2
         self._y = pos[1] - self._height / 2
 
+    def expand(self, height, width):
+        """Expands the hitbox."""
+        self._x -= width
+        self._y -= height
+        self._width += 2 * width
+        self._height += 2 * height
+
     @property
     def left(self):
         """Return's the box's leftmost x."""

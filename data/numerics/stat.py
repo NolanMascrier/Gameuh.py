@@ -95,13 +95,13 @@ class Stat:
         If a duration is negative, it's considered infinite.  
         """
         for flats in self._flats.copy():
-            if flats.duration == 0:
+            if flats.duration <= 0:
                 self._flats.remove(flats)
         for mults in self._mults.copy():
-            if mults.duration == 0:
+            if mults.duration <= 0:
                 self._mults.remove(mults)
         for incr in self._incr.copy():
-            if incr.duration == 0:
+            if incr.duration <= 0:
                 self._incr.remove(incr)
 
     def export(self):
@@ -197,3 +197,9 @@ class Stat:
     @incr.setter
     def incr(self, value):
         self._incr = value
+        
+    @property
+    def c_value(self):
+        """Wrapper to get_value(). Return the computed
+        value of the stat."""
+        return self.get_value()

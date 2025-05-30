@@ -33,7 +33,7 @@ class Enemy():
         if self._creature.stats["life"].current_value <= 0:
             return
         self._counter += 0.016
-        self._entity.tick(player)
+        self._entity.tick(self)
         self._creature.tick()
         if Flags.CHASER in self._behaviours:
             self._entity.move((player.x, player.y))

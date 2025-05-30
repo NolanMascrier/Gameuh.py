@@ -7,6 +7,7 @@ from data.physics.entity import Entity
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM
 from data.image.animation import Animation
 from data.numerics.affliction import Affliction
+from data.numerics.stat import Stat
 
 FIREBOLT = Damage(2, 1.5, fire=1, flags=[Flags.SPELL])
 DARKBOLT = Damage(2, 1, dark=1, flags=[Flags.SPELL])
@@ -16,22 +17,26 @@ CHARGE = Damage(3, 1, phys=1, flags=[Flags.MELEE])
 
 ELEFURY = Affliction("elemetal_fury", 1.25, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
+CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
 
 class Spell():
     def __init__(self, name, icon, proj_image, base_damage:Damage, mana_cost = 0, life_cost = 0,\
-                 bounces = 0, delay = 0,\
+                 bounces = 0, delay = 0, distance = 0,\
                  cooldown = 0, projectiles = 1, flags = None, afflictions = None):
         self._name = name
         self._icon = icon
         self._proj_image = proj_image
         self._base_damage = base_damage
-        self._mana_cost = mana_cost
-        self._life_cost = life_cost
+        self._stats = {
+            "mana_cost": Stat(mana_cost, "mana_cost"),
+            "life_cost": Stat(life_cost, "life_cost"),
+            "bounces": Stat(bounces, "bounces"),
+            "delay": Stat(delay, "delay"),
+            "cooldown": Stat(cooldown, "cooldown"),
+            "projectiles": Stat(projectiles, "projectiles"),
+            "distance": Stat(distance, "distance")
+        }
         self._cooldown = 0
-        self._max_cooldown = cooldown
-        self._projectiles = projectiles
-        self._bounces = bounces
-        self._delay = delay
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
@@ -50,35 +55,39 @@ class Spell():
         """Shoots the spell."""
         if self._cooldown > 0:
             return
-        if caster.stats["mana"].current_value < self._mana_cost:
+        #TODO : Apply mana efficiency to checks
+        if caster.stats["mana"].current_value < self._stats["mana_cost"].c_value:
             return
-        if caster.stats["life"].current_value < self._life_cost:
+        if caster.stats["life"].current_value < self._stats["life_cost"].c_value:
             return
-        self._cooldown = self._max_cooldown
-        caster.consume_mana(self._mana_cost)
-        caster.stats["life"].current_value -= self._life_cost
+        self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
+        caster.consume_mana(self._stats["mana_cost"].c_value)
+        caster.stats["life"].current_value -= self._stats["life_cost"].c_value
         if Flags.PROJECTILE in self._flags:
             if Flags.BARRAGE in self._flags:
-                for i in range (0, self._projectiles):
+                for i in range (0, self._stats["projectiles"].c_value):
                     proj = Projectile(entity.center[0], entity.center[1] + i * 20, 0 ,\
                                       self._proj_image.clone(),\
                                       self._base_damage, caster, evil,\
-                                      delay=self._delay * (i + 1), bounces=self._bounces, \
+                                      delay=self._stats["delay"].c_value * (i + 1),\
+                                      bounces=self._stats["bounces"].c_value, \
                                       behaviours=self._flags, caster=entity)
                     PROJECTILE_TRACKER.append(proj)
             elif Flags.SPREAD in self._flags:
-                if self._projectiles == 1:
+                if self._stats["projectiles"].c_value == 1:
                     proj = Projectile(entity.center[0], entity.center[1], 0,\
                                       self._proj_image.clone(), self._base_damage, caster, evil,\
-                                      delay=self._delay, bounces=self._bounces, \
+                                      delay=self._stats["delay"].c_value,\
+                                      bounces=self._stats["bounces"].c_value, \
                                       behaviours=self._flags, caster=entity)
                     PROJECTILE_TRACKER.append(proj)
                 else:
-                    spread = 90 / self._projectiles
-                    for i in range(0, self._projectiles):
+                    spread = 90 / self._stats["projectiles"].c_value
+                    for i in range(0, self._stats["projectiles"].c_value):
                         proj = Projectile(entity.center[0], entity.center[1], -45 + spread * i,\
                                         self._proj_image.clone(), self._base_damage, caster, evil,\
-                                        delay=self._delay, bounces=self._bounces, \
+                                        delay=self._stats["delay"].c_value * (i + 1),\
+                                        bounces=self._stats["bounces"].c_value, \
                                         behaviours=self._flags, caster=entity)
                         PROJECTILE_TRACKER.append(proj)
         if Flags.BUFF in self._flags:
@@ -86,6 +95,8 @@ class Spell():
                 if not isinstance(afflic, Affliction):
                     continue
                 caster.afflict(afflic)
+        if Flags.DASH in self._flags:
+            entity.dash(self._stats["distance"].c_value)
 
     @property
     def icon(self):
@@ -96,22 +107,6 @@ class Spell():
         self._icon = value
 
     @property
-    def mana_cost(self):
-        return self._mana_cost
-
-    @mana_cost.setter
-    def mana_cost(self, value):
-        self._mana_cost = value
-
-    @property
-    def life_cost(self):
-        return self._life_cost
-
-    @life_cost.setter
-    def life_cost(self, value):
-        self._life_cost = value
-
-    @property
     def cooldown(self):
         return self._cooldown
 
@@ -120,12 +115,12 @@ class Spell():
         self._cooldown = value
 
     @property
-    def max_cooldown(self):
-        return self._max_cooldown
+    def stats(self):
+        return self._stats
 
-    @max_cooldown.setter
-    def max_cooldown(self, value):
-        self._max_cooldown = value
+    @stats.setter
+    def stats(self, value):
+        self._stats = value
 
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
@@ -140,8 +135,10 @@ def generate_spell_list():
     firebolt = Spell("Firebolt", firebolt_icon, firebolt_proj_img, FIREBOLT, 2, cooldown=0.5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
     icebolt = Spell("Ice lance", icebolt_icon, icebolt_proj_img, ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
     voidolt = Spell("Voidbolt", voidbolt_icon, voidbolt_proj_img, VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
-    elementalfury = Spell("Elemental Fury", elefury_icon, None, None, 20, 0, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
+    elementalfury = Spell("Elemental Fury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
+    dash_basic = Spell("Wind dash", heal_icon, None, None, 5, distance=200, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["voidbolt"] = voidolt
     SYSTEM["spells"]["elefury"] = elementalfury
+    SYSTEM["spells"]["winddash"] = dash_basic

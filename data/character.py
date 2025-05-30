@@ -13,12 +13,14 @@ class Character():
         self._creature = Creature("hero")
         self._cooldown = 0
         self._max_cooldown = 2
+        self._base_speed = speed
         self._equipped_spells = {
             K_q: SYSTEM["spells"]["firebolt"],
             K_e: SYSTEM["spells"]["voidbolt"],
             K_f: SYSTEM["spells"]["icebolt"],
             K_t: SYSTEM["spells"]["elefury"],
-            K_r: None
+            K_r: None,
+            K_LSHIFT: SYSTEM["spells"]["winddash"]
         }
 
     def get_pos(self):
@@ -33,7 +35,7 @@ class Character():
     def tick(self):
         """Ticks down the character."""
         self._creature.tick()
-        self._entity.tick(self)
+        self._entity.tick(self, self._base_speed)
         if self._cooldown > 0:
             self._cooldown -= 0.016
         for _, skill in self._equipped_spells.items():
@@ -56,22 +58,22 @@ class Character():
             if self._entity.hitbox.left >= 0:
                 x = self._entity.x - self._entity.move_speed
                 y = self._entity.y
-                self._entity.displace((x, y))
+                self._entity.displace((x, y), keys)
         if keys[K_RIGHT] or keys[K_d]:
             if self._entity.hitbox.right <= SCREEN_WIDTH:
                 x = self._entity.x + self._entity.move_speed
                 y = self._entity.y
-                self._entity.displace((x, y))
+                self._entity.displace((x, y), keys)
         if keys[K_UP] or keys[K_w]:
             if self._entity.hitbox.top >= 0:
                 x = self._entity.x
                 y = self._entity.y - self._entity.move_speed
-                self._entity.displace((x, y))
+                self._entity.displace((x, y), keys)
         if keys[K_DOWN] or keys[K_s]:
             if self._entity.hitbox.bottom <= SCREEN_HEIGHT:
                 x = self._entity.x
                 y = self._entity.y + self._entity.move_speed
-                self._entity.displace((x, y))
+                self._entity.displace((x, y), keys)
         #TODO: Check if None
         if keys[K_q]:
             self._equipped_spells[K_q].cast(self._creature, self._entity, False)
@@ -81,6 +83,8 @@ class Character():
             self._equipped_spells[K_f].cast(self._creature, self._entity, False)
         if keys[K_t]:
             self._equipped_spells[K_t].cast(self._creature, self._entity, False)
+        if keys[K_LSHIFT]:
+            self._equipped_spells[K_LSHIFT].cast(self._creature, self._entity, False)
 
     @property
     def x(self):

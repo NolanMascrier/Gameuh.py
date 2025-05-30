@@ -38,7 +38,7 @@ class Affliction():
     def tick(self):
         """Ticks down the timer.
         """
-        if self._duration > 0:
+        if self._duration >= 0:
             self._duration -= 0.016
 
     def __eq__(self, other):

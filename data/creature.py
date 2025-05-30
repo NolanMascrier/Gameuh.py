@@ -215,7 +215,7 @@ class Creature:
         """Ticks down all buffs and debuffs."""
         for buff in self._buffs.copy():
             buff.tick()
-            if buff.duration == 0:
+            if buff.duration <= 0:
                 self._buffs.remove(buff)
         for stat in self._stats:
             self._stats[stat].tick()

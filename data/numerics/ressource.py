@@ -75,11 +75,11 @@ class Ressource(Stat):
         self._current_value += self.get_value() * self._rate.get_value()
         for buff in self._buffs:
             self._current_value += buff.value
-            if buff.duration == 0:
+            if buff.duration <= 0:
                 self._buffs.remove(buff)
         for buff in self._buffs_multi:
             self._current_value += buff.value * self._current_value
-            if buff.duration == 0:
+            if buff.duration <= 0:
                 self._buffs.remove(buff)
         if self._current_value > self.get_value():
             self._current_value = self.get_value()

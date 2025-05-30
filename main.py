@@ -66,9 +66,9 @@ def draw_ui(char, bg, ui, boss_here = False, boss = 1, boss_max = 1):
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_bottom"].image, (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
         if skill is not None:
             cdc = skill.cooldown
-            cdm = skill.max_cooldown
+            cdm = skill.stats["cooldown"].get_value()
             cdl = cdc / cdm * 60
-            oom = True if skill.mana_cost > char.creature.stats["mana"].current_value else False
+            oom = True if skill.stats["mana_cost"].get_value() > char.creature.stats["mana"].current_value else False
             s = pygame.Surface((cdl, 60))
             s.set_alpha(128)
             s.fill((255, 196, 0))
@@ -229,6 +229,7 @@ if __name__ == "__main__":
     SYSTEM["images"][K_f] = Image("ui/kb_f.png").image
     SYSTEM["images"][K_r] = Image("ui/kb_r.png").image
     SYSTEM["images"][K_t] = Image("ui/kb_t.png").image
+    SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
 
     diff_x = [0.0, 0.0, 0.0, 0.0]
     speeds = [0.2, 0.6, 1.0, 2.0]

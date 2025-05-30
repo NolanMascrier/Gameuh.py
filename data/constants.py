@@ -145,6 +145,8 @@ class Flags(Enum):
     OFFHAND = "off_hand"
     RELIC = "relic"
     AMULET = "amulet"
+    SPEED = "speed"
+    CSPEED = "cast_speed"
     RING = "ring"
     ITEM = "items"
     GOLD = "gold"
@@ -160,6 +162,7 @@ class Flags(Enum):
     SPREAD = "spread"
     CHANNELED = "channeled"
     BUFF = "buff"
+    DASH = "dash"
     #Flags for ennemies
     SHOOTER = "shooter"
     CHASER = "chaser"
