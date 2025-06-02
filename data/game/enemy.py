@@ -22,7 +22,6 @@ class Enemy():
         else:
             self._behaviours = behaviours
         self._timer = timer
-        #TODO: Replace enemy damage with actual damage sources
         self._power = power
         self._counter = 0
         self._projectile = projectile

@@ -20,9 +20,14 @@ class Creature:
         self._level = 1
         self._exp = 0
         self._exp_to_next = 100
+        life_regen = Stat(0, "life_regen")
+        mana_regen = Stat(0.001, "life_regen")
         self._stats = {
-            "life": Ressource(100, "Life", 0),
-            "mana": Ressource(50, "Mana", 0.001),
+            "life": Ressource(100, "Life", life_regen),
+            "mana": Ressource(50, "Mana", mana_regen),
+
+            "life_regen": life_regen,
+            "mana_regen": mana_regen,
 
             "str": Stat(10, "Strength"),
             "dex": Stat(10, "Dexterity"),
@@ -87,7 +92,7 @@ class Creature:
             }
         }
         self._buffs = []
-        self._abilities = []
+        self._ap = 0
 
     def recalculate_damage(self, damage_source: Damage) -> Damage:
         """Takes a raw damage source (ie from a spell) and applies the creature's
@@ -176,9 +181,14 @@ class Creature:
         """
         mod = self._stats["mana_efficiency"].get_value()
         value = amount * (1 + (1 - mod))
-        if value <= 0:
-            value = 0
+        value = max(value, 0)
         self._stats["mana"].modify(value)
+
+    def get_efficient_value(self, base:float):
+        """Returns the input value modified by the mana
+        efficiency. """
+        value = base * self._stats["mana_efficiency"].get_value()
+        return value
 
     def afflict(self, affliction: Affliction):
         """Afflicts the creature with an affliction.
@@ -221,9 +231,12 @@ class Creature:
             self._stats[stat].tick()
 
     def on_level_up(self):
-        """Does an action on level up. Empty by
-        default, function to overide for player
-        characters."""
+        """Grants the creature a level, one ap (up to
+        150), and refill its life and mana."""
+        self._stats["life"].refill()
+        self._stats["mana"].refill()
+        if self._level <= 150:
+            self._ap += 1
 
     def grant_experience(self, amount:int):
         """Grants a creature experience, leveling it up if needed.
@@ -368,3 +381,13 @@ class Creature:
     @abilities.setter
     def abilities(self, value):
         self._abilities = value
+
+    @property
+    def ap(self):
+        """Returns the creatures's ability points.
+        Only used for player characters."""
+        return self._ap
+
+    @ap.setter
+    def ap(self, value):
+        self._ap = value

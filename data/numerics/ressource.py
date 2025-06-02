@@ -21,10 +21,10 @@ class Ressource(Stat):
         the proportion that is restored each tick. Defaults to 5%.
 
     """
-    def __init__(self, val = 100.0, name = "ressource", refresh = 0.05):
+    def __init__(self, val = 100.0, name = "ressource", refresh = None):
         super().__init__(val, name)
         self._current_value = val
-        self._rate = Stat(refresh, "refresh_rate")
+        self._rate = refresh
         self._buffs = []
         self._buffs_multi = []
 
@@ -53,6 +53,10 @@ class Ressource(Stat):
         for afflic in self._buffs_multi.copy():
             if afflic == affliction:
                 self._buffs_multi.remove(afflic)
+
+    def refill(self):
+        """Restores the ressource to its maximum value."""
+        self._current_value = self._value
 
     def modify(self, value: float):
         """Increments or decrements the value of the 

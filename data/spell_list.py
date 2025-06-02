@@ -55,14 +55,16 @@ class Spell():
         """Shoots the spell."""
         if self._cooldown > 0:
             return
+        mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
+        life_cost = caster.get_efficient_value(self._stats["life_cost"].c_value)
         #TODO : Apply mana efficiency to checks
-        if caster.stats["mana"].current_value < self._stats["mana_cost"].c_value:
+        if caster.stats["mana"].current_value < mana_cost:
             return
-        if caster.stats["life"].current_value < self._stats["life_cost"].c_value:
+        if caster.stats["life"].current_value < life_cost:
             return
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         caster.consume_mana(self._stats["mana_cost"].c_value)
-        caster.stats["life"].current_value -= self._stats["life_cost"].c_value
+        caster.stats["life"].current_value -= life_cost
         if Flags.PROJECTILE in self._flags:
             if Flags.BARRAGE in self._flags:
                 for i in range (0, self._stats["projectiles"].c_value):
