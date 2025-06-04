@@ -9,36 +9,38 @@ from data.constants import Flags, TEXT_TRACKER, SYSTEM
 
 class PickUp():
     """Creates a pickup."""
-    def __init__(self, x, y, image, value = 0, w = 16, h = 16, flags = None):
+    def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1, flags = None):
         self._position = pygame.math.Vector2(x, y)
-        self._image = image
-        if isinstance(image, list):
-            self._frame_max = len(image)
-        else:
-            self._frame_max = 1
         self._value = value
         if flags is None:
             self._flags = []
         else:
             self._flags = flags
-        self._frame = 0
         self._hitbox = HitBox(x, y, w, h)
         self._to_delete = False
         #maths stuff
         self._acceleration = pygame.math.Vector2(0, 0)
-        self._max_speed = 5.0
-        self._max_force = 0.2
+        self._max_speed = 5.0 * speed_mod
+        self._max_force = 0.2 * speed_mod
         self._arrival_threshold = 10
         self._delay = 30
         angle = random.uniform(0, 2 * math.pi)
-        speed = random.uniform(2, 4)
+        speed = random.uniform(2, 4) * speed_mod
         self._velocity = pygame.math.Vector2(math.cos(angle), math.sin(angle)) * speed
 
     def get_image(self):
         """Returns the pickup image."""
-        if isinstance(self._image, list):
-            return self._image[int(self._frame) % self._frame_max]
-        return self._image
+        if Flags.LIFE in self._flags:
+            return SYSTEM["images"]["life_orb"].get_image()
+        if Flags.MANA in self._flags:
+            return SYSTEM["images"]["mana_orb"].get_image()
+        if Flags.EXPERIENCE in self._flags:
+            return SYSTEM["images"]["exp_orb"].get_image()
+        if Flags.GOLD in self._flags:
+            return None
+        if Flags.ITEM in self._flags:
+            return None
+        return None
 
     def move(self, player):
         """Gravitates toward the player."""
@@ -77,6 +79,8 @@ class PickUp():
             if Flags.MANA in self._flags:
                 player.creature.stats["mana"].current_value += self._value
                 self.generate_text(0x00FF00)
+            if Flags.EXPERIENCE in self._flags:
+                player.creature.grant_experience(self._value)
             if Flags.GOLD in self._flags:
                 pass #TODO
                 self.generate_text(0xFCA400)
@@ -85,9 +89,9 @@ class PickUp():
             self._to_delete = True
         self.move(player)
         self._hitbox.move((self.x, self.y))
-        self._frame += 0.25
-        if self._frame > self._frame_max:
-            self._frame -= self._frame_max
+        SYSTEM["images"]["life_orb"].tick()
+        SYSTEM["images"]["mana_orb"].tick()
+        SYSTEM["images"]["exp_orb"].tick()
 
     @property
     def x(self):

@@ -19,9 +19,15 @@ class Animation():
         Defaults to -1. 
         loops (bool, optionnal): Wether or not the animation should loop.\
         defaults to True.
+        animated (bool, optionnal): Whether or not the animation played.\
+        Defaults to True. Used for conditionnal animations (like the life orb).
+        plays_once (bool, optionnal): Whether or not the animation should play only\
+        once. If set to `True`, the inner boolean finished will be set to `True`\
+        once the animation is over. Defaults to False.
     """
     def __init__(self, uri: str|Image, frame_x: int, frame_y: int, lines = 1,\
-                frame_rate = 1, frame_max = -1, loops = True):
+                frame_rate = 1, frame_max = -1, loops = True, animated = True,\
+                plays_once = False):
         if isinstance(uri, Image):
             self._base_image = uri
         else:
@@ -35,8 +41,11 @@ class Animation():
         self._sequence = []
         self.__sequencer()
         self._current_frame = 0
+        self._animated = animated
+        self._play_once = plays_once
+        self._finished = False
         #
-        self._scaled = (frame_x, frame_y)
+        self._scaled = (frame_y, frame_x)
         self._flipped = (False, False)
         self._rotated = 0
 
@@ -59,11 +68,15 @@ class Animation():
 
     def tick(self):
         """Advance the sequence."""
+        if not self._animated:
+            return
         self._current_frame += self._frame_rate
         if self._current_frame > self._frame_max:
             if self._loops:
                 self._current_frame = 0
             else:
+                if self._play_once:
+                    self._finished = True
                 self._current_frame = self._frame_max
 
     def rotate(self, deg: float):
@@ -110,7 +123,9 @@ class Animation():
             self._lines,
             self._frame_rate,
             self._frame_max,
-            self._loops
+            self._loops,
+            self._animated,
+            self._play_once
         ).flip(self._flipped[0], self._flipped[1])\
         .rotate(self._rotated)\
         .scale(self._scaled[0], self._scaled[1])
@@ -124,3 +139,21 @@ class Animation():
     def height(self):
         """Returns the sequence's frame height."""
         return self._frame_y
+
+    @property
+    def frame(self):
+        """Returns the current frame."""
+        return self._current_frame
+
+    @frame.setter
+    def frame(self, value):
+        self._current_frame = value
+
+    @property
+    def finished(self):
+        """Returns whether or not the animation is finished."""
+        return self._finished
+
+    @finished.setter
+    def finished(self, value):
+        self._finished = value

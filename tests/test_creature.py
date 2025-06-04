@@ -59,7 +59,7 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.tick()
         bob.tick()
         bob.tick()
-        self.assertEqual(bob.stats["life"].current_value, 70)
+        self.assertEqual(bob.stats["life"].current_value, 50)
         self.assertEqual(len(bob._buffs), 0)
 
     def test_buff(self):
@@ -112,7 +112,7 @@ class TestingCreatureDamage(unittest.TestCase):
         self.assertEqual(bob.stats["mana"].current_value, 50)
         bob.consume_mana(30)
         bob.tick()
-        self.assertEqual(bob.stats["mana"].current_value, 22.5)
+        self.assertEqual(bob.stats["mana"].current_value, 20.05)
         bob.consume_mana(999999)
         self.assertEqual(bob.stats["mana"].current_value, 0)
 

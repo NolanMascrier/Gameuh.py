@@ -9,6 +9,7 @@ from data.physics.entity import Entity
 from data.creature import Creature
 from data.game.enemy import Enemy
 from data.game.pickup import PickUp
+from data.slash import Slash
 from data.generator import Generator
 from data.image.animation import Animation
 from data.image.image import Image
@@ -28,39 +29,46 @@ UI_SKILLS_INPUT_OFFSET = 48
 
 shoot_da_bouncy = False
 bouncies = 0
+difficulty = 1
 
 def draw_ui(char, bg, ui, boss_here = False, boss = None):
-    cd = (char.cooldown + 0.001) / char.max_cooldown * 176
+    mana = 8 - int(char.creature.stats["mana"].current_value\
+                   / char.creature.stats["mana"].get_value() * 8)
+    life = 8 - int(char.creature.stats["life"].current_value\
+                   / char.creature.stats["life"].get_value() * 8)
+
+    SYSTEM["images"]["life_jauge"].frame = life
+    SYSTEM["images"]["mana_jauge"].frame = mana
+
+    SYSTEM["windows"].blit(SYSTEM["images"]["life_jauge"].get_image(), (33, SCREEN_HEIGHT - 144))
+    SYSTEM["windows"].blit(SYSTEM["images"]["mana_jauge"].get_image(),\
+                           (SCREEN_WIDTH - 177, SCREEN_HEIGHT - 144))
+
+    text_life = SYSTEM["font_crit"].render(f'{round(char.creature.stats["life"].current_value)}',\
+                                      False, (0, 37, 97))
+    text_mana = SYSTEM["font_crit"].render(f'{round(char.creature.stats["mana"].current_value)}',\
+                                      False, (97, 0, 0))
+
+    SYSTEM["windows"].blit(text_life, (80, SCREEN_HEIGHT - 85))
+    SYSTEM["windows"].blit(text_mana, (SCREEN_WIDTH - 124, SCREEN_HEIGHT - 85))
+
+    SYSTEM["windows"].blit(SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60))
+    cd = (char.creature.exp + 0.001) / char.creature.exp_to_next * 1434
     if cd < 0:
         cd = 0
-    mana = char.creature.stats["mana"].current_value / char.creature.stats["mana"].get_value() * 176
-    life = char.creature.stats["life"].current_value / char.creature.stats["life"].get_value() * 176
-    bossl = (boss.creature.stats["life"].current_value/boss.creature.stats["life"].c_value) * 1000
-    #Positions
-    posL = (0, 10)
-    posM = (0, 50)
-    posC = (0, 90)
-    #sizes up
-    l = pygame.transform.scale(ui[4], (life, 40))
-    m = pygame.transform.scale(ui[5], (mana, 40))
-    c = pygame.transform.scale(ui[6], (cd, 40))
-    #jauges
-    SYSTEM["windows"].blit(l, (posL[0] + 24, posL[1]))
-    SYSTEM["windows"].blit(m, (posM[0] + 24, posM[1]))
-    SYSTEM["windows"].blit(c, (posC[0] + 24, posC[1]))
+    c = pygame.transform.scale(SYSTEM["images"]["exp_jauge"].image, (cd, 9))
+    SYSTEM["windows"].blit(c, (243, SCREEN_HEIGHT - 39))
+    SYSTEM["windows"].blit(SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60))
+
     if boss_here:
+        boss_name = SYSTEM["font_crit"].render(f'{boss.creature.name}',\
+                                      False, (255, 255, 255))
+        bossl = (boss.creature.stats["life"].current_value/boss.creature.stats["life"].c_value) * 1000
         b = pygame.transform.scale(ui[7], (bossl, 80))
         bb = pygame.transform.scale(ui[8], (1000, 80))
         SYSTEM["windows"].blit(bb, (200, 20))
         SYSTEM["windows"].blit(b, (200, 20))
-    #fluff
-    SYSTEM["windows"].blit(ui[0], posL)
-    SYSTEM["windows"].blit(ui[0], posM)
-    SYSTEM["windows"].blit(ui[0], posC)
-    #icons
-    SYSTEM["windows"].blit(ui[1], posL)
-    SYSTEM["windows"].blit(ui[2], posM)
-    SYSTEM["windows"].blit(ui[3], posC)
+        SYSTEM["windows"].blit(boss_name, (200, 20))
     #Skills
     i = 0
     for name, skill in char._equipped_spells.items():
@@ -101,23 +109,9 @@ def move_boss(boss, img, gen, laz):
     if pattern > 10 and pattern <= 12:
         for i in range(3):
             sh = Generator(boss.x, boss.y, (boss.x + random.randint(-100,100), boss.y+ random.randint(100,250) * (random.randint(0, 1) - 1)), 0.025, 1, 3,\
-                        gen, laz)
+                        SYSTEM["images"]["generator"], SYSTEM["images"]["lazer"], caster=boss.creature)
             PROJECTILE_TRACKER.append(sh)
     return (x, y)
-
-def explode(target, img1, img2):
-    amount = random.randint(0,5)
-    for _ in range(amount + 1):
-        power_type = True if random.randint(0, 1) == 0 else False
-        x = target.x + 30
-        y = target.y + 60
-        img = img1 if power_type else img2
-        pu = PickUp(x, y, img, value = 1)
-        if power_type:
-            pu.flags.append(Flags.MANA)
-        else:
-            pu.flags.append(Flags.LIFE)
-        POWER_UP_TRACKER.append(pu)
 
 def draw_hitbox(box, color):
     s = pygame.Surface((box.width, box.height))
@@ -133,26 +127,26 @@ def spawn_boss():
     boss_cord = [1000, 500]
     boss_hitbox = HitBox(boss_cord[0], boss_cord[1], 100, 200)
     ent = Entity(boss_cord[0], boss_cord[1], SYSTEM["images"]["boss_a"], boss_hitbox, 5)
-    crea = Creature("Orcus")
+    crea = Creature("Totally not Orcus, Lord of Copyrights")
     crea.stats["life"].value = 500
     crea.stats["life"].refill()
     crea.stats["speed"].value = 12
-    boss = Enemy(ent, crea, None)
+    boss = Enemy(ent, crea, None, exp_value=100*difficulty)
     return boss
 
-def spawn_enemies(image, attack_anim):
-    to_spawn = random.randint(3, 10)
+def spawn_enemies(attack_anim):
+    to_spawn = random.randint(3 * difficulty, 10 * difficulty)
     for i in range(to_spawn + 1):
         y_pos = random.randint(0, SCREEN_HEIGHT)
         enemy_type = Flags.SHOOTER if random.randint(0, 1) == 1 else Flags.CHASER
         hb = HitBox(SCREEN_WIDTH - 100, y_pos, 64, 128)
-        ent = Entity(SCREEN_WIDTH - 100, y_pos, image, hb)
+        ent = Entity(SCREEN_WIDTH - 100, y_pos, SYSTEM["images"]["badguy"], hb)
         crea = Creature("bob")
         if enemy_type == Flags.CHASER:
             crea.stats["life"].value = 20
         else:
             crea.stats["life"].value = 10
-        enemy = Enemy(ent, crea, attack_anim, behaviours=[enemy_type], timer=1)
+        enemy = Enemy(ent, crea, attack_anim, behaviours=[enemy_type], timer=1, exp_value=5*difficulty)
         ENNEMY_TRACKER.append(enemy)
 
 if __name__ == "__main__":
@@ -160,7 +154,7 @@ if __name__ == "__main__":
     boss = None
     destination = (1000, 500)
     boss_here = False
-    waves = 1
+    waves = 3
 
     direction = K_DOWN
     pygame.init()
@@ -206,6 +200,14 @@ if __name__ == "__main__":
     SYSTEM["images"]["bouncer"] = Animation("bounce.png", 8, 8, frame_rate=0.25).scale(64, 64)
     SYSTEM["images"]["generator"] = Animation("generator.png", 8, 8, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["lazer"] = Animation("lazor.png", 16, 10, frame_rate=0.25).scale(16, 64)
+    SYSTEM["images"]["exp_orb"] = Animation("exporb.png", 8, 8, frame_rate=0.1).scale(8, 8)
+    SYSTEM["images"]["mana_orb"] = Animation("manaorb.png", 16, 16, frame_rate=0.1)
+    SYSTEM["images"]["life_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1)
+    SYSTEM["images"]["exp_bar"] = Image("exp.png")
+    SYSTEM["images"]["exp_bar2"] = Image("exp_back.png")
+    SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png")
+    SYSTEM["images"]["life_jauge"] = Animation("life.png", 144, 144, animated=False)
+    SYSTEM["images"]["mana_jauge"] = Animation("mana.png", 144, 144, animated=False)
 
     manaorb = pygame.image.load("ressources/manaorb.png").convert_alpha()
     manaorb_anim = [pygame.transform.scale(manaorb.subsurface(x, 0, 16, 14), (16, 16))
@@ -215,7 +217,7 @@ if __name__ == "__main__":
     lifeorb_anim = [pygame.transform.scale(lifeorb.subsurface(x, 0, 16, 14), (16, 16))
                  for x in range(0, 64, 16)]
 
-    badguy = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
+    SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png").image
@@ -228,9 +230,6 @@ if __name__ == "__main__":
     diff_x = [0.0, 0.0, 0.0, 0.0]
     speeds = [0.2, 0.6, 1.0, 2.0]
     frame = 0
-    
-    boss = spawn_boss()
-
 
     while PLAYING:
         frame += 0.2
@@ -253,9 +252,10 @@ if __name__ == "__main__":
             if event.type == WAVE_TIMER:
                 if waves > 0:
                     pygame.time.set_timer(WAVE_TIMER, 12000)
-                    spawn_enemies(badguy, SYSTEM["images"]["energyball"])
+                    spawn_enemies(SYSTEM["images"]["energyball"])
                     waves -= 1
-                else:
+                elif not boss_here:
+                    boss = spawn_boss()
                     boss_here = True
             if boss_here:
                 if event.type == USEREVENT+1:
@@ -270,13 +270,14 @@ if __name__ == "__main__":
                         bouncies -= 1
 
         #if boss_here:
-        #    draw_hitbox(boss_hitbox, 0xFF0000)
+            #draw_hitbox(boss.hitbox, 0xFF0000)
         #draw_hitbox(john.hitbox, 0x00FF00)
 
         keys = pygame.key.get_pressed()
         john.action(keys)
         john.tick()
-        boss.tick(john)
+        if boss is not None:
+            boss.tick(john)
         for bubble in POWER_UP_TRACKER.copy():
             bubble.tick(john)
             SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
@@ -285,10 +286,12 @@ if __name__ == "__main__":
         for baddie in ENNEMY_TRACKER.copy():
             SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
             baddie.tick(john)
-            if baddie._creature.stats["life"].current_value <= 0:
-                explode(baddie, manaorb_anim, lifeorb_anim)
+            if baddie._exploded:
                 ENNEMY_TRACKER.remove(baddie)
         for proj in PROJECTILE_TRACKER.copy():
+            if isinstance(proj, Generator):
+                SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
+                proj.tick(john)
             if not isinstance(proj, Projectile):
                 continue
             proj.tick()
@@ -297,6 +300,19 @@ if __name__ == "__main__":
                 dmg, crit = john.creature.damage(proj.damage)
                 SYSTEM["text_generator"].generate_damage_text(proj.x, proj.y, (255, 30, 30), crit, dmg)
                 PROJECTILE_TRACKER.remove(proj)
+        for slash in SLASH_TRACKER.copy():
+            if not isinstance(slash, Slash):
+                continue
+            slash.tick()
+            SYSTEM["windows"].blit(slash.get_image(), slash.get_pos())
+            if slash.evil and slash.hitbox.is_colliding(john.hitbox):
+                dmg, crit = slash.on_hit(john.creature)
+                if dmg is None or crit is None:
+                    continue
+                SYSTEM["text_generator"].generate_damage_text(john.x, john.y,\
+                                                            (255, 30, 30), crit, dmg)
+            if slash.finished:
+                SLASH_TRACKER.remove(slash)
 
         for txt in TEXT_TRACKER.copy():
             sfc = txt[0]
@@ -312,5 +328,10 @@ if __name__ == "__main__":
         john.tick()
         if frame >= 60:
             frame -= 60
-        #gc.collect(0)
+        if boss_here and boss.creature.stats["life"].current_value <= 0:
+            waves = 5 * difficulty
+            difficulty += 1
+            boss_here = False
+            boss.explode()
+            boss = None
     pygame.quit()

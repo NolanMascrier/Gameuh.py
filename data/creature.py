@@ -7,7 +7,7 @@ from data.numerics.ressource import Ressource
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.damage import Damage
-from data.constants import Flags
+from data.constants import Flags, SYSTEM
 from data.item import Item
 
 class Creature:
@@ -20,7 +20,7 @@ class Creature:
         self._name = name
         self._level = 1
         self._exp = 0
-        self._exp_to_next = 100
+        self._exp_to_next = 1000
         life_regen = Stat(0, "life_regen")
         mana_regen = Stat(0.001, "life_regen")
         self._stats = {
@@ -135,6 +135,18 @@ class Creature:
         INT gives MP and spell damage. \
         DEX gives crit chance and ranged damage.
         """
+        hp = round(self._stats["str"].get_value())
+        mp = round(self._stats["mana"].get_value())
+        crit = self._stats["dex"].get_value() * 0.001
+        melee = self._stats["str"].get_value() * 0.01
+        spell = self._stats["mana"].get_value() * 0.01
+        ranged = self._stats["dex"].get_value() * 0.01
+        self.afflict(Affliction("str_to_hp", hp, -1, [Flags.LIFE, Flags.FLAT], False))
+        self.afflict(Affliction("int_to_mp", mp, -1, [Flags.MANA, Flags.FLAT], False))
+        self.afflict(Affliction("str_to_hp", crit, -1, [Flags.CRIT_CHANCE, Flags.BOON], False))
+        self.afflict(Affliction("str_to_melee", melee, -1, [Flags.MELEE, Flags.BOON], False))
+        self.afflict(Affliction("int_to_spell", spell, -1, [Flags.SPELL, Flags.BOON], False))
+        self.afflict(Affliction("dex_to_ranged", ranged, -1, [Flags.RANGED, Flags.BOON], False))
 
     def __get_armor_mitigation(self) -> float:
         """Calculate and returns the mitigation from the endurance
@@ -253,6 +265,7 @@ class Creature:
         self._stats["mana"].refill()
         if self._level <= 150:
             self._ap += 1
+        SYSTEM["text_generator"].generate_level_up()
 
     def grant_experience(self, amount:int):
         """Grants a creature experience, leveling it up if needed.
@@ -264,7 +277,7 @@ class Creature:
         self._exp += final_amount
         while self._exp >= self._exp_to_next:
             self._exp -= self._exp_to_next
-            self._exp_to_next *= 1.2
+            self._exp_to_next *= 1.35
             self._level += 1
             self.on_level_up()
 

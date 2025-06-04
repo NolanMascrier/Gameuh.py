@@ -14,8 +14,11 @@ class Affliction():
         Defaults to `None`.
         stackable (bool, optionnal): Wether or not the affliction\
         is stackable. Defaults to `False`.
+        refreshable (bool, optionnal): Wether or not the affliction\
+        refreshes on getting a stack. Defaults to `False`.
     """
-    def __init__(self, name, value, duration = 1, flags: list = None, stackable = False):
+    def __init__(self, name, value, duration = 1, flags: list = None, stackable = False,\
+                 refreshable = False):
         self._name = name
         self._value = value
         self._duration = duration
@@ -24,6 +27,7 @@ class Affliction():
         else:
             self._flags = flags
         self._stackable = stackable
+        self._refreshable = refreshable
 
     @DeprecationWarning
     def get(self):
@@ -40,6 +44,17 @@ class Affliction():
         """
         if self._duration >= 0:
             self._duration -= 0.016
+
+    def clone(self):
+        """Returns a copy of the affliction."""
+        return Affliction(
+            self._name,
+            self._value,
+            self._duration,
+            self._flags,
+            self._stackable,
+            self._refreshable
+        )
 
     def __eq__(self, other):
         if not isinstance(other, Affliction):
@@ -92,3 +107,12 @@ class Affliction():
     @stackable.setter
     def stackable(self, value):
         self._stackable = value
+
+    @property
+    def refreshable(self):
+        """Returns wether or not the affliction is refreshable."""
+        return self._refreshable
+
+    @refreshable.setter
+    def refreshable(self, value):
+        self._refreshable = value

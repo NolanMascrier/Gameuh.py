@@ -4,20 +4,25 @@ from data.damage import Damage
 from data.projectile import Projectile
 from data.creature import Creature
 from data.physics.entity import Entity
-from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM
+from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER
 from data.image.animation import Animation
 from data.numerics.affliction import Affliction
 from data.numerics.stat import Stat
+from data.slash import Slash
 
 FIREBOLT = Damage(2, 1.5, fire=1, flags=[Flags.SPELL])
 DARKBOLT = Damage(2, 1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT = Damage(1, 0.1, dark=1, flags=[Flags.SPELL])
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
-CHARGE = Damage(3, 1, phys=1, flags=[Flags.MELEE])
+CHARGE = Damage(1, 15, phys=1, flags=[Flags.MELEE])
+FURYSLASH = Damage(1, 5, phys=1, flags=[Flags.MELEE])
 
 ELEFURY = Affliction("elemetal_fury", 1.25, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
+FURY = Affliction("FURY", 1.1, 2, flags=[Flags.BLESS, Flags.MELEE],\
+                stackable=True, refreshable=True)
+
 
 class Spell():
     def __init__(self, name, icon, proj_image, base_damage:Damage, mana_cost = 0, life_cost = 0,\
@@ -51,13 +56,12 @@ class Spell():
         if self._cooldown <= 0:
             self._cooldown = 0
 
-    def cast(self, caster: Creature, entity: Entity, evil: bool):
+    def cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True):
         """Shoots the spell."""
         if self._cooldown > 0:
             return
         mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
         life_cost = caster.get_efficient_value(self._stats["life_cost"].c_value)
-        #TODO : Apply mana efficiency to checks
         if caster.stats["mana"].current_value < mana_cost:
             return
         if caster.stats["life"].current_value < life_cost:
@@ -96,9 +100,13 @@ class Spell():
             for afflic in self._afflictions:
                 if not isinstance(afflic, Affliction):
                     continue
-                caster.afflict(afflic)
+                caster.afflict(afflic.clone())
         if Flags.DASH in self._flags:
             entity.dash(self._stats["distance"].c_value)
+        if Flags.MELEE in self._flags:
+            sl = Slash(entity, caster, self._proj_image, self._base_damage,\
+                       aim_right, evil, self._flags)
+            SLASH_TRACKER.append(sl)
 
     @property
     def icon(self):
@@ -131,16 +139,23 @@ def generate_spell_list():
     voidbolt_icon = Animation("icons/darkbolt.png", 64, 64, loops=False)
     elefury_icon = Animation("icons/elementalfury.png", 64, 64, loops=False)
     heal_icon = Animation("icons/heal.png", 64, 64, loops=False)
+    fury_icon = Animation("icons/furyslash.png", 64, 64, loops=False)
     firebolt_proj_img = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     icebolt_proj_img = Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     voidbolt_proj_img = Animation("pew.png", 13, 13, frame_rate=0.25)
+    furyslash_img = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(58, 40)
+    furyslash_alt = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(87, 60).flip(False, True)
     firebolt = Spell("Firebolt", firebolt_icon, firebolt_proj_img, FIREBOLT, 2, cooldown=0.5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
     icebolt = Spell("Ice lance", icebolt_icon, icebolt_proj_img, ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
     voidolt = Spell("Voidbolt", voidbolt_icon, voidbolt_proj_img, VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
     elementalfury = Spell("Elemental Fury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
     dash_basic = Spell("Wind dash", heal_icon, None, None, 5, distance=200, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
+    furyslash = Spell("Fury Slash", fury_icon, furyslash_img, FURYSLASH, 5, 0, cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF], afflictions=[FURY])
+    charge = Spell("Charge", fury_icon, furyslash_alt, CHARGE, 0, 0, cooldown=0, flags=[Flags.MELEE])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["voidbolt"] = voidolt
     SYSTEM["spells"]["elefury"] = elementalfury
     SYSTEM["spells"]["winddash"] = dash_basic
+    SYSTEM["spells"]["furyslash"] = furyslash
+    SYSTEM["spells"]["e_charge"] = charge

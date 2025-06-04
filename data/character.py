@@ -19,7 +19,7 @@ class Character():
             K_e: SYSTEM["spells"]["voidbolt"],
             K_f: SYSTEM["spells"]["icebolt"],
             K_t: SYSTEM["spells"]["elefury"],
-            K_r: None,
+            K_r: SYSTEM["spells"]["furyslash"],
             K_LSHIFT: SYSTEM["spells"]["winddash"]
         }
 
@@ -41,16 +41,8 @@ class Character():
         for _, skill in self._equipped_spells.items():
             if skill is not None:
                 skill.tick()
-
-    def shoot_fireball(self):
-        orig_x, orig_y = self._entity.hitbox.center
-        if self._cooldown <= 0 and self._creature.stats["mana"].current_value >= 2:
-            fire = Projectile(orig_x, orig_y, 0, SYSTEM["images"]["fireball"], FIREBOLT,\
-                              self._creature, len=32, height=32)
-            PROJECTILE_TRACKER.append(fire)
-            self._cooldown = 0.5
-            self._max_cooldown = 0.5
-            self._creature.stats["mana"].current_value -= 2
+        SYSTEM["player.x"] = self.x
+        SYSTEM["player.y"] = self.y
 
     def action(self, keys):
         """Acts depending on the input."""
@@ -83,6 +75,8 @@ class Character():
             self._equipped_spells[K_f].cast(self._creature, self._entity, False)
         if keys[K_t]:
             self._equipped_spells[K_t].cast(self._creature, self._entity, False)
+        if keys[K_r]:
+            self._equipped_spells[K_r].cast(self._creature, self._entity, False)
         if keys[K_LSHIFT]:
             self._equipped_spells[K_LSHIFT].cast(self._creature, self._entity, False)
 

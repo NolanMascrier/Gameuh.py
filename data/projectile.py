@@ -14,6 +14,7 @@ class Projectile():
                 evil = False, len = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
                 bounces = 0, delay = 0,\
+                clone_image = True,\
                 behaviours = None):
         self._x = x
         self._y = y
@@ -24,7 +25,10 @@ class Projectile():
         self._damage = origin.recalculate_damage(damage)
         self._evil = evil
         self._bounces = bounces
-        self._image = imagefile.clone()
+        if clone_image:
+            self._image = imagefile.clone()
+        else:
+            self._image = imagefile
         self._delay = delay
         if hitbox_len is None:
             hitbox_len = len

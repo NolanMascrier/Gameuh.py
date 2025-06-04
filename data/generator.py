@@ -1,10 +1,11 @@
 from data.constants import *
 from data.projectile import Projectile
 from data.physics.hitbox import HitBox
+from data.spell_list import VOIDBOLT
 from math import atan2, pi
 
 class Generator():
-    def __init__(self, x, y, dest, delay, power, duration, gen_img, proj_img, frame_max = 4, evil = True):
+    def __init__(self, x, y, dest, delay, power, duration, gen_img, proj_img, frame_max = 4, evil = True, caster = None):
         self._x = x
         self._y = y
         self._destination = dest
@@ -19,12 +20,14 @@ class Generator():
         self._frame_max = frame_max
         self._evil = evil
         self._box = HitBox(self._x, self._y, 32, 32)
+        self._caster = caster
+        self._angle = 0
 
     def get_pos(self):
         return (self._x, self._y)
 
     def get_image(self):
-        return self._gen_img[int(self._frame) % self._frame_max]
+        return self._gen_img.get_image()
 
     def tick(self, player):
         self._frame += 0.1
@@ -32,7 +35,8 @@ class Generator():
             self._tock += 0.016
             self._duration -= 0.016
             while self._tock >= self._delay:
-                proj = Projectile(self._x - 16, self._y + 8, 180, True, self._power, speed=30, image=self._proj_img, animated=True)
+                proj = Projectile(self._x - 16, self._y + 8, 180, self._proj_img,\
+                                VOIDBOLT, self._caster, True, clone_image=False)
                 PROJECTILE_TRACKER.append(proj)
                 self._tock -= self._delay
             if self._tock >= self._duration:
@@ -40,6 +44,8 @@ class Generator():
         else:
             if self._x <= self._destination[0] + 5 and self._x >= self._destination[0] - 5 \
                 and self._y <= self._destination[1] + 5 and self._y >= self._destination[1] - 5:
+                self._angle = 90 - atan2(player.x - self._x,\
+                           player.y - self._y) * 180 / pi
                 self._ready = True
             if self._x < self._destination[0]:
                 self._x += 6

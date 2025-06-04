@@ -52,6 +52,10 @@ class Stat:
         target_list = getattr(self, list_name)
         if affliction.stackable:
             target_list.append(affliction)
+            if affliction.refreshable:
+                for aff in target_list:
+                    if aff.name == affliction.name:
+                        aff.duration = affliction.duration
         else:
             for i, existing_aff in enumerate(target_list):
                 if existing_aff.name == affliction.name:

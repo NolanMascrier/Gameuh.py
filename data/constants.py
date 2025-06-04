@@ -15,6 +15,7 @@ SCREEN_HEIGHT = 1080
 PROJECTILE_TRACKER = []
 ENNEMY_TRACKER = []
 TEXT_TRACKER = []
+SLASH_TRACKER = []
 POWER_UP_TRACKER = []
 
 FIREBALL_IMAGE = "ressources/fire.png"
@@ -118,6 +119,8 @@ class Flags(Enum):
     ENERG = "energy"
     LIGHT = "light"
     DARK = "dark"
+    CRIT_CHANCE = "crit_rate"
+    CRIT_DAMAGE = "crit_dmg"
     PHYS_DMG = "phys_dmg"
     FIRE_DMG = "fire_dmg"
     ICE_DMG = "ice_dmg"
@@ -149,6 +152,7 @@ class Flags(Enum):
     RING = "ring"
     ITEM = "items"
     GOLD = "gold"
+    EXPERIENCE = "exp"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"
@@ -162,6 +166,8 @@ class Flags(Enum):
     CHANNELED = "channeled"
     BUFF = "buff"
     DASH = "dash"
+    #Flags for slashes
+    CUTS_PROJECTILE = "cuts_proj"
     #Flags for ennemies
     SHOOTER = "shooter"
     CHASER = "chaser"

@@ -18,13 +18,14 @@ class Entity():
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
-    def __init__(self, x, y, image: Animation, hitbox, move_speed = 1):
+    def __init__(self, x, y, imagefile: Animation, hitbox, move_speed = 1):
         self._x = x
         self._y = y
-        self._image = image
+        self._image = imagefile.clone()
         self._hitbox = hitbox
         self._move_speed = move_speed
         self._keys = []
+        self._flipped = False
 
     def tick(self, character, speed_mod = 1):
         """Ticks down the entity. Does nothing by default and needs
@@ -75,6 +76,11 @@ class Entity():
             self._y += distance
         self._hitbox.move_center(self.center)
 
+    def flip(self):
+        """Flips the image."""
+        self._image = self._image.flip(False, True)
+        self._flipped = not self._flipped
+
     @property
     def x(self):
         """Returns the entity's x position."""
@@ -92,6 +98,11 @@ class Entity():
     @y.setter
     def y(self, value):
         self._y = value
+
+    @property
+    def right(self):
+        """Returns the entity right side."""
+        return self.hitbox.right
 
     @property
     def max_frame(self):
@@ -119,6 +130,15 @@ class Entity():
     @move_speed.setter
     def move_speed(self, value):
         self._move_speed = value
+
+    @property
+    def flipped(self):
+        """Returns whether or not the image has been flipped."""
+        return self._flipped
+
+    @flipped.setter
+    def flipped(self, value):
+        self._flipped = value
 
     @property
     def center(self):
