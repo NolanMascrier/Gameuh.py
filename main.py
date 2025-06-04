@@ -14,6 +14,7 @@ from data.image.animation import Animation
 from data.image.image import Image
 from data.image.text_generator import TextGenerator
 from data.spell_list import *
+import gc
 
 SPEED = 4
 PLAYING = True
@@ -155,7 +156,7 @@ def spawn_enemies(image, attack_anim):
         ENNEMY_TRACKER.append(enemy)
 
 if __name__ == "__main__":
-    
+    #gc.set_debug(gc.DEBUG_UNCOLLECTABLE)
     boss = None
     destination = (1000, 500)
     boss_here = False
@@ -311,4 +312,5 @@ if __name__ == "__main__":
         john.tick()
         if frame >= 60:
             frame -= 60
+        #gc.collect(0)
     pygame.quit()

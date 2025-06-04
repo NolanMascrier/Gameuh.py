@@ -10,8 +10,8 @@ ROOT = ""
 #ROOT = "Gameuh.py/"
 RESSOURCES = f"{ROOT}ressources"
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 PROJECTILE_TRACKER = []
 ENNEMY_TRACKER = []
 TEXT_TRACKER = []
@@ -52,7 +52,7 @@ def change_language(lang):
         to a file in ressources/locales.
     """
     try:
-        with open(f"{lang}.json", mode = 'r',\
+        with open(f"{ROOT}/locales/{lang}.json", mode = 'r',\
                 encoding="utf-8") as file:
             data = file.read()
             langfile = json.loads(data)
@@ -111,7 +111,6 @@ class Flags(Enum):
     DEX = "dex"
     INT = "int"
     DEF = "def"
-    MDEF = "mdef"
     PHYS = "phys"
     FIRE = "fire"
     ICE = "ice"

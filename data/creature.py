@@ -2,11 +2,12 @@
 both the player and the ennemies alike."""
 
 import random
+import math
 from data.numerics.ressource import Ressource
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.damage import Damage
-from data.constants import Flags, SYSTEM
+from data.constants import Flags
 from data.item import Item
 
 class Creature:
@@ -33,7 +34,6 @@ class Creature:
             "dex": Stat(10, "Dexterity"),
             "int": Stat(10, "Intelligence"),
             "def": Stat(0, "Endurance"),
-            "mdef": Stat(0, "Spirit"),
 
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense"),
@@ -41,8 +41,6 @@ class Creature:
             "mana_efficiency": Stat(1, "Mana Efficiency"),
             "crit_rate": Stat(0.05, "Crit rate"),
             "crit_dmg": Stat(1.5, "Crit Damage"),
-            "dodge": Stat(0, "Evasion"),
-            "precision": Stat(0, "Precision"),
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
             "speed": Stat(1, "Move Speed"),
@@ -130,8 +128,25 @@ class Creature:
                       pp, fp, ip, ep, enp, lp, dp, crit,\
                       self._stats["crit_dmg"].get_value(), flags)
 
+    def __get_bonuses_from_stat(self):
+        """Generates the bonuses from the bases stats.\
+        
+        STR gives HP and melee damage. \
+        INT gives MP and spell damage. \
+        DEX gives crit chance and ranged damage.
+        """
 
-    def damage(self, damage_source: Damage) -> float:
+    def __get_armor_mitigation(self) -> float:
+        """Calculate and returns the mitigation from the endurance
+        values.
+        Thank you chatGPT for pulling that formula out of nowhere"""
+        k = 0.0004
+        a = 7000
+        x = self.stats["def"].get_value()
+        offset = 90 / (1 + math.exp(k * a))
+        return (90 / (1 + math.exp(-k * (abs(x) - a))) - offset) / 100
+
+    def damage(self, damage_source: Damage) -> tuple[float, bool]:
         """Deals damage to a creature. Adapts each source
         of damage from the damage to the creature's resistance.
         Returns the final damage as a float for display purpose.
@@ -141,12 +156,13 @@ class Creature:
         """
         damage = 0
         dmg, pen = damage_source.get_damage()
+        mitig = 1 - self.__get_armor_mitigation()
         for dmg_type in dmg:
-            dmga = float(dmg[dmg_type])
+            dmga = float(dmg[dmg_type]) * mitig
             res = self._stats[dmg_type].get_value() - pen[dmg_type]
             damage += dmga * (1 - res)
         if damage_source.is_crit:
-            damage *= damage_source.crit_mult
+            damage *= damage_source.crit_mult 
         self._stats["life"].modify(-damage)
         return round(damage, 2), damage_source.is_crit
 
