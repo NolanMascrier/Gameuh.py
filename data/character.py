@@ -14,6 +14,7 @@ class Character():
         self._cooldown = 0
         self._max_cooldown = 2
         self._base_speed = speed
+        self._potions = [3, 3]
         self._equipped_spells = {
             K_q: SYSTEM["spells"]["firebolt"],
             K_e: SYSTEM["spells"]["voidbolt"],
@@ -66,19 +67,46 @@ class Character():
                 x = self._entity.x
                 y = self._entity.y + self._entity.move_speed
                 self._entity.displace((x, y), keys)
-        #TODO: Check if None
         if keys[K_q]:
-            self._equipped_spells[K_q].cast(self._creature, self._entity, False)
+            if self._equipped_spells[K_q] is not None:
+                self._equipped_spells[K_q].cast(self._creature, self._entity, False)
         if keys[K_e]:
-            self._equipped_spells[K_e].cast(self._creature, self._entity, False)
+            if self._equipped_spells[K_e] is not None:
+                self._equipped_spells[K_e].cast(self._creature, self._entity, False)
         if keys[K_f]:
-            self._equipped_spells[K_f].cast(self._creature, self._entity, False)
+            if self._equipped_spells[K_f] is not None:
+                self._equipped_spells[K_f].cast(self._creature, self._entity, False)
         if keys[K_t]:
-            self._equipped_spells[K_t].cast(self._creature, self._entity, False)
+            if self._equipped_spells[K_t] is not None:
+                self._equipped_spells[K_t].cast(self._creature, self._entity, False)
         if keys[K_r]:
-            self._equipped_spells[K_r].cast(self._creature, self._entity, False)
+            if self._equipped_spells[K_r] is not None:
+                self._equipped_spells[K_r].cast(self._creature, self._entity, False)
         if keys[K_LSHIFT]:
-            self._equipped_spells[K_LSHIFT].cast(self._creature, self._entity, False)
+            if self._equipped_spells[K_LSHIFT] is not None:
+                self._equipped_spells[K_LSHIFT].cast(self._creature, self._entity, False)
+        if keys[K_1]:
+            self.use_life_potion()
+        if keys[K_2]:
+            self.use_mana_potion()
+
+    def use_life_potion(self):
+        """Uses a life potion, which heals for 20% of the user's life."""
+        #TODO: Maybe add stats to them ?
+        if self._potions[0] > 0 and self._cooldown <= 0.0:
+            self._potions[0]-= 1
+            self._cooldown = 0.5
+            self._creature.stats["life"].current_value +=\
+                self._creature.stats["life"].get_value() / 5
+
+    def use_mana_potion(self):
+        """Uses a mana potion, which heals for 40% of the user's mana."""
+        #TODO: Maybe add stats to them ?
+        if self._potions[1] > 0 and self._cooldown <= 0.0:
+            self._potions[1]-= 1
+            self._cooldown = 0.5
+            self._creature.stats["mana"].current_value +=\
+                self._creature.stats["mana"].get_value() * 0.4
 
     @property
     def x(self):
@@ -130,3 +158,12 @@ class Character():
     @max_cooldown.setter
     def max_cooldown(self, value):
         self._max_cooldown = value
+
+    @property
+    def potions(self):
+        """Returns the user's potions."""
+        return self._potions
+
+    @potions.setter
+    def potions(self, value):
+        self._potions = value

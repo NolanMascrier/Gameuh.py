@@ -23,7 +23,7 @@ PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
 
-UI_SKILLS_OFFSET = 600
+UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2
 UI_SKILLS_INPUT_OFFSET = 48
 
@@ -40,18 +40,37 @@ def draw_ui(char, bg, ui, boss_here = False, boss = None):
     SYSTEM["images"]["life_jauge"].frame = life
     SYSTEM["images"]["mana_jauge"].frame = mana
 
-    SYSTEM["windows"].blit(SYSTEM["images"]["life_jauge"].get_image(), (33, SCREEN_HEIGHT - 144))
+    SYSTEM["windows"].blit(SYSTEM["images"]["life_jauge"].get_image(), (380, SCREEN_HEIGHT - 200))
     SYSTEM["windows"].blit(SYSTEM["images"]["mana_jauge"].get_image(),\
-                           (SCREEN_WIDTH - 177, SCREEN_HEIGHT - 144))
+                           (SCREEN_WIDTH - 524, SCREEN_HEIGHT - 200))
 
     text_life = SYSTEM["font_crit"].render(f'{round(char.creature.stats["life"].current_value)}',\
                                       False, (0, 37, 97))
     text_mana = SYSTEM["font_crit"].render(f'{round(char.creature.stats["mana"].current_value)}',\
                                       False, (97, 0, 0))
 
-    SYSTEM["windows"].blit(text_life, (80, SCREEN_HEIGHT - 85))
-    SYSTEM["windows"].blit(text_mana, (SCREEN_WIDTH - 124, SCREEN_HEIGHT - 85))
+    SYSTEM["windows"].blit(text_life, (430, SCREEN_HEIGHT - 165))
+    SYSTEM["windows"].blit(text_mana, (SCREEN_WIDTH - 470, SCREEN_HEIGHT - 165))
 
+    #Life potions
+    SYSTEM["windows"].blit(SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130))
+    SYSTEM["windows"].blit(SYSTEM["images"]["life_potion"].get_image(), (524, SCREEN_HEIGHT - 130))
+    life_amount = SYSTEM["font_crit"].render(f'x{char.potions[0]}', False, (255, 255, 255))
+    SYSTEM["windows"].blit(SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130))
+    SYSTEM["windows"].blit(SYSTEM["images"][K_1], (508, SCREEN_HEIGHT - 82))
+    SYSTEM["windows"].blit(life_amount, (572, SCREEN_HEIGHT - 82))
+    #Mana potions
+    SYSTEM["windows"].blit(SYSTEM["images"]["item_bottom"].image,\
+                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
+    SYSTEM["windows"].blit(SYSTEM["images"]["mana_potion"].get_image(),\
+                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
+    mana_amount = SYSTEM["font_crit"].render(f'x{char.potions[1]}', False, (255, 255, 255))
+    SYSTEM["windows"].blit(SYSTEM["images"]["item_top"].image,\
+                           (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
+    SYSTEM["windows"].blit(SYSTEM["images"][K_2], (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82))
+    SYSTEM["windows"].blit(mana_amount, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82))
+
+    #Exp bar
     SYSTEM["windows"].blit(SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60))
     cd = (char.creature.exp + 0.001) / char.creature.exp_to_next * 1434
     if cd < 0:
@@ -60,6 +79,7 @@ def draw_ui(char, bg, ui, boss_here = False, boss = None):
     SYSTEM["windows"].blit(c, (243, SCREEN_HEIGHT - 39))
     SYSTEM["windows"].blit(SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60))
 
+    #Boss life bar
     if boss_here:
         boss_name = SYSTEM["font_crit"].render(f'{boss.creature.name}',\
                                       False, (255, 255, 255))
@@ -90,6 +110,7 @@ def draw_ui(char, bg, ui, boss_here = False, boss = None):
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
         SYSTEM["windows"].blit(SYSTEM["images"][name], (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i, SCREEN_HEIGHT - 82))
         i += 1
+    
 
 def move_boss(boss, img, gen, laz):
     global shoot_da_bouncy, bouncies
@@ -208,6 +229,10 @@ if __name__ == "__main__":
     SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png")
     SYSTEM["images"]["life_jauge"] = Animation("life.png", 144, 144, animated=False)
     SYSTEM["images"]["mana_jauge"] = Animation("mana.png", 144, 144, animated=False)
+    SYSTEM["images"]["life_potion"] = Animation("lifepot.png", 16, 16, frame_max=7,\
+        frame_rate=0.2, lines=3).scale(64, 64)
+    SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
+        frame_rate=0.2, lines=3).scale(64, 64)
 
     manaorb = pygame.image.load("ressources/manaorb.png").convert_alpha()
     manaorb_anim = [pygame.transform.scale(manaorb.subsurface(x, 0, 16, 14), (16, 16))
@@ -220,11 +245,15 @@ if __name__ == "__main__":
     SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
+    SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
+    SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png").image
     SYSTEM["images"][K_e] = Image("ui/kb_e.png").image
     SYSTEM["images"][K_f] = Image("ui/kb_f.png").image
     SYSTEM["images"][K_r] = Image("ui/kb_r.png").image
     SYSTEM["images"][K_t] = Image("ui/kb_t.png").image
+    SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
+    SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
 
     diff_x = [0.0, 0.0, 0.0, 0.0]
@@ -334,4 +363,6 @@ if __name__ == "__main__":
             boss_here = False
             boss.explode()
             boss = None
+        SYSTEM["images"]["life_potion"].tick()
+        SYSTEM["images"]["mana_potion"].tick()
     pygame.quit()
