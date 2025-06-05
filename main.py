@@ -1,5 +1,5 @@
-from time import sleep
 import random
+from time import sleep
 from data.constants import *
 from data.character import Character
 from data.Sprite import Sprite
@@ -8,14 +8,13 @@ from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.game.enemy import Enemy
-from data.game.pickup import PickUp
 from data.slash import Slash
 from data.generator import Generator
 from data.image.animation import Animation
+from data.image.parallaxe import Parallaxe
 from data.image.image import Image
 from data.image.text_generator import TextGenerator
 from data.spell_list import *
-import gc
 
 SPEED = 4
 PLAYING = True
@@ -110,7 +109,6 @@ def draw_ui(char, bg, ui, boss_here = False, boss = None):
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
         SYSTEM["windows"].blit(SYSTEM["images"][name], (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i, SCREEN_HEIGHT - 82))
         i += 1
-    
 
 def move_boss(boss, img, gen, laz):
     global shoot_da_bouncy, bouncies
@@ -170,51 +168,13 @@ def spawn_enemies(attack_anim):
         enemy = Enemy(ent, crea, attack_anim, behaviours=[enemy_type], timer=1, exp_value=5*difficulty)
         ENNEMY_TRACKER.append(enemy)
 
-if __name__ == "__main__":
-    #gc.set_debug(gc.DEBUG_UNCOLLECTABLE)
-    boss = None
-    destination = (1000, 500)
-    boss_here = False
-    waves = 3
-
-    direction = K_DOWN
+def init_game():
+    """Loads the basic data for the game.
+    TODO: Threads for loading ?"""
     pygame.init()
     pygame.font.init()
-    pygame.time.set_timer(WAVE_TIMER, 2000)
-    pygame.time.set_timer(USEREVENT+1, 2000)
-    pygame.time.set_timer(USEREVENT+2, 100)
     flags = pygame.SCALED|pygame.FULLSCREEN
     SYSTEM["windows"] = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
-    spri = Sprite("ressources/tiles/Island_24x24.png", 24, 24, 9, 8)
-    fnt_txt = pygame.font.SysFont('ressources/dmg.ttf', 30)
-    SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
-    SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
-    SYSTEM["text_generator"] = TextGenerator()
-    generate_spell_list()
-    img = Animation("witch.png", 64, 64, frame_rate = 0.25)
-    john = Character(imagefile=img)
-    ui = [
-        pygame.transform.scale(pygame.image.load(UI_JAUGE).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(UI_JAUGE_L).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(UI_JAUGE_M).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(UI_JAUGE_C).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_L).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_M).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_C).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_BOSS).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_BOSS_BACK).convert_alpha(), (176, 40))
-    ]
-    #john.rect = john.image.get_rect()
-    index = 0
-    bg = pygame.image.load("ressources/parallax_field.png").convert_alpha()
-    parallaxes = [
-        pygame.transform.scale(bg.subsurface((0, 0, 320, 180)), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-        pygame.transform.scale(bg.subsurface((320, 0, 320, 180)), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-        pygame.transform.scale(bg.subsurface((640, 0, 320, 180)), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-        pygame.transform.scale(bg.subsurface((960, 0, 320, 180)), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-        pygame.transform.scale(bg.subsurface((1280, 0, 320, 180)), (SCREEN_WIDTH, SCREEN_HEIGHT))
-    ]
-
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.25).scale(300, 256)
@@ -233,15 +193,6 @@ if __name__ == "__main__":
         frame_rate=0.2, lines=3).scale(64, 64)
     SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
-
-    manaorb = pygame.image.load("ressources/manaorb.png").convert_alpha()
-    manaorb_anim = [pygame.transform.scale(manaorb.subsurface(x, 0, 16, 14), (16, 16))
-                 for x in range(0, 64, 16)]
-
-    lifeorb = pygame.image.load("ressources/lifeorb.png").convert_alpha()
-    lifeorb_anim = [pygame.transform.scale(lifeorb.subsurface(x, 0, 16, 14), (16, 16))
-                 for x in range(0, 64, 16)]
-
     SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
@@ -255,6 +206,40 @@ if __name__ == "__main__":
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
+    SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
+    SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
+    SYSTEM["text_generator"] = TextGenerator()
+
+if __name__ == "__main__":
+    #gc.set_debug(gc.DEBUG_UNCOLLECTABLE)
+    init_game()
+    boss = None
+    destination = (1000, 500)
+    boss_here = False
+    waves = 3
+    direction = K_DOWN
+
+    pygame.time.set_timer(WAVE_TIMER, 2000)
+    pygame.time.set_timer(USEREVENT+1, 2000)
+    pygame.time.set_timer(USEREVENT+2, 100)
+
+    generate_spell_list()
+    img = Animation("witch.png", 64, 64, frame_rate = 0.25)
+    john = Character(imagefile=img)
+    ui = [
+        pygame.transform.scale(pygame.image.load(UI_JAUGE).convert_alpha(), (200, 40)),
+        pygame.transform.scale(pygame.image.load(UI_JAUGE_L).convert_alpha(), (200, 40)),
+        pygame.transform.scale(pygame.image.load(UI_JAUGE_M).convert_alpha(), (200, 40)),
+        pygame.transform.scale(pygame.image.load(UI_JAUGE_C).convert_alpha(), (200, 40)),
+        pygame.transform.scale(pygame.image.load(JAUGE_L).convert_alpha(), (176, 40)),
+        pygame.transform.scale(pygame.image.load(JAUGE_M).convert_alpha(), (176, 40)),
+        pygame.transform.scale(pygame.image.load(JAUGE_C).convert_alpha(), (176, 40)),
+        pygame.transform.scale(pygame.image.load(JAUGE_BOSS).convert_alpha(), (176, 40)),
+        pygame.transform.scale(pygame.image.load(JAUGE_BOSS_BACK).convert_alpha(), (176, 40))
+    ]
+    #john.rect = john.image.get_rect()
+    index = 0
+    paral = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0], scroll_left=False)
 
     diff_x = [0.0, 0.0, 0.0, 0.0]
     speeds = [0.2, 0.6, 1.0, 2.0]
@@ -262,14 +247,7 @@ if __name__ == "__main__":
 
     while PLAYING:
         frame += 0.2
-        SYSTEM["windows"].blit(parallaxes[0], (0, 0))
-        for i in range(4):
-            diff_x[i] = (diff_x[i] + speeds[i] * SPEED_FACTOR) % SCREEN_WIDTH
-        for layer in range(4):
-            for y in range(0, 2):
-                x = int((y * SCREEN_WIDTH) - diff_x[layer])
-                SYSTEM["windows"].blit(parallaxes[layer + 1], (x, 0))
-
+        SYSTEM["windows"].blit(paral.draw(), (0, 0))
         SYSTEM["windows"].blit(john.get_image(), john.get_pos())
         if boss_here:
             boss.entity.move(destination)

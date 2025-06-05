@@ -84,7 +84,8 @@ SYSTEM = {
     },
     "spells": {
 
-    }
+    },
+    "player": None
 }
 
 WAVE_TIMER = USEREVENT+4

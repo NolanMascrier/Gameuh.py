@@ -60,7 +60,9 @@ class Animation():
                 for index in range(0, frame_per_line)]
             self._sequence.extend(sequence)
             max_frame += len(sequence) - 1
-        self._frame_max = max_frame
+        if self._frame_max == -1:
+            self._frame_max = max_frame
+        self._frame_max = min(max_frame, self._frame_max)
 
     def get_image(self) -> pygame.Surface:
         """Returns the current image of the sequence."""
