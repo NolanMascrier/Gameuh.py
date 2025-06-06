@@ -70,23 +70,25 @@ class PickUp():
             text = SYSTEM["font"].render(f'{self._value}', False, color)
             TEXT_TRACKER.append([text, self.x, self.y, 255])
 
+    def pickup(self, player):
+        """Picks up the pickup."""
+        if Flags.LIFE in self._flags:
+            player.creature.stats["life"].current_value += self._value
+            self.generate_text(0xFF0000)
+        if Flags.MANA in self._flags:
+            player.creature.stats["mana"].current_value += self._value
+            self.generate_text(0x00FF00)
+        if Flags.EXPERIENCE in self._flags:
+            player.creature.grant_experience(self._value)
+        if Flags.GOLD in self._flags:
+            pass #TODO
+            self.generate_text(0xFCA400)
+        if Flags.ITEM in self._flags:
+            pass #TODO
+        self._to_delete = True
+
     def tick(self, player):
         """Ticks down the pickup"""
-        if self._hitbox.is_colliding(player.hitbox):
-            if Flags.LIFE in self._flags:
-                player.creature.stats["life"].current_value += self._value
-                self.generate_text(0xFF0000)
-            if Flags.MANA in self._flags:
-                player.creature.stats["mana"].current_value += self._value
-                self.generate_text(0x00FF00)
-            if Flags.EXPERIENCE in self._flags:
-                player.creature.grant_experience(self._value)
-            if Flags.GOLD in self._flags:
-                pass #TODO
-                self.generate_text(0xFCA400)
-            if Flags.ITEM in self._flags:
-                pass #TODO
-            self._to_delete = True
         self.move(player)
         self._hitbox.move((self.x, self.y))
         SYSTEM["images"]["life_orb"].tick()

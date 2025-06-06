@@ -1,6 +1,6 @@
 from data.constants import *
 from data.spell_list import *
-from data.projectile import Projectile
+from data.generator import Generator
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
@@ -23,6 +23,7 @@ class Character():
             K_r: SYSTEM["spells"]["furyslash"],
             K_LSHIFT: SYSTEM["spells"]["winddash"]
         }
+        self._immune = []
 
     def get_pos(self):
         """Returns the position of the character as a
@@ -44,6 +45,30 @@ class Character():
                 skill.tick()
         SYSTEM["player.x"] = self.x
         SYSTEM["player.y"] = self.y
+        for proj in PROJECTILE_GRID.query(self.hitbox):
+            if isinstance(proj, Generator):
+                continue
+            if proj.evil and proj.hitbox.is_colliding(self._entity.hitbox):
+                if proj in self._immune:
+                    return
+                dmg, crit = self.creature.damage(proj.damage)
+                SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
+                                                              (255, 30, 30), crit, dmg)
+                if Flags.PIERCING not in proj.behaviours:
+                    proj.flag()
+                else:
+                    self._immune.append(proj)
+        for slash in SLASH_GRID.query(self.hitbox):
+            if slash.evil and slash.hitbox.is_colliding(self._entity.hitbox):
+                if slash in self._immune:
+                    return
+                dmg, crit = slash.on_hit(self._creature)
+                SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
+                                                              (255, 30, 30), crit, dmg)
+                self._immune.append(slash)
+        for pickup in POWER_UP_GRID.query(self.hitbox):
+            if self.hitbox.is_colliding(pickup.hitbox):
+                pickup.pickup(self)
 
     def action(self, keys):
         """Acts depending on the input."""

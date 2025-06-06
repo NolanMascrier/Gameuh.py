@@ -162,9 +162,9 @@ class Generator():
         self._evil = value
 
     @property
-    def box(self):
+    def hitbox(self):
         return self._box
 
-    @box.setter
-    def box(self, value):
+    @hitbox.setter
+    def hitbox(self, value):
         self._box = value

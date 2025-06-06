@@ -43,6 +43,7 @@ class Projectile():
         self._caster = caster
         if caster is not None:
             self._offset = (self.x - caster.x, self.y - caster.y)
+        self._flagged = False
 
     def get_image(self):
         """Returns the projectile image."""
@@ -51,6 +52,8 @@ class Projectile():
     def can_be_destroyed(self):
         """Checks whether or not the projectile is out of the screen
         and can be garbage collected."""
+        if self._flagged:
+            return True
         if self._box.y < 0 - self._box.height:
             return True
         if self._box.y > SCREEN_HEIGHT + self._box.height:
@@ -78,7 +81,7 @@ class Projectile():
         self._x = round(self._x + self._speed * cos(angle))
         self._y = round(self._y + self._speed * sin(angle))
         if self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
-            PROJECTILE_TRACKER.remove(self)
+            self._flagged = True
         elif self.can_be_destroyed():
             self._bounces -= 1
             self._damage.coeff = round(self._damage.coeff * 0.7, 2)
@@ -97,7 +100,11 @@ class Projectile():
                 self._angle = random.randint(225, 315)
             self._box.move((self._x, self._y))
         if self._bounces <= 0 and Flags.BOUNCE in self._behaviours:
-            PROJECTILE_TRACKER.remove(self)
+            self._flagged = True
+
+    def flag(self):
+        """Flags the projectile for destruction."""
+        self._flagged = True
 
     def get_pos(self):
         """Returns the projectile's position."""

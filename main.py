@@ -30,7 +30,7 @@ shoot_da_bouncy = False
 bouncies = 0
 difficulty = 1
 
-def draw_ui(char, bg, ui, boss_here = False, boss = None):
+def draw_ui(char, boss_here = False, boss = None):
     mana = 8 - int(char.creature.stats["mana"].current_value\
                    / char.creature.stats["mana"].get_value() * 8)
     life = 8 - int(char.creature.stats["life"].current_value\
@@ -82,9 +82,9 @@ def draw_ui(char, bg, ui, boss_here = False, boss = None):
     if boss_here:
         boss_name = SYSTEM["font_crit"].render(f'{boss.creature.name}',\
                                       False, (255, 255, 255))
-        bossl = (boss.creature.stats["life"].current_value/boss.creature.stats["life"].c_value) * 1000
-        b = pygame.transform.scale(ui[7], (bossl, 80))
-        bb = pygame.transform.scale(ui[8], (1000, 80))
+        bossl = (boss.creature.stats["life"].current_value/boss.creature.stats["life"].c_value) * 1500
+        b = pygame.transform.scale(SYSTEM["images"]["boss_jauge"].image, (bossl, 80))
+        bb = pygame.transform.scale(SYSTEM["images"]["boss_jauge_back"].image, (1500, 80))
         SYSTEM["windows"].blit(bb, (200, 20))
         SYSTEM["windows"].blit(b, (200, 20))
         SYSTEM["windows"].blit(boss_name, (200, 20))
@@ -173,8 +173,10 @@ def init_game():
     TODO: Threads for loading ?"""
     pygame.init()
     pygame.font.init()
+    #TODO: Load options
     flags = pygame.SCALED|pygame.FULLSCREEN
     SYSTEM["windows"] = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
+    #TODO: thread loading
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.25).scale(300, 256)
@@ -210,8 +212,10 @@ def init_game():
     SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
     SYSTEM["text_generator"] = TextGenerator()
 
+def game_loop():
+    pass
+
 if __name__ == "__main__":
-    #gc.set_debug(gc.DEBUG_UNCOLLECTABLE)
     init_game()
     boss = None
     destination = (1000, 500)
@@ -226,26 +230,17 @@ if __name__ == "__main__":
     generate_spell_list()
     img = Animation("witch.png", 64, 64, frame_rate = 0.25)
     john = Character(imagefile=img)
-    ui = [
-        pygame.transform.scale(pygame.image.load(UI_JAUGE).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(UI_JAUGE_L).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(UI_JAUGE_M).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(UI_JAUGE_C).convert_alpha(), (200, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_L).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_M).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_C).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_BOSS).convert_alpha(), (176, 40)),
-        pygame.transform.scale(pygame.image.load(JAUGE_BOSS_BACK).convert_alpha(), (176, 40))
-    ]
-    #john.rect = john.image.get_rect()
+    SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
+    SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     index = 0
-    paral = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0], scroll_left=False)
+    paral = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0])
 
     diff_x = [0.0, 0.0, 0.0, 0.0]
     speeds = [0.2, 0.6, 1.0, 2.0]
     frame = 0
 
     while PLAYING:
+        generate_grids()
         frame += 0.2
         SYSTEM["windows"].blit(paral.draw(), (0, 0))
         SYSTEM["windows"].blit(john.get_image(), john.get_pos())
@@ -303,24 +298,15 @@ if __name__ == "__main__":
                 continue
             proj.tick()
             SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
-            if proj.evil and proj.hitbox.is_colliding(john.hitbox):
-                dmg, crit = john.creature.damage(proj.damage)
-                SYSTEM["text_generator"].generate_damage_text(proj.x, proj.y, (255, 30, 30), crit, dmg)
+            if proj.can_be_destroyed():
                 PROJECTILE_TRACKER.remove(proj)
         for slash in SLASH_TRACKER.copy():
             if not isinstance(slash, Slash):
                 continue
             slash.tick()
             SYSTEM["windows"].blit(slash.get_image(), slash.get_pos())
-            if slash.evil and slash.hitbox.is_colliding(john.hitbox):
-                dmg, crit = slash.on_hit(john.creature)
-                if dmg is None or crit is None:
-                    continue
-                SYSTEM["text_generator"].generate_damage_text(john.x, john.y,\
-                                                            (255, 30, 30), crit, dmg)
             if slash.finished:
                 SLASH_TRACKER.remove(slash)
-
         for txt in TEXT_TRACKER.copy():
             sfc = txt[0]
             sfc.set_alpha(txt[3])
@@ -329,7 +315,7 @@ if __name__ == "__main__":
             SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
             if txt[3] < 10:
                 TEXT_TRACKER.remove(txt)
-        draw_ui(john, bg, ui, boss_here, boss)
+        draw_ui(john, boss_here, boss)
         pygame.display.update()
         sleep(0.016)
         john.tick()
@@ -343,4 +329,5 @@ if __name__ == "__main__":
             boss = None
         SYSTEM["images"]["life_potion"].tick()
         SYSTEM["images"]["mana_potion"].tick()
+        clean_grids()
     pygame.quit()

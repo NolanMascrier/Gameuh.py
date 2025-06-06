@@ -7,7 +7,7 @@ from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
 from data.projectile import Projectile
-from data.constants import PROJECTILE_TRACKER, Flags
+from data.constants import PROJECTILE_GRID, Flags
 
 class Slash():
     def __init__(self, caster: Entity, origin: Creature, animation: Animation,\
@@ -46,12 +46,12 @@ class Slash():
         if self._image.finished:
             self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
-            for proj in PROJECTILE_TRACKER.copy():
+            for proj in PROJECTILE_GRID.query(self._hitbox):
                 if not isinstance(proj, Projectile):
                     return
                 if proj.hitbox.is_colliding(self._hitbox) and\
                     proj.evil is not self._evil:
-                    PROJECTILE_TRACKER.remove(proj)
+                        proj.flag()
 
     def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
         """Called when the slash hits a target."""

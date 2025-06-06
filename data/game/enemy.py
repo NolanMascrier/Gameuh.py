@@ -7,7 +7,7 @@ import random
 from math import atan2, pi, sqrt
 from data.physics.entity import Entity
 from data.creature import Creature
-from data.constants import Flags, PROJECTILE_TRACKER, POWER_UP_TRACKER, SYSTEM, ENNEMY_TRACKER
+from data.constants import Flags, PROJECTILE_GRID, SLASH_GRID, POWER_UP_TRACKER, SYSTEM
 from data.spell_list import *
 from data.projectile import Projectile
 from data.game.pickup import PickUp
@@ -91,7 +91,7 @@ class Enemy():
                 self.attack(player)
         if self._counter >= self._timer:
             self._counter -= self._timer
-        for proj in PROJECTILE_TRACKER.copy():
+        for proj in PROJECTILE_GRID.query(self.hitbox):
             if not proj.evil and proj.hitbox.is_colliding(self._entity.hitbox):
                 if proj in self._immune:
                     return
@@ -99,10 +99,10 @@ class Enemy():
                 SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
                                                               (255, 30, 30), crit, dmg)
                 if Flags.PIERCING not in proj.behaviours:
-                    PROJECTILE_TRACKER.remove(proj)
+                    proj.flag()
                 else:
                     self._immune.append(proj)
-        for slash in SLASH_TRACKER:
+        for slash in SLASH_GRID.query(self.hitbox):
             if not slash.evil and slash.hitbox.is_colliding(self._entity.hitbox):
                 if slash in self._immune:
                     return
