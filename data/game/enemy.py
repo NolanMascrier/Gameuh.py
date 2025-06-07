@@ -158,3 +158,9 @@ class Enemy():
         """Returns the enemy's y. Shorthand for\
         Enemy.entity.y"""
         return self._entity.y
+
+    @property
+    def destroyed(self) -> bool:
+        """Returns whether or not the enemy can be\
+        removed."""
+        return self._exploded

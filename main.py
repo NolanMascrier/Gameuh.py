@@ -169,14 +169,13 @@ def spawn_enemies(attack_anim):
         ENNEMY_TRACKER.append(enemy)
 
 def init_game():
-    """Loads the basic data for the game.
-    TODO: Threads for loading ?"""
+    """Loads the basic data for the game."""
     pygame.init()
     pygame.font.init()
     #TODO: Load options
     flags = pygame.SCALED|pygame.FULLSCREEN
     SYSTEM["windows"] = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
-    #TODO: thread loading
+
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.25).scale(300, 256)
@@ -208,126 +207,121 @@ def init_game():
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
+    SYSTEM["player"] = Character(imagefile=Animation("witch.png", 64, 64, frame_rate = 0.25))
+    SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
+    SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
     SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
     SYSTEM["text_generator"] = TextGenerator()
 
-def game_loop():
-    pass
+def game_loop(frame, boss, waves, paral, difficulty, boss_here):
+    global PLAYING
+    generate_grids()
+    destination = (1000, 1000)
+    frame += 0.2
+    SYSTEM["windows"].blit(paral.draw(), (0, 0))
+    SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
+    if boss_here:
+        boss.entity.move(destination)
+        SYSTEM["windows"].blit(boss.entity.get_image(), (boss.x, boss.y))
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            PLAYING = False
+        if event.type == WAVE_TIMER:
+            if waves > 0:
+                pygame.time.set_timer(WAVE_TIMER, 12000)
+                spawn_enemies(SYSTEM["images"]["energyball"])
+                waves -= 1
+            elif not boss_here:
+                boss = spawn_boss()
+                boss_here = True
+        if boss_here:
+            if event.type == USEREVENT+1:
+                destination = move_boss(boss, SYSTEM["images"]["energyball"], SYSTEM["images"]["generator"], SYSTEM["images"]["lazer"])
+            if event.type == USEREVENT+2:
+                if shoot_da_bouncy:
+                    if bouncies <= 0:
+                        shoot_da_bouncy = False
+                        pygame.time.set_timer(USEREVENT+1, 2000)
+                    sh = Projectile(boss.x, boss.y, 145 if random.randint(0, 1) == 1 else -145, SYSTEM["images"]["bouncer"], ICEBOLT, boss.creature, speed=5, evil=True, bounces=5, behaviours=[Flags.BOUNCE])
+                    PROJECTILE_TRACKER.append(sh)
+                    bouncies -= 1
+    #if boss_here:
+        #draw_hitbox(boss.hitbox, 0xFF0000)
+    #draw_hitbox(SYSTEM["player"].hitbox, 0x00FF00)
+    keys = pygame.key.get_pressed()
+    SYSTEM["player"].action(keys)
+    SYSTEM["player"].tick()
+    if boss is not None:
+        boss.tick(SYSTEM["player"])
+    for bubble in POWER_UP_TRACKER.copy():
+        bubble.tick(SYSTEM["player"])
+        SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
+        if bubble.flagged_for_deletion:
+            POWER_UP_TRACKER.remove(bubble)
+    for baddie in ENNEMY_TRACKER.copy():
+        SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
+        baddie.tick(SYSTEM["player"])
+        if baddie._exploded:
+            ENNEMY_TRACKER.remove(baddie)
+    for proj in PROJECTILE_TRACKER.copy():
+        if isinstance(proj, Generator):
+            SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
+            proj.tick(SYSTEM["player"])
+        if not isinstance(proj, Projectile):
+            continue
+        proj.tick()
+        SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
+        if proj.can_be_destroyed():
+            PROJECTILE_TRACKER.remove(proj)
+    for slash in SLASH_TRACKER.copy():
+        if not isinstance(slash, Slash):
+            continue
+        slash.tick()
+        SYSTEM["windows"].blit(slash.get_image(), slash.get_pos())
+        if slash.finished:
+            SLASH_TRACKER.remove(slash)
+    for txt in TEXT_TRACKER.copy():
+        sfc = txt[0]
+        sfc.set_alpha(txt[3])
+        txt[3] -= 5
+        txt[2] -= 3
+        SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
+        if txt[3] < 10:
+            TEXT_TRACKER.remove(txt)
+    draw_ui(SYSTEM["player"], boss_here, boss)
+    pygame.display.update()
+    sleep(0.016)
+    SYSTEM["player"].tick()
+    if frame >= 60:
+        frame -= 60
+    if boss_here and boss.creature.stats["life"].current_value <= 0:
+        waves = 5 * difficulty
+        difficulty += 1
+        boss_here = False
+        boss.explode()
+        boss = None
+    SYSTEM["images"]["life_potion"].tick()
+    SYSTEM["images"]["mana_potion"].tick()
+    clean_grids()
 
 if __name__ == "__main__":
     init_game()
     boss = None
-    destination = (1000, 500)
     boss_here = False
     waves = 3
-    direction = K_DOWN
 
     pygame.time.set_timer(WAVE_TIMER, 2000)
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
 
     generate_spell_list()
-    img = Animation("witch.png", 64, 64, frame_rate = 0.25)
-    john = Character(imagefile=img)
-    SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
-    SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
-    index = 0
     paral = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0])
-
-    diff_x = [0.0, 0.0, 0.0, 0.0]
-    speeds = [0.2, 0.6, 1.0, 2.0]
     frame = 0
+    SYSTEM["game_state"] = GAME_LEVEL
 
     while PLAYING:
-        generate_grids()
-        frame += 0.2
-        SYSTEM["windows"].blit(paral.draw(), (0, 0))
-        SYSTEM["windows"].blit(john.get_image(), john.get_pos())
-        if boss_here:
-            boss.entity.move(destination)
-            SYSTEM["windows"].blit(boss.entity.get_image(), (boss.x, boss.y))
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                PLAYING = False
-            if event.type == WAVE_TIMER:
-                if waves > 0:
-                    pygame.time.set_timer(WAVE_TIMER, 12000)
-                    spawn_enemies(SYSTEM["images"]["energyball"])
-                    waves -= 1
-                elif not boss_here:
-                    boss = spawn_boss()
-                    boss_here = True
-            if boss_here:
-                if event.type == USEREVENT+1:
-                    destination = move_boss(boss, SYSTEM["images"]["energyball"], SYSTEM["images"]["generator"], SYSTEM["images"]["lazer"])
-                if event.type == USEREVENT+2:
-                    if shoot_da_bouncy:
-                        if bouncies <= 0:
-                            shoot_da_bouncy = False
-                            pygame.time.set_timer(USEREVENT+1, 2000)
-                        sh = Projectile(boss.x, boss.y, 145 if random.randint(0, 1) == 1 else -145, SYSTEM["images"]["bouncer"], ICEBOLT, boss.creature, speed=5, evil=True, bounces=5, behaviours=[Flags.BOUNCE])
-                        PROJECTILE_TRACKER.append(sh)
-                        bouncies -= 1
-
-        #if boss_here:
-            #draw_hitbox(boss.hitbox, 0xFF0000)
-        #draw_hitbox(john.hitbox, 0x00FF00)
-
-        keys = pygame.key.get_pressed()
-        john.action(keys)
-        john.tick()
-        if boss is not None:
-            boss.tick(john)
-        for bubble in POWER_UP_TRACKER.copy():
-            bubble.tick(john)
-            SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
-            if bubble.flagged_for_deletion:
-                POWER_UP_TRACKER.remove(bubble)
-        for baddie in ENNEMY_TRACKER.copy():
-            SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
-            baddie.tick(john)
-            if baddie._exploded:
-                ENNEMY_TRACKER.remove(baddie)
-        for proj in PROJECTILE_TRACKER.copy():
-            if isinstance(proj, Generator):
-                SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
-                proj.tick(john)
-            if not isinstance(proj, Projectile):
-                continue
-            proj.tick()
-            SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
-            if proj.can_be_destroyed():
-                PROJECTILE_TRACKER.remove(proj)
-        for slash in SLASH_TRACKER.copy():
-            if not isinstance(slash, Slash):
-                continue
-            slash.tick()
-            SYSTEM["windows"].blit(slash.get_image(), slash.get_pos())
-            if slash.finished:
-                SLASH_TRACKER.remove(slash)
-        for txt in TEXT_TRACKER.copy():
-            sfc = txt[0]
-            sfc.set_alpha(txt[3])
-            txt[3] -= 5
-            txt[2] -= 3
-            SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
-            if txt[3] < 10:
-                TEXT_TRACKER.remove(txt)
-        draw_ui(john, boss_here, boss)
-        pygame.display.update()
-        sleep(0.016)
-        john.tick()
-        if frame >= 60:
-            frame -= 60
-        if boss_here and boss.creature.stats["life"].current_value <= 0:
-            waves = 5 * difficulty
-            difficulty += 1
-            boss_here = False
-            boss.explode()
-            boss = None
-        SYSTEM["images"]["life_potion"].tick()
-        SYSTEM["images"]["mana_potion"].tick()
-        clean_grids()
+        if SYSTEM["game_state"] == GAME_LEVEL:
+            game_loop(frame, boss, waves, paral, difficulty, boss_here)
     pygame.quit()

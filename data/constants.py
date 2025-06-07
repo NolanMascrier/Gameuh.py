@@ -69,6 +69,7 @@ GAME_MAP = 6
 GAME_SHOP = 7
 GAME_INVENTORY = 8
 GAME_EQUIP = 9
+GAME_PAUSE = 10
 
 def change_language(lang):
     """Changes the system's language.
@@ -92,13 +93,14 @@ SYSTEM = {
     "font_crit": None,
     "text_generator": None,
     "options": {
-        "screen_width": 1280,
-        "screen_height": 720,
+        "screen_width": 1920,
+        "screen_height": 1080,
         "resolutions": [(1138, 640), (1280, 720), (1600, 900), (1920, 1080)],
-        "fullscreen": False,
-        "vsync": False,
+        "fullscreen": True,
+        "vsync": 1,
         "lang_selec": "EN-en",
-        "lang": change_language("EN_us")
+        "lang": change_language("EN_us"),
+        "show_hitboxes": False
     },
     "game_state": None,
     "windows": None,
@@ -115,7 +117,7 @@ SYSTEM = {
 
 WAVE_TIMER = USEREVENT+4
 TICKER_TIMER = USEREVENT+5
-
+UPDATE_TIMER = USEREVENT+6
 
 
 class Flags(Enum):
@@ -186,6 +188,8 @@ class Flags(Enum):
     ACCELERATE = "accelerate"
     DELAYED = "delayed"
     PIERCING = "piercing"
+    TRACK_STRICT = "tracking_strict"
+    TRACK_LOOSE = "tracking_loose"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"
