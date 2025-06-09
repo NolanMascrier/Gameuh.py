@@ -151,11 +151,14 @@ def generate_spell_list():
     elementalfury = Spell("Elemental Fury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
     dash_basic = Spell("Wind dash", heal_icon, None, None, 5, distance=200, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
     furyslash = Spell("Fury Slash", fury_icon, furyslash_img, FURYSLASH, 5, 0, cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF], afflictions=[FURY])
-    charge = Spell("Charge", fury_icon, furyslash_alt, CHARGE, 0, 0, cooldown=0, flags=[Flags.MELEE])
+    charge = Spell("Charge", fury_icon, furyslash_alt, CHARGE, flags=[Flags.MELEE])
+    voidbolt_enemy = Spell("Voidbolt", None, voidbolt_proj_img, DARKBOLT, projectiles=1, flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["voidbolt"] = voidolt
     SYSTEM["spells"]["elefury"] = elementalfury
     SYSTEM["spells"]["winddash"] = dash_basic
     SYSTEM["spells"]["furyslash"] = furyslash
+    #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
+    SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

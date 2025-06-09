@@ -190,6 +190,7 @@ class Flags(Enum):
     PIERCING = "piercing"
     TRACK_STRICT = "tracking_strict"
     TRACK_LOOSE = "tracking_loose"
+    AIMED_AT_PLAYER = "aimed_at_player"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"
@@ -201,3 +202,8 @@ class Flags(Enum):
     #Flags for ennemies
     SHOOTER = "shooter"
     CHASER = "chaser"
+    #Flags for levels
+    WAVES = "waves"
+    DUNGEON = "dungeon"
+    RAID = "raid"
+    HAS_BOSS = "has_boss"

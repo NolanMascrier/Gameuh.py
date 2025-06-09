@@ -19,10 +19,17 @@ class Ressource(Stat):
         `ressource`.
         refresh (float, optionnal): Refresh rate of the ressource, ie \
         the proportion that is restored each tick. Defaults to 5%.
+        cap (float, optionnal): At what value the stat should cap\
+        ie what it is its maximum value. Defaults to -1 (no cap).
+        scaling_value (float, optionnal): How much level influence\
+        this stat. Only for enemies. Defaults to 1.
+        mult_scaling (bool, optionnal): Whether or not the stat\
+        scales multiplicatively. Defaults to `False` (additive).
 
     """
-    def __init__(self, val = 100.0, name = "ressource", refresh = None):
-        super().__init__(val, name)
+    def __init__(self, val = 100.0, name = "ressource", refresh = None,\
+            cap:float = -1, scaling_value:float = 1, mult_scaling = False):
+        super().__init__(val, name, cap, scaling_value, mult_scaling)
         self._current_value = val
         self._rate = refresh
         self._buffs = []
@@ -101,6 +108,15 @@ class Ressource(Stat):
         result.extend(self._buffs)
         result.extend(self._buffs_multi)
         return result
+
+    def clone(self):
+        """Returns a copy of the ressource."""
+        copy = Ressource(
+            self._value,
+            self._name,
+            self._rate.clone()
+        )
+        return copy
 
     @property
     def current_value(self) -> float:

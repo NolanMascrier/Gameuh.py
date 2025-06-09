@@ -1,8 +1,9 @@
 """Projectile are the most common type of attacks."""
 
 import random
+from math import atan2, pi
 from math import cos, sin, radians
-from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, PROJECTILE_TRACKER
+from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
@@ -20,6 +21,9 @@ class Projectile():
         self._y = y
         self._speed = speed
         self._angle = angle
+        if Flags.AIMED_AT_PLAYER in behaviours:
+            angle = 90 - atan2(SYSTEM["player.x"] - x,\
+                    SYSTEM["player.y"] - y.y) * 180 / pi
         self._length = len
         self._height = height
         self._damage = origin.recalculate_damage(damage)

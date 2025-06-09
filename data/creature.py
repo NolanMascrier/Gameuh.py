@@ -38,41 +38,41 @@ class Creature:
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense"),
             "heal_factor": Stat(1, "Healing Effectivness"),
-            "mana_efficiency": Stat(1, "Mana Efficiency"),
-            "crit_rate": Stat(0.05, "Crit rate"),
-            "crit_dmg": Stat(1.5, "Crit Damage"),
+            "mana_efficiency": Stat(1, "Mana Efficiency", 0.05, 0),
+            "crit_rate": Stat(0.05, "Crit rate", 1, 0.001),
+            "crit_dmg": Stat(1.5, "Crit Damage", scaling_value=0.02),
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
             "speed": Stat(1, "Move Speed"),
             "cast_speed": Stat(1, "Cast Speed"),
 
-            "melee_dmg": Stat(1, "Melee Damage"),
-            "spell_dmg": Stat(1, "Spell Damage"),
-            "ranged_dmg": Stat(1, "Ranged Damage"),
+            "melee_dmg": Stat(1, "Melee Damage", scaling_value=0.01),
+            "spell_dmg": Stat(1, "Spell Damage", scaling_value=0.01),
+            "ranged_dmg": Stat(1, "Ranged Damage", scaling_value=0.01),
 
-            "phys": Stat(0, "Physical resistance"),
-            "fire": Stat(0, "Fire resistance"),
-            "ice": Stat(0, "Ice resistance"),
-            "elec": Stat(0, "Electric resistance"),
-            "energy": Stat(0, "Energy resistance"),
-            "light": Stat(0, "Light resistance"),
-            "dark": Stat(0, "Dark resistance"),
+            "phys": Stat(0, "Physical resistance", 0.9, scaling_value=0.005),
+            "fire": Stat(0, "Fire resistance", 0.9, scaling_value=0.005),
+            "ice": Stat(0, "Ice resistance", 0.9, scaling_value=0.005),
+            "elec": Stat(0, "Electric resistance", 0.9, scaling_value=0.005),
+            "energy": Stat(0, "Energy resistance", 0.9, scaling_value=0.005),
+            "light": Stat(0, "Light resistance", 0.9, scaling_value=0.005),
+            "dark": Stat(0, "Dark resistance", 0.9, scaling_value=0.005),
 
-            "phys_dmg": Stat(1, "Physical damage"),
-            "fire_dmg": Stat(1, "Fire damage"),
-            "ice_dmg": Stat(1, "Ice damage"),
-            "elec_dmg": Stat(1, "Electric damage"),
-            "energy_dmg": Stat(1, "Energy damage"),
-            "light_dmg": Stat(1, "Light damage"),
-            "dark_dmg": Stat(1, "Dark damage"),
+            "phys_dmg": Stat(1, "Physical damage", scaling_value=0.05),
+            "fire_dmg": Stat(1, "Fire damage", scaling_value=0.05),
+            "ice_dmg": Stat(1, "Ice damage", scaling_value=0.05),
+            "elec_dmg": Stat(1, "Electric damage", scaling_value=0.05),
+            "energy_dmg": Stat(1, "Energy damage", scaling_value=0.05),
+            "light_dmg": Stat(1, "Light damage", scaling_value=0.05),
+            "dark_dmg": Stat(1, "Dark damage", scaling_value=0.05),
 
-            "phys_pen": Stat(0, "Physical resistance penetration"),
-            "fire_pen": Stat(0, "Fire resistance penetration"),
-            "ice_pen": Stat(0, "Ice resistance penetration"),
-            "elec_pen": Stat(0, "Electric resistance penetration"),
-            "energy_pen": Stat(0, "Energy resistance penetration"),
-            "light_pen": Stat(0, "Light resistance penetration"),
-            "dark_pen": Stat(0, "Dark resistance penetration")
+            "phys_pen": Stat(0, "Physical resistance penetration", 2, scaling_value=0.01),
+            "fire_pen": Stat(0, "Fire resistance penetration", 2, scaling_value=0.01),
+            "ice_pen": Stat(0, "Ice resistance penetration", 2, scaling_value=0.01),
+            "elec_pen": Stat(0, "Electric resistance penetration", 2, scaling_value=0.01),
+            "energy_pen": Stat(0, "Energy resistance penetration", 2, scaling_value=0.01),
+            "light_pen": Stat(0, "Light resistance penetration", 2, scaling_value=0.01),
+            "dark_pen": Stat(0, "Dark resistance penetration", 2, scaling_value=0.01)
         }
         self._gear = {
             "helm": None,
@@ -174,7 +174,9 @@ class Creature:
             res = self._stats[dmg_type].get_value() - pen[dmg_type]
             damage += dmga * (1 - res)
         if damage_source.is_crit:
-            damage *= damage_source.crit_mult 
+            damage *= damage_source.crit_mult
+        damage -= self._stats["abs_res"].get_value()
+        damage = max(damage, 0)
         self._stats["life"].modify(-damage)
         return round(damage, 2), damage_source.is_crit
 
@@ -336,6 +338,21 @@ class Creature:
             for affix in item.affixes :
                 self.remove_affliction(affix.as_affliction())
         return item
+
+    def import_stackblock(self, statblock: dict):
+        """Import a statblock and replace current
+        stats with the block's."""
+        for val in statblock:
+            if val in self._stats:
+                self.stats[val] = statblock[val].clone()
+
+    def scale(self, level: int):
+        """Scales the creature to the given level."""
+        for stat in self._stats:
+            stat.scale(level)
+        self._level = level
+        self._stats["life"].refill()
+        self._stats["mana"].refill()
 
     @property
     def name(self) -> str:

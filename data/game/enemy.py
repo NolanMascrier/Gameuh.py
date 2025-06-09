@@ -4,7 +4,7 @@ and also an entity.
 They can move toward the player, or fire projectiles."""
 
 import random
-from math import atan2, pi, sqrt
+from math import sqrt
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.constants import Flags, PROJECTILE_GRID, SLASH_GRID, POWER_UP_TRACKER, SYSTEM
@@ -15,7 +15,7 @@ from data.game.pickup import PickUp
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
     with set behaviours."""
-    def __init__(self, entity: Entity, creature: Creature, projectile, power = 1,\
+    def __init__(self, entity: Entity, creature: Creature, abilities, power = 1,\
                 timer = 2, exp_value = 10, behaviours = None):
         self._entity = entity
         self._creature = creature
@@ -26,7 +26,7 @@ class Enemy():
         self._timer = timer
         self._power = power
         self._counter = 0
-        self._projectile = projectile
+        self._abilities = abilities
         self._exp_value = exp_value
         self._exploded = False
         self._immune = []
@@ -71,8 +71,7 @@ class Enemy():
         if Flags.CHASER in self._behaviours:
             if self._stopped:
                 if self._counter >= self._timer:
-                    SYSTEM["spells"]["e_charge"].cast(self._creature, self._entity, True,\
-                                                    aim_right=self._aim_right)
+                    self.attack()
                     self._stopped = False
             else:
                 if not self._entity.flipped and player.x > self.x:
@@ -88,7 +87,7 @@ class Enemy():
                     self._entity.move((player.x, player.y))
         if Flags.SHOOTER in self._behaviours:
             if self._counter >= self._timer:
-                self.attack(player)
+                self.attack()
         if self._counter >= self._timer:
             self._counter -= self._timer
         for proj in PROJECTILE_GRID.query(self.hitbox):
@@ -111,13 +110,16 @@ class Enemy():
                                                               (255, 30, 30), crit, dmg)
                 self._immune.append(slash)
 
-    def attack(self, player):
-        """Shoots a projectile toward the player."""
-        angle = 90 - atan2(player.hitbox.center[0] - self._entity.x,\
-                           player.hitbox.center[1] - self._entity.y) * 180 / pi
-        proj = Projectile(self._entity.x, self._entity.y, angle, SYSTEM["images"]["energyball"],\
-                          DARKBOLT, self._creature, True)
-        PROJECTILE_TRACKER.append(proj)
+    def attack(self):
+        """Launches a random attack from the enemy's arsenal."""
+        choice = random.uniform(0, 1)
+        cumulative = 0.0
+        for ability, weight in self._abilities:
+            cumulative += weight
+            if cumulative >= choice:
+                if not isinstance(ability, Spell):
+                    return
+                ability.cast(self._creature, self._entity, True, self._aim_right)
 
     def get_image(self):
         """Returns the entity's image."""

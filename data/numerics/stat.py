@@ -13,14 +13,24 @@ class Stat:
     
     Args:
         val (float, optionnal): Initial value of the stat. defaults to 10.
-        name (str, optionnal): Name of the stat.    
+        name (str, optionnal): Name of the stat. 
+        cap (float, optionnal): At what value the stat should cap\
+        ie what it is its maximum value. Defaults to -1 (no cap).
+        scaling_value (float, optionnal): How much level influence\
+        this stat. Only for enemies. Defaults to 1.
+        mult_scaling (bool, optionnal): Whether or not the stat\
+        scales multiplicatively. Defaults to `False` (additive).
     """
-    def __init__(self, val = 10, name = "stat"):
+    def __init__(self, val = 10, name = "stat",\
+            cap:float = -1, scaling_value:float = 1, mult_scaling = False):
         self._value = val
         self._name = name
         self._flats = []
         self._mults = []
         self._incr = []
+        self._cap = cap
+        self._scaling_value = scaling_value
+        self._mult_scaling = mult_scaling
 
     def get_value(self):
         """Returns the computed final value of the stat.
@@ -37,7 +47,10 @@ class Stat:
             final_mults *= multiplier.value
         for increase in self._incr:
             final_incr += increase.value
-        return round((self._value + final_flats) * final_incr * final_mults, 4)
+        final_value = round((self._value + final_flats) * final_incr * final_mults, 4)
+        if self._cap >= 0:
+            final_value = max(final_value, self._cap)
+        return final_value
 
     def _handle_affliction_list(self, list_name, affliction):
         """Appends the affliction to the corresponding list.
@@ -108,6 +121,13 @@ class Stat:
             if incr.duration <= 0:
                 self._incr.remove(incr)
 
+    def scale(self, level:int):
+        """Scales the stat to the given level."""
+        if self._mult_scaling:
+            self._value *= self._scaling_value * level
+        else:
+            self._value += self._scaling_value * level
+
     def export(self):
         """Exports the stat data as a JSON list.
         
@@ -156,6 +176,14 @@ class Stat:
         result.extend(self._incr)
         result.extend(self._mults)
         return result
+
+    def clone(self):
+        """Creates a copy of the stat."""
+        copy = Stat(
+            self._value,
+            self._name
+        )
+        return copy
 
     @property
     def value(self) -> float:
