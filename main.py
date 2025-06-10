@@ -30,7 +30,8 @@ shoot_da_bouncy = False
 bouncies = 0
 difficulty = 1
 
-def draw_ui(char, boss_here = False, boss = None):
+def draw_ui(boss_here = False, boss = None):
+    char = SYSTEM["player"]
     mana = 8 - int(char.creature.stats["mana"].current_value\
                    / char.creature.stats["mana"].get_value() * 8)
     life = 8 - int(char.creature.stats["life"].current_value\
@@ -90,7 +91,7 @@ def draw_ui(char, boss_here = False, boss = None):
         SYSTEM["windows"].blit(boss_name, (200, 20))
     #Skills
     i = 0
-    for name, skill in char._equipped_spells.items():
+    for name, skill in char.equipped_spells.items():
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_bottom"].image, (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
         if skill is not None:
             cdc = skill.cooldown

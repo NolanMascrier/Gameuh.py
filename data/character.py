@@ -192,3 +192,12 @@ class Character():
     @potions.setter
     def potions(self, value):
         self._potions = value
+
+    @property
+    def equipped_spells(self):
+        """Returns the character equipped spells."""
+        return self._equipped_spells
+
+    @equipped_spells.setter
+    def equipped_spells(self, value):
+        self._equipped_spells = value

@@ -14,6 +14,8 @@ from data.image.animation import Animation
 from data.image.parallaxe import Parallaxe
 from data.image.image import Image
 from data.image.text_generator import TextGenerator
+from data.interface.gameui import draw_ui
+from data.game.level import Level
 from data.spell_list import *
 
 SPEED = 4
@@ -21,10 +23,6 @@ PLAYING = True
 PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
-
-UI_SKILLS_OFFSET = 650
-UI_SKILLS_PANEL_OFFSET = 2
-UI_SKILLS_INPUT_OFFSET = 48
 
 def init_game():
     """Loads the basic data for the game."""
@@ -138,11 +136,14 @@ def game_loop():
         SYSTEM["windows"].blit(s.get_image(), s.get_pos())
     for txt in TEXT_TRACKER:
         SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
+    #Draw the UI
+    draw_ui()
 
 if __name__ == "__main__":
     init_game()
     init_timers()
     SYSTEM["game_state"] = GAME_LEVEL
+    SYSTEM["level"] = Level("Test level", 1, None, None)
 
     while PLAYING:
         if SYSTEM["game_state"] == GAME_LEVEL:
