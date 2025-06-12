@@ -25,6 +25,7 @@ class Button(Image):
         """Sets the button to the x;y position."""
         self._x = x
         self._y = y
+        return self
 
     def press(self, mouse_pos):
         """Checks if the mouse is clicking on the button.

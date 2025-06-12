@@ -12,10 +12,14 @@ class Image():
         uri (str): URI pointing to the image in /ressources/"""
     def __init__(self, uri = None):
         self._uri = uri
-        try:
-            self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
-        except FileNotFoundError:
-            self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
+        if isinstance(uri, Image):
+            print("dodoko")
+            self._image = uri.clone()
+        else:
+            try:
+                self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
+            except FileNotFoundError:
+                self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         self._visible = True

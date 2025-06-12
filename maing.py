@@ -20,6 +20,11 @@ PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
 
+def start_level():
+    """Starts the level stored in the SYSTEM."""
+    SYSTEM["level"] = SYSTEM["selected"]
+    SYSTEM["game_state"] = GAME_LEVEL
+
 def init_game():
     """Loads the basic data for the game."""
     pygame.init()
@@ -88,6 +93,8 @@ def init_game():
     SYSTEM["images"]["button_options"] = Button("ui/button.png",\
                                              lambda : SYSTEM.__setitem__("game_state",\
                                              MENU_OPTIONS_GAME), "Options").scale(55, 280)
+    SYSTEM["images"]["button_assault"] = Button("ui/button.png",\
+                                             start_level, "Begin the assault !").scale(55, 280)
     SYSTEM["images"]["char_details"] = Image("ui/char_back.png").scale(1050, 376)
     SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
     SYSTEM["images"]["mini_moolah"] = Image("minifric.png")
@@ -101,6 +108,7 @@ def init_game():
     SYSTEM["images"]["supra_moolah"] = Image("grail.png").scale(64, 64)
     SYSTEM["images"]["maxi_moolah"] = Image("maxigrail.png").scale(64, 64)
     SYSTEM["images"]["gold_icon"] = Image("thune.png")
+    SYSTEM["images"]["mission_map"] = Image("mission.png").scale(1024, 1024)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
@@ -108,6 +116,10 @@ def init_game():
     SYSTEM["font_detail_small"] = pygame.font.SysFont('ressources/dogica.ttf', 20)
     SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
     SYSTEM["text_generator"] = TextGenerator()
+    SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
+    SYSTEM["images"]["city_icon"] = Image("icons/cybercity.png")
+    SYSTEM["images"]["sunrise_icon"] = Image("icons/sunrise.png")
+    SYSTEM["images"]["forest_icon"] = Image("icons/forest.png")
     generate_spell_list()
     #TODO: Offset this to the scene manager
     SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0])
@@ -275,10 +287,41 @@ def draw_bottom_bar():
     SYSTEM["images"]["button_options"].set(1170, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_options"].draw(SYSTEM["windows"])
 
-def draw_menu():
+def generate_random_level():
+    """Creates a random level."""
+    area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 0)
+    zone = random.randint(0, 3)
+    match zone:
+        case 0:
+            area = SYSTEM["sunrise"]
+            icon = SYSTEM["images"]["sunrise_icon"]
+            name = "Red mountain of Doom"
+        case 1:
+            area = SYSTEM["cybercity"]
+            icon = SYSTEM["images"]["city_icon"]
+            name = "City of the Night"
+        case 2:
+            area = SYSTEM["forest"]
+            icon = SYSTEM["images"]["forest_icon"]
+            name = "Forest of things"
+        case 3:
+            area = SYSTEM["mountains"]
+            icon = SYSTEM["images"]["mount_icon"]
+            name = "Above the sky"
+    level = Level(name, area_lvl, icon, 6000, area)
+    return level
+
+def draw_menu(levels, buttons):
     """Draws the main game menu."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["mission_map"].image, (200, 10))
+    buttons[0].set(350, 680).draw(SYSTEM["windows"])
+    buttons[1].set(860, 250).draw(SYSTEM["windows"])
+    buttons[2].set(900, 900).draw(SYSTEM["windows"])
+    buttons[3].set(478, 420).draw(SYSTEM["windows"])
     draw_small_card()
+    if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
+        SYSTEM["images"]["button_assault"].set(1700, 800).draw(SYSTEM["windows"])
     draw_bottom_bar()
     for events in pygame.event.get():
         if events.type == pygame.MOUSEBUTTONDOWN:
@@ -287,13 +330,25 @@ def draw_menu():
             SYSTEM["images"]["button_tree"].press(events.pos)
             SYSTEM["images"]["button_inventory"].press(events.pos)
             SYSTEM["images"]["button_options"].press(events.pos)
+            SYSTEM["images"]["button_assault"].press(events.pos)
+            buttons[0].press(events.pos)
+            buttons[1].press(events.pos)
+            buttons[2].press(events.pos)
+            buttons[3].press(events.pos)
 
 if __name__ == "__main__":
     init_game()
     init_timers()
-    SYSTEM["game_state"] = GAME_LEVEL
-    SYSTEM["level"] = Level("Test level", 0, None, 3000, SYSTEM["sunrise"])
+    SYSTEM["game_state"] = MENU_MAIN
+    #SYSTEM["level"] = Level("Test level", 0, None, 3000, SYSTEM["sunrise"])
     INTERNAL_COOLDOWN = 0
+    levels = []
+    buttons = []
+    for _ in range(4):
+        levels.append(generate_random_level())
+    for i in range(4):
+        butt = Button(levels[i].icon._uri, lambda:SYSTEM.__setitem__("selected", levels[i]), "")
+        buttons.append(butt)
     while SYSTEM["playing"]:
         SYSTEM["mouse"] = pygame.mouse.get_pos()
         keys = pygame.key.get_pressed()
@@ -311,7 +366,7 @@ if __name__ == "__main__":
         if SYSTEM["game_state"] == GAME_VICTORY:
             draw_victory()
         if SYSTEM["game_state"] == MENU_MAIN:
-            draw_menu()
+            draw_menu(levels, buttons)
 
         for events in pygame.event.get():
             if events.type == QUIT:
