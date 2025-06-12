@@ -175,7 +175,7 @@ class Creature:
             damage += dmga * (1 - res)
         if damage_source.is_crit:
             damage *= damage_source.crit_mult
-        damage -= self._stats["abs_res"].get_value()
+        damage -= self._stats["abs_def"].get_value()
         damage = max(damage, 0)
         self._stats["life"].modify(-damage)
         return round(damage, 2), damage_source.is_crit
@@ -343,13 +343,14 @@ class Creature:
         """Import a statblock and replace current
         stats with the block's."""
         for val in statblock:
+
             if val in self._stats:
                 self.stats[val] = statblock[val].clone()
 
     def scale(self, level: int):
         """Scales the creature to the given level."""
         for stat in self._stats:
-            stat.scale(level)
+            self._stats[stat].scale(level)
         self._level = level
         self._stats["life"].refill()
         self._stats["mana"].refill()

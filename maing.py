@@ -2,21 +2,16 @@ import random
 from time import sleep
 from data.constants import *
 from data.character import Character
-from data.Sprite import Sprite
 from data.projectile import Projectile
-from data.physics.hitbox import HitBox
-from data.physics.entity import Entity
-from data.creature import Creature
-from data.game.enemy import Enemy
-from data.slash import Slash
 from data.generator import Generator
 from data.image.animation import Animation
 from data.image.parallaxe import Parallaxe
 from data.image.image import Image
+from data.image.button import Button
 from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
 from data.game.level import Level
-from data.spell_list import *
+from data.spell_list import generate_spell_list
 
 SPEED = 4
 PLAYING = True
@@ -63,6 +58,17 @@ def init_game():
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
+    SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
+    SYSTEM["images"]["menu_button"] = Image("ui/button.png").scale(55, 280)
+    SYSTEM["images"]["button_quit"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("playing", False),\
+                                             "Quit Game").scale(55, 280)
+    SYSTEM["images"]["button_resume"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state", GAME_LEVEL),\
+                                             "Resume").scale(55, 280)
+    SYSTEM["images"]["button_abandon"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("playing", False),\
+                                             "DO NOTHING YET").scale(55, 280)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
@@ -78,15 +84,16 @@ def init_timers():
     pygame.time.set_timer(WAVE_TIMER, 2000)
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
-    pygame.time.set_timer(TICKER_TIMER, 16)
+    pygame.time.set_timer(TICKER_TIMER, 20)
 
-def game_loop():
+def game_loop(keys):
     """Main game loop."""
-    global PLAYING
     #Handle Events
     for events in pygame.event.get():
         if events.type == QUIT:
-            PLAYING = False
+            SYSTEM["playing"] = False
+        if events.type == WAVE_TIMER:
+            SYSTEM["level"].next_wave()
         if events.type == TICKER_TIMER:
             generate_grids()
             SYSTEM["player"].tick()
@@ -118,7 +125,6 @@ def game_loop():
                     TEXT_TRACKER.remove(txt)
             clean_grids()
     #Handle logic
-    keys = pygame.key.get_pressed()
     SYSTEM["player"].action(keys)
     #Handle printing on screen
     SYSTEM["windows"].blit(SYSTEM["background"].draw(), (0, 0))
@@ -130,30 +136,63 @@ def game_loop():
     for p in PROJECTILE_TRACKER:
         if isinstance(p, Generator):
             SYSTEM["windows"].blit(p.get_image(), p.get_pos())
-        elif (isinstance(p, Projectile)):
+        elif isinstance(p, Projectile):
             SYSTEM["windows"].blit(p.get_image(), p.get_pos())
     for s in SLASH_TRACKER:
         SYSTEM["windows"].blit(s.get_image(), s.get_pos())
     for txt in TEXT_TRACKER:
-        SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
+        SYSTEM["windows"].blit(txt[0], (txt[1], txt[2]))
     #Draw the UI
     draw_ui()
+    SYSTEM["latest_frame"] = SYSTEM["windows"].copy()
+
+def draw_pause():
+    """Draws the pause menu."""
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["latest_frame"], (0, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_button"].image, (x_offset + 200, y_offset + 100))
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_button"].image, (x_offset + 200, y_offset + 200))
+    SYSTEM["images"]["button_resume"].set(x_offset + 200, y_offset + 100)
+    SYSTEM["images"]["button_abandon"].set(x_offset + 200, y_offset + 200)
+    SYSTEM["images"]["button_quit"].set(x_offset + 200, y_offset + 300)
+    SYSTEM["images"]["button_resume"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_abandon"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_quit"].draw(SYSTEM["windows"])
+    for events in pygame.event.get():
+        if events.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_resume"].press(events.pos)
+            SYSTEM["images"]["button_abandon"].press(events.pos)
+            SYSTEM["images"]["button_quit"].press(events.pos)
 
 if __name__ == "__main__":
     init_game()
     init_timers()
     SYSTEM["game_state"] = GAME_LEVEL
-    SYSTEM["level"] = Level("Test level", 1, None, None)
+    SYSTEM["level"] = Level("Test level", 1, None, SYSTEM["background"])
+    INTERNAL_COOLDOWN = 0
 
-    while PLAYING:
+    while SYSTEM["playing"]:
+        keys = pygame.key.get_pressed()
+        if keys[K_ESCAPE]:
+            if INTERNAL_COOLDOWN <= 0:
+                INTERNAL_COOLDOWN = 0.2
+                if SYSTEM["game_state"] == GAME_LEVEL:
+                    SYSTEM["game_state"] = GAME_PAUSE
+                elif SYSTEM["game_state"] == GAME_PAUSE:
+                    SYSTEM["game_state"] = GAME_LEVEL
         if SYSTEM["game_state"] == GAME_LEVEL:
-            game_loop()
+            game_loop(keys)
         if SYSTEM["game_state"] == GAME_PAUSE:
-            pass
+            draw_pause()
 
         for events in pygame.event.get():
             if events.type == QUIT:
                 PLAYING = False
 
         pygame.display.update()
-        sleep(0.016)
+        INTERNAL_COOLDOWN -= 0.032
+        INTERNAL_COOLDOWN = max(INTERNAL_COOLDOWN, 0)
+        sleep(float(SYSTEM["options"]["fps"]))

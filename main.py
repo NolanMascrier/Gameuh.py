@@ -216,7 +216,6 @@ def init_game():
     SYSTEM["text_generator"] = TextGenerator()
 
 def game_loop(frame, boss, waves, paral, difficulty, boss_here):
-    global PLAYING
     generate_grids()
     destination = (1000, 1000)
     frame += 0.2
@@ -228,7 +227,7 @@ def game_loop(frame, boss, waves, paral, difficulty, boss_here):
 
     for event in pygame.event.get():
         if event.type == QUIT:
-            PLAYING = False
+            SYSTEM["playing"] = False
         if event.type == WAVE_TIMER:
             if waves > 0:
                 pygame.time.set_timer(WAVE_TIMER, 12000)
@@ -322,7 +321,7 @@ if __name__ == "__main__":
     frame = 0
     SYSTEM["game_state"] = GAME_LEVEL
 
-    while PLAYING:
+    while SYSTEM["playing"]:
         if SYSTEM["game_state"] == GAME_LEVEL:
             game_loop(frame, boss, waves, paral, difficulty, boss_here)
     pygame.quit()

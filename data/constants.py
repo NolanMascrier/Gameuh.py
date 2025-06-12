@@ -89,12 +89,15 @@ def change_language(lang):
     return langfile
 
 SYSTEM = {
+    "playing": True,
     "font": None,
     "font_crit": None,
     "text_generator": None,
     "options": {
         "screen_width": 1920,
         "screen_height": 1080,
+        "fps": 0.008,
+        "fps_selector": (0, 0.008, 0.016, 0.032),
         "resolutions": [(1138, 640), (1280, 720), (1600, 900), (1920, 1080)],
         "fullscreen": True,
         "vsync": 1,

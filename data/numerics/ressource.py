@@ -31,7 +31,10 @@ class Ressource(Stat):
             cap:float = -1, scaling_value:float = 1, mult_scaling = False):
         super().__init__(val, name, cap, scaling_value, mult_scaling)
         self._current_value = val
-        self._rate = refresh
+        if refresh is None:
+            self._rate = Stat(0, "refresh")
+        else:
+            self._rate = refresh
         self._buffs = []
         self._buffs_multi = []
 

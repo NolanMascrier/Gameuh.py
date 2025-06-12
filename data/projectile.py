@@ -22,8 +22,8 @@ class Projectile():
         self._speed = speed
         self._angle = angle
         if Flags.AIMED_AT_PLAYER in behaviours:
-            angle = 90 - atan2(SYSTEM["player.x"] - x,\
-                    SYSTEM["player.y"] - y.y) * 180 / pi
+            self._angle = 90 - atan2(SYSTEM["player.x"] - x,\
+                    SYSTEM["player.y"] - y) * 180 / pi
         self._length = len
         self._height = height
         self._damage = origin.recalculate_damage(damage)

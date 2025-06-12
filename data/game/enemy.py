@@ -117,9 +117,10 @@ class Enemy():
         for ability, weight in self._abilities:
             cumulative += weight
             if cumulative >= choice:
-                if not isinstance(ability, Spell):
+                if ability not in SYSTEM["spells"] or \
+                    not isinstance(SYSTEM["spells"][ability], Spell):
                     return
-                ability.cast(self._creature, self._entity, True, self._aim_right)
+                SYSTEM["spells"][ability].cast(self._creature, self._entity, True, self._aim_right)
 
     def get_image(self):
         """Returns the entity's image."""

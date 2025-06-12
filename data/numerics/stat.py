@@ -49,7 +49,7 @@ class Stat:
             final_incr += increase.value
         final_value = round((self._value + final_flats) * final_incr * final_mults, 4)
         if self._cap >= 0:
-            final_value = max(final_value, self._cap)
+            final_value = min(final_value, self._cap)
         return final_value
 
     def _handle_affliction_list(self, list_name, affliction):

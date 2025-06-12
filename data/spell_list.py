@@ -143,6 +143,7 @@ def generate_spell_list():
     firebolt_proj_img = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     icebolt_proj_img = Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     voidbolt_proj_img = Animation("pew.png", 13, 13, frame_rate=0.25)
+    darkbolt_img = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     furyslash_img = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(58, 40)
     furyslash_alt = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(87, 60).flip(False, True)
     firebolt = Spell("Firebolt", firebolt_icon, firebolt_proj_img, FIREBOLT, 2, cooldown=0.5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
@@ -152,7 +153,7 @@ def generate_spell_list():
     dash_basic = Spell("Wind dash", heal_icon, None, None, 5, distance=200, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
     furyslash = Spell("Fury Slash", fury_icon, furyslash_img, FURYSLASH, 5, 0, cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF], afflictions=[FURY])
     charge = Spell("Charge", fury_icon, furyslash_alt, CHARGE, flags=[Flags.MELEE])
-    voidbolt_enemy = Spell("Voidbolt", None, voidbolt_proj_img, DARKBOLT, projectiles=1, flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
+    voidbolt_enemy = Spell("Voidbolt", None, darkbolt_img, DARKBOLT, projectiles=1, flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["voidbolt"] = voidolt

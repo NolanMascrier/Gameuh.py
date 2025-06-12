@@ -18,8 +18,8 @@ VOIDLING = [
     "badguy",
     "Voidling",
     {
-            "life": Ressource(20, "Life", 0),
-            "mana": Ressource(10, "Mana", 0),
+            "life": Ressource(20, "Life"),
+            "mana": Ressource(10, "Mana"),
             "life_regen": Stat(0, "life_regen"),
             "mana_regen": Stat(0, "mana_regen"),
             "str": Stat(2, "Strength"),
@@ -45,8 +45,8 @@ VOIDSNIPER = [
     "badguy",
     "Void Sniper",
     {
-            "life": Ressource(10, "Life", 0),
-            "mana": Ressource(10, "Mana", 0),
+            "life": Ressource(10, "Life"),
+            "mana": Ressource(10, "Mana"),
             "life_regen": Stat(0, "life_regen"),
             "mana_regen": Stat(0, "mana_regen"),
             "str": Stat(2, "Strength"),
