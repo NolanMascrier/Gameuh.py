@@ -70,23 +70,11 @@ GAME_SHOP = 7
 GAME_INVENTORY = 8
 GAME_EQUIP = 9
 GAME_PAUSE = 10
-
-def change_language(lang):
-    """Changes the system's language.
-    
-    Args:
-        lang (str): Name of the language. Must correspond\
-        to a file in ressources/locales.
-    """
-    try:
-        with open(f"{ROOT}/locales/{lang}.json", mode = 'r',\
-                encoding="utf-8") as file:
-            data = file.read()
-            langfile = json.loads(data)
-    except FileNotFoundError:
-        print("File not found, language unchanged.")
-        langfile = None
-    return langfile
+GAME_VICTORY = 11
+MENU_GEAR = 12
+MENU_INVENTORY = 13
+MENU_OPTIONS_GAME = 14
+MENU_TREE = 15
 
 SYSTEM = {
     "playing": True,
@@ -102,9 +90,9 @@ SYSTEM = {
         "fullscreen": True,
         "vsync": 1,
         "lang_selec": "EN-en",
-        "lang": change_language("EN_us"),
         "show_hitboxes": False
     },
+    "lang": [],
     "game_state": None,
     "windows": None,
     "images": {
@@ -123,6 +111,23 @@ WAVE_TIMER = USEREVENT+4
 TICKER_TIMER = USEREVENT+5
 UPDATE_TIMER = USEREVENT+6
 
+def change_language(lang):
+    """Changes the system's language.
+    
+    Args:
+        lang (str): Name of the language. Must correspond\
+        to a file in ressources/locales.
+    """
+    try:
+        with open(f"{RESSOURCES}/locales/{lang}.json", mode = 'r',\
+                encoding="utf-8") as file:
+            data = file.read()
+            SYSTEM["lang"] = json.loads(data)
+    except FileNotFoundError:
+        print("File not found, language unchanged.")
+        SYSTEM["lang"] = None
+
+change_language("EN_us")
 
 class Flags(Enum):
     """Flags to use for skills and damage sources."""

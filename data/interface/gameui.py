@@ -9,6 +9,13 @@ UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2
 UI_SKILLS_INPUT_OFFSET = 48
 
+def draw_gold():
+    """Draws the gold and item counter."""
+    gold = SYSTEM["level"].gold
+    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (10, 10))
+    SYSTEM["windows"].blit(text, (80, 42))
+
 def draw_exp_bar():
     """Draws the EXP bar."""
     char = SYSTEM["player"]
@@ -42,8 +49,17 @@ def draw_life_mana():
     text_life = SYSTEM["font_crit"].render(life_buff, False, (0, 37, 97))
     text_mana = SYSTEM["font_crit"].render(mana_buff, False, (97, 0, 0))
 
-    SYSTEM["windows"].blit(text_life, (400, SCREEN_HEIGHT - 165))
-    SYSTEM["windows"].blit(text_mana, (SCREEN_WIDTH - 510, SCREEN_HEIGHT - 165))
+    life_size_img = SYSTEM["images"]["life_jauge"].get_image().get_size()
+    mana_size_img = SYSTEM["images"]["mana_jauge"].get_image().get_size()
+    life_size = text_life.get_size()
+    mana_size = text_mana.get_size()
+    life_center = (380 + life_size_img[0] / 2 - life_size[0] / 2,\
+                   SCREEN_HEIGHT - 200 + life_size_img[1] / 2 - life_size[1] / 2)
+    mana_center = (SCREEN_WIDTH - 524 + mana_size_img[0] / 2 - mana_size[0] / 2,\
+                   SCREEN_HEIGHT - 200 + mana_size_img[1] / 2 - mana_size[1] / 2)
+
+    SYSTEM["windows"].blit(text_life, life_center)
+    SYSTEM["windows"].blit(text_mana, mana_center)
 
 def draw_potions():
     """Draw the potions icons and use count."""
@@ -103,6 +119,7 @@ def draw_ui(boss_here = False, boss = None):
     draw_potions()
     draw_exp_bar()
     draw_skills()
+    draw_gold()
     #Boss life bar
     if boss_here:
         boss_name = SYSTEM["font_crit"].render(f'{boss.creature.name}',\

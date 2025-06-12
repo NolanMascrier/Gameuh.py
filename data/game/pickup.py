@@ -37,7 +37,25 @@ class PickUp():
         if Flags.EXPERIENCE in self._flags:
             return SYSTEM["images"]["exp_orb"].get_image()
         if Flags.GOLD in self._flags:
-            return None
+            if self._value < 5:
+                return SYSTEM["images"]["mini_moolah"].image
+            if self._value < 20:
+                return SYSTEM["images"]["moolah"].image
+            if self._value < 50:
+                return SYSTEM["images"]["big_moolah"].image
+            if self._value < 100:
+                return SYSTEM["images"]["super_moolah"].image
+            if self._value < 250:
+                return SYSTEM["images"]["mega_moolah"].image
+            if self._value < 500:
+                return SYSTEM["images"]["giga_moolah"].image
+            if self._value < 1000:
+                return SYSTEM["images"]["terra_moolah"].image
+            if self._value < 2500:
+                return SYSTEM["images"]["zeta_moolah"].image
+            if self._value < 5000:
+                return SYSTEM["images"]["supra_moolah"].image
+            return SYSTEM["images"]["maxi_moolah"].image
         if Flags.ITEM in self._flags:
             return None
         return None
@@ -81,8 +99,7 @@ class PickUp():
         if Flags.EXPERIENCE in self._flags:
             player.creature.grant_experience(self._value)
         if Flags.GOLD in self._flags:
-            pass #TODO
-            self.generate_text(0xFCA400)
+            SYSTEM["level"].gold += self._value
         if Flags.ITEM in self._flags:
             pass #TODO
         self._to_delete = True

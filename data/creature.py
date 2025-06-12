@@ -9,6 +9,7 @@ from data.numerics.affliction import Affliction
 from data.damage import Damage
 from data.constants import Flags, SYSTEM
 from data.item import Item
+from data.image.hoverable import Hoverable
 
 class Creature:
     """Defines a creature. A creature can be interacted with\
@@ -38,7 +39,7 @@ class Creature:
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense"),
             "heal_factor": Stat(1, "Healing Effectivness"),
-            "mana_efficiency": Stat(1, "Mana Efficiency", 0.05, 0),
+            "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0),
             "crit_rate": Stat(0.05, "Crit rate", 1, 0.001),
             "crit_dmg": Stat(1.5, "Crit Damage", scaling_value=0.02),
             "item_quant": Stat(0, "Item Quantity"),
@@ -354,6 +355,24 @@ class Creature:
         self._level = level
         self._stats["life"].refill()
         self._stats["mana"].refill()
+
+    def generate_stat_simple(self, x, y):
+        """Generates a simple report of the creature's data."""
+        lines = []
+        name = SYSTEM["font_detail"].render(f'{self._name}', False, (255, 255, 255))
+        SYSTEM["windows"].blit(name, (x, y))
+        life = Hoverable(x, y + 20, f"{self._stats['life'].get_value()}", SYSTEM["lang"]["life"])
+        mana = Hoverable(x + 150, y + 20, f"{self._stats['mana'].get_value()}",\
+                         SYSTEM["lang"]["mana"])
+        exp1 = Hoverable(x + 90, y + 45, f"Level : {self._level}", SYSTEM["lang"]["exp"])
+        exp2 = Hoverable(x + 70, y + 65, f"{self._exp}/{self._exp_to_next}", SYSTEM["lang"]["exp"])
+        lines.append(life)
+        lines.append(mana)
+        lines.extend([exp1, exp2])
+        return lines
+
+    def generate_stat_details(self):
+        """Generates a detailed report of the creature's data."""
 
     @property
     def name(self) -> str:

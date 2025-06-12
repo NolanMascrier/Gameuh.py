@@ -1,3 +1,123 @@
 {
-    "fire_dot": "Burning"
+    "fire_dot": "Burning",
+    "life": [
+        "HP represents the life of your character.",
+        "Should it fall to 0, your character will die",
+        "And you'll be sent back to the world map."
+    ],
+    "mana": [
+        "Mana represents the spirit of your character.",
+        "It is used to cast spells and launch attacks."
+    ],
+    "life_regen": [
+        "Life regen dictates how much life you recover",
+        "each tick (60 times a second)."
+    ],
+    "mana_regen": [
+        "Mana regen dictates how much mana you recover",
+        "each tick (60 times a second)."
+    ],
+    "str": [
+        "STR represents the strength of your character.",
+        "Strength will grant you more life and melee",
+        "damage."
+    ],
+    "dex": [
+        "DEX represents the dexterity of your character.",
+        "Dexterity will grant you more crit chance, crit",
+        "damage and ranged damage."
+    ],
+    "int": [
+        "INT represents the intelligence of your character.",
+        "Intelligence will grant you more mana and spell",
+        "damage."
+    ],
+    "def": [
+        "Endurance represents how well your character",
+        "reacts to damage. The higher your endurance, the",
+        "lower damage you'll take. It caps at 90% reduction."
+    ],
+    "exp_mult": [
+        "Experience multiplier represents how much more",
+        "exp your character will obtain with experience",
+        "orbs."
+    ],
+    "abs_def": [
+        "Absolute defense will reduce any incoming damage",
+        "by a flat amount."
+    ],
+    "heal_factor": [
+        "Heal factor represents how efficient healing is",
+        "on your character. It acts as a multiplier for any",
+        "healing ability."
+    ],
+    "mana_efficiency": [
+        "Mana efficiency represents how efficient your.",
+        "character is with spellcasting. The higher it is,",
+        "the lower the cost of abilities.."
+    ],
+    "crit_rate": [
+        "Crit rate is your chance to deal a critical hit.",
+        "It cannot exceed 100%. By default, your critical",
+        "damage is 150%."
+    ],
+    "crit_dmg": [
+        "Crit damage is the damage multiplier of your",
+        "Critical hits."
+    ],
+    "item_quant": [
+        "HP represents the life of your character.",
+        "Should it fall to 0, your character will die",
+        "And you'll be sent back to the world map."
+    ],
+    "item_qual": [
+        "HP represents the life of your character.",
+        "Should it fall to 0, your character will die",
+        "And you'll be sent back to the world map."
+    ],
+    "speed": [
+        "Speeds represents how fast your character can",
+        "fly and move around. Dash type abilities are",
+        "Also affected by your speed."
+    ],
+    "cast_speed": [
+        "Cast speed represents how fast your character",
+        "can launch attacks. The lower it is, the lower",
+        "Your cooldowns will be. Caps to 5%."
+    ],
+    "melee_dmg": [
+        "Melee damage is a damage modifier that affects",
+        "your physical attacks such as Furyslash.",
+        "It is affected by your Strength."
+    ],
+    "spell_dmg": [
+        "Spell damage is a damage modifier that affects",
+        "your spells such as Firebolt.",
+        "It is affected by your Intelligence."
+    ],
+    "ranged_dmg": [
+        "Ranged damage is a damage modifier that affects",
+        "your ranged attacks such as Shuriken.",
+        "It is affected by your Dexterity."
+    ],
+    "res": [
+        "Resistance reduce the damage taken from an elemental",
+        "attack. Elemetal types are Physical, Fire, Ice, Thunder,",
+        "Dark and Light. Caps to 90%. Resistances can be negatives."
+    ],
+    "dmg": [
+        "Elemental damage affects damage from said element.",
+        "Elemetal types are Physical, Fire, Ice, Thunder,",
+        "Dark and Light."
+    ],
+    "pen": [
+        "Elemental Penetration allows your attacks to ignore",
+        "an amount of the target's resistance. Caps to 100%."
+    ],
+    "exp": [
+        "Experience dictates the level of your character.",
+        "When you gain enough experience, your character levels up.",
+        "By leveling up, not only they fully heal, they also gain",
+        "a stat point and a tree point."
+    ]
 }

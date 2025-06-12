@@ -31,6 +31,7 @@ class Parallaxe(Animation):
             self._speeds = speeds
         self._diff_x = [0 for _ in range(len(self._sequence))]
         self._speed_factor = speed_factor
+        print(f'Opening file {uri}. Sequence has {len(self._sequence)} frames')
 
     def invert(self):
         """Flips the scrolling animation."""
@@ -41,19 +42,19 @@ class Parallaxe(Animation):
         surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         surface.blit(self._sequence[0].image, (0, 0))
         if self._scroll_left:
-            for i in range(4):
+            for i in range(len(self._sequence)):
                 self._diff_x[i] = (self._diff_x[i] + self._speeds[i] *\
                     self._speed_factor) % SCREEN_WIDTH
-            for layer in range(4):
+            for layer, image in enumerate(self._sequence):
                 for y in range(0, 2):
                     x = int((y * SCREEN_WIDTH) - self._diff_x[layer])
-                    surface.blit(self._sequence[layer + 1].image, (x, 0))
+                    surface.blit(image.image, (x, 0))
         else:
-            for i in range(4):
+            for i in range(len(self._sequence)):
                 self._diff_x[i] = (self._diff_x[i] - self._speeds[i] *\
                     self._speed_factor) % SCREEN_WIDTH
-            for layer in range(4):
+            for layer in range(len(self._sequence)):
                 for y in range(0, 2):
                     x = int((y * SCREEN_WIDTH) - self._diff_x[layer])
-                    surface.blit(self._sequence[layer + 1].image, (x, 0))
+                    surface.blit(self._sequence[layer].image, (x, 0))
         return surface

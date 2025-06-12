@@ -43,8 +43,8 @@ class Character():
         for _, skill in self._equipped_spells.items():
             if skill is not None:
                 skill.tick()
-        SYSTEM["player.x"] = self.x
-        SYSTEM["player.y"] = self.y
+        SYSTEM["player.x"] = self.hitbox.center[0]
+        SYSTEM["player.y"] = self.hitbox.center[1]
         for proj in PROJECTILE_GRID.query(self.hitbox):
             if isinstance(proj, Generator):
                 continue

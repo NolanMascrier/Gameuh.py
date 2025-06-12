@@ -16,7 +16,7 @@ class Enemy():
     """Defines an enemy, which associates an entity to a creature
     with set behaviours."""
     def __init__(self, entity: Entity, creature: Creature, abilities, power = 1,\
-                timer = 2, exp_value = 10, behaviours = None):
+                timer = 2, exp_value = 10, gold_value = 10, behaviours = None):
         self._entity = entity
         self._creature = creature
         if behaviours is None:
@@ -27,6 +27,7 @@ class Enemy():
         self._power = power
         self._counter = 0
         self._abilities = abilities
+        self._gold_value = gold_value
         self._exp_value = exp_value
         self._exploded = False
         self._immune = []
@@ -52,6 +53,15 @@ class Enemy():
             y = self.y + 60
             pu = PickUp(x, y, 1, flags=[Flags.EXPERIENCE], speed_mod=2.5)
             POWER_UP_TRACKER.append(pu)
+        gold_left = self._gold_value
+        denominations = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
+        for value in denominations:
+            while gold_left >= value:
+                x = self.x + random.randint(-20, 20)
+                y = self.y + random.randint(-20, 20)
+                pu = PickUp(x, y, value, flags=[Flags.GOLD], speed_mod=2.5)
+                POWER_UP_TRACKER.append(pu)
+                gold_left -= value
         self._exploded = True
 
     def distance_to_player(self, player):

@@ -6,7 +6,7 @@ Only waves for now."""
 import random
 import pygame
 from data.creature import Creature
-from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM
+from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM, GAME_VICTORY
 from data.game.enemy import Enemy
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
@@ -34,6 +34,8 @@ class Level():
         else:
             self._flags = flags
         self._wave_timer = wave_timer
+        self._gold = 0
+        self._loot = []
 
     def generate_enemy(self, reference: list, level:int):
         """Creates a single enemy."""
@@ -42,18 +44,22 @@ class Level():
         img = SYSTEM["images"][reference[0]]
         hb = HitBox(SCREEN_WIDTH - 100, y_pos, img.width, img.height)
         ent = Entity(SCREEN_WIDTH - 100, y_pos, img, hb)
+        exp_value = random.randint(int(reference[5]*(level + 1) *0.9),\
+                                   int(reference[5]*(level + 1) * 1.1))
+        gold_value = random.randint(int(reference[6]*(level + 1) *0.9),\
+                                    int(reference[6]*(level + 1) * 1.1))
         crea = Creature(reference[1])
         crea.import_stackblock(reference[2])
         #TODO: append the modifiers from the level to the creature
         crea.scale(level)
         enemy = Enemy(ent, crea, reference[7], behaviours=enemy_type,\
-            timer=1, exp_value=reference[5]*level)
+            timer=1, exp_value=exp_value, gold_value=gold_value)
         return enemy
 
     def summon_wave(self, level:int, wave:int):
         """Summons a wave of monsters."""
-        min_monsters = (2 + random.randint(0, 3)) * wave
-        max_monsters = (6 + random.randint(0, 3)) * wave
+        min_monsters = (1 + random.randint(0, 3)) * wave
+        max_monsters = (4 + random.randint(0, 3)) * wave
         monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
         for _ in range(monsters):
             #TODO: Actual random choice of monster depending on zone
@@ -63,7 +69,7 @@ class Level():
 
     def start(self):
         """Starts the level."""
-        pygame.time.set_timer(WAVE_TIMER, 5000)
+        pygame.time.set_timer(WAVE_TIMER, self._wave_timer)
         self.summon_wave(self._area_level, self._current_wave)
         self._current_wave += 1
 
@@ -74,7 +80,9 @@ class Level():
             self.start()
             return
         if self._current_wave > self._waves:
-            self._finished = True
+            if len(ENNEMY_TRACKER) <= 0:
+                self._finished = True
+                SYSTEM["game_state"] = GAME_VICTORY
             return
         self.summon_wave(self._area_level, self._current_wave)
         self._current_wave += 1
@@ -132,3 +140,21 @@ class Level():
     @current_wave.setter
     def current_wave(self, value):
         self._current_wave = value
+
+    @property
+    def gold(self):
+        """Returns the amount of gold gained during this level."""
+        return self._gold
+
+    @gold.setter
+    def gold(self, value):
+        self._gold = value
+
+    @property
+    def loot(self):
+        """Returns the loot gained during this level."""
+        return self._loot
+
+    @loot.setter
+    def loot(self, value):
+        self._loot = value
