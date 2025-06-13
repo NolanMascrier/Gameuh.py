@@ -185,6 +185,12 @@ class Stat:
         )
         return copy
 
+    def reset(self):
+        """Resets the stat."""
+        self._incr.clear()
+        self._mults.clear()
+        self._flats.clear()
+
     @property
     def value(self) -> float:
         """Returns the current value of the stat."""

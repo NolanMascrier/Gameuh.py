@@ -1,6 +1,8 @@
 """An affliction is a debuff or a buff. It has
 a name, a value, a duration, flags."""
 
+from data.constants import SYSTEM
+
 class Affliction():
     """Defines an affliction. An affliction is a temporary \
     stat modifier.
@@ -43,7 +45,7 @@ class Affliction():
         """Ticks down the timer.
         """
         if self._duration >= 0:
-            self._duration -= 0.016
+            self._duration -= float(SYSTEM["options"]["fps"])
 
     def clone(self):
         """Returns a copy of the affliction."""

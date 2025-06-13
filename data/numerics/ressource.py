@@ -121,6 +121,13 @@ class Ressource(Stat):
         )
         return copy
 
+    def reset(self):
+        """Resets the stat."""
+        super().reset()
+        self._buffs.clear()
+        self._buffs_multi.clear()
+        self.refill()
+
     @property
     def current_value(self) -> float:
         """Returns the current value of the ressource, ie the one \

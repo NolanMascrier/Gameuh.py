@@ -34,12 +34,21 @@ class Character():
         """Returns the character current image."""
         return self._entity.get_image()
 
+    def reset(self):
+        """Resets the character."""
+        self._creature.reset()
+        self._entity.reset()
+        self._potions = [3, 3]
+        self._cooldown = 0
+        for spell in self._equipped_spells:
+            self._equipped_spells[spell].reset()
+
     def tick(self):
         """Ticks down the character."""
         self._creature.tick()
         self._entity.tick(self, self._base_speed)
         if self._cooldown > 0:
-            self._cooldown -= 0.016
+            self._cooldown -= float(SYSTEM["options"]["fps"])
         for _, skill in self._equipped_spells.items():
             if skill is not None:
                 skill.tick()

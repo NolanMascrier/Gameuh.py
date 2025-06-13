@@ -76,7 +76,7 @@ class Projectile():
                 if self._caster is not None:
                     self.x = self._caster.x + self._offset[0]
                     self.y = self._caster.y + self._offset[1]
-                self._delay -= 0.016
+                self._delay -= float(SYSTEM["options"]["fps"])
                 return
         angle = radians(self._angle)
         self._box.move((self._x, self._y))

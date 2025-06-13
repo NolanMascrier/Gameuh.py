@@ -2,10 +2,8 @@ import random
 from time import sleep
 from data.constants import *
 from data.character import Character
-from data.projectile import Projectile
 from data.generator import Generator
 from data.image.animation import Animation
-from data.image.hoverable import Hoverable
 from data.image.parallaxe import Parallaxe
 from data.image.image import Image
 from data.image.button import Button
@@ -24,6 +22,11 @@ def start_level():
     """Starts the level stored in the SYSTEM."""
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["game_state"] = GAME_LEVEL
+
+def quit_level():
+    """Quits the current level and resets the player."""
+    SYSTEM["game_state"] = MENU_MAIN
+    reset()
 
 def init_game():
     """Loads the basic data for the game."""
@@ -73,10 +76,10 @@ def init_game():
                                              lambda : SYSTEM.__setitem__("game_state", GAME_LEVEL),\
                                              "Resume").scale(55, 280)
     SYSTEM["images"]["button_abandon"] = Button("ui/button.png",\
-                                             lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
+                                             quit_level,\
                                              "Abandon mission").scale(55, 280)
     SYSTEM["images"]["button_continue"] = Button("ui/button.png",\
-                                             lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
+                                             quit_level,\
                                              "Return to base").scale(55, 280)
     SYSTEM["images"]["button_map"] = Button("ui/button.png",\
                                              lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
@@ -99,7 +102,7 @@ def init_game():
     SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
     SYSTEM["images"]["mini_moolah"] = Image("minifric.png")
     SYSTEM["images"]["moolah"] = Image("fric.png")
-    SYSTEM["images"]["big_moolah"] = Image("superminifric.png")
+    SYSTEM["images"]["big_moolah"] = Image("minisuperfric.png")
     SYSTEM["images"]["super_moolah"] = Image("superfric.png")
     SYSTEM["images"]["mega_moolah"] = Image("megaminifric.png").scale(64, 64)
     SYSTEM["images"]["giga_moolah"] = Image("maximinifric.png").scale(64, 64)
@@ -122,20 +125,85 @@ def init_game():
     SYSTEM["images"]["forest_icon"] = Image("icons/forest.png")
     generate_spell_list()
     #TODO: Offset this to the scene manager
-    SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0])
+    SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0, 2])
     SYSTEM["city_back"] = Parallaxe("city.png", 576, 324, speeds = [0.1, 0.0])
-    SYSTEM["mount"] = Parallaxe("icemount.png", 360, 189, speeds = [0.2, 0.6, 1.0, 2.0, 1, 2.5, 3])
+    SYSTEM["mount"] = Parallaxe("icemount.png", 360, 189, speeds = [0.2, 0.6, 1.0, 2.0, 1, 2.5, 3, 3])
     SYSTEM["cybercity"] = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
-    SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2])
-    SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240, speeds = [0.0, 0.1, 0.2, 0.9, 1.0, 1.5], scroll_left=False)
+    SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2, 2])
+    SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240, speeds = [0.0, 0.1, 0.2, 0.9, 1.0, 1.5, 1.5], scroll_left=False)
     SYSTEM["player"] = Character(imagefile=Animation("witch.png", 64, 64, frame_rate = 0.25))
+
+def reset():
+    """Resets the game's status"""
+    SYSTEM["selected"] = None
+    SYSTEM["player"].reset()
+    ENNEMY_TRACKER.clear()
+    PROJECTILE_TRACKER.clear()
+    POWER_UP_TRACKER.clear()
+    SLASH_TRACKER.clear()
+    TEXT_TRACKER.clear()
+    pygame.time.set_timer(WAVE_TIMER, 1000)
 
 def init_timers():
     """Inits Pygame's timers."""
-    pygame.time.set_timer(WAVE_TIMER, 2000)
+    pygame.time.set_timer(WAVE_TIMER, 1000)
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
     pygame.time.set_timer(TICKER_TIMER, 20)
+
+def draw_game(show_player = True, show_enemies = True,\
+    show_loot = True, show_projectiles = True, show_slashes = True,\
+    show_text = True):
+    """Draws the main game component."""
+    if show_player:
+        SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
+    if show_loot:
+        for bubble in POWER_UP_TRACKER:
+            SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
+    if show_enemies:
+        for baddie in ENNEMY_TRACKER:
+            SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
+    if show_projectiles:
+        for p in PROJECTILE_TRACKER:
+            SYSTEM["windows"].blit(p.get_image(), p.get_pos())
+    if show_slashes:
+        for s in SLASH_TRACKER:
+            SYSTEM["windows"].blit(s.get_image(), s.get_pos())
+    if show_text:
+        for txt in TEXT_TRACKER:
+            SYSTEM["windows"].blit(txt[0], (txt[1], txt[2]))
+
+def tick():
+    """Ticks all there is to tick."""
+    generate_grids()
+    SYSTEM["player"].tick()
+    for bubble in POWER_UP_TRACKER.copy():
+        bubble.tick(SYSTEM["player"])
+        if bubble.flagged_for_deletion:
+            POWER_UP_TRACKER.remove(bubble)
+    for baddie in ENNEMY_TRACKER.copy():
+        baddie.tick(SYSTEM["player"])
+        if baddie.destroyed:
+            ENNEMY_TRACKER.remove(baddie)
+    for p in PROJECTILE_TRACKER.copy():
+        if isinstance(p, Generator):
+            p.tick(SYSTEM["player"])
+            continue
+        p.tick()
+        if p.can_be_destroyed():
+            PROJECTILE_TRACKER.remove(p)
+    for s in SLASH_TRACKER.copy():
+        s.tick()
+        if s.finished:
+            SLASH_TRACKER.remove(s)
+    for txt in TEXT_TRACKER.copy():
+        sfc = txt[0]
+        sfc.set_alpha(txt[3])
+        txt[3] -= 5
+        txt[2] -= 3
+        if txt[3] < 10:
+            TEXT_TRACKER.remove(txt)
+    clean_grids()
 
 def game_loop(keys):
     """Main game loop."""
@@ -146,55 +214,16 @@ def game_loop(keys):
         if events.type == WAVE_TIMER:
             SYSTEM["level"].next_wave()
         if events.type == TICKER_TIMER:
-            generate_grids()
-            SYSTEM["player"].tick()
-            for bubble in POWER_UP_TRACKER.copy():
-                bubble.tick(SYSTEM["player"])
-                if bubble.flagged_for_deletion:
-                    POWER_UP_TRACKER.remove(bubble)
-            for baddie in ENNEMY_TRACKER.copy():
-                baddie.tick(SYSTEM["player"])
-                if baddie.destroyed:
-                    ENNEMY_TRACKER.remove(baddie)
-            for p in PROJECTILE_TRACKER.copy():
-                if isinstance(p, Generator):
-                    p.tick(SYSTEM["player"])
-                    continue
-                p.tick()
-                if p.can_be_destroyed():
-                    PROJECTILE_TRACKER.remove(p)
-            for s in SLASH_TRACKER.copy():
-                s.tick()
-                if s.finished:
-                    SLASH_TRACKER.remove(s)
-            for txt in TEXT_TRACKER.copy():
-                sfc = txt[0]
-                sfc.set_alpha(txt[3])
-                txt[3] -= 5
-                txt[2] -= 3
-                if txt[3] < 10:
-                    TEXT_TRACKER.remove(txt)
-            clean_grids()
+            tick()
     SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
     #Handle logic
     SYSTEM["player"].action(keys)
     #Handle printing on screen
-    SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
-    for bubble in POWER_UP_TRACKER:
-        SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
-    for baddie in ENNEMY_TRACKER:
-        SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
-    for p in PROJECTILE_TRACKER:
-        if isinstance(p, Generator):
-            SYSTEM["windows"].blit(p.get_image(), p.get_pos())
-        elif isinstance(p, Projectile):
-            SYSTEM["windows"].blit(p.get_image(), p.get_pos())
-    for s in SLASH_TRACKER:
-        SYSTEM["windows"].blit(s.get_image(), s.get_pos())
-    for txt in TEXT_TRACKER:
-        SYSTEM["windows"].blit(txt[0], (txt[1], txt[2]))
+    draw_game()
     #Draw the UI
     draw_ui()
+    if SYSTEM["player"].creature.stats["life"].current_value <= 0:
+        SYSTEM["game_state"] = GAME_DEATH
     SYSTEM["latest_frame"] = SYSTEM["windows"].copy()
 
 def draw_victory():
@@ -231,8 +260,55 @@ def draw_victory():
                     TEXT_TRACKER.remove(txt)
             clean_grids()
     SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
-    for bubble in POWER_UP_TRACKER:
-        SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
+    draw_game()
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["images"]["button_continue"].set(x_offset + 200, y_offset + 300)
+    SYSTEM["images"]["button_continue"].draw(SYSTEM["windows"])
+    gold = SYSTEM["level"].gold
+    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
+    SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
+    for events in pygame.event.get():
+        if events.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_continue"].press(events.pos)
+
+def draw_game_over():
+    """Draws the defeat screen."""
+    for events in pygame.event.get():
+        if events.type == TICKER_TIMER:
+            generate_grids()
+            SYSTEM["player"].tick()
+            for bubble in POWER_UP_TRACKER.copy():
+                bubble.tick(SYSTEM["player"])
+                if bubble.flagged_for_deletion:
+                    POWER_UP_TRACKER.remove(bubble)
+            for baddie in ENNEMY_TRACKER.copy():
+                baddie.tick(SYSTEM["player"])
+                if baddie.destroyed:
+                    ENNEMY_TRACKER.remove(baddie)
+            for p in PROJECTILE_TRACKER.copy():
+                if isinstance(p, Generator):
+                    p.tick(SYSTEM["player"])
+                    continue
+                p.tick()
+                if p.can_be_destroyed():
+                    PROJECTILE_TRACKER.remove(p)
+            for s in SLASH_TRACKER.copy():
+                s.tick()
+                if s.finished:
+                    SLASH_TRACKER.remove(s)
+            for txt in TEXT_TRACKER.copy():
+                sfc = txt[0]
+                sfc.set_alpha(txt[3])
+                txt[3] -= 5
+                txt[2] -= 3
+                if txt[3] < 10:
+                    TEXT_TRACKER.remove(txt)
+            clean_grids()
+    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    draw_game(False)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
     SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
@@ -321,7 +397,15 @@ def draw_menu(levels, buttons):
     buttons[3].set(478, 420).draw(SYSTEM["windows"])
     draw_small_card()
     if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
-        SYSTEM["images"]["button_assault"].set(1700, 800).draw(SYSTEM["windows"])
+        name = SYSTEM["font_detail"].render(f'{SYSTEM["selected"].name}',\
+            False, (255, 255, 255))
+        lvl = SYSTEM["font_detail"].render(f'Area level: {SYSTEM["selected"].area_level}',\
+            False, (255, 255, 255))
+        #TODO: modifiers ...
+        SYSTEM["windows"].blit(name, (1500, 750))
+        SYSTEM["windows"].blit(lvl, (1500, 775))
+        SYSTEM["images"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
+        SYSTEM["windows"].blit(SYSTEM["selected"].icon.image, (1500, 800))
     draw_bottom_bar()
     for events in pygame.event.get():
         if events.type == pygame.MOUSEBUTTONDOWN:
@@ -340,14 +424,14 @@ if __name__ == "__main__":
     init_game()
     init_timers()
     SYSTEM["game_state"] = MENU_MAIN
-    #SYSTEM["level"] = Level("Test level", 0, None, 3000, SYSTEM["sunrise"])
     INTERNAL_COOLDOWN = 0
     levels = []
     buttons = []
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
-        butt = Button(levels[i].icon._uri, lambda:SYSTEM.__setitem__("selected", levels[i]), "")
+        butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
+                                             levels[i]))
         buttons.append(butt)
     while SYSTEM["playing"]:
         SYSTEM["mouse"] = pygame.mouse.get_pos()
@@ -365,6 +449,8 @@ if __name__ == "__main__":
             draw_pause()
         if SYSTEM["game_state"] == GAME_VICTORY:
             draw_victory()
+        if SYSTEM["game_state"] == GAME_DEATH:
+            draw_game_over()
         if SYSTEM["game_state"] == MENU_MAIN:
             draw_menu(levels, buttons)
 

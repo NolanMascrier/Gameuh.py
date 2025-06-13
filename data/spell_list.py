@@ -52,9 +52,13 @@ class Spell():
             self._afflictions = afflictions
 
     def tick(self):
-        self._cooldown -= 0.016
-        if self._cooldown <= 0:
-            self._cooldown = 0
+        """Ticks down the spell's cooldown."""
+        self._cooldown -= float(SYSTEM["options"]["fps"])
+        self._cooldown = max(self._cooldown, 0)
+
+    def reset(self):
+        """Resets the spell's data."""
+        self._cooldown = 0
 
     def cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True):
         """Shoots the spell."""

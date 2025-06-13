@@ -71,6 +71,7 @@ GAME_INVENTORY = 8
 GAME_EQUIP = 9
 GAME_PAUSE = 10
 GAME_VICTORY = 11
+GAME_DEATH = 111
 MENU_GEAR = 12
 MENU_INVENTORY = 13
 MENU_OPTIONS_GAME = 14
@@ -84,12 +85,13 @@ SYSTEM = {
     "options": {
         "screen_width": 1920,
         "screen_height": 1080,
-        "fps": 0.008,
+        "fps": 0.016,
         "fps_selector": (0, 0.008, 0.016, 0.032),
         "resolutions": [(1138, 640), (1280, 720), (1600, 900), (1920, 1080)],
         "fullscreen": True,
         "vsync": 1,
-        "lang_selec": "EN-en",
+        "lang_selec": "EN_us",
+        "langs": ["EN_us", "FR_fr"],
         "show_hitboxes": False
     },
     "lang": [],

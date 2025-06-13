@@ -25,8 +25,8 @@ class Creature:
         life_regen = Stat(0, "life_regen")
         mana_regen = Stat(0.001, "life_regen")
         self._stats = {
-            "life": Ressource(100, "Life", life_regen),
-            "mana": Ressource(50, "Mana", mana_regen),
+            "life": Ressource(90, "Life", life_regen),
+            "mana": Ressource(40, "Mana", mana_regen),
 
             "life_regen": life_regen,
             "mana_regen": mana_regen,
@@ -37,7 +37,7 @@ class Creature:
             "def": Stat(0, "Endurance"),
 
             "exp_mult": Stat(1, "Exp Multiplier"),
-            "abs_def": Stat(0, "Absolute Defense"),
+            "abs_def": Stat(0, "Absolute Defense", scaling_value=0.01),
             "heal_factor": Stat(1, "Healing Effectivness"),
             "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0),
             "crit_rate": Stat(0.05, "Crit rate", 1, 0.001),
@@ -92,6 +92,10 @@ class Creature:
         }
         self._buffs = []
         self._ap = 0
+        self.__get_bonuses_from_stat()
+        self._stats["life"].refill()
+        self._stats["mana"].refill()
+        
 
     def recalculate_damage(self, damage_source: Damage) -> Damage:
         """Takes a raw damage source (ie from a spell) and applies the creature's
@@ -137,7 +141,7 @@ class Creature:
         DEX gives crit chance and ranged damage.
         """
         hp = round(self._stats["str"].get_value())
-        mp = round(self._stats["mana"].get_value())
+        mp = round(self._stats["int"].get_value())
         crit = self._stats["dex"].get_value() * 0.001
         melee = self._stats["str"].get_value() * 0.01
         spell = self._stats["mana"].get_value() * 0.01
@@ -278,9 +282,11 @@ class Creature:
         """
         final_amount = self._stats["exp_mult"].value * amount
         self._exp += final_amount
+        self._exp = round(self._exp)
         while self._exp >= self._exp_to_next:
             self._exp -= self._exp_to_next
             self._exp_to_next *= 1.35
+            self._exp_to_next = round(self._exp_to_next)
             self._level += 1
             self.on_level_up()
 
@@ -373,6 +379,24 @@ class Creature:
 
     def generate_stat_details(self):
         """Generates a detailed report of the creature's data."""
+        #TODO
+
+    def reset(self):
+        """Resets the creature data."""
+        for stat in self._stats:
+            self._stats[stat].reset()
+        self.__get_bonuses_from_stat()
+        for gear in self._gear:
+            if isinstance(self._gear[gear], dict):
+                for gearr in self._gear[gear]:
+                    if self._gear[gear][gearr] is not None:
+                        for affix in self._gear[gear][gearr].affixes:
+                            self.afflict(affix.as_affliction())
+            else:
+                if self._gear[gear] is not None:
+                    for affix in self._gear[gear].affixes:
+                        self.afflict(affix.as_affliction())
+                
 
     @property
     def name(self) -> str:

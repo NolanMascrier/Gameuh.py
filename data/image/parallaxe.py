@@ -31,7 +31,6 @@ class Parallaxe(Animation):
             self._speeds = speeds
         self._diff_x = [0 for _ in range(len(self._sequence))]
         self._speed_factor = speed_factor
-        print(f'Opening file {uri}. Sequence has {len(self._sequence)} frames')
 
     def invert(self):
         """Flips the scrolling animation."""

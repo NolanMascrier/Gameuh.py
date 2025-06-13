@@ -21,6 +21,8 @@ class Entity():
     def __init__(self, x, y, imagefile: Animation, hitbox, move_speed = 1):
         self._x = x
         self._y = y
+        self._x_def = x
+        self._y_def = y
         self._image = imagefile.clone()
         self._hitbox = hitbox
         self._move_speed = move_speed
@@ -32,6 +34,14 @@ class Entity():
         to be overriden."""
         self._image.tick()
         self._move_speed = character.creature.stats["speed"].c_value * speed_mod
+
+    def reset(self):
+        """Resets the entity."""
+        self._x = self._x_def
+        self._y = self._y_def
+        self._keys = []
+        self._flipped = False
+        self._hitbox.move_center(self.center)
 
     def get_image(self):
         """Returns the current image."""

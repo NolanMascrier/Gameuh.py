@@ -75,7 +75,7 @@ class Enemy():
         if self._creature.stats["life"].current_value <= 0:
             self.explode()
             return
-        self._counter += 0.016
+        self._counter += float(SYSTEM["options"]["fps"])
         self._entity.tick(self)
         self._creature.tick()
         if Flags.CHASER in self._behaviours:

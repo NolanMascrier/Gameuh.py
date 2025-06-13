@@ -32,8 +32,8 @@ class Generator():
     def tick(self, player):
         self._frame += 0.1
         if self._ready:
-            self._tock += 0.016
-            self._duration -= 0.016
+            self._tock += float(SYSTEM["options"]["fps"])
+            self._duration -= float(SYSTEM["options"]["fps"])
             while self._tock >= self._delay:
                 proj = Projectile(self._x - 16, self._y + 8, 180, self._proj_img,\
                                 VOIDBOLT, self._caster, True, clone_image=False)

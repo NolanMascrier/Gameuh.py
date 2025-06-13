@@ -12,16 +12,22 @@ class Image():
         uri (str): URI pointing to the image in /ressources/"""
     def __init__(self, uri = None):
         self._uri = uri
-        if isinstance(uri, Image):
-            print("dodoko")
+        if uri is None:
+            self._image = None
+        elif isinstance(uri, Image):
             self._image = uri.clone()
         else:
             try:
                 self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
             except FileNotFoundError:
+                print(f"Couldn't find file {uri}. Using default image.")
                 self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
-        self._width = self._image.get_width()
-        self._height = self._image.get_height()
+        if uri is None:
+            self._width = 0
+            self._height = 0
+        else:
+            self._width = self._image.get_width()
+            self._height = self._image.get_height()
         self._visible = True
 
     def rotate(self, deg: float):
@@ -68,7 +74,7 @@ class Image():
             width (int): width of the subimage.
             height (int): height of the subimage.
         """
-        subsurface = Image(None)
+        subsurface = Image()
         subsurface.image = self._image.subsurface((x, y, width, height))
         subsurface.width = width
         subsurface.height = height
