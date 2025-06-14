@@ -80,6 +80,14 @@ class Image():
         subsurface.height = height
         return subsurface
 
+    def opacity(self, opacity:int):
+        """Sets the opacity of the image."""
+        opacity = max(opacity, 0)
+        opacity = min(opacity, 255)
+        if self._image.get_alpha() != opacity:
+            self._image.set_alpha(opacity)
+        return self
+
     def clone(self):
         """Returns a deep copy of the image."""
         return Image(self._uri)

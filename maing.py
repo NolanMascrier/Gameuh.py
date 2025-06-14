@@ -11,6 +11,8 @@ from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
 from data.game.level import Level
 from data.spell_list import generate_spell_list
+from data.image.slot import Slot
+from data.image.draggable import Draggable
 
 SPEED = 4
 PLAYING = True
@@ -58,6 +60,7 @@ def init_game():
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
+    SYSTEM["images"]["slot_empty"] = Image("ui/item_top.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png").image
     SYSTEM["images"][K_e] = Image("ui/kb_e.png").image
@@ -427,6 +430,12 @@ if __name__ == "__main__":
     INTERNAL_COOLDOWN = 0
     levels = []
     buttons = []
+    defa = Draggable("thune.png", 200, 200).scale(64, 64)
+    slots = [
+        Slot(100, 100),
+        Slot(200, 100)
+    ]
+    slots[0].insert(defa)
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
@@ -435,6 +444,7 @@ if __name__ == "__main__":
         buttons.append(butt)
     while SYSTEM["playing"]:
         SYSTEM["mouse"] = pygame.mouse.get_pos()
+        SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
         keys = pygame.key.get_pressed()
         if keys[K_ESCAPE]:
             if INTERNAL_COOLDOWN <= 0:
@@ -453,6 +463,16 @@ if __name__ == "__main__":
             draw_game_over()
         if SYSTEM["game_state"] == MENU_MAIN:
             draw_menu(levels, buttons)
+
+        defa.tick()
+        if not SYSTEM["mouse_click"][0]:
+            for slot in slots:
+                if slot.try_insert(defa):
+                    break
+
+        defa.draw()
+        for slot in slots:
+            slot.draw()
 
         for events in pygame.event.get():
             if events.type == QUIT:
