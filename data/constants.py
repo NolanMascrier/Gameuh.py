@@ -74,6 +74,13 @@ GAME_VICTORY = 11
 GAME_DEATH = 111
 MENU_GEAR = 12
 MENU_INVENTORY = 13
+MENU_SPELLBOOK = 131
+MENU_SPELLBOOK_Q = 1311
+MENU_SPELLBOOK_E = 1312
+MENU_SPELLBOOK_F = 1313
+MENU_SPELLBOOK_R = 1314
+MENU_SPELLBOOK_T = 1315
+MENU_SPELLBOOK_SHIFT = 1316
 MENU_OPTIONS_GAME = 14
 MENU_TREE = 15
 
@@ -105,11 +112,20 @@ SYSTEM = {
     "spells": {
 
     },
+    "ui": {},
     "player": None,
     "level": None,
     "selected": None,
-    "dragged": None
+    "dragged": None,
+    "pop-up": None
 }
+
+def trad(keys):
+    """Returns the translation data for the given key."""
+    try:
+        return SYSTEM["lang"][keys]
+    except KeyError:
+        return ["Unknown text data."]
 
 WAVE_TIMER = USEREVENT+4
 TICKER_TIMER = USEREVENT+5

@@ -11,9 +11,9 @@ from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
 from data.game.level import Level
 from data.spell_list import generate_spell_list
-from data.image.draggable import Draggable
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
+from data.item import Item
 
 SPEED = 4
 PLAYING = True
@@ -31,6 +31,29 @@ def quit_level():
     """Quits the current level and resets the player."""
     SYSTEM["game_state"] = MENU_MAIN
     reset()
+
+def open_gear_screen():
+    """Sets up the gear screen."""
+    SYSTEM["game_state"] = MENU_GEAR
+    x = SCREEN_WIDTH / 2- 32
+    y = SCREEN_HEIGHT / 2 - 128
+    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm")
+    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet")
+    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor")
+    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon")
+    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring")
+    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring")
+    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand")
+    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands")
+    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic")
+    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt")
+    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots")
+    data = []
+    for item in SYSTEM["player"].inventory:
+        if isinstance(item, Item):
+            if Flags.GEAR in item.flags:
+                data.append(item)
+    SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
 
 def init_game():
     """Loads the basic data for the game."""
@@ -90,8 +113,11 @@ def init_game():
                                              lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
                                              "World Map").scale(55, 280)
     SYSTEM["images"]["button_gear"] = Button("ui/button.png",\
-                                             lambda : SYSTEM.__setitem__("game_state", MENU_GEAR),\
+                                             open_gear_screen,\
                                              "Gear").scale(55, 280)
+    SYSTEM["images"]["button_spells"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state", MENU_SPELLBOOK),\
+                                             "Spellbook").scale(55, 280)
     SYSTEM["images"]["button_tree"] = Button("ui/button.png",\
                                              lambda : SYSTEM.__setitem__("game_state", MENU_TREE),\
                                              "Skill Tree").scale(55, 280)
@@ -104,6 +130,7 @@ def init_game():
     SYSTEM["images"]["button_assault"] = Button("ui/button.png",\
                                              start_level, "Begin the assault !").scale(55, 280)
     SYSTEM["images"]["char_details"] = Image("ui/char_back.png").scale(1050, 376)
+    SYSTEM["images"]["panel_back"] = Image("ui/char_back.png").scale(1024, 448)
     SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
     SYSTEM["images"]["mini_moolah"] = Image("minifric.png")
     SYSTEM["images"]["moolah"] = Image("fric.png")
@@ -118,6 +145,16 @@ def init_game():
     SYSTEM["images"]["gold_icon"] = Image("thune.png")
     SYSTEM["images"]["mission_map"] = Image("mission.png").scale(1024, 1024)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
+    SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
+    SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
+    SYSTEM["images"]["gear_helm"] = Image("ui/gear_helm.png").scale(64, 64)
+    SYSTEM["images"]["gear_boots"] = Image("ui/gear_boots.png").scale(64, 64)
+    SYSTEM["images"]["gear_hands"] = Image("ui/gear_hands.png").scale(64, 64)
+    SYSTEM["images"]["gear_armor"] = Image("ui/gear_armor.png").scale(64, 64)
+    SYSTEM["images"]["gear_belt"] = Image("ui/gear_belt.png").scale(64, 64)
+    SYSTEM["images"]["gear_ring"] = Image("ui/gear_ring.png").scale(64, 64)
+    SYSTEM["images"]["gear_amulet"] = Image("ui/gear_amulet.png").scale(64, 64)
+    SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
     SYSTEM["font_detail"] = pygame.font.SysFont('ressources/dogica.ttf', 25)
@@ -361,11 +398,13 @@ def draw_bottom_bar(events):
     SYSTEM["images"]["button_map"].draw(SYSTEM["windows"])
     SYSTEM["images"]["button_gear"].set(300, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_gear"].draw(SYSTEM["windows"])
-    SYSTEM["images"]["button_tree"].set(590, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_spells"].set(590, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_spells"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_tree"].set(880, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_tree"].draw(SYSTEM["windows"])
-    SYSTEM["images"]["button_inventory"].set(880, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_inventory"].set(1170, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_inventory"].draw(SYSTEM["windows"])
-    SYSTEM["images"]["button_options"].set(1170, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_options"].set(1460, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_options"].draw(SYSTEM["windows"])
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -374,6 +413,7 @@ def draw_bottom_bar(events):
             SYSTEM["images"]["button_tree"].press(event.pos)
             SYSTEM["images"]["button_inventory"].press(event.pos)
             SYSTEM["images"]["button_options"].press(event.pos)
+            SYSTEM["images"]["button_spells"].press(event.pos)
 
 def generate_random_level():
     """Creates a random level."""
@@ -431,11 +471,28 @@ def draw_menu(events):
 def draw_gear(events):
     """Draws the gear menu."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
-    SYSTEM["def_panel"].tick().draw()
-    SYSTEM["def_panel2"].tick().draw()
-    SYSTEM["def_drag"].tick().draw()
-    SYSTEM["def_drag2"].tick().draw()
-    SYSTEM["def_slot"].tick().draw()
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["ui"]["gear_weapon"].tick().draw()
+    SYSTEM["ui"]["gear_offhand"].tick().draw()
+    SYSTEM["ui"]["gear_helm"].tick().draw()
+    SYSTEM["ui"]["gear_boots"].tick().draw()
+    SYSTEM["ui"]["gear_hands"].tick().draw()
+    SYSTEM["ui"]["gear_armor"].tick().draw()
+    SYSTEM["ui"]["gear_belt"].tick().draw()
+    SYSTEM["ui"]["gear_ring"].tick().draw()
+    SYSTEM["ui"]["gear_ring2"].tick().draw()
+    SYSTEM["ui"]["gear_amulet"].tick().draw()
+    SYSTEM["ui"]["gear_relic"].tick().draw()
+    SYSTEM["gear_panel"].tick().draw()
+    x = 10
+    y = 10
+    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (x, y))
+    li = SYSTEM["player"].creature.generate_stat_details(x + 10, y + 10)
+    for l in li:
+        l.draw(SYSTEM["windows"])
+        l.tick()
     draw_bottom_bar(events)
 
 if __name__ == "__main__":
@@ -452,13 +509,10 @@ if __name__ == "__main__":
         butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
-    SYSTEM["def_drag"] = Draggable("default.png", 200, 200).scale(64, 64)
-    SYSTEM["def_drag2"] = Draggable("fire.png", 300, 200).scale(64, 64)
-    SYSTEM["def_panel"] = SlotPanel(100, 10)
-    SYSTEM["def_panel2"] = SlotPanel(500, 10)
-    SYSTEM["def_slot"] = Slot(900, 100)
+    SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
     ###
     while SYSTEM["playing"]:
+        SYSTEM["pop_up"] = None
         SYSTEM["mouse"] = pygame.mouse.get_pos()
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
         events = pygame.event.get()
@@ -485,6 +539,10 @@ if __name__ == "__main__":
             draw_menu(events)
         if SYSTEM["game_state"] == MENU_GEAR:
             draw_gear(events)
+
+        if SYSTEM["pop_up"] is not None:
+            SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (SYSTEM["mouse"][0] - SYSTEM["pop_up"][1],\
+                                     SYSTEM["mouse"][1]))
 
         pygame.display.update()
         INTERNAL_COOLDOWN -= 0.032

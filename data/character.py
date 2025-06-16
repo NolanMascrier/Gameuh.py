@@ -1,3 +1,5 @@
+"""Class for player characters."""
+
 from data.constants import *
 from data.spell_list import *
 from data.generator import Generator
@@ -7,6 +9,8 @@ from data.creature import Creature
 from data.image.animation import Animation
 
 class Character():
+    """Defines a character. A character is a creature/entity
+    specifically made to be used by players."""
     def __init__(self, x = 10, y = SCREEN_HEIGHT / 2, imagefile:Animation = None, speed = 12):
         box = HitBox(x, y, imagefile.width / 3, imagefile.height / 1.3)
         self._entity = Entity(x, y, imagefile, box, speed)
@@ -24,6 +28,8 @@ class Character():
             K_LSHIFT: SYSTEM["spells"]["winddash"]
         }
         self._immune = []
+        self._spellbook = []
+        self._inventory = []
 
     def get_pos(self):
         """Returns the position of the character as a
@@ -210,3 +216,19 @@ class Character():
     @equipped_spells.setter
     def equipped_spells(self, value):
         self._equipped_spells = value
+
+    @property
+    def spellbook(self):
+        return self._spellbook
+
+    @spellbook.setter
+    def spellbook(self, value):
+        self._spellbook = value
+
+    @property
+    def inventory(self):
+        return self._inventory
+
+    @inventory.setter
+    def inventory(self, value):
+        self._inventory = value

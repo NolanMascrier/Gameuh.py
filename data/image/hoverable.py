@@ -10,7 +10,7 @@ class Hoverable():
         self._x = x
         self._y = y
         self._text = SYSTEM["font_detail"].render(f'{text}', False, color)
-        self._hoverable = [SYSTEM["font_detail_small"].render(f'{t}', False, color)\
+        self._hoverable = [SYSTEM["font_detail_small"].render(f'{t}', False, (255, 255, 255))\
                            for t in hoverable_text]
 
     def tick(self):
@@ -20,18 +20,21 @@ class Hoverable():
         if SYSTEM["mouse"][0] >= self._x and SYSTEM["mouse"][0] <= self._x + txt[0] and\
             SYSTEM["mouse"][1] >= self._y and SYSTEM["mouse"][1] <= self._y + txt[1]:
             w = 0
-            h = 0
+            h = 5
             for text in self._hoverable:
                 w = max(w, text.get_size()[0])
-                h = text.get_size()[1] + 26
+                h += text.get_size()[1]
             sfc = pygame.Surface((w + 15, h + 15))
             surface = SYSTEM["images"]["hoverable"].clone().scale(h + 15,\
                                                                   w + 15).image
             sfc.blit(surface, (0, 0))
             for i, text in enumerate(self._hoverable):
                 sfc.blit(text, (7, 14 * i + 7))
-            SYSTEM["windows"].blit(sfc, (SYSTEM["mouse"][0] - w - 15,\
-                                         SYSTEM["mouse"][1]))
+            if SYSTEM["mouse"][0] - w < 0:
+                w += SYSTEM["mouse"][0] - w
+            SYSTEM["pop_up"] = (sfc, w, h)
+            #SYSTEM["windows"].blit(sfc, (SYSTEM["mouse"][0] - w,\
+            #                             SYSTEM["mouse"][1]))
 
     def draw(self, surface):
         """Draws the text to the window."""

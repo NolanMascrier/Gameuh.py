@@ -1,17 +1,16 @@
 """A component that houses slots. Used for
 inventories and such"""
 
-import pygame
 from data.constants import SYSTEM
 from data.image.slot import Slot
 from data.image.draggable import Draggable
 
 class SlotPanel:
-    def __init__(self, x, y, slot_size=64, padding = 5, default = None):
+    def __init__(self, x, y, slot_size=64, padding = 16, default = None):
         self._x = x
         self._y = y
         self._slot_size = slot_size
-        self._background = SYSTEM["images"]["char_details"]
+        self._background = SYSTEM["images"]["panel_back"]
         self._padding = padding
         if default is None:
             self._inventory = []

@@ -47,7 +47,7 @@ class Stat:
             final_mults *= multiplier.value
         for increase in self._incr:
             final_incr += increase.value
-        final_value = round((self._value + final_flats) * final_incr * final_mults, 4)
+        final_value = round((self._value + final_flats) * final_incr * final_mults, 2)
         if self._cap >= 0:
             final_value = min(final_value, self._cap)
         return final_value

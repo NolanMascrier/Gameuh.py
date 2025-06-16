@@ -4,8 +4,11 @@ from data.constants import SYSTEM
 from data.image.draggable import Draggable
 
 class Slot():
-    def __init__(self, x, y):
-        self._empty_image = SYSTEM["images"]["slot_empty"]
+    def __init__(self, x, y, back_image = None):
+        if back_image is None:
+            self._empty_image = SYSTEM["images"]["slot_empty"]
+        else:
+            self._empty_image = SYSTEM["images"][back_image]
         self._x = x
         self._y = y
         self._size = (self._empty_image.width, self._empty_image.height)

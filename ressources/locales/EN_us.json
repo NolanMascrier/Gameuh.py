@@ -119,5 +119,33 @@
         "When you gain enough experience, your character levels up.",
         "By leveling up, not only they fully heal, they also gain",
         "a stat point and a tree point."
+    ],
+    "phys": [
+        "Physical damage is often gray in color. It can leave",
+        "deep bleeding wounds behind."
+    ],
+    "fire": [
+        "Fire damage is often red in color. It can leave",
+        "powerful burns behind."
+    ],
+    "ice": [
+        "Ice damage is often b;ue in color. It can slow",
+        "down targets and even outright immobilize them."
+    ],
+    "elec": [
+        "Thunder damage is often yellow in color. It can spread",
+        "between enemies."
+    ],
+    "energy": [
+        "Energy damage is often very bright and colored. It can punch through",
+        "armors."
+    ],
+    "light": [
+        "Divine damage is often white in color. It is extremely",
+        "powerful against voidlings and undeads.."
+    ],
+    "dark": [
+        "Void damage is often black and purple in color. It disrupts",
+        "the very laws of the universe."
     ]
 }
