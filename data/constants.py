@@ -107,7 +107,8 @@ SYSTEM = {
     },
     "player": None,
     "level": None,
-    "selected": None
+    "selected": None,
+    "dragged": None
 }
 
 WAVE_TIMER = USEREVENT+4

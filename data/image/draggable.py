@@ -22,10 +22,11 @@ class Draggable(Image):
         self._x = x
         self._y = y
         self._dragging = False
-        self._offset = (0, 0)
         self._contains = contains
-        self._parent = None
-        self._last = None
+        self._parent_slot = None
+        self._last_slot = None
+        self._parent_panel = None
+        self._last_panel = None
 
     def tick(self):
         """Adjusts the position of the draggable if\
@@ -33,19 +34,30 @@ class Draggable(Image):
         mouse_x, mouse_y = SYSTEM["mouse"]
         mouse_click = SYSTEM["mouse_click"]
         if mouse_click[0]:
-            if self._dragging:
-                self._x = mouse_x + self._offset[0]
-                self._y = mouse_y + self._offset[1]
-                self.opacity(180)
-            elif (self._x <= mouse_x <= self._x + self.width and
-                    self._y <= mouse_y <= self._y + self.height):
-                self._dragging = True
-                self._offset = (mouse_x - self._x, mouse_y - self._y)
-                self._last = self._parent
-        else:
+            if SYSTEM["dragged"] is None or SYSTEM["dragged"] is self:
+                if self._dragging:
+                    self._x = mouse_x
+                    self._y = mouse_y
+                    self.opacity(180)
+                elif (self._x <= mouse_x <= self._x + self.width and
+                        self._y <= mouse_y <= self._y + self.height):
+                    self._dragging = True
+                    self._last_slot = self._parent_slot
+                    self._last_panel = self._parent_panel
+                    if self._parent_panel is not None:
+                        self._parent_panel.remove(self)
+                        self._parent_panel = None
+                    elif self._parent_slot is not None:
+                        self._parent_slot.remove()
+                        self._parent_slot = None
+                    SYSTEM["dragged"] = self
+        elif SYSTEM["dragged"] is None:
+            if self._parent_panel is None and self._parent_slot is None:
+                if self._last_panel is not None:
+                    self._last_panel.insert(self)
+                elif self._last_slot is not None:
+                    self._last_slot.insert(self)
             self._dragging = False
-            if self.parent is None:
-                self._last.insert(self)
             self.opacity(255)
         return self
 
@@ -61,11 +73,28 @@ class Draggable(Image):
 
     def set_parent(self, slot):
         """Sets the draggeable's parent."""
-        self._parent = slot
+        self._parent_slot = slot
 
     def clear_parent(self):
         """Clears the parent."""
-        self._parent = None
+        self._parent_slot = None
+
+    def set_panel(self, panel):
+        """Sets the draggeable's parent."""
+        self._parent_panel = panel
+
+    def clear_panel(self):
+        """Clears the parent."""
+        self._parent_panel = None
+
+    @property
+    def dragging(self):
+        """Returns whether or not the component is being dragged."""
+        return self._dragging
+
+    @dragging.setter
+    def dragging(self, value):
+        self._dragging = value
 
     @property
     def contains(self):
@@ -79,4 +108,4 @@ class Draggable(Image):
     @property
     def parent(self):
         """Returns the parent."""
-        return self._parent
+        return self._parent_slot

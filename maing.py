@@ -11,8 +11,9 @@ from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
 from data.game.level import Level
 from data.spell_list import generate_spell_list
-from data.image.slot import Slot
 from data.image.draggable import Draggable
+from data.image.slotpanel import SlotPanel
+from data.image.slot import Slot
 
 SPEED = 4
 PLAYING = True
@@ -22,6 +23,7 @@ SPEED_FACTOR = 5
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
+    print("starting level")
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["game_state"] = GAME_LEVEL
 
@@ -229,7 +231,7 @@ def game_loop(keys):
         SYSTEM["game_state"] = GAME_DEATH
     SYSTEM["latest_frame"] = SYSTEM["windows"].copy()
 
-def draw_victory():
+def draw_victory(events):
     """Draws the victory screen."""
     for events in pygame.event.get():
         if events.type == TICKER_TIMER:
@@ -273,11 +275,11 @@ def draw_victory():
     text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
     SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
     SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
-    for events in pygame.event.get():
-        if events.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_continue"].press(events.pos)
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_continue"].press(event.pos)
 
-def draw_game_over():
+def draw_game_over(event):
     """Draws the defeat screen."""
     for events in pygame.event.get():
         if events.type == TICKER_TIMER:
@@ -321,11 +323,11 @@ def draw_game_over():
     text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
     SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
     SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
-    for events in pygame.event.get():
-        if events.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_continue"].press(events.pos)
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_continue"].press(event.pos)
 
-def draw_pause():
+def draw_pause(events):
     """Draws the pause menu."""
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
@@ -337,11 +339,11 @@ def draw_pause():
     SYSTEM["images"]["button_resume"].draw(SYSTEM["windows"])
     SYSTEM["images"]["button_abandon"].draw(SYSTEM["windows"])
     SYSTEM["images"]["button_quit"].draw(SYSTEM["windows"])
-    for events in pygame.event.get():
-        if events.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_resume"].press(events.pos)
-            SYSTEM["images"]["button_abandon"].press(events.pos)
-            SYSTEM["images"]["button_quit"].press(events.pos)
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_resume"].press(event.pos)
+            SYSTEM["images"]["button_abandon"].press(event.pos)
+            SYSTEM["images"]["button_quit"].press(event.pos)
 
 def draw_small_card():
     """Draws a small character card."""
@@ -353,7 +355,7 @@ def draw_small_card():
         l.draw(SYSTEM["windows"])
         l.tick()
 
-def draw_bottom_bar():
+def draw_bottom_bar(events):
     """Draws the bottom bar, quick access to the menus."""
     SYSTEM["images"]["button_map"].set(10, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_map"].draw(SYSTEM["windows"])
@@ -365,6 +367,13 @@ def draw_bottom_bar():
     SYSTEM["images"]["button_inventory"].draw(SYSTEM["windows"])
     SYSTEM["images"]["button_options"].set(1170, SCREEN_HEIGHT - 64)
     SYSTEM["images"]["button_options"].draw(SYSTEM["windows"])
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_map"].press(event.pos)
+            SYSTEM["images"]["button_gear"].press(event.pos)
+            SYSTEM["images"]["button_tree"].press(event.pos)
+            SYSTEM["images"]["button_inventory"].press(event.pos)
+            SYSTEM["images"]["button_options"].press(event.pos)
 
 def generate_random_level():
     """Creates a random level."""
@@ -390,14 +399,14 @@ def generate_random_level():
     level = Level(name, area_lvl, icon, 6000, area)
     return level
 
-def draw_menu(levels, buttons):
+def draw_menu(events):
     """Draws the main game menu."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
     SYSTEM["windows"].blit(SYSTEM["images"]["mission_map"].image, (200, 10))
-    buttons[0].set(350, 680).draw(SYSTEM["windows"])
-    buttons[1].set(860, 250).draw(SYSTEM["windows"])
-    buttons[2].set(900, 900).draw(SYSTEM["windows"])
-    buttons[3].set(478, 420).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][0].set(350, 680).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][1].set(860, 250).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][2].set(900, 900).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][3].set(478, 420).draw(SYSTEM["windows"])
     draw_small_card()
     if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
         name = SYSTEM["font_detail"].render(f'{SYSTEM["selected"].name}',\
@@ -409,42 +418,53 @@ def draw_menu(levels, buttons):
         SYSTEM["windows"].blit(lvl, (1500, 775))
         SYSTEM["images"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
         SYSTEM["windows"].blit(SYSTEM["selected"].icon.image, (1500, 800))
-    draw_bottom_bar()
-    for events in pygame.event.get():
-        if events.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_map"].press(events.pos)
-            SYSTEM["images"]["button_gear"].press(events.pos)
-            SYSTEM["images"]["button_tree"].press(events.pos)
-            SYSTEM["images"]["button_inventory"].press(events.pos)
-            SYSTEM["images"]["button_options"].press(events.pos)
-            SYSTEM["images"]["button_assault"].press(events.pos)
-            buttons[0].press(events.pos)
-            buttons[1].press(events.pos)
-            buttons[2].press(events.pos)
-            buttons[3].press(events.pos)
+    draw_bottom_bar(events)
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["buttons"][0].press(event.pos)
+            SYSTEM["buttons"][1].press(event.pos)
+            SYSTEM["buttons"][2].press(event.pos)
+            SYSTEM["buttons"][3].press(event.pos)
+            SYSTEM["images"]["button_assault"].press(event.pos)
+
+
+def draw_gear(events):
+    """Draws the gear menu."""
+    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["def_panel"].tick().draw()
+    SYSTEM["def_panel2"].tick().draw()
+    SYSTEM["def_drag"].tick().draw()
+    SYSTEM["def_drag2"].tick().draw()
+    SYSTEM["def_slot"].tick().draw()
+    draw_bottom_bar(events)
 
 if __name__ == "__main__":
     init_game()
     init_timers()
     SYSTEM["game_state"] = MENU_MAIN
     INTERNAL_COOLDOWN = 0
+    #TODO: Put that in scene manager
     levels = []
-    buttons = []
-    defa = Draggable("thune.png", 200, 200).scale(64, 64)
-    slots = [
-        Slot(100, 100),
-        Slot(200, 100)
-    ]
-    slots[0].insert(defa)
+    SYSTEM["buttons"] = []
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
         butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
                                              levels[i]))
-        buttons.append(butt)
+        SYSTEM["buttons"].append(butt)
+    SYSTEM["def_drag"] = Draggable("default.png", 200, 200).scale(64, 64)
+    SYSTEM["def_drag2"] = Draggable("fire.png", 300, 200).scale(64, 64)
+    SYSTEM["def_panel"] = SlotPanel(100, 10)
+    SYSTEM["def_panel2"] = SlotPanel(500, 10)
+    SYSTEM["def_slot"] = Slot(900, 100)
+    ###
     while SYSTEM["playing"]:
         SYSTEM["mouse"] = pygame.mouse.get_pos()
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
+        events = pygame.event.get()
+        for event in events:
+            if event.type == QUIT:
+                PLAYING = False
         keys = pygame.key.get_pressed()
         if keys[K_ESCAPE]:
             if INTERNAL_COOLDOWN <= 0:
@@ -456,29 +476,19 @@ if __name__ == "__main__":
         if SYSTEM["game_state"] == GAME_LEVEL:
             game_loop(keys)
         if SYSTEM["game_state"] == GAME_PAUSE:
-            draw_pause()
+            draw_pause(events)
         if SYSTEM["game_state"] == GAME_VICTORY:
-            draw_victory()
+            draw_victory(events)
         if SYSTEM["game_state"] == GAME_DEATH:
-            draw_game_over()
+            draw_game_over(events)
         if SYSTEM["game_state"] == MENU_MAIN:
-            draw_menu(levels, buttons)
-
-        defa.tick()
-        if not SYSTEM["mouse_click"][0]:
-            for slot in slots:
-                if slot.try_insert(defa):
-                    break
-
-        defa.draw()
-        for slot in slots:
-            slot.draw()
-
-        for events in pygame.event.get():
-            if events.type == QUIT:
-                PLAYING = False
+            draw_menu(events)
+        if SYSTEM["game_state"] == MENU_GEAR:
+            draw_gear(events)
 
         pygame.display.update()
         INTERNAL_COOLDOWN -= 0.032
         INTERNAL_COOLDOWN = max(INTERNAL_COOLDOWN, 0)
+        if not SYSTEM["mouse_click"][0]:
+            SYSTEM["dragged"] = None
         sleep(float(SYSTEM["options"]["fps"]))
