@@ -2,6 +2,8 @@
 characters and used."""
 
 from data.constants import Flags
+from data.image.image import Image
+from data.image.animation import Animation
 
 class Item():
     """Creates an item.
@@ -11,16 +13,21 @@ class Item():
         max_held(int, optionnal): Maximum amount of the \
         item that can be held in a single inventory slot. \
         Defaults to 64.
+        image (Image|Animation, optionnal): Image of the item.\
+        Defaults to None. 
         flags (list, optionnal): List of the items's flags. \
         Defaults to [].
         affixes (list, optionnal): List of the item's affixes,\
         aka its effects. Defaults to [].
     """
-    def __init__(self, name, price, power, max_held = 64, flags = None, affixes = None):
+    def __init__(self, name, price, power, max_held = 64,\
+        image:Image|Animation = None,\
+        flags = None, affixes = None):
         self._name = name
         self._max_held = max_held
         self._price = price
         self._power = power
+        self._image = image
         if flags is None:
             self._flags = []
         else:
@@ -41,6 +48,12 @@ class Item():
                 target.restore_mana(self._power)
         else:
             return
+
+    def get_image(self):
+        """returns the item's image."""
+        if self._image is None:
+            return None
+        return self._image
 
     @property
     def name(self):

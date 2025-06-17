@@ -13,7 +13,7 @@ class Image():
     def __init__(self, uri = None):
         self._uri = uri
         if uri is None:
-            self._image = None
+            self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
         elif isinstance(uri, Image):
             self._image = uri.clone()
         else:
@@ -23,12 +23,16 @@ class Image():
                 print(f"Couldn't find file {uri}. Using default image.")
                 self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
         if uri is None:
-            self._width = 0
-            self._height = 0
+            self._width = 64
+            self._height = 64
         else:
             self._width = self._image.get_width()
             self._height = self._image.get_height()
         self._visible = True
+
+    def get_image(self) -> pygame.Surface:
+        """Returns the image."""
+        return self.image
 
     def rotate(self, deg: float):
         """Rotates the image.

@@ -14,12 +14,32 @@ from data.spell_list import generate_spell_list
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
+from data.numerics.affix import Affix
 
 SPEED = 4
 PLAYING = True
 PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
+
+def equip(item: Item):
+    """Equips an item on the player character."""
+    if item is None:
+        return
+    #aff = Affix("def", 10, [Flags.STR, Flags.FLAT])
+    #armor = Item("Bob's armor", 999, 0, 1, [Flags.GEAR, Flags.ARMOR], [aff])
+    SYSTEM["player"].creature.equip(Flags.ARMOR, item)
+
+def debug_create_items():
+    """Creates a bunch of items."""
+    aff = Affix("def", 10, [Flags.STR, Flags.FLAT])
+    armor = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+        ,[Flags.GEAR, Flags.ARMOR], [aff])
+    armor2 = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+        ,[Flags.GEAR, Flags.ARMOR], [aff])
+    armor3 = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+        ,[Flags.GEAR, Flags.ARMOR], [aff])
+    SYSTEM["player"].inventory.extend([armor, armor2, armor3])
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
@@ -34,24 +54,28 @@ def quit_level():
 
 def open_gear_screen():
     """Sets up the gear screen."""
+    print("set up")
     SYSTEM["game_state"] = MENU_GEAR
     x = SCREEN_WIDTH / 2- 32
     y = SCREEN_HEIGHT / 2 - 128
-    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm")
-    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet")
-    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor")
-    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon")
-    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring")
-    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring")
-    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand")
-    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands")
-    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic")
-    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt")
-    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots")
+    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip)
+    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip)
+    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip)
+    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip)
+    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip)
+    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip)
+    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip)
+    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip)
+    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip)
+    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip)
+    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip)
     data = []
     for item in SYSTEM["player"].inventory:
+        print(item)
         if isinstance(item, Item):
+            print("la")
             if Flags.GEAR in item.flags:
+                print("ici")
                 data.append(item)
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
 
@@ -155,6 +179,7 @@ def init_game():
     SYSTEM["images"]["gear_ring"] = Image("ui/gear_ring.png").scale(64, 64)
     SYSTEM["images"]["gear_amulet"] = Image("ui/gear_amulet.png").scale(64, 64)
     SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
+    SYSTEM["images"]["test_armor"] = Image("icons/elementalfury.png").scale(64, 64)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
     SYSTEM["font_detail"] = pygame.font.SysFont('ressources/dogica.ttf', 25)
@@ -510,6 +535,7 @@ if __name__ == "__main__":
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
+    debug_create_items()
     ###
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None

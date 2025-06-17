@@ -4,7 +4,21 @@ from data.constants import SYSTEM
 from data.image.draggable import Draggable
 
 class Slot():
-    def __init__(self, x, y, back_image = None):
+    """Defines a draggable image, an image that can be
+    dragged around and inserted into slots.
+    
+    Args:
+        x (int): x position of the component.    
+        y (int): y position of the component.
+        back_image (str, optionnal): name of the image to\
+        use as a background. Needs to be loaded into the system.\
+        Defaults to `back_image`.
+        on_slot (function, optionnal): Function to call when a draggable\
+        has been slotted inside. The function will need to take on a\
+        single argument, which is the `contains` field of the\
+        draggable. Defaults to None.
+    """
+    def __init__(self, x, y, back_image = None, on_slot = None):
         if back_image is None:
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
@@ -13,6 +27,7 @@ class Slot():
         self._y = y
         self._size = (self._empty_image.width, self._empty_image.height)
         self._contains = None
+        self._on_slot = on_slot
 
     def insert(self, draggable: Draggable):
         """Insert a draggable inside the slot."""
@@ -21,6 +36,8 @@ class Slot():
         draggable.set(self._x, self._y)
         draggable.set_parent(self)
         SYSTEM["dragged"] = None
+        if self._on_slot is not None:
+            self._on_slot(draggable.contains)
         return old
 
     def remove(self):
@@ -56,13 +73,13 @@ class Slot():
         """Draws the component on screen."""
         SYSTEM["windows"].blit(self._empty_image.image, (self._x, self._y))
         if self._contains is not None:
-            SYSTEM["windows"].blit(self._contains.image, (self._x, self._y))
+            SYSTEM["windows"].blit(self._contains.get_image().image, (self._x, self._y))
 
     def draw_alt(self, surface, x, y):
         """Draws the component on the surface at specified position."""
         surface.blit(self._empty_image.image, (x, y))
         if self._contains is not None:
-            surface.blit(self._contains.image, (x, y))
+            surface.blit(self._contains.get_image().image, (x, y))
 
     @property
     def contains(self):

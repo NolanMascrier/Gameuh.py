@@ -1,6 +1,7 @@
 """A component that houses slots. Used for
 inventories and such"""
 
+from collections.abc import Iterable
 from data.constants import SYSTEM
 from data.image.slot import Slot
 from data.image.draggable import Draggable
@@ -12,12 +13,13 @@ class SlotPanel:
         self._slot_size = slot_size
         self._background = SYSTEM["images"]["panel_back"]
         self._padding = padding
-        if default is None:
-            self._inventory = []
-        else:
-            self._inventory = default
         self._slots = []
         self._columns = (self._background.width - self._padding * 2) // slot_size
+        if isinstance(default, Iterable):
+            for item in default:
+                y, x = self.get_index()
+                drag = Draggable(None, x, y, item)
+                self.insert(drag)
 
     def get_index(self):
         """Returns the index of the latest element."""

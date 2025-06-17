@@ -3,6 +3,7 @@ around by the mouse."""
 
 from data.constants import SYSTEM
 from data.image.image import Image
+from data.item import Item
 
 class Draggable(Image):
     """Defines a draggable.
@@ -23,6 +24,10 @@ class Draggable(Image):
         self._y = y
         self._dragging = False
         self._contains = contains
+        if isinstance(contains, Item):
+            self._width = contains.get_image().width
+            self._height = contains.get_image().height
+            self._image = contains.get_image().clone().image
         self._parent_slot = None
         self._last_slot = None
         self._parent_panel = None
@@ -70,6 +75,11 @@ class Draggable(Image):
     def draw(self):
         """Displays the draggable."""
         SYSTEM["windows"].blit(self._image, (self._x, self._y))
+
+    def get_image(self):
+        """Returns the image of the contained item, or the\
+        image of the slot should the latter be None."""
+        return self
 
     def set_parent(self, slot):
         """Sets the draggeable's parent."""
