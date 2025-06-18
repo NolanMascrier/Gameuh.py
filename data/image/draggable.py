@@ -1,7 +1,7 @@
 """A draggable is a component that can be dragged
 around by the mouse."""
 
-from data.constants import SYSTEM
+from data.constants import SYSTEM, IMAGE_TRACKER
 from data.image.image import Image
 from data.item import Item
 

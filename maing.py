@@ -22,13 +22,23 @@ PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
 
-def equip(item: Item):
+def equip(item: Item, slot: Slot):
     """Equips an item on the player character."""
     if item is None:
         return
-    #aff = Affix("def", 10, [Flags.STR, Flags.FLAT])
-    #armor = Item("Bob's armor", 999, 0, 1, [Flags.GEAR, Flags.ARMOR], [aff])
-    SYSTEM["player"].creature.equip(Flags.ARMOR, item)
+    if slot.flag not in item.flags:
+        SYSTEM["gear_panel"].insert(slot.contains)
+        slot.remove()
+    else:
+        SYSTEM["player"].creature.equip(slot.flag, item, slot.left)
+        SYSTEM["player"].inventory.remove(item)
+
+def unequip(item: Item, slot: Slot):
+    """Removes the equiped item from the slot."""
+    if item is None:
+        return
+    it = SYSTEM["player"].creature.unequip(slot.flag, slot.left)
+    SYSTEM["player"].inventory.append(it)
 
 def debug_create_items():
     """Creates a bunch of items."""
@@ -54,28 +64,35 @@ def quit_level():
 
 def open_gear_screen():
     """Sets up the gear screen."""
-    print("set up")
     SYSTEM["game_state"] = MENU_GEAR
     x = SCREEN_WIDTH / 2- 32
     y = SCREEN_HEIGHT / 2 - 128
-    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip)
-    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip)
-    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip)
-    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip)
-    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip)
-    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip)
-    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip)
-    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip)
-    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip)
-    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip)
-    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip)
+    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip,\
+         Flags.HELM, SYSTEM["player"].creature.gear["helm"])
+    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip, unequip,\
+         Flags.AMULET, SYSTEM["player"].creature.gear["amulet"])
+    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip, unequip,\
+         Flags.ARMOR, SYSTEM["player"].creature.gear["armor"])
+    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip,\
+         Flags.WEAPON, SYSTEM["player"].creature.gear["weapon"])
+    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip,\
+         Flags.RING, SYSTEM["player"].creature.gear["ring"]["left"])
+    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip,\
+         Flags.RING, SYSTEM["player"].creature.gear["ring"]["right"])
+    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip,\
+         Flags.OFFHAND, SYSTEM["player"].creature.gear["off_hand"])
+    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip, unequip,\
+         Flags.HANDS, SYSTEM["player"].creature.gear["hands"])
+    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip, unequip,\
+         Flags.RELIC, SYSTEM["player"].creature.gear["relic"])
+    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip, unequip,\
+         Flags.BELT, SYSTEM["player"].creature.gear["belt"])
+    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip,\
+         Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
     data = []
     for item in SYSTEM["player"].inventory:
-        print(item)
         if isinstance(item, Item):
-            print("la")
             if Flags.GEAR in item.flags:
-                print("ici")
                 data.append(item)
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
 
@@ -570,9 +587,11 @@ if __name__ == "__main__":
             SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (SYSTEM["mouse"][0] - SYSTEM["pop_up"][1],\
                                      SYSTEM["mouse"][1]))
 
-        pygame.display.update()
         INTERNAL_COOLDOWN -= 0.032
         INTERNAL_COOLDOWN = max(INTERNAL_COOLDOWN, 0)
+        if SYSTEM["dragged"] is not None:
+            SYSTEM["dragged"].tick().draw()
         if not SYSTEM["mouse_click"][0]:
             SYSTEM["dragged"] = None
+        pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))

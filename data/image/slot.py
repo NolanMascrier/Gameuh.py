@@ -14,11 +14,23 @@ class Slot():
         use as a background. Needs to be loaded into the system.\
         Defaults to `back_image`.
         on_slot (function, optionnal): Function to call when a draggable\
-        has been slotted inside. The function will need to take on a\
-        single argument, which is the `contains` field of the\
-        draggable. Defaults to None.
+        has been slotted inside. The function will need to take two\
+        arguments, which is the `contains` field of the\
+        draggable and the slot. Defaults to None.
+        on_remove(function, optionnal): Function to call when the slot\
+        is emptied. The function will need to take two\
+        arguments, which is the `contains` field of the\
+        draggable and the slot. Defaults to None.
+        flags (list, optionnal): List of flags. Used for internal\
+        logic. Defaults to [].
+        default (Any, optionnal): Default containable of the slot.\
+        Defaults to None.
+        left (bool, optionnal): Very specific parameter only used for\
+        rings slot. Denotes whether or not the slot is for the left hand\
+        ring. Defaults to None.
     """
-    def __init__(self, x, y, back_image = None, on_slot = None):
+    def __init__(self, x, y, back_image = None, on_slot = None,\
+        on_remove = None, flag = None, default = None, left = False):
         if back_image is None:
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
@@ -28,16 +40,27 @@ class Slot():
         self._size = (self._empty_image.width, self._empty_image.height)
         self._contains = None
         self._on_slot = on_slot
+        self._on_remove = on_remove
+        self._flag = flag
+        self._left = left
+        if default is not None:
+            dr = Draggable(contains=default)
+            dr.set(self._x, self._y)
+            dr.set_parent(self)
+            self._contains = dr
 
     def insert(self, draggable: Draggable):
         """Insert a draggable inside the slot."""
+        if self._contains is not None:
+            self.remove()
         old = self._contains
         self._contains = draggable
+        draggable.dragging = False
         draggable.set(self._x, self._y)
         draggable.set_parent(self)
         SYSTEM["dragged"] = None
         if self._on_slot is not None:
-            self._on_slot(draggable.contains)
+            self._on_slot(draggable.contains, self)
         return old
 
     def remove(self):
@@ -45,6 +68,8 @@ class Slot():
         old = self._contains
         if self._contains is not None:
             self._contains.clear_parent()
+        if self._on_remove is not None:
+            self._on_remove(old, self)
         self._contains = None
         return old
 
@@ -65,6 +90,8 @@ class Slot():
 
     def tick(self):
         """tick"""
+        if self._contains is not None:
+            self._contains.tick().draw()
         if not SYSTEM["mouse_click"][0]:
             self.try_insert(SYSTEM["dragged"])
         return self
@@ -100,3 +127,14 @@ class Slot():
     def width(self):
         """Returns the background's width."""
         return self._empty_image.width
+
+    @property
+    def flag(self):
+        """Returns the slot's flag."""
+        return self._flag
+
+    @property
+    def left(self):
+        """Returns whether or not the slot is marked for\
+        the left hand ring."""
+        return self._left 

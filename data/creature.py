@@ -95,7 +95,6 @@ class Creature:
         self.__get_bonuses_from_stat()
         self._stats["life"].refill()
         self._stats["mana"].refill()
-        
 
     def recalculate_damage(self, damage_source: Damage) -> Damage:
         """Takes a raw damage source (ie from a spell) and applies the creature's
@@ -315,6 +314,7 @@ class Creature:
             self._gear[slot.value] = item
         for affix in item.affixes:
             self.afflict(affix.as_affliction())
+        self.__get_bonuses_from_stat()
         return old
 
     def unequip(self, slot: Flags, left_hand = False) -> Item | None:
@@ -344,6 +344,7 @@ class Creature:
         if item is not None:
             for affix in item.affixes :
                 self.remove_affliction(affix.as_affliction())
+        self.__get_bonuses_from_stat()
         return item
 
     def import_stackblock(self, statblock: dict):
@@ -486,8 +487,7 @@ class Creature:
             else:
                 if self._gear[gear] is not None:
                     for affix in self._gear[gear].affixes:
-                        self.afflict(affix.as_affliction())
-                
+                        self.afflict(affix.as_affliction())          
 
     @property
     def name(self) -> str:
