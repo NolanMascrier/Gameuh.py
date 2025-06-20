@@ -22,6 +22,28 @@ class Affix():
         flags.append(Flags.GEAR)
         return Affliction(f"{self._name}_effect", self._value, -1, flags)
 
+    def descript(self):
+        """Generates a description of the affix."""
+        if self._value == 0:
+            return "\n"
+        if Flags.DESC_FLAT not in self._flags:
+            value = f"{self._value * 100}%"
+        else:
+            value = f"{self._value}"
+        if Flags.BOON in self._flags:
+            adds = f"{value} increased "
+        elif Flags.HEX in self._flags:
+            adds = f"{value} decreased "
+        elif Flags.BLESS in self._flags:
+            adds = f"{value} more"
+        elif Flags.CURSE in self._flags:
+            adds = f"x{value} less"
+        elif Flags.FLAT in self._flags:
+            if self._value < 0:
+                adds = f"{value}"
+            else:
+                adds = f"+{value}"
+
     @property
     def name(self):
         """Return the affix's name."""
@@ -41,10 +63,10 @@ class Affix():
         self._value = value
 
     @property
-    def flag(self):
+    def flags(self):
         """Return's the affix flag."""
-        return self._flag
+        return self._flags
 
-    @flag.setter
-    def flag(self, value):
-        self._flag = value
+    @flags.setter
+    def flags(self, value):
+        self._flags = value

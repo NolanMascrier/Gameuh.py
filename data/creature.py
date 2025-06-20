@@ -47,6 +47,10 @@ class Creature:
             "speed": Stat(1, "Move Speed"),
             "cast_speed": Stat(1, "Cast Speed"),
 
+            "proj_quant": Stat(1, "proj_quant", scaling_value=0),
+            "proj_speed": Stat(1, "proj_speed", scaling_value=0.001),
+            "chains": Stat(0, "chains", scaling_value=0),
+
             "melee_dmg": Stat(1, "Melee Damage", scaling_value=0.01),
             "spell_dmg": Stat(1, "Spell Damage", scaling_value=0.01),
             "ranged_dmg": Stat(1, "Ranged Damage", scaling_value=0.01),

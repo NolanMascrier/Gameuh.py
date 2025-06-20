@@ -237,3 +237,5 @@ class Flags(Enum):
     DUNGEON = "dungeon"
     RAID = "raid"
     HAS_BOSS = "has_boss"
+    #Flags for description
+    DESC_FLAT = "description_flat_attribute"
