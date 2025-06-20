@@ -15,6 +15,7 @@ from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
 from data.numerics.affix import Affix
+from data.image.text import Text
 
 SPEED = 4
 PLAYING = True
@@ -552,6 +553,7 @@ if __name__ == "__main__":
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
+    txt = Text(trad("lorem"), True)
     debug_create_items()
     ###
     while SYSTEM["playing"]:
@@ -593,5 +595,6 @@ if __name__ == "__main__":
             SYSTEM["dragged"].tick().draw()
         if not SYSTEM["mouse_click"][0]:
             SYSTEM["dragged"] = None
+        txt.draw(100, 100)
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))

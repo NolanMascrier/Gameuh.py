@@ -121,31 +121,32 @@
         "a stat point and a tree point."
     ],
     "phys": [
-        "Physical damage is often gray in color. It can leave",
+        "Physical damage is often #c#(168, 168, 168)gray #c#(255, 255, 255)in color. It can leave",
         "deep bleeding wounds behind."
     ],
     "fire": [
-        "Fire damage is often red in color. It can leave",
+        "Fire damage is often #c#(255, 119, 0)red #c#(255, 255, 255)in color. It can leave",
         "powerful burns behind."
     ],
     "ice": [
-        "Ice damage is often b;ue in color. It can slow",
+        "Ice damage is often #c#(89, 219, 255)blue #c#(255, 255, 255)in color. It can slow",
         "down targets and even outright immobilize them."
     ],
     "elec": [
-        "Thunder damage is often yellow in color. It can spread",
+        "Thunder damage is often #c#(250, 233, 0)yellow #c#(255, 255, 255)in color. It can spread",
         "between enemies."
     ],
     "energy": [
-        "Energy damage is often very bright and colored. It can punch through",
+        "Energy damage is often #c#(156, 0, 5)very bright and colored#c#(255, 255, 255). It can punch through",
         "armors."
     ],
     "light": [
-        "Divine damage is often white in color. It is extremely",
-        "powerful against voidlings and undeads.."
+        "Divine damage is often #c#(255, 254, 219)white #c#(255, 255, 255)in color. It is extremely",
+        "powerful against voidlings and undeads."
     ],
     "dark": [
-        "Void damage is often black and purple in color. It disrupts",
+        "Void damage is often #c#(71, 0, 125)black and purple #c#(255, 255, 255)in color. It disrupts",
         "the very laws of the universe."
-    ]
+    ],
+    "lorem": "Lorem ipsum\ndolorem sic #c#(185, 0, 0) amet #c#(255, 255, 255) consulus"
 }
