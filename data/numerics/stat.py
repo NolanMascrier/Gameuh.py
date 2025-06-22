@@ -14,23 +14,29 @@ class Stat:
     Args:
         val (float, optionnal): Initial value of the stat. defaults to 10.
         name (str, optionnal): Name of the stat. 
-        cap (float, optionnal): At what value the stat should cap\
+        max_cap (float, optionnal): At what value the stat should cap\
         ie what it is its maximum value. Defaults to -1 (no cap).
+        min_cap (float, optionnal): At what value the stat should cap\
+        ie what it is its minimum value. Defaults to -1 (no cap).
+        precision (int, optionnal): How many decimals should the final\
+        value be rounded to. Defaults to 2.
         scaling_value (float, optionnal): How much level influence\
         this stat. Only for enemies. Defaults to 1.
         mult_scaling (bool, optionnal): Whether or not the stat\
         scales multiplicatively. Defaults to `False` (additive).
     """
     def __init__(self, val = 10, name = "stat",\
-            cap:float = -1, scaling_value:float = 1, mult_scaling = False):
+            max_cap:float = -1, min_cap = -1, precision:int = 2,\
+            scaling_value:float = 1, mult_scaling = False):
         self._value = val
         self._name = name
         self._flats = []
         self._mults = []
         self._incr = []
-        self._cap = cap
+        self._cap = (min_cap, max_cap)
         self._scaling_value = scaling_value
         self._mult_scaling = mult_scaling
+        self._round = int(precision)
 
     def get_value(self):
         """Returns the computed final value of the stat.
@@ -39,17 +45,19 @@ class Stat:
             float: value of the stat with computed increases \
             and multipliers."""
         final_mults = 1
-        final_incr = 1
+        final_incr = 0
         final_flats = 0
         for flats in self._flats:
             final_flats += flats.value
         for multiplier in self._mults:
-            final_mults *= multiplier.value
+            final_mults *= 1 + multiplier.value
         for increase in self._incr:
             final_incr += increase.value
-        final_value = round((self._value + final_flats) * final_incr * final_mults, 2)
-        if self._cap >= 0:
-            final_value = min(final_value, self._cap)
+        final_value = round((self._value + final_flats) * (1 + final_incr) * final_mults, self._round)
+        if self._cap[0] >= 0:
+            final_value = max(final_value, self._cap[0])
+        if self._cap[1] >= 0:
+            final_value = min(final_value, self._cap[1])
         return final_value
 
     def _handle_affliction_list(self, list_name, affliction):
@@ -235,7 +243,7 @@ class Stat:
     @incr.setter
     def incr(self, value):
         self._incr = value
-        
+
     @property
     def c_value(self):
         """Wrapper to get_value(). Return the computed

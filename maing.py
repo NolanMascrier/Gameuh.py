@@ -15,7 +15,6 @@ from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
 from data.numerics.affix import Affix
-from data.image.text import Text
 
 SPEED = 4
 PLAYING = True
@@ -43,20 +42,26 @@ def unequip(item: Item, slot: Slot):
 
 def debug_create_items():
     """Creates a bunch of items."""
-    aff = Affix("def", 10, [Flags.STR, Flags.FLAT])
+    aff = Affix("str_1", 10, [Flags.STR, Flags.FLAT, Flags.DESC_FLAT])
+    aff2 = Affix("fire_dmg_1", 0.1, [Flags.FIRE_DMG, Flags.BOON])
+    aff3 = Affix("life_1", 0.05, [Flags.LIFE, Flags.BLESS])
+    aff4 = Affix("def", 10, [Flags.DEF, Flags.FLAT, Flags.DESC_FLAT])
+    aff5 = Affix("fire_res", 0.25, [Flags.FIRE, Flags.FLAT])
+    aff6 = Affix("elec_res", 0.12, [Flags.ELEC, Flags.FLAT])
     armor = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
-        ,[Flags.GEAR, Flags.ARMOR], [aff])
-    armor2 = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
-        ,[Flags.GEAR, Flags.ARMOR], [aff])
-    armor3 = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
-        ,[Flags.GEAR, Flags.ARMOR], [aff])
+        ,[Flags.GEAR, Flags.ARMOR], [aff, aff3])
+    armor2 = Item("Bob's boots", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+        ,[Flags.GEAR, Flags.BOOTS], [aff2])
+    armor3 = Item("Bob's ring", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+        ,[Flags.GEAR, Flags.RING], [aff4, aff5, aff6])
     SYSTEM["player"].inventory.extend([armor, armor2, armor3])
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
-    print("starting level")
+    SYSTEM["player"].reset()
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["game_state"] = GAME_LEVEL
+    init_timers()
 
 def quit_level():
     """Quits the current level and resets the player."""
@@ -290,15 +295,15 @@ def tick():
             TEXT_TRACKER.remove(txt)
     clean_grids()
 
-def game_loop(keys):
+def game_loop(keys, events):
     """Main game loop."""
     #Handle Events
-    for events in pygame.event.get():
-        if events.type == QUIT:
+    for event in events:
+        if event.type == QUIT:
             SYSTEM["playing"] = False
-        if events.type == WAVE_TIMER:
+        if event.type == WAVE_TIMER:
             SYSTEM["level"].next_wave()
-        if events.type == TICKER_TIMER:
+        if event.type == TICKER_TIMER:
             tick()
     SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
     #Handle logic
@@ -313,37 +318,9 @@ def game_loop(keys):
 
 def draw_victory(events):
     """Draws the victory screen."""
-    for events in pygame.event.get():
-        if events.type == TICKER_TIMER:
-            generate_grids()
-            SYSTEM["player"].tick()
-            for bubble in POWER_UP_TRACKER.copy():
-                bubble.tick(SYSTEM["player"])
-                if bubble.flagged_for_deletion:
-                    POWER_UP_TRACKER.remove(bubble)
-            for baddie in ENNEMY_TRACKER.copy():
-                baddie.tick(SYSTEM["player"])
-                if baddie.destroyed:
-                    ENNEMY_TRACKER.remove(baddie)
-            for p in PROJECTILE_TRACKER.copy():
-                if isinstance(p, Generator):
-                    p.tick(SYSTEM["player"])
-                    continue
-                p.tick()
-                if p.can_be_destroyed():
-                    PROJECTILE_TRACKER.remove(p)
-            for s in SLASH_TRACKER.copy():
-                s.tick()
-                if s.finished:
-                    SLASH_TRACKER.remove(s)
-            for txt in TEXT_TRACKER.copy():
-                sfc = txt[0]
-                sfc.set_alpha(txt[3])
-                txt[3] -= 5
-                txt[2] -= 3
-                if txt[3] < 10:
-                    TEXT_TRACKER.remove(txt)
-            clean_grids()
+    for event in events:
+        if event.type == TICKER_TIMER:
+            tick()
     SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
     draw_game()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
@@ -361,37 +338,9 @@ def draw_victory(events):
 
 def draw_game_over(event):
     """Draws the defeat screen."""
-    for events in pygame.event.get():
-        if events.type == TICKER_TIMER:
-            generate_grids()
-            SYSTEM["player"].tick()
-            for bubble in POWER_UP_TRACKER.copy():
-                bubble.tick(SYSTEM["player"])
-                if bubble.flagged_for_deletion:
-                    POWER_UP_TRACKER.remove(bubble)
-            for baddie in ENNEMY_TRACKER.copy():
-                baddie.tick(SYSTEM["player"])
-                if baddie.destroyed:
-                    ENNEMY_TRACKER.remove(baddie)
-            for p in PROJECTILE_TRACKER.copy():
-                if isinstance(p, Generator):
-                    p.tick(SYSTEM["player"])
-                    continue
-                p.tick()
-                if p.can_be_destroyed():
-                    PROJECTILE_TRACKER.remove(p)
-            for s in SLASH_TRACKER.copy():
-                s.tick()
-                if s.finished:
-                    SLASH_TRACKER.remove(s)
-            for txt in TEXT_TRACKER.copy():
-                sfc = txt[0]
-                sfc.set_alpha(txt[3])
-                txt[3] -= 5
-                txt[2] -= 3
-                if txt[3] < 10:
-                    TEXT_TRACKER.remove(txt)
-            clean_grids()
+    for event in events:
+        if event.type == TICKER_TIMER:
+            tick()
     SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
     draw_game(False)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
@@ -553,7 +502,6 @@ if __name__ == "__main__":
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
-    txt = Text(trad("lorem"), True)
     debug_create_items()
     ###
     while SYSTEM["playing"]:
@@ -573,7 +521,7 @@ if __name__ == "__main__":
                 elif SYSTEM["game_state"] == GAME_PAUSE:
                     SYSTEM["game_state"] = GAME_LEVEL
         if SYSTEM["game_state"] == GAME_LEVEL:
-            game_loop(keys)
+            game_loop(keys, events)
         if SYSTEM["game_state"] == GAME_PAUSE:
             draw_pause(events)
         if SYSTEM["game_state"] == GAME_VICTORY:
@@ -595,6 +543,5 @@ if __name__ == "__main__":
             SYSTEM["dragged"].tick().draw()
         if not SYSTEM["mouse_click"][0]:
             SYSTEM["dragged"] = None
-        txt.draw(100, 100)
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))

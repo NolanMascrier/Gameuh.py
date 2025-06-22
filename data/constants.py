@@ -121,10 +121,13 @@ SYSTEM = {
     "pop-up": None
 }
 
-def trad(keys):
+def trad(keys, subkey = None):
     """Returns the translation data for the given key."""
     try:
-        return SYSTEM["lang"][keys]
+        if subkey is None:
+            return SYSTEM["lang"][keys]
+        else:
+            return SYSTEM["lang"][keys][subkey]
     except KeyError:
         return ["Unknown text data."]
 
@@ -239,3 +242,4 @@ class Flags(Enum):
     HAS_BOSS = "has_boss"
     #Flags for description
     DESC_FLAT = "description_flat_attribute"
+    DESC_PERCENT = "force_percentage_in_desc"

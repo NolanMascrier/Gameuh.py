@@ -66,7 +66,7 @@ class Ressource(Stat):
 
     def refill(self):
         """Restores the ressource to its maximum value."""
-        self._current_value = self._value
+        self._current_value = self.get_value()
 
     def modify(self, value: float):
         """Increments or decrements the value of the 

@@ -39,8 +39,8 @@ class Creature:
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense", scaling_value=0.01),
             "heal_factor": Stat(1, "Healing Effectivness"),
-            "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0),
-            "crit_rate": Stat(0.05, "Crit rate", 1, 0.001),
+            "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0.05, 0),
+            "crit_rate": Stat(0.05, "Crit rate", 1, 0, 0.001),
             "crit_dmg": Stat(1.5, "Crit Damage", scaling_value=0.02),
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
@@ -55,13 +55,13 @@ class Creature:
             "spell_dmg": Stat(1, "Spell Damage", scaling_value=0.01),
             "ranged_dmg": Stat(1, "Ranged Damage", scaling_value=0.01),
 
-            "phys": Stat(0, "Physical resistance", 0.9, scaling_value=0.005),
-            "fire": Stat(0, "Fire resistance", 0.9, scaling_value=0.005),
-            "ice": Stat(0, "Ice resistance", 0.9, scaling_value=0.005),
-            "elec": Stat(0, "Electric resistance", 0.9, scaling_value=0.005),
-            "energy": Stat(0, "Energy resistance", 0.9, scaling_value=0.005),
-            "light": Stat(0, "Light resistance", 0.9, scaling_value=0.005),
-            "dark": Stat(0, "Dark resistance", 0.9, scaling_value=0.005),
+            "phys": Stat(0, "Physical resistance", 0.9, -2, scaling_value=0.005),
+            "fire": Stat(0, "Fire resistance", 0.9, -2, scaling_value=0.005),
+            "ice": Stat(0, "Ice resistance", 0.9, -2, scaling_value=0.005),
+            "elec": Stat(0, "Electric resistance", 0.9, -2, scaling_value=0.005),
+            "energy": Stat(0, "Energy resistance", 0.9, -2, scaling_value=0.005),
+            "light": Stat(0, "Light resistance", 0.9, -2, scaling_value=0.005),
+            "dark": Stat(0, "Dark resistance", 0.9, -2, scaling_value=0.005),
 
             "phys_dmg": Stat(1, "Physical damage", scaling_value=0.05),
             "fire_dmg": Stat(1, "Fire damage", scaling_value=0.05),
@@ -71,13 +71,13 @@ class Creature:
             "light_dmg": Stat(1, "Light damage", scaling_value=0.05),
             "dark_dmg": Stat(1, "Dark damage", scaling_value=0.05),
 
-            "phys_pen": Stat(0, "Physical resistance penetration", 2, scaling_value=0.01),
-            "fire_pen": Stat(0, "Fire resistance penetration", 2, scaling_value=0.01),
-            "ice_pen": Stat(0, "Ice resistance penetration", 2, scaling_value=0.01),
-            "elec_pen": Stat(0, "Electric resistance penetration", 2, scaling_value=0.01),
-            "energy_pen": Stat(0, "Energy resistance penetration", 2, scaling_value=0.01),
-            "light_pen": Stat(0, "Light resistance penetration", 2, scaling_value=0.01),
-            "dark_pen": Stat(0, "Dark resistance penetration", 2, scaling_value=0.01)
+            "phys_pen": Stat(0, "Physical resistance penetration", 2, 0, scaling_value=0.01),
+            "fire_pen": Stat(0, "Fire resistance penetration", 2, 0, scaling_value=0.01),
+            "ice_pen": Stat(0, "Ice resistance penetration", 2, 0, scaling_value=0.01),
+            "elec_pen": Stat(0, "Electric resistance penetration", 2, 0, scaling_value=0.01),
+            "energy_pen": Stat(0, "Energy resistance penetration", 2, 0, scaling_value=0.01),
+            "light_pen": Stat(0, "Light resistance penetration", 2, 0, scaling_value=0.01),
+            "dark_pen": Stat(0, "Dark resistance penetration", 2, 0, scaling_value=0.01)
         }
         self._gear = {
             "helm": None,
@@ -343,8 +343,9 @@ class Creature:
             else:
                 item = self._gear["ring"]["right"]
                 self._gear["ring"]["right"] = None
-        item = self._gear[slot.value]
-        self._gear[slot.value] = None
+        else:
+            item = self._gear[slot.value]
+            self._gear[slot.value] = None
         if item is not None:
             for affix in item.affixes :
                 self.remove_affliction(affix.as_affliction())
@@ -491,7 +492,9 @@ class Creature:
             else:
                 if self._gear[gear] is not None:
                     for affix in self._gear[gear].affixes:
-                        self.afflict(affix.as_affliction())          
+                        self.afflict(affix.as_affliction())
+        self._stats["life"].refill()
+        self._stats["mana"].refill()
 
     @property
     def name(self) -> str:

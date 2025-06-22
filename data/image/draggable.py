@@ -1,8 +1,9 @@
 """A draggable is a component that can be dragged
 around by the mouse."""
 
-from data.constants import SYSTEM, IMAGE_TRACKER
+from data.constants import SYSTEM
 from data.image.image import Image
+from data.image.hoverable import Hoverable
 from data.item import Item
 
 class Draggable(Image):
@@ -24,10 +25,12 @@ class Draggable(Image):
         self._y = y
         self._dragging = False
         self._contains = contains
+        self._hover = None
         if isinstance(contains, Item):
             self._width = contains.get_image().width
             self._height = contains.get_image().height
             self._image = contains.get_image().clone().image
+            self._hover = Hoverable(x, y, None, contains.describe(), surface=self._image)
         self._parent_slot = None
         self._last_slot = None
         self._parent_panel = None
@@ -38,6 +41,8 @@ class Draggable(Image):
         dragged."""
         mouse_x, mouse_y = SYSTEM["mouse"]
         mouse_click = SYSTEM["mouse_click"]
+        if self._hover is not None:
+            self._hover.tick()
         if mouse_click[0]:
             if SYSTEM["dragged"] is None or SYSTEM["dragged"] is self:
                 if self._dragging:
@@ -70,6 +75,8 @@ class Draggable(Image):
         """Sets the draggable position."""
         self._x = x
         self._y = y
+        if self._hover is not None:
+            self._hover.set(x, y)
         return self
 
     def draw(self):

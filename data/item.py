@@ -49,6 +49,15 @@ class Item():
         else:
             return
 
+    def describe(self):
+        """Returns a text description of the item."""
+        text = []
+        text.append(f"{self._name}\n")
+        #TODO: base type
+        for affx in self._affixes:
+            text.append(f"{affx.describe()}")
+        return text
+
     def get_image(self):
         """returns the item's image."""
         if self._image is None:

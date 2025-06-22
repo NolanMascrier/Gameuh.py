@@ -149,6 +149,12 @@
         "the very laws of the universe."
     ],
     "lorem": "Lorem ipsum\ndolorem sic #c#(185, 0, 0) amet #c#(255, 255, 255) consulus",
+    "meta_words": {
+        "more": "more",
+        "less": "less",
+        "increased": "increased",
+        "decreased": "decreased"
+    },
     "descripts": {
         "life": "Life",
         "mana": "Mana",

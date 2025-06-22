@@ -2,6 +2,7 @@
 
 from data.constants import Flags
 from data.numerics.affliction import Affliction
+from data.constants import trad
 
 class Affix():
     """An affix a single modifier for an item.
@@ -22,27 +23,36 @@ class Affix():
         flags.append(Flags.GEAR)
         return Affliction(f"{self._name}_effect", self._value, -1, flags)
 
-    def descript(self):
+    def describe(self):
         """Generates a description of the affix."""
         if self._value == 0:
             return "\n"
-        if Flags.DESC_FLAT not in self._flags:
-            value = f"{self._value * 100}%"
-        else:
+        if Flags.DESC_FLAT in self._flags:
             value = f"{self._value}"
+        elif Flags.DESC_PERCENT in self._flags:
+            value = f"{self._value}%"
+        else:
+            value = f"{self._value * 100}%"
         if Flags.BOON in self._flags:
-            adds = f"{value} increased "
+            adds = f"{value} {trad("meta_words", "increased")}"
         elif Flags.HEX in self._flags:
-            adds = f"{value} decreased "
+            adds = f"{value} {trad("meta_words", "decreased")} "
         elif Flags.BLESS in self._flags:
-            adds = f"{value} more"
+            adds = f"{value} {trad("meta_words", "more")}"
         elif Flags.CURSE in self._flags:
-            adds = f"x{value} less"
+            adds = f"x{value} {trad("meta_words", "less")}"
         elif Flags.FLAT in self._flags:
             if self._value < 0:
                 adds = f"{value}"
             else:
                 adds = f"+{value}"
+        affx = []
+        for aff in self._flags:
+            if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
+                Flags.BLESS, Flags.CURSE, Flags.FLAT]:
+                affx.append(trad("descripts", aff.value))
+        lst = ", ".join(affx)
+        return f"{adds} {lst}"
 
     @property
     def name(self):
