@@ -15,6 +15,7 @@ class SlotPanel:
         self._padding = padding
         self._slots = []
         self._columns = (self._background.width - self._padding * 2) // slot_size
+        self._default = default
         if isinstance(default, Iterable):
             for item in default:
                 y, x = self.get_index()
@@ -37,6 +38,15 @@ class SlotPanel:
             SYSTEM["mouse"][1] <= self._y + self._background.height - self._padding:
             return True
         return False
+
+    def refresh(self):
+        """Refresh the content of the panel and redraws them."""
+        self._slots.clear()
+        if isinstance(self._default, Iterable):
+            for item in self._default:
+                y, x = self.get_index()
+                drag = Draggable(None, x, y, item)
+                self.insert(drag)
 
     def insert(self, drag: Draggable):
         """Inserts the draggable into the panel."""

@@ -35,6 +35,7 @@ class Draggable(Image):
         self._last_slot = None
         self._parent_panel = None
         self._last_panel = None
+        self._slotted = False
 
     def tick(self):
         """Adjusts the position of the draggable if\
@@ -52,17 +53,18 @@ class Draggable(Image):
                 elif (self._x <= mouse_x <= self._x + self.width and
                         self._y <= mouse_y <= self._y + self.height):
                     self._dragging = True
-                    self._last_slot = self._parent_slot
-                    self._last_panel = self._parent_panel
+                    self._slotted = False
                     if self._parent_panel is not None:
+                        self._last_panel = self._parent_panel
                         self._parent_panel.remove(self)
                         self._parent_panel = None
                     elif self._parent_slot is not None:
+                        self._last_slot = self._parent_slot
                         self._parent_slot.remove()
                         self._parent_slot = None
                     SYSTEM["dragged"] = self
-        elif SYSTEM["dragged"] is None:
-            if self._parent_panel is None and self._parent_slot is None:
+        elif not mouse_click[0]:
+            if not self._slotted:
                 if self._last_panel is not None:
                     self._last_panel.insert(self)
                 elif self._last_slot is not None:
@@ -90,7 +92,9 @@ class Draggable(Image):
 
     def set_parent(self, slot):
         """Sets the draggeable's parent."""
+        self._slotted = True
         self._parent_slot = slot
+        self._last_slot = slot
 
     def clear_parent(self):
         """Clears the parent."""
@@ -98,7 +102,9 @@ class Draggable(Image):
 
     def set_panel(self, panel):
         """Sets the draggeable's parent."""
+        self._slotted = True
         self._parent_panel = panel
+        self._last_panel = panel
 
     def clear_panel(self):
         """Clears the parent."""

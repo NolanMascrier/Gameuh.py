@@ -2,19 +2,19 @@ import random
 from time import sleep
 from data.constants import *
 from data.character import Character
-from data.Sprite import Sprite
-from data.projectile import Projectile
-from data.physics.hitbox import HitBox
-from data.physics.entity import Entity
-from data.creature import Creature
-from data.game.enemy import Enemy
-from data.slash import Slash
 from data.generator import Generator
 from data.image.animation import Animation
 from data.image.parallaxe import Parallaxe
 from data.image.image import Image
+from data.image.button import Button
 from data.image.text_generator import TextGenerator
-from data.spell_list import *
+from data.interface.gameui import draw_ui
+from data.game.level import Level
+from data.spell_list import generate_spell_list
+from data.image.slotpanel import SlotPanel
+from data.image.slot import Slot
+from data.item import Item
+from data.numerics.affix import Affix
 
 SPEED = 4
 PLAYING = True
@@ -22,152 +22,85 @@ PLAYER = (50, SCREEN_HEIGHT/2)
 
 SPEED_FACTOR = 5
 
-UI_SKILLS_OFFSET = 650
-UI_SKILLS_PANEL_OFFSET = 2
-UI_SKILLS_INPUT_OFFSET = 48
+def equip(item: Item, slot: Slot):
+    """Equips an item on the player character."""
+    if item is None:
+        return
+    if slot.flag not in item.flags:
+        SYSTEM["gear_panel"].insert(slot.contains)
+        slot.remove()
+    else:
+        SYSTEM["player"].creature.equip(slot.flag, item, slot.left)
+        SYSTEM["player"].inventory.remove(item)
 
-shoot_da_bouncy = False
-bouncies = 0
-difficulty = 1
+def unequip(item: Item, slot: Slot):
+    """Removes the equiped item from the slot."""
+    if item is None:
+        return
+    it = SYSTEM["player"].creature.unequip(slot.flag, slot.left)
+    SYSTEM["player"].inventory.append(it)
 
-def draw_ui(boss_here = False, boss = None):
-    char = SYSTEM["player"]
-    mana = 8 - int(char.creature.stats["mana"].current_value\
-                   / char.creature.stats["mana"].get_value() * 8)
-    life = 8 - int(char.creature.stats["life"].current_value\
-                   / char.creature.stats["life"].get_value() * 8)
+def debug_create_items():
+    """Creates a bunch of items."""
+    aff = Affix("str_1", 10, [Flags.STR, Flags.FLAT, Flags.DESC_FLAT])
+    aff2 = Affix("fire_dmg_1", 0.1, [Flags.FIRE_DMG, Flags.BOON])
+    aff3 = Affix("life_1", 0.05, [Flags.LIFE, Flags.BLESS])
+    aff4 = Affix("def", 10, [Flags.DEF, Flags.FLAT, Flags.DESC_FLAT])
+    aff5 = Affix("fire_res", 0.25, [Flags.FIRE, Flags.FLAT])
+    aff6 = Affix("elec_res", 0.12, [Flags.ELEC, Flags.FLAT])
+    armor = Item("Bob's armor", "body armor", 999, 0, 1, SYSTEM["images"]["item_armorA"], 2 \
+        ,[Flags.GEAR, Flags.ARMOR], [aff, aff3])
+    armor2 = Item("Bob's boots", "boots", 999, 0, 1, SYSTEM["images"]["item_bootsA"], 1 \
+        ,[Flags.GEAR, Flags.BOOTS], [aff2])
+    armor3 = Item("Bob's ring", "ring", 999, 0, 1, SYSTEM["images"]["item_ringA"], 3 \
+        ,[Flags.GEAR, Flags.RING], [aff4, aff5, aff6])
+    SYSTEM["player"].inventory.extend([armor, armor2, armor3])
 
-    SYSTEM["images"]["life_jauge"].frame = life
-    SYSTEM["images"]["mana_jauge"].frame = mana
+def start_level():
+    """Starts the level stored in the SYSTEM."""
+    SYSTEM["player"].reset()
+    SYSTEM["level"] = SYSTEM["selected"]
+    SYSTEM["game_state"] = GAME_LEVEL
+    init_timers()
 
-    SYSTEM["windows"].blit(SYSTEM["images"]["life_jauge"].get_image(), (380, SCREEN_HEIGHT - 200))
-    SYSTEM["windows"].blit(SYSTEM["images"]["mana_jauge"].get_image(),\
-                           (SCREEN_WIDTH - 524, SCREEN_HEIGHT - 200))
+def quit_level():
+    """Quits the current level and resets the player."""
+    SYSTEM["game_state"] = MENU_MAIN
+    reset()
 
-    text_life = SYSTEM["font_crit"].render(f'{round(char.creature.stats["life"].current_value)}',\
-                                      False, (0, 37, 97))
-    text_mana = SYSTEM["font_crit"].render(f'{round(char.creature.stats["mana"].current_value)}',\
-                                      False, (97, 0, 0))
-
-    SYSTEM["windows"].blit(text_life, (430, SCREEN_HEIGHT - 165))
-    SYSTEM["windows"].blit(text_mana, (SCREEN_WIDTH - 470, SCREEN_HEIGHT - 165))
-
-    #Life potions
-    SYSTEM["windows"].blit(SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130))
-    SYSTEM["windows"].blit(SYSTEM["images"]["life_potion"].get_image(), (524, SCREEN_HEIGHT - 130))
-    life_amount = SYSTEM["font_crit"].render(f'x{char.potions[0]}', False, (255, 255, 255))
-    SYSTEM["windows"].blit(SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130))
-    SYSTEM["windows"].blit(SYSTEM["images"][K_1], (508, SCREEN_HEIGHT - 82))
-    SYSTEM["windows"].blit(life_amount, (572, SCREEN_HEIGHT - 82))
-    #Mana potions
-    SYSTEM["windows"].blit(SYSTEM["images"]["item_bottom"].image,\
-                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
-    SYSTEM["windows"].blit(SYSTEM["images"]["mana_potion"].get_image(),\
-                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
-    mana_amount = SYSTEM["font_crit"].render(f'x{char.potions[1]}', False, (255, 255, 255))
-    SYSTEM["windows"].blit(SYSTEM["images"]["item_top"].image,\
-                           (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
-    SYSTEM["windows"].blit(SYSTEM["images"][K_2], (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82))
-    SYSTEM["windows"].blit(mana_amount, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82))
-
-    #Exp bar
-    SYSTEM["windows"].blit(SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60))
-    cd = (char.creature.exp + 0.001) / char.creature.exp_to_next * 1434
-    if cd < 0:
-        cd = 0
-    c = pygame.transform.scale(SYSTEM["images"]["exp_jauge"].image, (cd, 9))
-    SYSTEM["windows"].blit(c, (243, SCREEN_HEIGHT - 39))
-    SYSTEM["windows"].blit(SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60))
-
-    #Boss life bar
-    if boss_here:
-        boss_name = SYSTEM["font_crit"].render(f'{boss.creature.name}',\
-                                      False, (255, 255, 255))
-        bossl = (boss.creature.stats["life"].current_value/boss.creature.stats["life"].c_value) * 1500
-        b = pygame.transform.scale(SYSTEM["images"]["boss_jauge"].image, (bossl, 80))
-        bb = pygame.transform.scale(SYSTEM["images"]["boss_jauge_back"].image, (1500, 80))
-        SYSTEM["windows"].blit(bb, (200, 20))
-        SYSTEM["windows"].blit(b, (200, 20))
-        SYSTEM["windows"].blit(boss_name, (200, 20))
-    #Skills
-    i = 0
-    for name, skill in char.equipped_spells.items():
-        SYSTEM["windows"].blit(SYSTEM["images"]["skill_bottom"].image, (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
-        if skill is not None:
-            cdc = skill.cooldown
-            cdm = skill.stats["cooldown"].get_value()
-            cdl = cdc / cdm * 60
-            oom = bool(char.creature.get_efficient_value(skill.stats["mana_cost"].get_value()) > char.creature.stats["mana"].current_value)
-            s = pygame.Surface((cdl, 60))
-            s.set_alpha(128)
-            s.fill((255, 196, 0))
-            s2 = pygame.Surface((60, 60))
-            s2.set_alpha(128 if oom else 0)
-            s2.fill((255, 0, 0))
-            SYSTEM["windows"].blit(skill.icon.get_image(), (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
-            SYSTEM["windows"].blit(s2, (UI_SKILLS_OFFSET + UI_SKILLS_PANEL_OFFSET + 104 * i, SCREEN_HEIGHT - 128))
-            SYSTEM["windows"].blit(s, (UI_SKILLS_OFFSET + UI_SKILLS_PANEL_OFFSET + 104 * i, SCREEN_HEIGHT - 128))
-        SYSTEM["windows"].blit(SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
-        SYSTEM["windows"].blit(SYSTEM["images"][name], (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i, SCREEN_HEIGHT - 82))
-        i += 1
-
-def move_boss(boss, img, gen, laz):
-    global shoot_da_bouncy, bouncies
-    pattern = random.randint(0, 12)
-    #pattern = 11
-    x = random.randint(900, 1100)
-    y = random.randint(0, SCREEN_HEIGHT - 300)
-    if pattern >= 0 and pattern <= 7:
-        for i in range(9):
-            sh = Projectile(boss.x, boss.y, 200 - 5*i, SYSTEM["images"]["energyball"], FIREBOLT, boss.creature, True)
-            PROJECTILE_TRACKER.append(sh)
-            pass
-    if pattern > 7 and pattern <= 10:
-        pygame.time.set_timer(USEREVENT+1, 3500)
-        shoot_da_bouncy = True
-        bouncies = random.randint(2, 4)
-    if pattern > 10 and pattern <= 12:
-        for i in range(3):
-            sh = Generator(boss.x, boss.y, (boss.x + random.randint(-100,100), boss.y+ random.randint(100,250) * (random.randint(0, 1) - 1)), 0.025, 1, 3,\
-                        SYSTEM["images"]["generator"], SYSTEM["images"]["lazer"], caster=boss.creature)
-            PROJECTILE_TRACKER.append(sh)
-    return (x, y)
-
-def draw_hitbox(box, color):
-    s = pygame.Surface((box.width, box.height))
-    s.set_alpha(128)
-    s.fill(color)
-    SYSTEM["windows"].blit(s, (box.x, box.y))
-    s = pygame.Surface((4, 4))
-    s.set_alpha(255)
-    s.fill(color)
-    SYSTEM["windows"].blit(s, box.center)
-
-def spawn_boss():
-    boss_cord = [1000, 500]
-    boss_hitbox = HitBox(boss_cord[0], boss_cord[1], 100, 200)
-    ent = Entity(boss_cord[0], boss_cord[1], SYSTEM["images"]["boss_a"], boss_hitbox, 5)
-    crea = Creature("Totally not Orcus, Lord of Copyrights")
-    crea.stats["life"].value = 500
-    crea.stats["life"].refill()
-    crea.stats["speed"].value = 12
-    boss = Enemy(ent, crea, None, exp_value=100*difficulty)
-    return boss
-
-def spawn_enemies(attack_anim):
-    to_spawn = random.randint(3 * difficulty, 10 * difficulty)
-    for i in range(to_spawn + 1):
-        y_pos = random.randint(0, SCREEN_HEIGHT)
-        enemy_type = Flags.SHOOTER if random.randint(0, 1) == 1 else Flags.CHASER
-        hb = HitBox(SCREEN_WIDTH - 100, y_pos, 64, 128)
-        ent = Entity(SCREEN_WIDTH - 100, y_pos, SYSTEM["images"]["badguy"], hb)
-        crea = Creature("bob")
-        if enemy_type == Flags.CHASER:
-            crea.stats["life"].value = 20
-        else:
-            crea.stats["life"].value = 10
-        enemy = Enemy(ent, crea, attack_anim, behaviours=[enemy_type], timer=1, exp_value=5*difficulty)
-        ENNEMY_TRACKER.append(enemy)
+def open_gear_screen():
+    """Sets up the gear screen."""
+    SYSTEM["game_state"] = MENU_GEAR
+    x = SCREEN_WIDTH / 2- 32
+    y = SCREEN_HEIGHT / 2 - 128
+    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip,\
+         Flags.HELM, SYSTEM["player"].creature.gear["helm"])
+    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip, unequip,\
+         Flags.AMULET, SYSTEM["player"].creature.gear["amulet"])
+    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip, unequip,\
+         Flags.ARMOR, SYSTEM["player"].creature.gear["armor"])
+    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip,\
+         Flags.WEAPON, SYSTEM["player"].creature.gear["weapon"])
+    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip,\
+         Flags.RING, SYSTEM["player"].creature.gear["ring"]["left"])
+    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip,\
+         Flags.RING, SYSTEM["player"].creature.gear["ring"]["right"])
+    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip,\
+         Flags.OFFHAND, SYSTEM["player"].creature.gear["off_hand"])
+    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip, unequip,\
+         Flags.HANDS, SYSTEM["player"].creature.gear["hands"])
+    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip, unequip,\
+         Flags.RELIC, SYSTEM["player"].creature.gear["relic"])
+    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip, unequip,\
+         Flags.BELT, SYSTEM["player"].creature.gear["belt"])
+    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip,\
+         Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
+    data = []
+    for item in SYSTEM["player"].inventory:
+        if isinstance(item, Item):
+            if Flags.GEAR in item.flags:
+                data.append(item)
+    SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
 
 def init_game():
     """Loads the basic data for the game."""
@@ -199,6 +132,7 @@ def init_game():
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
+    SYSTEM["images"]["slot_empty"] = Image("ui/item_top.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png").image
     SYSTEM["images"][K_e] = Image("ui/kb_e.png").image
@@ -208,120 +142,421 @@ def init_game():
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
-    SYSTEM["player"] = Character(imagefile=Animation("witch.png", 64, 64, frame_rate = 0.25))
+    SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
+    SYSTEM["images"]["menu_button"] = Image("ui/button.png").scale(55, 280)
+    SYSTEM["images"]["button_quit"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("playing", False),\
+                                             "Quit Game").scale(55, 280)
+    SYSTEM["images"]["button_resume"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state", GAME_LEVEL),\
+                                             "Resume").scale(55, 280)
+    SYSTEM["images"]["button_abandon"] = Button("ui/button.png",\
+                                             quit_level,\
+                                             "Abandon mission").scale(55, 280)
+    SYSTEM["images"]["button_continue"] = Button("ui/button.png",\
+                                             quit_level,\
+                                             "Return to base").scale(55, 280)
+    SYSTEM["images"]["button_map"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
+                                             "World Map").scale(55, 280)
+    SYSTEM["images"]["button_gear"] = Button("ui/button.png",\
+                                             open_gear_screen,\
+                                             "Gear").scale(55, 280)
+    SYSTEM["images"]["button_spells"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state", MENU_SPELLBOOK),\
+                                             "Spellbook").scale(55, 280)
+    SYSTEM["images"]["button_tree"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state", MENU_TREE),\
+                                             "Skill Tree").scale(55, 280)
+    SYSTEM["images"]["button_inventory"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state",\
+                                             MENU_INVENTORY), "Inventory").scale(55, 280)
+    SYSTEM["images"]["button_options"] = Button("ui/button.png",\
+                                             lambda : SYSTEM.__setitem__("game_state",\
+                                             MENU_OPTIONS_GAME), "Options").scale(55, 280)
+    SYSTEM["images"]["button_assault"] = Button("ui/button.png",\
+                                             start_level, "Begin the assault !").scale(55, 280)
+    SYSTEM["images"]["char_details"] = Image("ui/char_back.png").scale(1050, 376)
+    SYSTEM["images"]["panel_back"] = Image("ui/char_back.png").scale(1024, 448)
+    SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
+    SYSTEM["images"]["mini_moolah"] = Image("minifric.png")
+    SYSTEM["images"]["moolah"] = Image("fric.png")
+    SYSTEM["images"]["big_moolah"] = Image("minisuperfric.png")
+    SYSTEM["images"]["super_moolah"] = Image("superfric.png")
+    SYSTEM["images"]["mega_moolah"] = Image("megaminifric.png").scale(64, 64)
+    SYSTEM["images"]["giga_moolah"] = Image("maximinifric.png").scale(64, 64)
+    SYSTEM["images"]["terra_moolah"] = Image("megafric.png").scale(64, 64)
+    SYSTEM["images"]["zeta_moolah"] = Image("maxifric.png").scale(64, 64)
+    SYSTEM["images"]["supra_moolah"] = Image("grail.png").scale(64, 64)
+    SYSTEM["images"]["maxi_moolah"] = Image("maxigrail.png").scale(64, 64)
+    SYSTEM["images"]["gold_icon"] = Image("thune.png")
+    SYSTEM["images"]["mission_map"] = Image("mission.png").scale(1024, 1024)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
+    SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
+    SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
+    SYSTEM["images"]["gear_helm"] = Image("ui/gear_helm.png").scale(64, 64)
+    SYSTEM["images"]["gear_boots"] = Image("ui/gear_boots.png").scale(64, 64)
+    SYSTEM["images"]["gear_hands"] = Image("ui/gear_hands.png").scale(64, 64)
+    SYSTEM["images"]["gear_armor"] = Image("ui/gear_armor.png").scale(64, 64)
+    SYSTEM["images"]["gear_belt"] = Image("ui/gear_belt.png").scale(64, 64)
+    SYSTEM["images"]["gear_ring"] = Image("ui/gear_ring.png").scale(64, 64)
+    SYSTEM["images"]["gear_amulet"] = Image("ui/gear_amulet.png").scale(64, 64)
+    SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
+    SYSTEM["images"]["test_armor"] = Image("icons/elementalfury.png").scale(64, 64)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
+    SYSTEM["font_detail"] = pygame.font.SysFont('ressources/dogica.ttf', 25)
+    SYSTEM["font_detail_small"] = pygame.font.SysFont('ressources/dogica.ttf', 20)
     SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
     SYSTEM["text_generator"] = TextGenerator()
+    SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
+    SYSTEM["images"]["city_icon"] = Image("icons/cybercity.png")
+    SYSTEM["images"]["sunrise_icon"] = Image("icons/sunrise.png")
+    SYSTEM["images"]["forest_icon"] = Image("icons/forest.png")
+    SYSTEM["images"]["ui_normal"] = Image("ui/border_normal.png")
+    SYSTEM["images"]["ui_magic"] = Image("ui/border_magic.png")
+    SYSTEM["images"]["ui_rare"] = Image("ui/border_rare.png")
+    SYSTEM["images"]["ui_legendary"] = Image("ui/border_legend.png")
+    SYSTEM["images"]["item_bootsA"] = Image("icons/bootsA.png")
+    SYSTEM["images"]["item_ringA"] = Image("icons/ringA.png")
+    SYSTEM["images"]["item_armorA"] = Image("icons/armorA.png")
+    generate_spell_list()
+    #TODO: Offset this to the scene manager
+    SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0, 2])
+    SYSTEM["city_back"] = Parallaxe("city.png", 576, 324, speeds = [0.1, 0.0])
+    SYSTEM["mount"] = Parallaxe("icemount.png", 360, 189, speeds = [0.2, 0.6, 1.0, 2.0, 1, 2.5, 3, 3])
+    SYSTEM["cybercity"] = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
+    SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2, 2])
+    SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240, speeds = [0.0, 0.1, 0.2, 0.9, 1.0, 1.5, 1.5], scroll_left=False)
+    SYSTEM["player"] = Character(imagefile=Animation("witch.png", 64, 64, frame_rate = 0.25))
 
-def game_loop(frame, boss, waves, paral, difficulty, boss_here):
+def reset():
+    """Resets the game's status"""
+    SYSTEM["selected"] = None
+    SYSTEM["player"].reset()
+    ENNEMY_TRACKER.clear()
+    PROJECTILE_TRACKER.clear()
+    POWER_UP_TRACKER.clear()
+    SLASH_TRACKER.clear()
+    TEXT_TRACKER.clear()
+    levels = []
+    SYSTEM["buttons"] = []
+    for _ in range(4):
+        levels.append(generate_random_level())
+    for i in range(4):
+        butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
+                                             levels[i]))
+        SYSTEM["buttons"].append(butt)
+    init_timers()
+
+def init_timers():
+    """Inits Pygame's timers."""
+    pygame.time.set_timer(WAVE_TIMER, 1000)
+    pygame.time.set_timer(USEREVENT+1, 2000)
+    pygame.time.set_timer(USEREVENT+2, 100)
+    pygame.time.set_timer(TICKER_TIMER, 20)
+
+def draw_game(show_player = True, show_enemies = True,\
+    show_loot = True, show_projectiles = True, show_slashes = True,\
+    show_text = True):
+    """Draws the main game component."""
+    if show_player:
+        SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
+    if show_loot:
+        for bubble in POWER_UP_TRACKER:
+            SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
+    if show_enemies:
+        for baddie in ENNEMY_TRACKER:
+            SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
+    if show_projectiles:
+        for p in PROJECTILE_TRACKER:
+            SYSTEM["windows"].blit(p.get_image(), p.get_pos())
+    if show_slashes:
+        for s in SLASH_TRACKER:
+            SYSTEM["windows"].blit(s.get_image(), s.get_pos())
+    if show_text:
+        for txt in TEXT_TRACKER:
+            SYSTEM["windows"].blit(txt[0], (txt[1], txt[2]))
+
+def tick():
+    """Ticks all there is to tick."""
     generate_grids()
-    destination = (1000, 1000)
-    frame += 0.2
-    SYSTEM["windows"].blit(paral.draw(), (0, 0))
-    SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
-    if boss_here:
-        boss.entity.move(destination)
-        SYSTEM["windows"].blit(boss.entity.get_image(), (boss.x, boss.y))
-
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            SYSTEM["playing"] = False
-        if event.type == WAVE_TIMER:
-            if waves > 0:
-                pygame.time.set_timer(WAVE_TIMER, 12000)
-                spawn_enemies(SYSTEM["images"]["energyball"])
-                waves -= 1
-            elif not boss_here:
-                boss = spawn_boss()
-                boss_here = True
-        if boss_here:
-            if event.type == USEREVENT+1:
-                destination = move_boss(boss, SYSTEM["images"]["energyball"], SYSTEM["images"]["generator"], SYSTEM["images"]["lazer"])
-            if event.type == USEREVENT+2:
-                if shoot_da_bouncy:
-                    if bouncies <= 0:
-                        shoot_da_bouncy = False
-                        pygame.time.set_timer(USEREVENT+1, 2000)
-                    sh = Projectile(boss.x, boss.y, 145 if random.randint(0, 1) == 1 else -145, SYSTEM["images"]["bouncer"], ICEBOLT, boss.creature, speed=5, evil=True, bounces=5, behaviours=[Flags.BOUNCE])
-                    PROJECTILE_TRACKER.append(sh)
-                    bouncies -= 1
-    #if boss_here:
-        #draw_hitbox(boss.hitbox, 0xFF0000)
-    #draw_hitbox(SYSTEM["player"].hitbox, 0x00FF00)
-    keys = pygame.key.get_pressed()
-    SYSTEM["player"].action(keys)
     SYSTEM["player"].tick()
-    if boss is not None:
-        boss.tick(SYSTEM["player"])
     for bubble in POWER_UP_TRACKER.copy():
         bubble.tick(SYSTEM["player"])
-        SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
         if bubble.flagged_for_deletion:
             POWER_UP_TRACKER.remove(bubble)
     for baddie in ENNEMY_TRACKER.copy():
-        SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
         baddie.tick(SYSTEM["player"])
-        if baddie._exploded:
+        if baddie.destroyed:
             ENNEMY_TRACKER.remove(baddie)
-    for proj in PROJECTILE_TRACKER.copy():
-        if isinstance(proj, Generator):
-            SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
-            proj.tick(SYSTEM["player"])
-        if not isinstance(proj, Projectile):
+    for p in PROJECTILE_TRACKER.copy():
+        if isinstance(p, Generator):
+            p.tick(SYSTEM["player"])
             continue
-        proj.tick()
-        SYSTEM["windows"].blit(proj.get_image(), proj.get_pos())
-        if proj.can_be_destroyed():
-            PROJECTILE_TRACKER.remove(proj)
-    for slash in SLASH_TRACKER.copy():
-        if not isinstance(slash, Slash):
-            continue
-        slash.tick()
-        SYSTEM["windows"].blit(slash.get_image(), slash.get_pos())
-        if slash.finished:
-            SLASH_TRACKER.remove(slash)
+        p.tick()
+        if p.can_be_destroyed():
+            PROJECTILE_TRACKER.remove(p)
+    for s in SLASH_TRACKER.copy():
+        s.tick()
+        if s.finished:
+            SLASH_TRACKER.remove(s)
     for txt in TEXT_TRACKER.copy():
         sfc = txt[0]
         sfc.set_alpha(txt[3])
         txt[3] -= 5
         txt[2] -= 3
-        SYSTEM["windows"].blit(sfc, (txt[1], txt[2]))
         if txt[3] < 10:
             TEXT_TRACKER.remove(txt)
-    draw_ui(SYSTEM["player"], boss_here, boss)
-    pygame.display.update()
-    sleep(0.016)
-    SYSTEM["player"].tick()
-    if frame >= 60:
-        frame -= 60
-    if boss_here and boss.creature.stats["life"].current_value <= 0:
-        waves = 5 * difficulty
-        difficulty += 1
-        boss_here = False
-        boss.explode()
-        boss = None
-    SYSTEM["images"]["life_potion"].tick()
-    SYSTEM["images"]["mana_potion"].tick()
     clean_grids()
+
+def game_loop(keys, events):
+    """Main game loop."""
+    #Handle Events
+    for event in events:
+        if event.type == QUIT:
+            SYSTEM["playing"] = False
+        if event.type == WAVE_TIMER:
+            SYSTEM["level"].next_wave()
+        if event.type == TICKER_TIMER:
+            tick()
+    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    #Handle logic
+    SYSTEM["player"].action(keys)
+    #Handle printing on screen
+    draw_game()
+    #Draw the UI
+    draw_ui()
+    if SYSTEM["player"].creature.stats["life"].current_value <= 0:
+        SYSTEM["game_state"] = GAME_DEATH
+    SYSTEM["latest_frame"] = SYSTEM["windows"].copy()
+
+def draw_victory(events):
+    """Draws the victory screen."""
+    for event in events:
+        if event.type == TICKER_TIMER:
+            tick()
+    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    draw_game()
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["images"]["button_continue"].set(x_offset + 200, y_offset + 300)
+    SYSTEM["images"]["button_continue"].draw(SYSTEM["windows"])
+    gold = SYSTEM["level"].gold
+    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
+    SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_continue"].press(event.pos)
+
+def draw_game_over(event):
+    """Draws the defeat screen."""
+    for event in events:
+        if event.type == TICKER_TIMER:
+            tick()
+    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    draw_game(False)
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["images"]["button_continue"].set(x_offset + 200, y_offset + 300)
+    SYSTEM["images"]["button_continue"].draw(SYSTEM["windows"])
+    gold = SYSTEM["level"].gold
+    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
+    SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_continue"].press(event.pos)
+
+def draw_pause(events):
+    """Draws the pause menu."""
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["latest_frame"], (0, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["images"]["button_resume"].set(x_offset + 200, y_offset + 100)
+    SYSTEM["images"]["button_abandon"].set(x_offset + 200, y_offset + 200)
+    SYSTEM["images"]["button_quit"].set(x_offset + 200, y_offset + 300)
+    SYSTEM["images"]["button_resume"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_abandon"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_quit"].draw(SYSTEM["windows"])
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_resume"].press(event.pos)
+            SYSTEM["images"]["button_abandon"].press(event.pos)
+            SYSTEM["images"]["button_quit"].press(event.pos)
+
+def draw_small_card():
+    """Draws a small character card."""
+    x = SCREEN_WIDTH - SYSTEM["images"]["char_details"].width
+    y = 0
+    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (x, y))
+    li = SYSTEM["player"].creature.generate_stat_simple(x + 10, y + 10)
+    for l in li:
+        l.draw(SYSTEM["windows"])
+        l.tick()
+
+def draw_bottom_bar(events):
+    """Draws the bottom bar, quick access to the menus."""
+    SYSTEM["images"]["button_map"].set(10, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_map"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_gear"].set(300, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_gear"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_spells"].set(590, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_spells"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_tree"].set(880, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_tree"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_inventory"].set(1170, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_inventory"].draw(SYSTEM["windows"])
+    SYSTEM["images"]["button_options"].set(1460, SCREEN_HEIGHT - 64)
+    SYSTEM["images"]["button_options"].draw(SYSTEM["windows"])
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_map"].press(event.pos)
+            SYSTEM["images"]["button_gear"].press(event.pos)
+            SYSTEM["images"]["button_tree"].press(event.pos)
+            SYSTEM["images"]["button_inventory"].press(event.pos)
+            SYSTEM["images"]["button_options"].press(event.pos)
+            SYSTEM["images"]["button_spells"].press(event.pos)
+
+def generate_random_level():
+    """Creates a random level."""
+    area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 0)
+    zone = random.randint(0, 3)
+    match zone:
+        case 0:
+            area = SYSTEM["sunrise"]
+            icon = SYSTEM["images"]["sunrise_icon"]
+            name = "Red mountain of Doom"
+        case 1:
+            area = SYSTEM["cybercity"]
+            icon = SYSTEM["images"]["city_icon"]
+            name = "City of the Night"
+        case 2:
+            area = SYSTEM["forest"]
+            icon = SYSTEM["images"]["forest_icon"]
+            name = "Forest of things"
+        case 3:
+            area = SYSTEM["mountains"]
+            icon = SYSTEM["images"]["mount_icon"]
+            name = "Above the sky"
+    level = Level(name, area_lvl, icon, 6000, area)
+    return level
+
+def draw_menu(events):
+    """Draws the main game menu."""
+    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["windows"].blit(SYSTEM["images"]["mission_map"].image, (200, 10))
+    SYSTEM["buttons"][0].set(350, 680).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][1].set(860, 250).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][2].set(900, 900).draw(SYSTEM["windows"])
+    SYSTEM["buttons"][3].set(478, 420).draw(SYSTEM["windows"])
+    draw_small_card()
+    if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
+        name = SYSTEM["font_detail"].render(f'{SYSTEM["selected"].name}',\
+            False, (255, 255, 255))
+        lvl = SYSTEM["font_detail"].render(f'Area level: {SYSTEM["selected"].area_level}',\
+            False, (255, 255, 255))
+        #TODO: modifiers ...
+        SYSTEM["windows"].blit(name, (1500, 750))
+        SYSTEM["windows"].blit(lvl, (1500, 775))
+        SYSTEM["images"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
+        SYSTEM["windows"].blit(SYSTEM["selected"].icon.image, (1500, 800))
+    draw_bottom_bar(events)
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["buttons"][0].press(event.pos)
+            SYSTEM["buttons"][1].press(event.pos)
+            SYSTEM["buttons"][2].press(event.pos)
+            SYSTEM["buttons"][3].press(event.pos)
+            SYSTEM["images"]["button_assault"].press(event.pos)
+
+
+def draw_gear(events):
+    """Draws the gear menu."""
+    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["ui"]["gear_weapon"].tick().draw()
+    SYSTEM["ui"]["gear_offhand"].tick().draw()
+    SYSTEM["ui"]["gear_helm"].tick().draw()
+    SYSTEM["ui"]["gear_boots"].tick().draw()
+    SYSTEM["ui"]["gear_hands"].tick().draw()
+    SYSTEM["ui"]["gear_armor"].tick().draw()
+    SYSTEM["ui"]["gear_belt"].tick().draw()
+    SYSTEM["ui"]["gear_ring"].tick().draw()
+    SYSTEM["ui"]["gear_ring2"].tick().draw()
+    SYSTEM["ui"]["gear_amulet"].tick().draw()
+    SYSTEM["ui"]["gear_relic"].tick().draw()
+    SYSTEM["gear_panel"].tick().draw()
+    x = 10
+    y = 10
+    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (x, y))
+    li = SYSTEM["player"].creature.generate_stat_details(x + 10, y + 10)
+    for l in li:
+        l.draw(SYSTEM["windows"])
+        l.tick()
+    draw_bottom_bar(events)
 
 if __name__ == "__main__":
     init_game()
-    boss = None
-    boss_here = False
-    waves = 3
-
-    pygame.time.set_timer(WAVE_TIMER, 2000)
-    pygame.time.set_timer(USEREVENT+1, 2000)
-    pygame.time.set_timer(USEREVENT+2, 100)
-
-    generate_spell_list()
-    paral = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0])
-    frame = 0
-    SYSTEM["game_state"] = GAME_LEVEL
-
+    init_timers()
+    SYSTEM["game_state"] = MENU_MAIN
+    INTERNAL_COOLDOWN = 0
+    #TODO: Put that in scene manager
+    levels = []
+    SYSTEM["buttons"] = []
+    for _ in range(4):
+        levels.append(generate_random_level())
+    for i in range(4):
+        butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
+                                             levels[i]))
+        SYSTEM["buttons"].append(butt)
+    SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
+    debug_create_items()
+    ###
     while SYSTEM["playing"]:
+        SYSTEM["pop_up"] = None
+        SYSTEM["mouse"] = pygame.mouse.get_pos()
+        SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
+        events = pygame.event.get()
+        for event in events:
+            if event.type == QUIT:
+                PLAYING = False
+        keys = pygame.key.get_pressed()
+        if keys[K_ESCAPE]:
+            if INTERNAL_COOLDOWN <= 0:
+                INTERNAL_COOLDOWN = 0.5
+                if SYSTEM["game_state"] == GAME_LEVEL:
+                    SYSTEM["game_state"] = GAME_PAUSE
+                elif SYSTEM["game_state"] == GAME_PAUSE:
+                    SYSTEM["game_state"] = GAME_LEVEL
         if SYSTEM["game_state"] == GAME_LEVEL:
-            game_loop(frame, boss, waves, paral, difficulty, boss_here)
-    pygame.quit()
+            game_loop(keys, events)
+        if SYSTEM["game_state"] == GAME_PAUSE:
+            draw_pause(events)
+        if SYSTEM["game_state"] == GAME_VICTORY:
+            draw_victory(events)
+        if SYSTEM["game_state"] == GAME_DEATH:
+            draw_game_over(events)
+        if SYSTEM["game_state"] == MENU_MAIN:
+            draw_menu(events)
+        if SYSTEM["game_state"] == MENU_GEAR:
+            draw_gear(events)
+
+        if SYSTEM["pop_up"] is not None:
+            SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (SYSTEM["mouse"][0] - SYSTEM["pop_up"][1],\
+                                     SYSTEM["mouse"][1]))
+
+        INTERNAL_COOLDOWN -= 0.032
+        INTERNAL_COOLDOWN = max(INTERNAL_COOLDOWN, 0)
+        if SYSTEM["dragged"] is not None:
+            SYSTEM["dragged"].tick().draw()
+        if not SYSTEM["mouse_click"][0]:
+            SYSTEM["dragged"] = None
+        pygame.display.update()
+        sleep(float(SYSTEM["options"]["fps"]))
