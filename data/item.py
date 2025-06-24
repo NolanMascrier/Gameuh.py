@@ -25,7 +25,7 @@ class Item():
         affixes (list, optionnal): List of the item's affixes,\
         aka its effects. Defaults to [].
     """
-    def __init__(self, name, base, price, power, max_held = 64,\
+    def __init__(self, name:str, base:str, price, power, max_held = 64,\
         image:Image|Animation = None, rarity = 0,\
         flags = None, affixes = None):
         self._name = name
@@ -56,6 +56,20 @@ class Item():
                 target.restore_mana(self._power)
         else:
             return
+
+    def copy(self):
+        """Returns a copy of the item."""
+        return Item(
+            self._name,
+            self._base,
+            self._price,
+            self._power,
+            self._max_held,
+            self._image,
+            self._rarity,
+            self._flags.copy(),
+            self._affixes.copy()
+        )
 
     def describe(self):
         """Returns a text description of the item."""

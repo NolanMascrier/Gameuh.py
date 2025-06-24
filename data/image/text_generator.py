@@ -1,7 +1,6 @@
 """A class that allows creation and display of text on the screen."""
 
 from data.constants import TEXT_TRACKER, SYSTEM
-from data.damage import Damage
 
 class TextGenerator():
     def __init__(self):

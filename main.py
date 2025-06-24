@@ -110,6 +110,10 @@ def init_game():
     flags = pygame.SCALED|pygame.FULLSCREEN
     SYSTEM["windows"] = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
 
+    SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
+    SYSTEM["font_detail"] = pygame.font.SysFont('ressources/dogica.ttf', 25)
+    SYSTEM["font_detail_small"] = pygame.font.SysFont('ressources/dogica.ttf', 20)
+    SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.25).scale(300, 256)
@@ -141,41 +145,43 @@ def init_game():
     SYSTEM["images"][K_t] = Image("ui/kb_t.png").image
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
+    SYSTEM["images"]["btn"] = Image("ui/button.png").scale(55, 280)
+    SYSTEM["images"]["btn_p"] = Image("ui/button_press.png").scale(55, 280)
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
     SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
     SYSTEM["images"]["menu_button"] = Image("ui/button.png").scale(55, 280)
-    SYSTEM["images"]["button_quit"] = Button("ui/button.png",\
+    SYSTEM["images"]["button_quit"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("playing", False),\
-                                             "Quit Game").scale(55, 280)
-    SYSTEM["images"]["button_resume"] = Button("ui/button.png",\
+                                             "Quit Game")
+    SYSTEM["images"]["button_resume"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state", GAME_LEVEL),\
-                                             "Resume").scale(55, 280)
-    SYSTEM["images"]["button_abandon"] = Button("ui/button.png",\
+                                             "Resume")
+    SYSTEM["images"]["button_abandon"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              quit_level,\
-                                             "Abandon mission").scale(55, 280)
-    SYSTEM["images"]["button_continue"] = Button("ui/button.png",\
+                                             "Abandon mission")
+    SYSTEM["images"]["button_continue"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              quit_level,\
-                                             "Return to base").scale(55, 280)
-    SYSTEM["images"]["button_map"] = Button("ui/button.png",\
+                                             "Return to base")
+    SYSTEM["images"]["button_map"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
-                                             "World Map").scale(55, 280)
-    SYSTEM["images"]["button_gear"] = Button("ui/button.png",\
+                                             "World Map")
+    SYSTEM["images"]["button_gear"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              open_gear_screen,\
-                                             "Gear").scale(55, 280)
-    SYSTEM["images"]["button_spells"] = Button("ui/button.png",\
+                                             "Gear")
+    SYSTEM["images"]["button_spells"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state", MENU_SPELLBOOK),\
-                                             "Spellbook").scale(55, 280)
-    SYSTEM["images"]["button_tree"] = Button("ui/button.png",\
+                                             "Spellbook")
+    SYSTEM["images"]["button_tree"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state", MENU_TREE),\
-                                             "Skill Tree").scale(55, 280)
-    SYSTEM["images"]["button_inventory"] = Button("ui/button.png",\
+                                             "Skill Tree")
+    SYSTEM["images"]["button_inventory"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state",\
-                                             MENU_INVENTORY), "Inventory").scale(55, 280)
-    SYSTEM["images"]["button_options"] = Button("ui/button.png",\
+                                             MENU_INVENTORY), "Inventory")
+    SYSTEM["images"]["button_options"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state",\
-                                             MENU_OPTIONS_GAME), "Options").scale(55, 280)
-    SYSTEM["images"]["button_assault"] = Button("ui/button.png",\
-                                             start_level, "Begin the assault !").scale(55, 280)
+                                             MENU_OPTIONS_GAME), "Options")
+    SYSTEM["images"]["button_assault"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
+                                             start_level, "Begin the assault !")
     SYSTEM["images"]["char_details"] = Image("ui/char_back.png").scale(1050, 376)
     SYSTEM["images"]["panel_back"] = Image("ui/char_back.png").scale(1024, 448)
     SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
@@ -204,10 +210,6 @@ def init_game():
     SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
     SYSTEM["images"]["test_armor"] = Image("icons/elementalfury.png").scale(64, 64)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
-    SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
-    SYSTEM["font_detail"] = pygame.font.SysFont('ressources/dogica.ttf', 25)
-    SYSTEM["font_detail_small"] = pygame.font.SysFont('ressources/dogica.ttf', 20)
-    SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
     SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
     SYSTEM["images"]["city_icon"] = Image("icons/cybercity.png")
@@ -244,7 +246,7 @@ def reset():
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
-        butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
+        butt = Button(levels[i].icon, None, lambda i=i:SYSTEM.__setitem__("selected",\
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
     init_timers()
@@ -351,7 +353,7 @@ def draw_victory(events):
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["images"]["button_continue"].press(event.pos)
 
-def draw_game_over(event):
+def draw_game_over(events):
     """Draws the defeat screen."""
     for event in events:
         if event.type == TICKER_TIMER:
@@ -513,7 +515,7 @@ if __name__ == "__main__":
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
-        butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
+        butt = Button(levels[i].icon, None, lambda i=i:SYSTEM.__setitem__("selected",\
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)

@@ -3,23 +3,30 @@ action when doing so."""
 
 from data.constants import SYSTEM
 from data.image.image import Image
+from data.image.text import Text
 
-class Button(Image):
-    def __init__(self, uri = None, action = None, text:str = ""):
-        super().__init__(uri)
+class Button():
+    """Defines a button. A button is a clickable image with two states (clicked
+    and not clicked), and does an action when clicked."""
+    def __init__(self, image:Image, pressed:Image = None, action = None, text:str = ""):
+        self._image = image
+        self._pressed = pressed
+        self._clicked = False
         self._action = action
         self._x = 0
         self._y = 0
-        self._text = text
+        self._width = image.width
+        self._height = image.height
+        self._text = Text(text, True, "font_detail", force_x=self._width)
 
     def draw(self, surface):
         """Draws the image to the surface."""
-        text = SYSTEM["font_crit"].render(self._text, False, (0, 0, 0))
-        size = text.get_size()
-        surface.blit(self._image, (self._x, self._y))
-        center = (self._x + self._width / 2 - size[0] / 2,\
-                  self._y + self._height / 2 - size[1] / 2)
-        surface.blit(text, center)
+        if self._clicked and self._pressed is not None:
+            surface.blit(self._pressed.image, (self._x, self._y))
+        else:
+            surface.blit(self._image.image, (self._x, self._y))
+        y = self._y + self._text.height / 2
+        surface.blit(self._text.surface, (self._x, y))
 
     def set(self, x, y):
         """Sets the button to the x;y position."""
@@ -33,6 +40,9 @@ class Button(Image):
         if mouse_pos[0] >= self._x and mouse_pos[0] <= self._x + self._width and\
             mouse_pos[1] >= self._y and mouse_pos[1] <= self._y + self._height:
             self._action()
+            self._clicked = True
+        else:
+            self._clicked = False
 
     @property
     def x(self):
