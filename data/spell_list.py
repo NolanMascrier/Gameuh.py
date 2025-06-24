@@ -14,15 +14,14 @@ FIREBOLT = Damage(2, 1.5, fire=1, flags=[Flags.SPELL])
 DARKBOLT = Damage(2, 1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT = Damage(1, 0.1, dark=1, flags=[Flags.SPELL])
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
-CHARGE = Damage(1, 15, phys=1, flags=[Flags.MELEE])
-FURYSLASH = Damage(1, 5, phys=1, flags=[Flags.MELEE])
+CHARGE = Damage(15, 1.5, phys=1, flags=[Flags.MELEE])
+FURYSLASH = Damage(5, 0.8, phys=1, flags=[Flags.MELEE])
 
 ELEFURY = Affliction("elemetal_fury", 1.25, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
-FURY = Affliction("FURY", 1.1, 2, flags=[Flags.BLESS, Flags.MELEE],\
+FURY = Affliction("FURY", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\
                 stackable=True, refreshable=True)
-
 
 class Spell():
     def __init__(self, name, icon, proj_image, base_damage:Damage, mana_cost = 0, life_cost = 0,\
@@ -150,7 +149,7 @@ def generate_spell_list():
     darkbolt_img = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     furyslash_img = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(58, 40)
     furyslash_alt = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(87, 60).flip(False, True)
-    firebolt = Spell("Firebolt", firebolt_icon, firebolt_proj_img, FIREBOLT, 2, cooldown=0.5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
+    firebolt = Spell("Firebolt", firebolt_icon, firebolt_proj_img, FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     icebolt = Spell("Ice lance", icebolt_icon, icebolt_proj_img, ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
     voidolt = Spell("Voidbolt", voidbolt_icon, voidbolt_proj_img, VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
     elementalfury = Spell("Elemental Fury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])

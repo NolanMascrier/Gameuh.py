@@ -6,8 +6,20 @@ from data.constants import SYSTEM
 class Text():
     """Reads a text in str form to create a pygame surface
     with line breaks and colors. to denote a color, use
-    #c#(r, g, b) before a word."""
-    def __init__(self, text: str, centered = False, font = "font_detail_small"):
+    #c#(r, g, b) before a word.
+     
+    Args:
+        text (str): Text to display.
+        centered (bool, optional): Whether or not to center the\
+        text on the surface. Defaults to False.
+        font (str, optional): Which font to use. Defaults to "font_detail_small".
+        force_x (int, optional): Overrides the automatic width calculation. Defaults\
+        to -1 (disabled).
+        force_y (int, optional): Overrides the automatic height calculation. Defaults\
+        to -1 (disabled).
+    """
+    def __init__(self, text: str, centered = False,\
+                font = "font_detail_small", force_x = -1, force_y = -1):
         self._data = []
         self._surfaces = []
         self._centered = centered
@@ -36,9 +48,9 @@ class Text():
                 cell_buffer.append(SYSTEM[font].render(\
                     f'{cell[1]}', False, cell[0]))
             self._surfaces.append(cell_buffer)
-        self.generate_surface()
+        self.generate_surface(force_x, force_y)
 
-    def generate_surface(self):
+    def generate_surface(self, force_x, force_y):
         """Creates the text surface."""
         self._height = 0
         self._width = 0
@@ -48,6 +60,10 @@ class Text():
             for cell in tab:
                 w_temp += cell.get_rect().width + 3
             self._width = max(self._width, w_temp)
+        if force_x > 0:
+            self._width = force_x
+        if force_y > 0:
+            self._width = force_y
         self._surface = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
         y_temp = 0
         for tab in self._surfaces:

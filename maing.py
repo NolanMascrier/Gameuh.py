@@ -48,11 +48,11 @@ def debug_create_items():
     aff4 = Affix("def", 10, [Flags.DEF, Flags.FLAT, Flags.DESC_FLAT])
     aff5 = Affix("fire_res", 0.25, [Flags.FIRE, Flags.FLAT])
     aff6 = Affix("elec_res", 0.12, [Flags.ELEC, Flags.FLAT])
-    armor = Item("Bob's armor", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+    armor = Item("Bob's armor", "body armor", 999, 0, 1, SYSTEM["images"]["item_armorA"], 2 \
         ,[Flags.GEAR, Flags.ARMOR], [aff, aff3])
-    armor2 = Item("Bob's boots", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+    armor2 = Item("Bob's boots", "boots", 999, 0, 1, SYSTEM["images"]["item_bootsA"], 1 \
         ,[Flags.GEAR, Flags.BOOTS], [aff2])
-    armor3 = Item("Bob's ring", 999, 0, 1, SYSTEM["images"]["test_armor"] \
+    armor3 = Item("Bob's ring", "ring", 999, 0, 1, SYSTEM["images"]["item_ringA"], 3 \
         ,[Flags.GEAR, Flags.RING], [aff4, aff5, aff6])
     SYSTEM["player"].inventory.extend([armor, armor2, armor3])
 
@@ -213,6 +213,13 @@ def init_game():
     SYSTEM["images"]["city_icon"] = Image("icons/cybercity.png")
     SYSTEM["images"]["sunrise_icon"] = Image("icons/sunrise.png")
     SYSTEM["images"]["forest_icon"] = Image("icons/forest.png")
+    SYSTEM["images"]["ui_normal"] = Image("ui/border_normal.png")
+    SYSTEM["images"]["ui_magic"] = Image("ui/border_magic.png")
+    SYSTEM["images"]["ui_rare"] = Image("ui/border_rare.png")
+    SYSTEM["images"]["ui_legendary"] = Image("ui/border_legend.png")
+    SYSTEM["images"]["item_bootsA"] = Image("icons/bootsA.png")
+    SYSTEM["images"]["item_ringA"] = Image("icons/ringA.png")
+    SYSTEM["images"]["item_armorA"] = Image("icons/armorA.png")
     generate_spell_list()
     #TODO: Offset this to the scene manager
     SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0, 2])
@@ -232,7 +239,15 @@ def reset():
     POWER_UP_TRACKER.clear()
     SLASH_TRACKER.clear()
     TEXT_TRACKER.clear()
-    pygame.time.set_timer(WAVE_TIMER, 1000)
+    levels = []
+    SYSTEM["buttons"] = []
+    for _ in range(4):
+        levels.append(generate_random_level())
+    for i in range(4):
+        butt = Button(levels[i].icon._uri, lambda i=i:SYSTEM.__setitem__("selected",\
+                                             levels[i]))
+        SYSTEM["buttons"].append(butt)
+    init_timers()
 
 def init_timers():
     """Inits Pygame's timers."""

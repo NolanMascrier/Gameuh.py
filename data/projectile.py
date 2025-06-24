@@ -24,13 +24,16 @@ class Projectile():
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - atan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
+        if Flags.AIMED_AT_MOUSE in behaviours:
+            self._angle = 90 - atan2(SYSTEM["mouse"][0] - x,\
+                    SYSTEM["mouse"][1] - y) * 180 / pi
         self._length = len
         self._height = height
         self._damage = origin.recalculate_damage(damage)
         self._evil = evil
         self._bounces = bounces
         if clone_image:
-            self._image = imagefile.clone()
+            self._image = imagefile.clone().rotate(-self._angle)
         else:
             self._image = imagefile
         self._delay = delay

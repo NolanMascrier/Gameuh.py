@@ -28,8 +28,8 @@ class Ressource(Stat):
 
     """
     def __init__(self, val = 100.0, name = "ressource", refresh = None,\
-            cap:float = -1, scaling_value:float = 1, mult_scaling = False):
-        super().__init__(val, name, cap, scaling_value, mult_scaling)
+            max_cap = None, min_cap = None, scaling_value:float = 1, mult_scaling = False):
+        super().__init__(val, name, max_cap, min_cap, scaling_value, mult_scaling)
         self._current_value = val
         if refresh is None:
             self._rate = Stat(0, "refresh")

@@ -23,7 +23,7 @@ class Creature:
         self._exp = 0
         self._exp_to_next = 1000
         life_regen = Stat(0, "life_regen")
-        mana_regen = Stat(0.001, "life_regen")
+        mana_regen = Stat(0.001, "life_regen", precision=4)
         self._stats = {
             "life": Ressource(90, "Life", life_regen),
             "mana": Ressource(40, "Mana", mana_regen),
@@ -40,12 +40,12 @@ class Creature:
             "abs_def": Stat(0, "Absolute Defense", scaling_value=0.01),
             "heal_factor": Stat(1, "Healing Effectivness"),
             "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0.05, 0),
-            "crit_rate": Stat(0.05, "Crit rate", 1, 0, 0.001),
+            "crit_rate": Stat(0.05, "Crit rate", 1, 0, scaling_value=0.001),
             "crit_dmg": Stat(1.5, "Crit Damage", scaling_value=0.02),
             "item_quant": Stat(0, "Item Quantity"),
             "item_qual": Stat(0, "Item Rarity"),
-            "speed": Stat(1, "Move Speed"),
-            "cast_speed": Stat(1, "Cast Speed"),
+            "speed": Stat(1, "Move Speed", scaling_value=0.001),
+            "cast_speed": Stat(1, "Cast Speed", scaling_value=0.001),
 
             "proj_quant": Stat(1, "proj_quant", scaling_value=0),
             "proj_speed": Stat(1, "proj_speed", scaling_value=0.001),
@@ -105,15 +105,15 @@ class Creature:
         own multipliers to it."""
         crit_roll = random.uniform(0, 1)
         crit = bool(crit_roll <= self._stats["crit_rate"].get_value())
-        flat = damage_source.base
+        multi = damage_source.coeff
         flags = damage_source.flags
         if Flags.MELEE in flags:
-            flat *= self._stats["melee_dmg"].get_value()
+            multi *= self._stats["melee_dmg"].get_value()
         if Flags.RANGED in flags:
-            flat *= self._stats["ranged_dmg"].get_value()
+            multi *= self._stats["ranged_dmg"].get_value()
         if Flags.SPELL in flags:
-            flat *= self._stats["spell_dmg"].get_value()
-        multi = damage_source.coeff
+            multi *= self._stats["spell_dmg"].get_value()
+        flat = damage_source.base
         dmg = damage_source.types
         pen = damage_source.penetration
         phys = dmg["phys"] * self._stats["phys_dmg"].get_value()
@@ -482,7 +482,6 @@ class Creature:
         """Resets the creature data."""
         for stat in self._stats:
             self._stats[stat].reset()
-        self.__get_bonuses_from_stat()
         for gear in self._gear:
             if isinstance(self._gear[gear], dict):
                 for gearr in self._gear[gear]:
@@ -493,6 +492,7 @@ class Creature:
                 if self._gear[gear] is not None:
                     for affix in self._gear[gear].affixes:
                         self.afflict(affix.as_affliction())
+        self.__get_bonuses_from_stat()
         self._stats["life"].refill()
         self._stats["mana"].refill()
 

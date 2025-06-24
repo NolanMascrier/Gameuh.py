@@ -201,5 +201,11 @@
         "proj_quant": "Projectiles",
         "proj_speed": "Projectile speed",
         "chains":"Chains"
-    }
+    },
+    "rarities": [
+        "",
+        "Enchanted ",
+        "Blessed ",
+        "Exalted "
+    ]
 }

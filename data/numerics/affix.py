@@ -34,13 +34,13 @@ class Affix():
         else:
             value = f"{self._value * 100}%"
         if Flags.BOON in self._flags:
-            adds = f"{value} {trad("meta_words", "increased")}"
+            adds = f"{value} {trad('meta_words', 'increased')}"
         elif Flags.HEX in self._flags:
-            adds = f"{value} {trad("meta_words", "decreased")} "
+            adds = f"{value} {trad('meta_words', 'decreased')} "
         elif Flags.BLESS in self._flags:
-            adds = f"{value} {trad("meta_words", "more")}"
+            adds = f"{value} {trad('meta_words', 'more')}"
         elif Flags.CURSE in self._flags:
-            adds = f"x{value} {trad("meta_words", "less")}"
+            adds = f"x{value} {trad('meta_words', 'less')}"
         elif Flags.FLAT in self._flags:
             if self._value < 0:
                 adds = f"{value}"

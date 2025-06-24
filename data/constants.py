@@ -224,6 +224,7 @@ class Flags(Enum):
     TRACK_STRICT = "tracking_strict"
     TRACK_LOOSE = "tracking_loose"
     AIMED_AT_PLAYER = "aimed_at_player"
+    AIMED_AT_MOUSE = "aimed_at_mouse"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"

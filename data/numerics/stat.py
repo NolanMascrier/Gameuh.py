@@ -15,9 +15,9 @@ class Stat:
         val (float, optionnal): Initial value of the stat. defaults to 10.
         name (str, optionnal): Name of the stat. 
         max_cap (float, optionnal): At what value the stat should cap\
-        ie what it is its maximum value. Defaults to -1 (no cap).
+        ie what it is its maximum value. Defaults to None (no cap).
         min_cap (float, optionnal): At what value the stat should cap\
-        ie what it is its minimum value. Defaults to -1 (no cap).
+        ie what it is its minimum value. Defaults to None (no cap).
         precision (int, optionnal): How many decimals should the final\
         value be rounded to. Defaults to 2.
         scaling_value (float, optionnal): How much level influence\
@@ -26,7 +26,7 @@ class Stat:
         scales multiplicatively. Defaults to `False` (additive).
     """
     def __init__(self, val = 10, name = "stat",\
-            max_cap:float = -1, min_cap = -1, precision:int = 2,\
+            max_cap:float = None, min_cap = None, precision:int = 2,\
             scaling_value:float = 1, mult_scaling = False):
         self._value = val
         self._name = name
@@ -53,10 +53,11 @@ class Stat:
             final_mults *= 1 + multiplier.value
         for increase in self._incr:
             final_incr += increase.value
-        final_value = round((self._value + final_flats) * (1 + final_incr) * final_mults, self._round)
-        if self._cap[0] >= 0:
+        final_value = round((self._value + final_flats) *\
+                            (1 + final_incr) * final_mults, self._round)
+        if self._cap[0] is not None:
             final_value = max(final_value, self._cap[0])
-        if self._cap[1] >= 0:
+        if self._cap[1] is not None:
             final_value = min(final_value, self._cap[1])
         return final_value
 
