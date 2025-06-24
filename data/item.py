@@ -27,7 +27,7 @@ class Item():
     """
     def __init__(self, name:str, base:str, price, power, max_held = 64,\
         image:Image|Animation = None, rarity = 0,\
-        flags = None, affixes = None):
+        flags = None, affixes = None, implicits = None):
         self._name = name
         self._base = base
         self._max_held = max_held
@@ -42,8 +42,13 @@ class Item():
             self._affixes = []
         else:
             self._affixes = affixes
+        if implicits is None:
+            self._implicits = []
+        else:
+            self._implicits = implicits
         self._rarity = rarity
-        self._popup = self.create_popup()
+        self._popup = None
+        self.create_popup()
 
     def on_use(self, target):
         """Uses the item on the creature."""
@@ -68,17 +73,22 @@ class Item():
             self._image,
             self._rarity,
             self._flags.copy(),
-            self._affixes.copy()
+            self._affixes.copy(),
+            self._implicits.copy()
         )
 
     def describe(self):
         """Returns a text description of the item."""
         text = ""
+        if len(self._implicits) > 0:
+            for affx in self._implicits:
+                text += f"{affx.describe()}\n"
+            text += "_______________\n"
         for affx in self._affixes:
             text += f"{affx.describe()}\n"
         return text
 
-    def create_popup(self) -> pygame.Surface:
+    def create_popup(self):
         """Creates the popup surface."""
         affixes = Text(self.describe(), True, force_x=250)
         text = f"{self._name}\n{trad('rarities', self._rarity)}{self._base}"
@@ -103,7 +113,7 @@ class Item():
                                                             (0, title.height + 10))
         sfc.blit(title.surface, (5, 5))
         sfc.blit(affixes.surface, (5, title.height + 20))
-        return sfc
+        self._popup = sfc
 
     def get_image(self):
         """returns the item's image."""
@@ -164,6 +174,15 @@ class Item():
     @affixes.setter
     def affixes(self, value):
         self._affixes = value
+
+    @property
+    def implicits(self):
+        """Returns the item's implicits."""
+        return self._implicits
+
+    @implicits.setter
+    def implicits(self, value):
+        self._implicits = value
 
     @property
     def rarity(self):

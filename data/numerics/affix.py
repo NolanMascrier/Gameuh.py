@@ -1,5 +1,6 @@
 """An affix is a modifier for an item."""
 
+import random
 from data.constants import Flags
 from data.numerics.affliction import Affliction
 from data.constants import trad
@@ -11,11 +12,16 @@ class Affix():
         name (str): name of the modifier.
         value (float): value of the modifier.
         flags (list[Flags]): Flag of the modifier.
+        lower_bound(float, optional): Lower bound multiplier\
+        for the random roll. Defaults to 80%.
+        upper_bound(float, optional): Upper bound multiplier\
+        for the random roll. Defaults to 120%.
     """
-    def __init__(self, name, value, flag):
+    def __init__(self, name, value, flag, lower_bound:float = 0.8, upper_bound:float = 1.2):
         self._name = name
         self._value = value
         self._flags = flag
+        self._bounds = (lower_bound, upper_bound)
 
     def as_affliction(self) -> Affliction:
         """Makes the affix into an affliction."""
@@ -23,16 +29,28 @@ class Affix():
         flags.append(Flags.GEAR)
         return Affliction(f"{self._name}_effect", self._value, -1, flags)
 
+    def roll(self):
+        """Creates a copy of the affix with a randomly rolled value."""
+        lower = self._bounds[0] * self._value
+        upper = self._bounds[1] * self._value
+        value = round(random.uniform(lower, upper), 2)
+        return Affix(
+            self._name,
+            value,
+            self._flags,
+            self._bounds
+        )
+
     def describe(self):
         """Generates a description of the affix."""
         if self._value == 0:
             return "\n"
         if Flags.DESC_FLAT in self._flags:
-            value = f"{self._value}"
+            value = f"{round(self._value)}"
         elif Flags.DESC_PERCENT in self._flags:
-            value = f"{self._value}%"
+            value = f"{round(self._value)}%"
         else:
-            value = f"{self._value * 100}%"
+            value = f"{round(self._value * 100)}%"
         if Flags.BOON in self._flags:
             adds = f"{value} {trad('meta_words', 'increased')}"
         elif Flags.HEX in self._flags:

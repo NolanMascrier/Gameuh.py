@@ -14,7 +14,7 @@ class SlotPanel:
         self._background = SYSTEM["images"]["panel_back"]
         self._padding = padding
         self._slots = []
-        self._columns = (self._background.width - self._padding * 2) // slot_size
+        self._columns = (self._background.width - self._padding * 2) // slot_size - 1
         self._default = default
         if isinstance(default, Iterable):
             for item in default:

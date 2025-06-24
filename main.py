@@ -1,4 +1,6 @@
 import random
+import os
+import re
 from time import sleep
 from data.constants import *
 from data.character import Character
@@ -15,6 +17,7 @@ from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
 from data.numerics.affix import Affix
+from data.game.lootgenerator import LootGenerator
 
 SPEED = 4
 PLAYING = True
@@ -48,13 +51,18 @@ def debug_create_items():
     aff4 = Affix("def", 10, [Flags.DEF, Flags.FLAT, Flags.DESC_FLAT])
     aff5 = Affix("fire_res", 0.25, [Flags.FIRE, Flags.FLAT])
     aff6 = Affix("elec_res", 0.12, [Flags.ELEC, Flags.FLAT])
-    armor = Item("Bob's armor", "body armor", 999, 0, 1, SYSTEM["images"]["item_armorA"], 2 \
+    armor = Item("Bob's armor", "body armor", 999, 0, 1, SYSTEM["images"]["armors"][3], 2 \
         ,[Flags.GEAR, Flags.ARMOR], [aff, aff3])
     armor2 = Item("Bob's boots", "boots", 999, 0, 1, SYSTEM["images"]["item_bootsA"], 1 \
         ,[Flags.GEAR, Flags.BOOTS], [aff2])
     armor3 = Item("Bob's ring", "ring", 999, 0, 1, SYSTEM["images"]["item_ringA"], 3 \
         ,[Flags.GEAR, Flags.RING], [aff4, aff5, aff6])
-    SYSTEM["player"].inventory.extend([armor, armor2, armor3])
+    lg = LootGenerator()
+    armor4 = lg.generate_armor(5, 0)
+    armor5 = lg.generate_armor(5, 1)
+    armor6 = lg.generate_armor(5, 2)
+    armor7 = lg.generate_armor(5, 3)
+    SYSTEM["player"].inventory.extend([armor, armor2, armor3, armor4, armor5, armor6, armor7])
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
@@ -222,6 +230,48 @@ def init_game():
     SYSTEM["images"]["item_bootsA"] = Image("icons/bootsA.png")
     SYSTEM["images"]["item_ringA"] = Image("icons/ringA.png")
     SYSTEM["images"]["item_armorA"] = Image("icons/armorA.png")
+    #Get all the items image
+    SYSTEM["images"]["helmets"] = []
+    SYSTEM["images"]["armors"] = []
+    SYSTEM["images"]["gloves"] = []
+    SYSTEM["images"]["boots"] = []
+    SYSTEM["images"]["belts"] = []
+    SYSTEM["images"]["rings"] = []
+    SYSTEM["images"]["relics"] = []
+    SYSTEM["images"]["amulets"] = []
+    SYSTEM["images"]["offhands"] = []
+    pattern = re.compile(r"^(.+?)(\d+)\.png$")
+    unsorted = []
+    for filename in os.listdir(f"{RESSOURCES}/icons"):
+        catch = pattern.match(filename)
+        if catch:
+            name = catch.group(1)
+            number = int(catch.group(2))
+            unsorted.append((name, number, filename))
+    unsorted.sort(key=lambda x: (x[0], x[1]))
+    for name, _, filename in unsorted:
+        match name:
+            case "he":
+                SYSTEM["images"]["helmets"].append(Image(f"icons/{filename}"))
+            case "ar":
+                SYSTEM["images"]["armors"].append(Image(f"icons/{filename}"))
+            case "gl":
+                SYSTEM["images"]["gloves"].append(Image(f"icons/{filename}"))
+            case "bo":
+                SYSTEM["images"]["boots"].append(Image(f"icons/{filename}"))
+            case "be":
+                SYSTEM["images"]["belts"].append(Image(f"icons/{filename}"))
+            case "ri":
+                SYSTEM["images"]["rings"].append(Image(f"icons/{filename}"))
+            case "rel":
+                SYSTEM["images"]["relics"].append(Image(f"icons/{filename}"))
+            case "am":
+                SYSTEM["images"]["amulets"].append(Image(f"icons/{filename}"))
+            case "oh":
+                SYSTEM["images"]["offhands"].append(Image(f"icons/{filename}"))
+
+
+    #Spells
     generate_spell_list()
     #TODO: Offset this to the scene manager
     SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180, speeds = [0.2, 0.6, 1.0, 2.0, 2])

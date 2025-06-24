@@ -164,7 +164,7 @@ class Creature:
         a = 7000
         x = self.stats["def"].get_value()
         offset = 90 / (1 + math.exp(k * a))
-        return (90 / (1 + math.exp(-k * (abs(x) - a))) - offset) / 100
+        return round((90 / (1 + math.exp(-k * (abs(x) - a))) - offset) / 100, 2)
 
     def damage(self, damage_source: Damage) -> tuple[float, bool]:
         """Deals damage to a creature. Adapts each source
@@ -318,6 +318,8 @@ class Creature:
             self._gear[slot.value] = item
         for affix in item.affixes:
             self.afflict(affix.as_affliction())
+        for affix in item.implicits:
+            self.afflict(affix.as_affliction())
         self.__get_bonuses_from_stat()
         return old
 
@@ -348,6 +350,8 @@ class Creature:
             self._gear[slot.value] = None
         if item is not None:
             for affix in item.affixes :
+                self.remove_affliction(affix.as_affliction())
+            for affix in item.implicits :
                 self.remove_affliction(affix.as_affliction())
         self.__get_bonuses_from_stat()
         return item
@@ -400,30 +404,33 @@ class Creature:
             trad("dex"), (0, 255, 0))
         expb = Hoverable(x, y + 120, f"Exp Multiplier: {self._stats['exp_mult'].get_value()*100}%",\
              trad("exp_mult"))
-        absdef = Hoverable(x, y + 135, f"Absolute defense: {self._stats['abs_def'].get_value()}",\
+        end = Hoverable(x, y + 135, f"Endurance: {self._stats['def'].get_value()}"\
+            + f"(Estimated mitigation : {self.__get_armor_mitigation()*100}%)",\
+            trad("def"))
+        absdef = Hoverable(x, y + 150, f"Absolute defense: {self._stats['abs_def'].get_value()}",\
             trad("abs_def"))
-        cr = Hoverable(x, y + 150, f"Crit chance: {self._stats['crit_rate'].get_value()*100}%",\
+        cr = Hoverable(x, y + 165, f"Crit chance: {self._stats['crit_rate'].get_value()*100}%",\
              trad("crit_rate"))
-        cd = Hoverable(x, y + 165, f"Crit damage: {self._stats['crit_dmg'].get_value()*100}%",\
+        cd = Hoverable(x, y + 180, f"Crit damage: {self._stats['crit_dmg'].get_value()*100}%",\
              trad("crit_dmg"))
-        hf = Hoverable(x, y + 180,\
+        hf = Hoverable(x, y + 195,\
             f"Mana Efficiency: {self._stats['mana_efficiency'].get_value()*100}%",\
             trad("mana_efficiency"))
-        me = Hoverable(x, y + 195, f"Heal Factor: {self._stats['heal_factor'].get_value()*100}%",\
+        me = Hoverable(x, y + 210, f"Heal Factor: {self._stats['heal_factor'].get_value()*100}%",\
              trad("heal_factor"))
-        iir = Hoverable(x, y + 210, f"Item quantity: {self._stats['item_quant'].get_value()*100}%",\
+        iir = Hoverable(x, y + 225, f"Item quantity: {self._stats['item_quant'].get_value()*100}%",\
              trad("item_quant"))
-        iiq = Hoverable(x, y + 225, f"Item quality : {self._stats['item_qual'].get_value()*100}%",\
+        iiq = Hoverable(x, y + 240, f"Item quality : {self._stats['item_qual'].get_value()*100}%",\
              trad("item_qual"))
-        sp = Hoverable(x, y + 240, f"Move speed: {self._stats['speed'].get_value()*100}%",\
+        sp = Hoverable(x, y + 255, f"Move speed: {self._stats['speed'].get_value()*100}%",\
              trad("speed"))
-        cs = Hoverable(x, y + 255, f"Cast speed: {self._stats['cast_speed'].get_value()*100}%",\
+        cs = Hoverable(x, y + 270, f"Cast speed: {self._stats['cast_speed'].get_value()*100}%",\
              trad("cast_speed"))
-        md = Hoverable(x, y + 270, f"Melee damage: {self._stats['melee_dmg'].get_value()*100}%",\
+        md = Hoverable(x, y + 285, f"Melee damage: {self._stats['melee_dmg'].get_value()*100}%",\
              trad("melee_dmg"))
-        sp = Hoverable(x, y + 285, f"Spell damage: {self._stats['spell_dmg'].get_value()*100}%",\
+        sp = Hoverable(x, y + 300, f"Spell damage: {self._stats['spell_dmg'].get_value()*100}%",\
              trad("spell_dmg"))
-        rd = Hoverable(x, y + 300, f"Ranged damage: {self._stats['ranged_dmg'].get_value()*100}%",\
+        rd = Hoverable(x, y + 315, f"Ranged damage: {self._stats['ranged_dmg'].get_value()*100}%",\
              trad("ranged_dmg"))
         res = Hoverable(x, y + 350, "Resistances :", trad("res"))
         rp = Hoverable(x, y + 370, f"{self._stats['phys'].get_value()*100}%", trad("phys"),\
@@ -475,7 +482,7 @@ class Creature:
         lines.extend([exp1, exp2, str, int, dex, expb, absdef, cr, cd,\
                 hf, me, iir, iiq, sp, cs, md, sp, rd, res, dmg, pen,\
                 rp, rf, ri, rt, re, rl, rda, dp, df, di, dt, de, dl, dda,\
-                pp, pf, pi, pt, pe, pl, pda])
+                pp, pf, pi, pt, pe, pl, pda, end])
         return lines
 
     def reset(self):
