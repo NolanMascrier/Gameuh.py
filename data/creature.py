@@ -35,6 +35,7 @@ class Creature:
             "dex": Stat(10, "Dexterity"),
             "int": Stat(10, "Intelligence"),
             "def": Stat(0, "Endurance"),
+            "add_def": Stat(0, "add_def"),
 
             "exp_mult": Stat(1, "Exp Multiplier"),
             "abs_def": Stat(0, "Absolute Defense", scaling_value=0.01),
@@ -54,6 +55,11 @@ class Creature:
             "melee_dmg": Stat(1, "Melee Damage", scaling_value=0.01),
             "spell_dmg": Stat(1, "Spell Damage", scaling_value=0.01),
             "ranged_dmg": Stat(1, "Ranged Damage", scaling_value=0.01),
+
+            "precision": Stat(1, "precision", scaling_value=0.01, min_cap=0),
+            "block": Stat(0, "block", scaling_value=0, min_cap=0, max_cap=0.9),
+            "dodge_rating": Stat(0, "dodge_rating", scaling_value=0, min_cap=0),
+            "dodge": Stat(0, "dodge", scaling_value=0, min_cap=0, max_cap=0.95),
 
             "phys": Stat(0, "Physical resistance", 0.9, -2, scaling_value=0.005),
             "fire": Stat(0, "Fire resistance", 0.9, -2, scaling_value=0.005),
@@ -134,7 +140,8 @@ class Creature:
 
         return Damage(flat, multi, phys, fire, ice, elec, energ, light, dark, \
                       pp, fp, ip, ep, enp, lp, dp, crit,\
-                      self._stats["crit_dmg"].get_value(), flags)
+                      self._stats["crit_dmg"].get_value(), flags,\
+                      damage_source.ignore_dodge, damage_source.ignore_block, self)
 
     def __get_bonuses_from_stat(self):
         """Generates the bonuses from the bases stats.\
@@ -164,7 +171,23 @@ class Creature:
         a = 7000
         x = self.stats["def"].get_value()
         offset = 90 / (1 + math.exp(k * a))
-        return round((90 / (1 + math.exp(-k * (abs(x) - a))) - offset) / 100, 2)
+        value = round((90 / (1 + math.exp(-k * (abs(x) - a))) - offset) / 100, 2)
+        value += self._stats["add_def"].get_value()
+        value = min(value, 0.9)
+        return value
+
+    def __get_dodge_chance(self, precision) -> float:
+        """Calculate and returns the mitigation from the endurance
+        values.
+        Thank you chatGPT for pulling that formula out of nowhere"""
+        k = 0.0004
+        a = 7000
+        x = self.stats["dodge_rating"].get_value() - precision
+        offset = 90 / (1 + math.exp(k * a))
+        value = round((90 / (1 + math.exp(-k * (abs(x) - a))) - offset) / 100, 2)
+        value += self._stats["dodge"].get_value()
+        value = min(value, 0.95)
+        return value
 
     def damage(self, damage_source: Damage) -> tuple[float, bool]:
         """Deals damage to a creature. Adapts each source
@@ -177,6 +200,14 @@ class Creature:
         damage = 0
         dmg, pen = damage_source.get_damage()
         mitig = 1 - self.__get_armor_mitigation()
+        if not damage_source.ignore_dodge:
+            roll = random.uniform(0, 1)
+            if roll <= self.__get_dodge_chance(damage_source.origin.stats["precision"].get_value()):
+                return "Dodged !", False
+        if not damage_source._ignore_block:
+            roll = random.uniform(0, 1)
+            if roll <= self._stats["block"].get_value():
+                return "Blocked !", False
         for dmg_type in dmg:
             dmga = float(dmg[dmg_type]) * mitig
             res = self._stats[dmg_type].get_value() - pen[dmg_type]
@@ -238,6 +269,30 @@ class Creature:
             stat_key = flag.value
             if stat_key in self._stats:
                 self._stats[stat_key].afflict(affliction)
+            elif stat_key == "all_resistances":
+                self._stats["phys"].afflict(affliction)
+                self._stats["fire"].afflict(affliction)
+                self._stats["ice"].afflict(affliction)
+                self._stats["elec"].afflict(affliction)
+                self._stats["energy"].afflict(affliction)
+                self._stats["light"].afflict(affliction)
+                self._stats["dark"].afflict(affliction)
+            elif stat_key == "all_damage":
+                self._stats["phys_dmg"].afflict(affliction)
+                self._stats["fire_dmg"].afflict(affliction)
+                self._stats["ice_dmg"].afflict(affliction)
+                self._stats["elec_dmg"].afflict(affliction)
+                self._stats["energy_dmg"].afflict(affliction)
+                self._stats["light_dmg"].afflict(affliction)
+                self._stats["dark_dmg"].afflict(affliction)
+            elif stat_key == "elemental_resistances":
+                self._stats["fire"].afflict(affliction)
+                self._stats["ice"].afflict(affliction)
+                self._stats["elec"].afflict(affliction)
+            elif stat_key == "elemental_damage":
+                self._stats["fire_dmg"].afflict(affliction)
+                self._stats["ice_dmg"].afflict(affliction)
+                self._stats["elec_dmg"].afflict(affliction)
         if affliction.stackable:
             self._buffs.append(affliction)
         else:

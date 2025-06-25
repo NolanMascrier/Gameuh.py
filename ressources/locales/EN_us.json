@@ -200,7 +200,15 @@
         "dark_pen": "Void penetration",
         "proj_quant": "Projectiles",
         "proj_speed": "Projectile speed",
-        "chains":"Chains"
+        "chains":"Chains",
+        "dodge": "Dodge chance",
+        "dodge_rating": "Evasion",
+        "block": "Block chance",
+        "precision": "Precision",
+        "all_damage": "All damage",
+        "elemental_damage": "Elemental damage",
+        "all_resistances": "All resistances",
+        "elemental_resistances": "Elemental resistances"
     },
     "rarities": [
         "",

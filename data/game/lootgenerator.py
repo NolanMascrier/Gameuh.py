@@ -14,9 +14,7 @@ IMPLICITS = {
     "plate_armor": Affix("IMPLICIT_ARMOR", 1000, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
     "dragon_armor": Affix("IMPLICIT_ARMOR", 2000, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
     "bushi_armor": Affix("IMPLICIT_ARMOR", 0.02, [Flags.FLAT, Flags.CRIT_CHANCE]),
-    "diamond_armor": Affix("IMPLICIT_ARMOR", 0.05, [Flags.FLAT, Flags.ELEC]),
-    "diamond_armor2": Affix("IMPLICIT_ARMOR1", 0.05, [Flags.FLAT, Flags.FIRE]),
-    "diamond_armor3": Affix("IMPLICIT_ARMOR2", 0.05, [Flags.FLAT, Flags.ICE]),
+    "diamond_armor": Affix("IMPLICIT_ARMOR", 0.05, [Flags.FLAT, Flags.ALL_RESISTANCES]),
 }
 AFFIXES = {
     "armors": {
@@ -133,6 +131,16 @@ AFFIXES = {
             (Affix("ARMOR_ENERG_RES_II", 0.25, [Flags.ENERG, Flags.FLAT]), 0.6, 10, 90),
             (Affix("ARMOR_ENERG_RES_III", 0.40, [Flags.ENERG, Flags.FLAT]), 0.3, 25, 999),
         ], 1),
+        "elemental_res": ([
+            (Affix("ARMOR_ELEMENTAL_RESISTANCES_I", 0.10, [Flags.ELEMENTAL_RESISTANCES, Flags.FLAT]), 1, 20, 60),
+            (Affix("ARMOR_ELEMENTAL_RESISTANCES_II", 0.25, [Flags.ELEMENTAL_RESISTANCES, Flags.FLAT]), 0.6, 40, 90),
+            (Affix("ARMOR_ELEMENTAL_RESISTANCES_III", 0.40, [Flags.ELEMENTAL_RESISTANCES, Flags.FLAT]), 0.3, 60, 999),
+        ], 0.8),
+        "all_res": ([
+            (Affix("ARMOR_ALL_RESISTANCES_I", 0.10, [Flags.ALL_RESISTANCES, Flags.FLAT]), 1, 20, 60),
+            (Affix("ARMOR_ALL_RESISTANCES_II", 0.25, [Flags.ALL_RESISTANCES, Flags.FLAT]), 0.6, 40, 90),
+            (Affix("ARMOR_ALL_RESISTANCES_III", 0.40, [Flags.ALL_RESISTANCES, Flags.FLAT]), 0.3, 60, 999),
+        ], 0.25),
     }
 }
 
@@ -154,9 +162,7 @@ class LootGenerator():
                 (Item("", "Bushi armor", 1500, 0, 1, SYSTEM["images"]["armors"][14],\
                     0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["bushi_armor"]]), 0.25),
                 (Item("", "Diamond armor", 2500, 0, 1, SYSTEM["images"]["armors"][23],\
-                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["diamond_armor"],\
-                                                             IMPLICITS["diamond_armor2"],\
-                                                             IMPLICITS["diamond_armor3"]]), 0.1),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["diamond_armor"]]), 0.1),
 
                 (Item("", "Worker clothes", 5, 0, 1, SYSTEM["images"]["armors"][4],\
                     0, [Flags.ARMOR, Flags.GEAR]), 1),
@@ -188,6 +194,53 @@ class LootGenerator():
                 (Item("", "Priest robes", 2500, 0, 1, SYSTEM["images"]["armors"][43],\
                     0, [Flags.ARMOR, Flags.GEAR]), 0.1),
         ]
+        self._helms = [
+            (Item("", "Rusty helm", 5, 0, 1, SYSTEM["images"]["helmets"][0],\
+                    0, [Flags.HELM, Flags.GEAR]), 1),
+            (Item("", "Coif", 50, 0, 1, SYSTEM["images"]["helmets"][2],\
+                    0, [Flags.HELM, Flags.GEAR]), 0.6),
+            (Item("", "Crusader helm", 250, 0, 1, SYSTEM["images"]["helmets"][4],\
+                    0, [Flags.HELM, Flags.GEAR]), 0.3),
+
+            (Item("", "Leather hat", 5, 0, 1, SYSTEM["images"]["helmets"][6],\
+                    0, [Flags.HELM, Flags.GEAR]), 1),
+            (Item("", "Bowler hat", 50, 0, 1, SYSTEM["images"]["helmets"][0],\
+                    0, [Flags.HELM, Flags.GEAR]), 0.6),
+            (Item("", "Lucky tophat", 250, 0, 1, SYSTEM["images"]["helmets"][14],\
+                    0, [Flags.HELM, Flags.GEAR]), 0.3),
+
+            (Item("", "Bonnet", 5, 0, 1, SYSTEM["images"]["helmets"][11],\
+                    0, [Flags.HELM, Flags.GEAR]), 1),
+            (Item("", "Mage's coif", 50, 0, 1, SYSTEM["images"]["helmets"][8],\
+                    0, [Flags.HELM, Flags.GEAR]), 0.6),
+            (Item("", "Archmage's crown", 250, 0, 1, SYSTEM["images"]["helmets"][3],\
+                    0, [Flags.HELM, Flags.GEAR]), 0.3),
+        ]
+        self._boots = [
+            (Item("", "Leather boots", 25, 0, 1, SYSTEM["images"]["boots"][6],\
+                    0, [Flags.BOOTS, Flags.GEAR]), 1),
+            (Item("", "Chain boots", 250, 0, 1, SYSTEM["images"]["boots"][16],\
+                    0, [Flags.BOOTS, Flags.GEAR]), 0.8),
+            (Item("", "Mage's boots", 250, 0, 1, SYSTEM["images"]["boots"][11],\
+                    0, [Flags.BOOTS, Flags.GEAR]), 0.8),
+            (Item("", "Diamond's greaves", 500, 0, 1, SYSTEM["images"]["boots"][17],\
+                    0, [Flags.BOOTS, Flags.GEAR]), 0.5),
+            (Item("", "Golden steps", 2500, 0, 1, SYSTEM["images"]["boots"][20],\
+                    0, [Flags.BOOTS, Flags.GEAR]), 0.05),
+        ]
+        self._gloves = [
+            (Item("", "Leather gloves", 250, 0, 1, SYSTEM["images"]["gloves"][4],\
+                    0, [Flags.HANDS, Flags.GEAR]), 1),
+            (Item("", "Mage's gloves", 250, 0, 1, SYSTEM["images"]["gloves"][3],\
+                    0, [Flags.HANDS, Flags.GEAR]), 1),
+            (Item("", "Iron gloves", 250, 0, 1, SYSTEM["images"]["gloves"][0],\
+                    0, [Flags.HANDS, Flags.GEAR]), 1),
+        ]
+        self._amulets = []
+        self._rings = []
+        self._relics = []
+        self._weapons = []
+        self._offhands = []
 
     def pick_weighted(self, items_with_weights):
         """Picks items with the weights"""

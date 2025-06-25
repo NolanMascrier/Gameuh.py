@@ -52,11 +52,18 @@ class Damage():
         damage source. Defaults to 1.5.
         Flags (list, optionnal): List of the damage source flags\
         ie Melee, Ranged or Spell. Defaults to None.
+        ignore_dodge (bool, optional): Whether or not this damage\
+        should ignore chances to dodge. Defaults to False.
+        ignore_block (bool, optional): Whether or not this damage\
+        should ignore chances to block. Defaults to False.
+        origin (creature, optional): Tracker to the damage's\
+        creator. Defaults to None.
     """
     def __init__(self, damage, multiplier, phys = 0, fire = 0, ice = 0,\
                 elec = 0, energ = 0, light = 0, dark = 0, pp = 0, fp = 0, \
                 ip = 0, ep = 0, enp = 0, lp = 0, dp = 0, is_crit = False, \
-                crit_mult = 1.5, flags = None):
+                crit_mult = 1.5, flags = None, ignore_dodge = False,\
+                ignore_block = False, origin = None):
         self._base = damage
         self._coeff = multiplier
         self._types = {
@@ -83,6 +90,9 @@ class Damage():
             self._flags = []
         else:
             self._flags = flags
+        self._ignore_block = ignore_block
+        self._ignore_dodge = ignore_dodge
+        self._origin = origin
 
     def get_damage(self):
         """Returns the computed damage.
@@ -158,3 +168,30 @@ class Damage():
     def crit_mult(self):
         """Returns the critical multiplier of the damage."""
         return self._crit_mult
+
+    @property
+    def ignore_block(self):
+        """Returns whether or not the damage can be blocked."""
+        return self._ignore_block
+
+    @ignore_block.setter
+    def ignore_block(self, value):
+        self._ignore_block = value
+
+    @property
+    def ignore_dodge(self):
+        """Returns whether or not the damage can be dodged."""
+        return self._ignore_dodge
+
+    @ignore_dodge.setter
+    def ignore_dodge(self, value):
+        self._ignore_dodge = value
+
+    @property
+    def origin(self):
+        """Returns the creature at the origin of the damage."""
+        return self._origin
+
+    @origin.setter
+    def origin(self, value):
+        self._origin = value
