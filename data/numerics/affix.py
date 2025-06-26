@@ -43,6 +43,7 @@ class Affix():
 
     def describe(self):
         """Generates a description of the affix."""
+            
         if self._value == 0:
             return "\n"
         if Flags.DESC_FLAT in self._flags:
@@ -65,9 +66,11 @@ class Affix():
             else:
                 adds = f"+{value}"
         affx = []
+        if Flags.DESC_UNIQUE in self._flags:
+            adds = ""
         for aff in self._flags:
             if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
-                Flags.BLESS, Flags.CURSE, Flags.FLAT]:
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
         return f"{adds} {lst}"

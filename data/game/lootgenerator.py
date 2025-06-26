@@ -15,6 +15,26 @@ IMPLICITS = {
     "dragon_armor": Affix("IMPLICIT_ARMOR", 2000, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
     "bushi_armor": Affix("IMPLICIT_ARMOR", 0.02, [Flags.FLAT, Flags.CRIT_CHANCE]),
     "diamond_armor": Affix("IMPLICIT_ARMOR", 0.05, [Flags.FLAT, Flags.ALL_RESISTANCES]),
+
+    "worker_clothes": Affix("IMPLICIT_ARMOR", 250, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+    "gambeson": Affix("IMPLICIT_ARMOR", 500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+    "leather_armor": Affix("IMPLICIT_ARMOR", 1000, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+    "brigandine": Affix("IMPLICIT_ARMOR", 1500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+    "vagabond": Affix("IMPLICIT_ARMOR", 0.03, [Flags.FLAT, Flags.DODGE]),
+    "heroic": Affix("IMPLICIT_ARMOR", 0.05, [Flags.BLESS, Flags.LIFE]),
+    "dark": Affix("IMPLICIT_ARMOR", 3500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+
+    "armor_mom": Affix("IMPLICIT_ARMOR_MOM", 1, [Flags.ARMOR_MOM, Flags.DESC_UNIQUE]),
+    "robes": Affix("IMPLICIT_ARMOR", 50, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "gown": Affix("IMPLICIT_ARMOR", 75, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "mage_coat": Affix("IMPLICIT_ARMOR", 100, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "arcane_robes": Affix("IMPLICIT_ARMOR", 200, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "arcane_gown": Affix("IMPLICIT_ARMOR", 150, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "arcane_gown2": Affix("IMPLICIT_ARMOR2", 0.05, [Flags.BOON, Flags.MANA_REGEN]),
+    "royal_coat": Affix("IMPLICIT_ARMOR", 250, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "royal_coat2": Affix("IMPLICIT_ARMOR2", 0.05, [Flags.BOON, Flags.MANAL_EFFICIENCY]),
+    "priest": Affix("IMPLICIT_ARMOR", 300, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
+    "priest2": Affix("IMPLICIT_ARMOR2", 0.5, [Flags.BOON, Flags.HEAL_EFFICIENCY]),
 }
 AFFIXES = {
     "armors": {
@@ -165,82 +185,180 @@ class LootGenerator():
                     0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["diamond_armor"]]), 0.1),
 
                 (Item("", "Worker clothes", 5, 0, 1, SYSTEM["images"]["armors"][4],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 1),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["worker_clothes"]]), 1),
                 (Item("", "Gambeson", 25, 0, 1, SYSTEM["images"]["armors"][6],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.8),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["gambeson"]]), 0.8),
                 (Item("", "Leather armor", 100, 0, 1, SYSTEM["images"]["armors"][38],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.6),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["leather_armor"]]), 0.6),
                 (Item("", "Brigandine", 500, 0, 1, SYSTEM["images"]["armors"][15],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.5),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["brigandine"]]), 0.5),
                 (Item("", "Vagabond coat", 1000, 0, 1, SYSTEM["images"]["armors"][55],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.33),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["vagabond"]]), 0.33),
                 (Item("", "Heroic garb", 1500, 0, 1, SYSTEM["images"]["armors"][46],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.25),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["heroic"]]), 0.25),
                 (Item("", "Dark veil", 2500, 0, 1, SYSTEM["images"]["armors"][44],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.1),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["dark"]]), 0.1),
 
                 (Item("", "Robes", 5, 0, 1, SYSTEM["images"]["armors"][27],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 1),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["robes"]]), 1),
                 (Item("", "Gown", 25, 0, 1, SYSTEM["images"]["armors"][31],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.8),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["gown"]]), 0.8),
                 (Item("", "Mage coat", 100, 0, 1, SYSTEM["images"]["armors"][3],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.6),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["mage_coat"]]), 0.6),
                 (Item("", "Arcane robes", 500, 0, 1, SYSTEM["images"]["armors"][30],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.5),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["arcane_robes"]]), 0.5),
                 (Item("", "Arcane gown", 1000, 0, 1, SYSTEM["images"]["armors"][33],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.33),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                        IMPLICITS["arcane_gown"], IMPLICITS["arcane_gown2"]]), 0.33),
                 (Item("", "Royal coat", 1500, 0, 1, SYSTEM["images"]["armors"][40],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.25),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                        IMPLICITS["royal_coat"], IMPLICITS["royal_coat2"]]), 0.25),
                 (Item("", "Priest robes", 2500, 0, 1, SYSTEM["images"]["armors"][43],\
-                    0, [Flags.ARMOR, Flags.GEAR]), 0.1),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                        IMPLICITS["priest"], IMPLICITS["priest2"]]), 0.1),
         ]
         self._helms = [
             (Item("", "Rusty helm", 5, 0, 1, SYSTEM["images"]["helmets"][0],\
-                    0, [Flags.HELM, Flags.GEAR]), 1),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 1),
             (Item("", "Coif", 50, 0, 1, SYSTEM["images"]["helmets"][2],\
-                    0, [Flags.HELM, Flags.GEAR]), 0.6),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 0.6),
             (Item("", "Crusader helm", 250, 0, 1, SYSTEM["images"]["helmets"][4],\
-                    0, [Flags.HELM, Flags.GEAR]), 0.3),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 0.3),
 
             (Item("", "Leather hat", 5, 0, 1, SYSTEM["images"]["helmets"][6],\
-                    0, [Flags.HELM, Flags.GEAR]), 1),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 1),
             (Item("", "Bowler hat", 50, 0, 1, SYSTEM["images"]["helmets"][0],\
-                    0, [Flags.HELM, Flags.GEAR]), 0.6),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 0.6),
             (Item("", "Lucky tophat", 250, 0, 1, SYSTEM["images"]["helmets"][14],\
-                    0, [Flags.HELM, Flags.GEAR]), 0.3),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 0.3),
 
             (Item("", "Bonnet", 5, 0, 1, SYSTEM["images"]["helmets"][11],\
-                    0, [Flags.HELM, Flags.GEAR]), 1),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 1),
             (Item("", "Mage's coif", 50, 0, 1, SYSTEM["images"]["helmets"][8],\
-                    0, [Flags.HELM, Flags.GEAR]), 0.6),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 0.6),
             (Item("", "Archmage's crown", 250, 0, 1, SYSTEM["images"]["helmets"][3],\
-                    0, [Flags.HELM, Flags.GEAR]), 0.3),
+                    0, [Flags.HELM, Flags.GEAR], implicits=[]), 0.3),
         ]
         self._boots = [
             (Item("", "Leather boots", 25, 0, 1, SYSTEM["images"]["boots"][6],\
-                    0, [Flags.BOOTS, Flags.GEAR]), 1),
+                    0, [Flags.BOOTS, Flags.GEAR], implicits=[]), 1),
             (Item("", "Chain boots", 250, 0, 1, SYSTEM["images"]["boots"][16],\
-                    0, [Flags.BOOTS, Flags.GEAR]), 0.8),
+                    0, [Flags.BOOTS, Flags.GEAR], implicits=[]), 0.8),
             (Item("", "Mage's boots", 250, 0, 1, SYSTEM["images"]["boots"][11],\
-                    0, [Flags.BOOTS, Flags.GEAR]), 0.8),
+                    0, [Flags.BOOTS, Flags.GEAR], implicits=[]), 0.8),
             (Item("", "Diamond's greaves", 500, 0, 1, SYSTEM["images"]["boots"][17],\
-                    0, [Flags.BOOTS, Flags.GEAR]), 0.5),
+                    0, [Flags.BOOTS, Flags.GEAR], implicits=[]), 0.5),
             (Item("", "Golden steps", 2500, 0, 1, SYSTEM["images"]["boots"][20],\
-                    0, [Flags.BOOTS, Flags.GEAR]), 0.05),
+                    0, [Flags.BOOTS, Flags.GEAR], implicits=[]), 0.05),
         ]
         self._gloves = [
             (Item("", "Leather gloves", 250, 0, 1, SYSTEM["images"]["gloves"][4],\
-                    0, [Flags.HANDS, Flags.GEAR]), 1),
+                    0, [Flags.HANDS, Flags.GEAR], implicits=[]), 1),
             (Item("", "Mage's gloves", 250, 0, 1, SYSTEM["images"]["gloves"][3],\
-                    0, [Flags.HANDS, Flags.GEAR]), 1),
+                    0, [Flags.HANDS, Flags.GEAR], implicits=[]), 1),
             (Item("", "Iron gloves", 250, 0, 1, SYSTEM["images"]["gloves"][0],\
-                    0, [Flags.HANDS, Flags.GEAR]), 1),
+                    0, [Flags.HANDS, Flags.GEAR], implicits=[]), 1),
         ]
-        self._amulets = []
-        self._rings = []
-        self._relics = []
-        self._weapons = []
-        self._offhands = []
+        self._amulets = [
+            (Item("", "Jade stone", 250, 0, 1, SYSTEM["images"]["amulets"][0],\
+                    0, [Flags.AMULET, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Ruby stone", 250, 0, 1, SYSTEM["images"]["amulets"][1],\
+                    0, [Flags.AMULET, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Lapis stone", 250, 0, 1, SYSTEM["images"]["amulets"][2],\
+                    0, [Flags.AMULET, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Holy symbol", 250, 0, 1, SYSTEM["images"]["amulets"][5],\
+                    0, [Flags.AMULET, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Mage pendant", 250, 0, 1, SYSTEM["images"]["amulets"][6],\
+                    0, [Flags.AMULET, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Arcane stone", 250, 0, 1, SYSTEM["images"]["amulets"][11],\
+                    0, [Flags.AMULET, Flags.GEAR], implicits=[]), 1),
+        ]
+        self._rings = [
+            (Item("", "Iron ring", 250, 0, 1, SYSTEM["images"]["rings"][0],\
+                    0, [Flags.RING, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Golden ring", 500, 0, 1, SYSTEM["images"]["rings"][1],\
+                    0, [Flags.RING, Flags.GEAR], implicits=[]), 0.8),
+            (Item("", "Arcane ring", 500, 0, 1, SYSTEM["images"]["rings"][3],\
+                    0, [Flags.RING, Flags.GEAR], implicits=[]), 0.8),
+            (Item("", "Abyss ring", 500, 0, 1, SYSTEM["images"]["rings"][4],\
+                    0, [Flags.RING, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Twinned ring", 1000, 0, 1, SYSTEM["images"]["rings"][7],\
+                    0, [Flags.RING, Flags.GEAR], implicits=[]), 0.3),
+            (Item("", "Jewel ring", 2500, 0, 1, SYSTEM["images"]["rings"][12],\
+                    0, [Flags.RING, Flags.GEAR], implicits=[]), 0.1),
+        ]
+        self._relics = [
+            (Item("", "Mana lantern", 250, 0, 1, SYSTEM["images"]["relics"][0],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Forbidden scriptures", 250, 0, 1, SYSTEM["images"]["relics"][1],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Lucky horseshoe", 250, 0, 1, SYSTEM["images"]["relics"][2],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Mage's skull", 250, 0, 1, SYSTEM["images"]["relics"][3],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Lunar coral", 250, 0, 1, SYSTEM["images"]["relics"][4],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Golden anchor", 250, 0, 1, SYSTEM["images"]["relics"][5],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Blood grail", 250, 0, 1, SYSTEM["images"]["relics"][6],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Meteor stone", 250, 0, 1, SYSTEM["images"]["relics"][7],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Corrupted meteor stone", 25000, 0, 1, SYSTEM["images"]["relics"][8],\
+                    0, [Flags.RELIC, Flags.GEAR], implicits=[]), 0.01),
+        ]
+        self._weapons = [
+            (Item("", "Longbow", 250, 0, 1, SYSTEM["images"]["weapons"][18],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Rogue's bow", 250, 0, 1, SYSTEM["images"]["weapons"][20],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Steel bow", 250, 0, 1, SYSTEM["images"]["weapons"][7],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+
+            (Item("", "Staff", 250, 0, 1, SYSTEM["images"]["weapons"][9],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Scepter", 250, 0, 1, SYSTEM["images"]["weapons"][16],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Grand cane", 250, 0, 1, SYSTEM["images"]["weapons"][19],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+
+            (Item("", "Sword", 250, 0, 1, SYSTEM["images"]["weapons"][1],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Saber", 250, 0, 1, SYSTEM["images"]["weapons"][8],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Enchanted blade", 250, 0, 1, SYSTEM["images"]["weapons"][10],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+
+            (Item("", "Axe", 250, 0, 1, SYSTEM["images"]["weapons"][12],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Mace", 250, 0, 1, SYSTEM["images"]["weapons"][13],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Scourge", 250, 0, 1, SYSTEM["images"]["weapons"][14],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+
+            (Item("", "Crossbow", 250, 0, 1, SYSTEM["images"]["weapons"][3],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.05),
+            (Item("", "Shuriken", 250, 0, 1, SYSTEM["images"]["weapons"][5],\
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.01),
+        ]
+        self._offhands = [
+            (Item("", "Grimoire", 250, 0, 1, SYSTEM["images"]["offhands"][0],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Codex", 250, 0, 1, SYSTEM["images"]["offhands"][1],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 0.8),
+            (Item("", "Scepter", 250, 0, 1, SYSTEM["images"]["offhands"][2],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 0.8),
+            (Item("", "Club", 250, 0, 1, SYSTEM["images"]["offhands"][3],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 0.33),
+            (Item("", "Wooden shield", 250, 0, 1, SYSTEM["images"]["offhands"][8],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Tower shield", 250, 0, 1, SYSTEM["images"]["offhands"][6],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 0.5),
+            (Item("", "Diamond shield", 250, 0, 1, SYSTEM["images"]["offhands"][11],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 0.1),
+            (Item("", "Diamond arrow", 250, 0, 1, SYSTEM["images"]["offhands"][12],\
+                    0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 1),
+        ]
 
     def pick_weighted(self, items_with_weights):
         """Picks items with the weights"""

@@ -163,6 +163,15 @@ class Creature:
         self.afflict(Affliction("int_to_spell", spell, -1, [Flags.SPELL, Flags.BOON], False))
         self.afflict(Affliction("dex_to_ranged", ranged, -1, [Flags.RANGED, Flags.BOON], False))
 
+    def __gather_flags(self) -> list:
+        """Gathers all flags from all debuffs and buffs. Used to
+        do special effects from unique affixes."""
+        lst = []
+        for afflic in self._buffs:
+            if isinstance(afflic, Affliction):
+                lst.extend(afflic.flags)
+        return lst
+
     def __get_armor_mitigation(self) -> float:
         """Calculate and returns the mitigation from the endurance
         values.
@@ -197,6 +206,7 @@ class Creature:
         Args:
             damage (Damage): Source of damage.
         """
+        unique_flags = self.__gather_flags()
         damage = 0
         dmg, pen = damage_source.get_damage()
         mitig = 1 - self.__get_armor_mitigation()
@@ -216,7 +226,11 @@ class Creature:
             damage *= damage_source.crit_mult
         damage -= self._stats["abs_def"].get_value()
         damage = max(damage, 0)
-        self._stats["life"].modify(-damage)
+        if Flags.ARMOR_MOM in unique_flags:
+            self._stats["life"].modify(-damage * 0.65)
+            self._stats["mana"].modify(-damage * 0.35)
+        else:
+            self._stats["life"].modify(-damage)
         return round(damage, 2), damage_source.is_crit
 
     def heal(self, amount: float):

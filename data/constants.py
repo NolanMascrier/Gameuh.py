@@ -209,6 +209,11 @@ class Flags(Enum):
     ALL_RESISTANCES = "all_resistances"
     ELEMENTAL_DAMAGE = "elemental_damage"
     ELEMENTAL_RESISTANCES = "elemental_resistances"
+    MANA_REGEN = "mana_regen"
+    LIFE_REGEN = "life_regen"
+    ARMOR_MOM = "armor_mind_over_matter"
+    HEAL_EFFICIENCY = "heal_factor"
+    MANAL_EFFICIENCY = "mana_efficiency"
     HELM = "helm"
     HANDS = "hands"
     ARMOR = "armor"
@@ -254,3 +259,4 @@ class Flags(Enum):
     #Flags for description
     DESC_FLAT = "description_flat_attribute"
     DESC_PERCENT = "force_percentage_in_desc"
+    DESC_UNIQUE = "desc_unique_effect"

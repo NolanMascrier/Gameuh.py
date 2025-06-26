@@ -240,6 +240,7 @@ def init_game():
     SYSTEM["images"]["relics"] = []
     SYSTEM["images"]["amulets"] = []
     SYSTEM["images"]["offhands"] = []
+    SYSTEM["images"]["weapons"] = []
     pattern = re.compile(r"^(.+?)(\d+)\.png$")
     unsorted = []
     for filename in os.listdir(f"{RESSOURCES}/icons"):
@@ -269,6 +270,8 @@ def init_game():
                 SYSTEM["images"]["amulets"].append(Image(f"icons/{filename}"))
             case "oh":
                 SYSTEM["images"]["offhands"].append(Image(f"icons/{filename}"))
+            case "wpn":
+                SYSTEM["images"]["weapons"].append(Image(f"icons/{filename}"))
 
 
     #Spells

@@ -208,7 +208,8 @@
         "all_damage": "All damage",
         "elemental_damage": "Elemental damage",
         "all_resistances": "All resistances",
-        "elemental_resistances": "Elemental resistances"
+        "elemental_resistances": "Elemental resistances",
+        "armor_mind_over_matter": "35% of damage redirected on Mana"
     },
     "rarities": [
         "",
