@@ -24,7 +24,7 @@ IMPLICITS = {
     "heroic": Affix("IMPLICIT_ARMOR", 0.05, [Flags.BLESS, Flags.LIFE]),
     "dark": Affix("IMPLICIT_ARMOR", 3500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
 
-    "armor_mom": Affix("IMPLICIT_ARMOR_MOM", 1, [Flags.ARMOR_MOM, Flags.DESC_UNIQUE]),
+    "armor_mom": Affix("armor_mind_over_matter", 1, [Flags.ARMOR_MOM, Flags.DESC_UNIQUE]),
     "robes": Affix("IMPLICIT_ARMOR", 50, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
     "gown": Affix("IMPLICIT_ARMOR", 75, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
     "mage_coat": Affix("IMPLICIT_ARMOR", 100, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
@@ -431,7 +431,12 @@ class LootGenerator():
                 affx = 1
         affixes = [a.roll() for a in self.generate_affixes("armors", affx, level)]
         it = self.select_base(self._armors).copy()
+        implicits = []
+        for implicit in it.implicits:
+            implicits.append(implicit.roll())
+        it.implicits = implicits
         it.affixes.extend(affixes)
         it.rarity = rarity
         it.create_popup()
+        it.create_popup_details()
         return it

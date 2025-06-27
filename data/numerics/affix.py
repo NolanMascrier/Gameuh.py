@@ -38,12 +38,17 @@ class Affix():
             self._name,
             value,
             self._flags,
-            self._bounds
+            lower,
+            upper
         )
+
+    def reroll(self):
+        """Rerolls an affix within its bounds."""
+        self._value = random.uniform(self._bounds[0], self._bounds[1])
 
     def describe(self):
         """Generates a description of the affix."""
-            
+        adds = ""
         if self._value == 0:
             return "\n"
         if Flags.DESC_FLAT in self._flags:
@@ -74,6 +79,45 @@ class Affix():
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
         return f"{adds} {lst}"
+
+    def describe_details(self):
+        """Generates a detailed description of the affix."""
+        adds = ""
+        deets = ""
+        if self._value == 0:
+            return "\n"
+        if Flags.DESC_FLAT in self._flags:
+            value = f"{round(self._value)}"
+            deets = f"({round(self._bounds[0])}-{round(self._bounds[1])})"
+        elif Flags.DESC_PERCENT in self._flags:
+            value = f"{round(self._value)}%"
+            deets = f"({round(self._bounds[0])}%-{round(self._bounds[1])}%)"
+        else:
+            value = f"{round(self._value * 100)}%"
+            deets = f"({round(self._bounds[0] * 100)}%-{round(self._bounds[1] * 100)}%)"
+        if Flags.BOON in self._flags:
+            adds = f"{value} {trad('meta_words', 'increased')}"
+        elif Flags.HEX in self._flags:
+            adds = f"{value} {trad('meta_words', 'decreased')} "
+        elif Flags.BLESS in self._flags:
+            adds = f"{value} {trad('meta_words', 'more')}"
+        elif Flags.CURSE in self._flags:
+            adds = f"x{value} {trad('meta_words', 'less')}"
+        elif Flags.FLAT in self._flags:
+            if self._value < 0:
+                adds = f"{value}"
+            else:
+                adds = f"+{value}"
+        affx = []
+        for aff in self._flags:
+            if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE]:
+                affx.append(trad("descripts", aff.value))
+        lst = ", ".join(affx)
+        if Flags.DESC_UNIQUE in self._flags:
+            deets = f"{trad('descript_alt', self._name)}"
+            return f"{lst}\n{deets}"
+        return f"{adds} {deets} {lst}"
 
     @property
     def name(self):

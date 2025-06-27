@@ -30,7 +30,8 @@ class Draggable(Image):
             self._width = contains.get_image().width
             self._height = contains.get_image().height
             self._image = contains.get_image().clone().image
-            self._hover = Hoverable(x, y, None, None, surface=self._image, override=contains.popup)
+            self._hover = Hoverable(x, y, None, None, surface=self._image, override=contains.popup,\
+                alternative=contains.popup_details)
         self._parent_slot = None
         self._last_slot = None
         self._parent_panel = None

@@ -583,6 +583,7 @@ if __name__ == "__main__":
             if event.type == QUIT:
                 PLAYING = False
         keys = pygame.key.get_pressed()
+        SYSTEM["keys"] = keys
         if keys[K_ESCAPE]:
             if INTERNAL_COOLDOWN <= 0:
                 INTERNAL_COOLDOWN = 0.5

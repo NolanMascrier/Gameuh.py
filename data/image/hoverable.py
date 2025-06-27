@@ -2,13 +2,14 @@
 the mouse is above it."""
 
 import pygame
-from data.constants import SYSTEM
+from data.constants import SYSTEM, K_LALT
 from data.image.text import Text
 
 class Hoverable():
     """Defines an hoverable."""
     def __init__(self, x:int, y:int, text:str, hoverable_text:str, color=(255, 255, 255),\
-        surface: pygame.Surface = None, override: pygame.Surface = None):
+        surface: pygame.Surface = None, override: pygame.Surface = None,\
+        alternative:pygame.Surface = None):
         self._x = x
         self._y = y
         if text is None:
@@ -19,6 +20,7 @@ class Hoverable():
             self._hoverable = Text('\n'.join(hoverable_text), font="font_detail")
         self._attach = surface
         self._override = override
+        self._alternative = alternative
 
     def set(self, x, y):
         """Sets the x;y position of the hoverable."""
@@ -48,9 +50,12 @@ class Hoverable():
                 if SYSTEM["mouse"][0] - w < 0:
                     w += SYSTEM["mouse"][0] - w
             else:
-                sfc = self._override
-                w = self._override.get_width()
-                h = self._override.get_height()
+                if SYSTEM["keys"][K_LALT]:
+                    sfc = self._alternative
+                else:
+                    sfc = self._override
+                w = sfc.get_width()
+                h = sfc.get_height()
             SYSTEM["pop_up"] = (sfc, w, h)
 
     def draw(self, surface):

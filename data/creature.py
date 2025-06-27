@@ -214,7 +214,7 @@ class Creature:
             roll = random.uniform(0, 1)
             if roll <= self.__get_dodge_chance(damage_source.origin.stats["precision"].get_value()):
                 return "Dodged !", False
-        if not damage_source._ignore_block:
+        if not damage_source.ignore_block:
             roll = random.uniform(0, 1)
             if roll <= self._stats["block"].get_value():
                 return "Blocked !", False
@@ -227,8 +227,13 @@ class Creature:
         damage -= self._stats["abs_def"].get_value()
         damage = max(damage, 0)
         if Flags.ARMOR_MOM in unique_flags:
-            self._stats["life"].modify(-damage * 0.65)
-            self._stats["mana"].modify(-damage * 0.35)
+            life_dmg = damage * 0.65
+            mana_dmg = damage * 0.35
+            if self._stats["mana"].current_value < mana_dmg:
+                mana = mana_dmg - self._stats["mana"].current_value
+                life_dmg += mana
+            self._stats["life"].modify(-life_dmg)
+            self._stats["mana"].modify(-mana_dmg)
         else:
             self._stats["life"].modify(-damage)
         return round(damage, 2), damage_source.is_crit
@@ -332,7 +337,7 @@ class Creature:
         """Ticks down all buffs and debuffs."""
         for buff in self._buffs.copy():
             buff.tick()
-            if buff.duration <= 0:
+            if buff.expired:
                 self._buffs.remove(buff)
         for stat in self._stats:
             self._stats[stat].tick()
@@ -564,9 +569,13 @@ class Creature:
                     if self._gear[gear][gearr] is not None:
                         for affix in self._gear[gear][gearr].affixes:
                             self.afflict(affix.as_affliction())
+                        for affix in self._gear[gear][gearr].implicits:
+                            self.afflict(affix.as_affliction())
             else:
                 if self._gear[gear] is not None:
                     for affix in self._gear[gear].affixes:
+                        self.afflict(affix.as_affliction())
+                    for affix in self._gear[gear].implicits:
                         self.afflict(affix.as_affliction())
         self.__get_bonuses_from_stat()
         self._stats["life"].refill()

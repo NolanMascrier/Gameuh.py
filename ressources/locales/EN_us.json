@@ -209,7 +209,10 @@
         "elemental_damage": "Elemental damage",
         "all_resistances": "All resistances",
         "elemental_resistances": "Elemental resistances",
-        "armor_mind_over_matter": "35% of damage redirected on Mana"
+        "armor_mind_over_matter": "Lesser Spirit Shield"
+    },
+    "descript_alt": {
+        "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"
     },
     "rarities": [
         "",

@@ -28,6 +28,7 @@ class Affliction():
             self._flags = []
         else:
             self._flags = flags
+        self._expire = (duration != -1)
         self._stackable = stackable
         self._refreshable = refreshable
 
@@ -57,6 +58,9 @@ class Affliction():
             self._stackable,
             self._refreshable
         )
+
+    def __str__(self):
+        return f"{self._name} with value {self._value} and flags {self._flags}\n"
 
     def __eq__(self, other):
         if not isinstance(other, Affliction):
@@ -118,3 +122,11 @@ class Affliction():
     @refreshable.setter
     def refreshable(self, value):
         self._refreshable = value
+
+    @property
+    def expired(self):
+        """"Returns true whether or not the affliction's expired."""
+        if not self._expire:
+            return False
+        else:
+            return self._duration <= 0
