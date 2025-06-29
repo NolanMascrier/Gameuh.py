@@ -214,6 +214,7 @@ class Flags(Enum):
     ARMOR_MOM = "armor_mind_over_matter"
     HEAL_EFFICIENCY = "heal_factor"
     MANAL_EFFICIENCY = "mana_efficiency"
+    CRIT_RES = "crit_res"
     HELM = "helm"
     HANDS = "hands"
     ARMOR = "armor"

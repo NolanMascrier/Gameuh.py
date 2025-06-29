@@ -68,6 +68,7 @@ class Creature:
             "energy": Stat(0, "Energy resistance", 0.9, -2, scaling_value=0.005),
             "light": Stat(0, "Light resistance", 0.9, -2, scaling_value=0.005),
             "dark": Stat(0, "Dark resistance", 0.9, -2, scaling_value=0.005),
+            "crit_res": Stat(0, "Crit res", 1, 0, scaling_value=0),
 
             "phys_dmg": Stat(1, "Physical damage", scaling_value=0.05),
             "fire_dmg": Stat(1, "Fire damage", scaling_value=0.05),
@@ -223,7 +224,9 @@ class Creature:
             res = self._stats[dmg_type].get_value() - pen[dmg_type]
             damage += dmga * (1 - res)
         if damage_source.is_crit:
-            damage *= damage_source.crit_mult
+            crit = damage_source.crit_mult * (1 - self._stats["crit_res"].get_value())
+            if crit > 0:
+                damage *= crit
         damage -= self._stats["abs_def"].get_value()
         damage = max(damage, 0)
         if Flags.ARMOR_MOM in unique_flags:
