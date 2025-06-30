@@ -12,7 +12,7 @@ from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
 from data.image.parallaxe import Parallaxe
-from data.game.statblocks import *
+from data.tables.enemy_table import *
 
 class Level():
     """A level."""

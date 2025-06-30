@@ -1530,7 +1530,7 @@ AFFIXES = {
                                                         Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
             (Affix("WEAPON_FIRE_FLAT_5", 80, [Flags.FIRE_FLAT, Flags.DESC_FLAT,\
                                                         Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
-        ], 100000.5),
+        ], 1.5),
         "ice_flat": ([
             (Affix("WEAPON_ICE_FLAT_1", 10, [Flags.ICE_FLAT, Flags.DESC_FLAT,\
                                                         Flags.FLAT], 0.5, 1.5), 1, 0, 75),
