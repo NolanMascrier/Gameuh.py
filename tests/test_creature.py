@@ -1,5 +1,5 @@
 from data.creature import Creature
-from data.damage import Damage
+from data.numerics.damage import Damage
 from data.numerics.affliction import Affliction
 from data.constants import Flags
 from data.numerics.affix import Affix

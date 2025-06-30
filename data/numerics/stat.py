@@ -121,13 +121,13 @@ class Stat:
         If a duration is negative, it's considered infinite.  
         """
         for flats in self._flats.copy():
-            if flats.duration <= 0:
+            if flats.expired:
                 self._flats.remove(flats)
         for mults in self._mults.copy():
-            if mults.duration <= 0:
+            if mults.expired:
                 self._mults.remove(mults)
         for incr in self._incr.copy():
-            if incr.duration <= 0:
+            if incr.expired:
                 self._incr.remove(incr)
 
     def scale(self, level:int):

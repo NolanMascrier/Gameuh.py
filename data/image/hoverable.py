@@ -16,8 +16,10 @@ class Hoverable():
             self._text = None
         else:
             self._text = SYSTEM["font_detail"].render(f'{text}', False, color)
-        if text is not None:
+        if hoverable_text is not None:
             self._hoverable = Text('\n'.join(hoverable_text), font="font_detail")
+        else:
+            self._hoverable = None
         self._attach = surface
         self._override = override
         self._alternative = alternative

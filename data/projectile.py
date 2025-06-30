@@ -4,7 +4,7 @@ import random
 from math import atan2, pi
 from math import cos, sin, radians
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
-from data.damage import Damage
+from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation

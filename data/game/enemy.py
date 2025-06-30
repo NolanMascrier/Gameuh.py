@@ -9,7 +9,7 @@ from data.physics.entity import Entity
 from data.creature import Creature
 from data.constants import Flags, PROJECTILE_GRID, SLASH_GRID, POWER_UP_TRACKER, SYSTEM
 from data.game.pickup import PickUp
-from data.spell_list import *
+from data.game.spell import Spell
 
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
@@ -135,7 +135,8 @@ class Enemy():
                 if ability not in SYSTEM["spells"] or \
                     not isinstance(SYSTEM["spells"][ability], Spell):
                     return
-                SYSTEM["spells"][ability].cast(self._creature, self._entity, True, self._aim_right)
+                SYSTEM["spells"][ability].cast(self._creature, self._entity,\
+                                               True, self._aim_right, True)
 
     def get_image(self):
         """Returns the entity's image."""

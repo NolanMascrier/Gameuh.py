@@ -171,6 +171,15 @@ class Item():
         self._name = value
 
     @property
+    def base(self):
+        """Returns the item's base."""
+        return self._base
+
+    @base.setter
+    def base(self, value):
+        self._base = value
+
+    @property
     def price(self):
         """Returns the item's price."""
         return self._price

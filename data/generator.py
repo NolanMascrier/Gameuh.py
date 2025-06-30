@@ -1,7 +1,7 @@
 from data.constants import *
 from data.projectile import Projectile
 from data.physics.hitbox import HitBox
-from data.spell_list import VOIDBOLT
+from data.tables.spell_table import VOIDBOLT
 from math import atan2, pi
 
 class Generator():

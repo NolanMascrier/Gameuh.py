@@ -2,6 +2,8 @@
 
 from data.constants import SYSTEM
 from data.image.draggable import Draggable
+from data.item import Item
+from data.game.spell import Spell
 
 class Slot():
     """Defines a draggable image, an image that can be
@@ -105,16 +107,20 @@ class Slot():
     def draw_alt(self, surface, x, y):
         """Draws the component on the surface at specified position."""
         if self._contains is not None:
-            match self._contains.contains.rarity:
-                case 0:
-                    surface.blit(self._empty_image.image, (x, y))
-                case 1:
-                    surface.blit(SYSTEM["images"]["slot_magic"].image, (x, y))
-                case 2:
-                    surface.blit(SYSTEM["images"]["slot_rare"].image, (x, y))
-                case 3:
-                    surface.blit(SYSTEM["images"]["slot_exalted"].image, (x, y))
-            surface.blit(self._contains.get_image().image, (x, y))
+            if isinstance(self._contains.contains, Item):
+                match self._contains.contains.rarity:
+                    case 0:
+                        surface.blit(self._empty_image.image, (x, y))
+                    case 1:
+                        surface.blit(SYSTEM["images"]["slot_magic"].image, (x, y))
+                    case 2:
+                        surface.blit(SYSTEM["images"]["slot_rare"].image, (x, y))
+                    case 3:
+                        surface.blit(SYSTEM["images"]["slot_exalted"].image, (x, y))
+                surface.blit(self._contains.contains.get_image().image, (x, y))
+            else:
+                surface.blit(self._contains.contains.icon.get_image(), (x, y))
+                surface.blit(SYSTEM["images"]["skill_top"].image, (x, y))
         else:
             surface.blit(self._empty_image.image, (x, y))
 

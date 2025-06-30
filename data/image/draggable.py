@@ -5,6 +5,7 @@ from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.hoverable import Hoverable
 from data.item import Item
+from data.game.spell import Spell
 
 class Draggable(Image):
     """Defines a draggable.
@@ -32,6 +33,11 @@ class Draggable(Image):
             self._image = contains.get_image().clone().image
             self._hover = Hoverable(x, y, None, None, surface=self._image, override=contains.popup,\
                 alternative=contains.popup_details)
+        elif isinstance(contains, Spell):
+            self._width = contains.icon.width
+            self._height = contains.icon.height
+            self._image = contains.icon.clone().get_image()
+            self._hover = Hoverable(x, y, None, [contains.name], surface=self._image)
         self._parent_slot = None
         self._last_slot = None
         self._parent_panel = None

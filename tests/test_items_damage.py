@@ -1,6 +1,6 @@
 from data.item import Item
 from data.constants import Flags
-from data.damage import Damage
+from data.numerics.damage import Damage
 import unittest
 
 class TestItems(unittest.TestCase):

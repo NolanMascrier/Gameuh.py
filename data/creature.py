@@ -4,9 +4,10 @@ both the player and the ennemies alike."""
 import random
 import math
 from data.numerics.ressource import Ressource
+from data.numerics.rangestat import RangeStat
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
-from data.damage import Damage
+from data.numerics.damage import Damage
 from data.constants import Flags, SYSTEM, trad
 from data.item import Item
 from data.image.hoverable import Hoverable
@@ -70,6 +71,14 @@ class Creature:
             "dark": Stat(0, "Dark resistance", 0.9, -2, scaling_value=0.005),
             "crit_res": Stat(0, "Crit res", 1, 0, scaling_value=0),
 
+            "phys_flat": RangeStat(0, 0, "Physical damage", scaling_value=0.05),
+            "fire_flat": RangeStat(0, 0, "Fire damage", scaling_value=0.05),
+            "ice_flat": RangeStat(0, 0, "Ice damage", scaling_value=0.05),
+            "elec_flat": RangeStat(0, 0, "Electric damage", scaling_value=0.05),
+            "energy_flat": RangeStat(0, 0, "Energy damage", scaling_value=0.05),
+            "light_flat": RangeStat(0, 0, "Light damage", scaling_value=0.05),
+            "dark_flat": RangeStat(0, 0, "Dark damage", scaling_value=0.05),
+
             "phys_dmg": Stat(1, "Physical damage", scaling_value=0.05),
             "fire_dmg": Stat(1, "Fire damage", scaling_value=0.05),
             "ice_dmg": Stat(1, "Ice damage", scaling_value=0.05),
@@ -120,16 +129,23 @@ class Creature:
             multi *= self._stats["ranged_dmg"].get_value()
         if Flags.SPELL in flags:
             multi *= self._stats["spell_dmg"].get_value()
-        flat = damage_source.base
         dmg = damage_source.types
         pen = damage_source.penetration
-        phys = dmg["phys"] * self._stats["phys_dmg"].get_value()
-        fire = dmg["fire"] * self._stats["fire_dmg"].get_value()
-        ice = dmg["ice"] * self._stats["ice_dmg"].get_value()
-        elec = dmg["elec"] * self._stats["elec_dmg"].get_value()
-        energ = dmg["energy"] * self._stats["energy_dmg"].get_value()
-        light = dmg["light"] * self._stats["light_dmg"].get_value()
-        dark = dmg["dark"] * self._stats["dark_dmg"].get_value()
+
+        phys = (dmg["phys"] + self._stats["phys_flat"].roll())\
+                    * self._stats["phys_dmg"].get_value()
+        fire = (dmg["fire"] + self._stats["fire_flat"].roll())\
+                    * self._stats['fire_dmg'].get_value()
+        ice = (dmg["ice"] + self._stats["ice_flat"].roll())\
+                    * self._stats["ice_dmg"].get_value()
+        elec = (dmg["elec"] + self._stats["elec_flat"].roll())\
+                    * self._stats["elec_dmg"].get_value()
+        energ = (dmg["energy"] + self._stats["energy_flat"].roll())\
+                    * self._stats["energy_dmg"].get_value()
+        light = (dmg["light"] + self._stats["light_flat"].roll())\
+                    * self._stats["light_dmg"].get_value()
+        dark = (dmg["dark"] + self._stats["dark_flat"].roll())\
+                    * self._stats["dark_dmg"].get_value()
 
         pp = pen["phys"] + self._stats["phys_pen"].get_value()
         fp = pen["fire"] + self._stats["fire_pen"].get_value()
@@ -139,7 +155,7 @@ class Creature:
         lp = pen["light"] + self._stats["light_pen"].get_value()
         dp = pen["dark"] + self._stats["dark_pen"].get_value()
 
-        return Damage(flat, multi, phys, fire, ice, elec, energ, light, dark, \
+        return Damage(multi, phys, fire, ice, elec, energ, light, dark, \
                       pp, fp, ip, ep, enp, lp, dp, crit,\
                       self._stats["crit_dmg"].get_value(), flags,\
                       damage_source.ignore_dodge, damage_source.ignore_block, self)
@@ -566,6 +582,7 @@ class Creature:
         """Resets the creature data."""
         for stat in self._stats:
             self._stats[stat].reset()
+        self._buffs.clear()
         for gear in self._gear:
             if isinstance(self._gear[gear], dict):
                 for gearr in self._gear[gear]:

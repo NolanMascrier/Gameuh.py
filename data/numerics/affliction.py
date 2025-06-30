@@ -28,7 +28,7 @@ class Affliction():
             self._flags = []
         else:
             self._flags = flags
-        self._expire = (duration != -1)
+        self._expire = duration != -1
         self._stackable = stackable
         self._refreshable = refreshable
 

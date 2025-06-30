@@ -6,6 +6,8 @@ damage source also has a flat damage.
 P stands for penetration, ie how much of the
 resistance the damage source shall ignore."""
 
+import random
+
 class Damage():
     """A source of damage is a group of numbers that will \
     be substracted from a creature's life. While all arguments \
@@ -14,23 +16,23 @@ class Damage():
     work, or the resulting damage will be 0.
     
     Args:
-        damage (float): Base damage of the source.
-        multiplier (float): Multiplier of the source.
-        phys (float, optionnal): Physical damage multiplier.\
+        multiplier (float): Multiplier of the source,\
+        aka "Efficiency of added damage"
+        phys (float, optionnal): Physical damage.\
         Defaults to 0.
-        phys (float, optionnal): Physical damage multiplier.\
+        phys (float, optionnal): Physical damage.\
         Defaults to 0.
-        fire (float, optionnal): Fire damage multiplier.\
+        fire (float, optionnal): Fire damage.\
         Defaults to 0.
-        ice (float, optionnal): Ice damage multiplier.\
+        ice (float, optionnal): Ice damage.\
         Defaults to 0.
-        elec (float, optionnal): Electric damage multiplier.\
+        elec (float, optionnal): Electric damage.\
         Defaults to 0.
-        energ (float, optionnal): Energy damage multiplier.\
+        energ (float, optionnal): Energy damage.\
         Defaults to 0.
-        light (float, optionnal): Light damage multiplier.\
+        light (float, optionnal): Light damage.\
         Defaults to 0.
-        dark (float, optionnal): Darkness damage multiplier.\
+        dark (float, optionnal): Darkness damage.\
         Defaults to 0.
         pp (float, optionnal): Physical penetration factor.\
         Defaults to 0.
@@ -58,13 +60,17 @@ class Damage():
         should ignore chances to block. Defaults to False.
         origin (creature, optional): Tracker to the damage's\
         creator. Defaults to None.
+        lower_bound (float, optionnal): Minimal value for the damage\
+        roll. Defaults to 0.9.
+        upper_bound (float, optionnal): Maximal value for the damage\
+        roll. Defaults to 1.1.
     """
-    def __init__(self, damage, multiplier, phys = 0, fire = 0, ice = 0,\
+    def __init__(self, multiplier, phys = 0, fire = 0, ice = 0,\
                 elec = 0, energ = 0, light = 0, dark = 0, pp = 0, fp = 0, \
                 ip = 0, ep = 0, enp = 0, lp = 0, dp = 0, is_crit = False, \
                 crit_mult = 1.5, flags = None, ignore_dodge = False,\
-                ignore_block = False, origin = None):
-        self._base = damage
+                ignore_block = False, origin = None, lower_bound = 0.9,\
+                upper_bound = 1.1):
         self._coeff = multiplier
         self._types = {
             "phys": phys,
@@ -93,6 +99,7 @@ class Damage():
         self._ignore_block = ignore_block
         self._ignore_dodge = ignore_dodge
         self._origin = origin
+        self._bounds = (lower_bound, upper_bound)
 
     def get_damage(self):
         """Returns the computed damage.
@@ -102,26 +109,23 @@ class Damage():
             List of damages and list of \
             penetration values.
         """
-        init_damage = self._base * self._coeff
         damages = {
-            "phys": init_damage * self._types["phys"],
-            "fire": init_damage * self._types["fire"],
-            "ice": init_damage * self._types["ice"],
-            "elec": init_damage * self._types["elec"],
-            "energy": init_damage * self._types["energy"],
-            "light": init_damage * self._types["light"],
-            "dark": init_damage * self._types["dark"]
+            "phys": self._types["phys"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff,
+            "fire": self._types["fire"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff,
+            "ice": self._types["ice"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff,
+            "elec": self._types["elec"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff,
+            "energy": self._types["energy"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff,
+            "light": self._types["light"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff,
+            "dark": self._types["dark"] * random.uniform(self._bounds[0], self._bounds[1])\
+                                        * self._coeff
         }
         return damages, self._penetration
-
-    @property
-    def base(self):
-        """Returns the base damage of the source."""
-        return self._base
-
-    @base.setter
-    def base(self, value):
-        self._base = value
 
     @property
     def coeff(self):

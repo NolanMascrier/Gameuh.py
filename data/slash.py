@@ -1,7 +1,7 @@
 """A slash is a type of attack that attaches itself to its caster,
 plays its animation and disappear. It's used for melee attacks."""
 
-from data.damage import Damage
+from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox

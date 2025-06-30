@@ -1,7 +1,7 @@
 """Class for player characters."""
 
 from data.constants import *
-from data.spell_list import *
+from data.tables.spell_table import *
 from data.generator import Generator
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
@@ -28,7 +28,14 @@ class Character():
             K_LSHIFT: SYSTEM["spells"]["winddash"]
         }
         self._immune = []
-        self._spellbook = []
+        self._spellbook = [
+            SYSTEM["spells"]["firebolt"],
+            SYSTEM["spells"]["voidbolt"],
+            SYSTEM["spells"]["icebolt"],
+            SYSTEM["spells"]["elefury"],
+            SYSTEM["spells"]["furyslash"],
+            SYSTEM["spells"]["winddash"],
+        ]
         self._inventory = []
 
     def get_pos(self):
@@ -219,6 +226,7 @@ class Character():
 
     @property
     def spellbook(self):
+        """Returns the character's known spells."""
         return self._spellbook
 
     @spellbook.setter
@@ -227,6 +235,7 @@ class Character():
 
     @property
     def inventory(self):
+        """Returns the character's inventory."""
         return self._inventory
 
     @inventory.setter

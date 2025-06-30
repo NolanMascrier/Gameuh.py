@@ -1,0 +1,84 @@
+"""A range stat is a special stat that has an upper and lower bound."""
+
+import random
+from data.numerics.stat import Stat
+from data.numerics.affliction import Affliction
+
+class RangeStat():
+    """Defines a range stat.
+
+    lower (float, optionnal): Initial lower value of the stat. defaults to 10.
+    upper (float, optionnal): Initial upper value of the stat. defaults to 10.
+    name (str, optionnal): Name of the stat. 
+    max_cap (float, optionnal): At what value the stat should cap\
+    ie what it is its maximum value. Defaults to None (no cap).
+    min_cap (float, optionnal): At what value the stat should cap\
+    ie what it is its minimum value. Defaults to None (no cap).
+    precision (int, optionnal): How many decimals should the final\
+    value be rounded to. Defaults to 2.
+    scaling_value (float, optionnal): How much level influence\
+    this stat. Only for enemies. Defaults to 1.
+    mult_scaling (bool, optionnal): Whether or not the stat\
+    scales multiplicatively. Defaults to `False` (additive).
+    """
+    def __init__(self, lower = 1, upper = 10, name = "stat",\
+            max_cap:float = None, min_cap = None, precision:int = 2,\
+            scaling_value:float = 0, mult_scaling = False):
+        self._name = name
+        self._upper = Stat(upper, f"{name}_upper", max_cap, min_cap,\
+                           precision, scaling_value, mult_scaling)
+        self._lower = Stat(lower, f"{name}_lower", max_cap, min_cap,\
+                           precision, scaling_value, mult_scaling)
+
+    def get_value(self):
+        """Returns the computed final value of the stat.
+        
+        Returns:
+            tuple: values of the stat with computed increases \
+            and multipliers."""
+        return self._upper.get_value(), self._lower.get_value()
+
+    def afflict(self, affliction: Affliction):
+        """Adds the debuff to the stat according to its
+        flag.
+        
+        Args:
+            affliction (Affliction): affliction to afflict."""
+        self._upper.afflict(affliction)
+        self._lower.afflict(affliction)
+
+    def remove_affliction(self, affliction: Affliction):
+        """Removes an affliction.
+        
+        Args:
+            affliction (Afflicton): Affliction to remove.
+        """
+        self._upper.remove_affliction(affliction)
+        self._lower.remove_affliction(affliction)
+
+    def tick(self):
+        """Ticks down all increases and multipliers durations.
+        
+        If a duration reaches 0, it'll be deleted. 
+        If a duration is negative, it's considered infinite.  
+        """
+        self._upper.tick()
+        self._lower.tick()
+
+    def scale(self, level:int):
+        """Scales the stat to the given level."""
+        self._upper.scale(level)
+        self._lower.scale(level)
+
+    def roll(self):
+        """Rolls a random value between the upper and the lower
+        bounds."""
+        roll = random.uniform(self._lower.get_value(),\
+                              self._upper.get_value())
+        
+        return roll
+
+    def reset(self):
+        """Resets the stats."""
+        self._upper.reset()
+        self._lower.reset()

@@ -1507,6 +1507,90 @@ AFFIXES = {
         ], 0.2),
     },
     "weapons": {
+        "phys_flat": ([
+            (Affix("WEAPON_PHYS_FLAT_1", 10, [Flags.PHYS_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_PHYS_FLAT_2", 20, [Flags.PHYS_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_PHYS_FLAT_3", 30, [Flags.PHYS_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_PHYS_FLAT_4", 50, [Flags.PHYS_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_PHYS_FLAT_5", 80, [Flags.PHYS_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 2),
+        "fire_flat": ([
+            (Affix("WEAPON_FIRE_FLAT_1", 10, [Flags.FIRE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_FIRE_FLAT_2", 20, [Flags.FIRE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_FIRE_FLAT_3", 30, [Flags.FIRE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_FIRE_FLAT_4", 50, [Flags.FIRE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_FIRE_FLAT_5", 80, [Flags.FIRE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 100000.5),
+        "ice_flat": ([
+            (Affix("WEAPON_ICE_FLAT_1", 10, [Flags.ICE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_ICE_FLAT_2", 20, [Flags.ICE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_ICE_FLAT_3", 30, [Flags.ICE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_ICE_FLAT_4", 50, [Flags.ICE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_ICE_FLAT_5", 80, [Flags.ICE_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 1.5),
+        "elec_flat": ([
+            (Affix("WEAPON_ELEC_FLAT_1", 10, [Flags.ELEC_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_ELEC_FLAT_2", 20, [Flags.ELEC_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_ELEC_FLAT_3", 30, [Flags.ELEC_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_ELEC_FLAT_4", 50, [Flags.ELEC_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_ELEC_FLAT_5", 80, [Flags.ELEC_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 1.5),
+        "energ_flat": ([
+            (Affix("WEAPON_ENERG_FLAT_1", 10, [Flags.ENERG_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_ENERG_FLAT_2", 20, [Flags.ENERG_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_ENERG_FLAT_3", 30, [Flags.ENERG_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_ENERG_FLAT_4", 50, [Flags.ENERG_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_ENERG_FLAT_5", 80, [Flags.ENERG_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 1.5),
+        "light_flat": ([
+            (Affix("WEAPON_LIGHT_FLAT_1", 10, [Flags.LIGHT_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_LIGHT_FLAT_2", 20, [Flags.LIGHT_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_LIGHT_FLAT_3", 30, [Flags.LIGHT_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_LIGHT_FLAT_4", 50, [Flags.LIGHT_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_LIGHT_FLAT_5", 80, [Flags.LIGHT_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 0.9),
+        "dark_flat": ([
+            (Affix("WEAPON_DARK_FLAT_1", 10, [Flags.DARK_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("WEAPON_DARK_FLAT_2", 20, [Flags.DARK_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("WEAPON_DARK_FLAT_3", 30, [Flags.DARK_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("WEAPON_DARK_FLAT_4", 50, [Flags.DARK_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("WEAPON_DARK_FLAT_5", 80, [Flags.DARK_FLAT, Flags.DESC_FLAT,\
+                                                        Flags.FLAT], 0.5, 1.5), 0.1, 75, 999),
+        ], 0.9),
         "phys_dmg": ([
             (Affix("WEAPON_PHYS_DMG_1", 0.1, [Flags.PHYS_DMG,\
                                                         Flags.BOON], 0.5, 1.5), 1, 0, 75),

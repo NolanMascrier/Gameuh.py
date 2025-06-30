@@ -12,7 +12,7 @@ from data.image.button import Button
 from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
 from data.game.level import Level
-from data.spell_list import generate_spell_list
+from data.tables.spell_table import generate_spell_list, Spell
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
@@ -60,6 +60,20 @@ def quit_level():
     """Quits the current level and resets the player."""
     SYSTEM["game_state"] = MENU_MAIN
     reset()
+
+def open_spell_screen():
+    """Sets up the spell screen menu."""
+    SYSTEM["game_state"] = MENU_SPELLBOOK
+    spells = []
+    dashes = []
+    for spell in SYSTEM["player"].spellbook:
+        if isinstance(spell, Spell):
+            if Flags.DASH in spell.flags:
+                dashes.append(spell)
+            else:
+                spells.append(spell)
+    SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells)
+    SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes)
 
 def open_gear_screen():
     """Sets up the gear screen."""
@@ -165,7 +179,7 @@ def init_game():
                                              open_gear_screen,\
                                              "Gear")
     SYSTEM["images"]["button_spells"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
-                                             lambda : SYSTEM.__setitem__("game_state", MENU_SPELLBOOK),\
+                                             open_spell_screen,\
                                              "Spellbook")
     SYSTEM["images"]["button_tree"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state", MENU_TREE),\
@@ -518,6 +532,14 @@ def draw_menu(events):
             SYSTEM["buttons"][3].press(event.pos)
             SYSTEM["images"]["button_assault"].press(event.pos)
 
+def draw_spells(events):
+    """Draws the gear menu."""
+    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["spell_panel"].tick().draw()
+    draw_bottom_bar(events)
 
 def draw_gear(events):
     """Draws the gear menu."""
@@ -593,6 +615,8 @@ if __name__ == "__main__":
             draw_menu(events)
         if SYSTEM["game_state"] == MENU_GEAR:
             draw_gear(events)
+        if SYSTEM["game_state"] == MENU_SPELLBOOK:
+            draw_spells(events)
 
         if SYSTEM["pop_up"] is not None:
             SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (SYSTEM["mouse"][0] - SYSTEM["pop_up"][1],\
