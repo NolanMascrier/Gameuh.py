@@ -3,351 +3,8 @@
 import random
 from data.item import Item
 from data.constants import SYSTEM, Flags
-from data.numerics.affix import Affix
-
-#Affix format : ARMOR TYPE > AFFIX > TIER, WEIGHT, MIN LEVEL TO SHOW, MAX LEVEL TO SHOW
-IMPLICITS = {
-    "rusted_armor": Affix("IMPLICIT_ARMOR", 250, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
-    "iron_armor": Affix("IMPLICIT_ARMOR", 500, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
-    "chain_armor": Affix("IMPLICIT_ARMOR", 5, [Flags.FLAT, Flags.DEX, Flags.DESC_FLAT]),
-    "chain_armor2": Affix("IMPLICIT_ARMOR2", 5, [Flags.FLAT, Flags.STR, Flags.DESC_FLAT]),
-    "plate_armor": Affix("IMPLICIT_ARMOR", 1000, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
-    "dragon_armor": Affix("IMPLICIT_ARMOR", 2000, [Flags.FLAT, Flags.DEF, Flags.DESC_FLAT]),
-    "bushi_armor": Affix("IMPLICIT_ARMOR", 0.02, [Flags.FLAT, Flags.CRIT_CHANCE]),
-    "diamond_armor": Affix("IMPLICIT_ARMOR", 0.05, [Flags.FLAT, Flags.ALL_RESISTANCES]),
-
-    "worker_clothes": Affix("IMPLICIT_ARMOR", 250, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
-    "gambeson": Affix("IMPLICIT_ARMOR", 500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
-    "leather_armor": Affix("IMPLICIT_ARMOR", 1000, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
-    "brigandine": Affix("IMPLICIT_ARMOR", 1500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
-    "vagabond": Affix("IMPLICIT_ARMOR", 0.03, [Flags.FLAT, Flags.DODGE]),
-    "heroic": Affix("IMPLICIT_ARMOR", 0.05, [Flags.BLESS, Flags.LIFE]),
-    "dark": Affix("IMPLICIT_ARMOR", 3500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
-
-    "armor_mom": Affix("armor_mind_over_matter", 1, [Flags.ARMOR_MOM, Flags.DESC_UNIQUE]),
-    "robes": Affix("IMPLICIT_ARMOR", 50, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "gown": Affix("IMPLICIT_ARMOR", 75, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "mage_coat": Affix("IMPLICIT_ARMOR", 100, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "arcane_robes": Affix("IMPLICIT_ARMOR", 200, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "arcane_gown": Affix("IMPLICIT_ARMOR", 150, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "arcane_gown2": Affix("IMPLICIT_ARMOR2", 0.05, [Flags.BOON, Flags.MANA_REGEN]),
-    "royal_coat": Affix("IMPLICIT_ARMOR", 250, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "royal_coat2": Affix("IMPLICIT_ARMOR2", 0.05, [Flags.BOON, Flags.MANAL_EFFICIENCY]),
-    "priest": Affix("IMPLICIT_ARMOR", 300, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
-    "priest2": Affix("IMPLICIT_ARMOR2", 0.5, [Flags.BOON, Flags.HEAL_EFFICIENCY]),
-}
-AFFIXES = {
-    "armors": {
-        "str": ([
-            (Affix("ARMOR_STR_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 1, 0, 25),
-            (Affix("ARMOR_STR_2", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.8, 0, 30),
-            (Affix("ARMOR_STR_3", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.5, 10, 40),
-            (Affix("ARMOR_STR_4", 20, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.3, 20, 60),
-            (Affix("ARMOR_STR_5", 30, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.2, 30, 80),
-            (Affix("ARMOR_STR_6", 40, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.1, 50, 999),
-            (Affix("ARMOR_STR_7", 65, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.05, 75, 999),
-        ], 1),
-        "dex": ([
-            (Affix("ARMOR_DEX_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 1, 0, 25),
-            (Affix("ARMOR_DEX_2", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.8, 0, 30),
-            (Affix("ARMOR_DEX_3", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.5, 10, 40),
-            (Affix("ARMOR_DEX_4", 20, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.3, 20, 60),
-            (Affix("ARMOR_DEX_5", 30, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.2, 30, 80),
-            (Affix("ARMOR_DEX_6", 40, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.1, 50, 999),
-            (Affix("ARMOR_DEX_7", 65, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.05, 75, 999),
-        ], 1),
-        "int": ([
-            (Affix("ARMOR_INT_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 1, 0, 25),
-            (Affix("ARMOR_INT_2", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.8, 0, 30),
-            (Affix("ARMOR_INT_3", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.5, 10, 40),
-            (Affix("ARMOR_INT_4", 20, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.3, 20, 60),
-            (Affix("ARMOR_INT_5", 30, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.2, 30, 80),
-            (Affix("ARMOR_INT_6", 40, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.1, 50, 999),
-            (Affix("ARMOR_INT_7", 65, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.05, 75, 999),
-        ], 1),
-        "life": ([
-            (Affix("ARMOR_LIFE_1", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 1, 0, 25),
-            (Affix("ARMOR_LIFE_2", 25, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.8, 0, 30),
-            (Affix("ARMOR_LIFE_3", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.5, 10, 40),
-            (Affix("ARMOR_LIFE_4", 75, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.3, 20, 60),
-            (Affix("ARMOR_LIFE_5", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.2, 30, 80),
-            (Affix("ARMOR_LIFE_6", 150, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.1, 50, 999),
-            (Affix("ARMOR_LIFE_7", 250, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.05, 75, 999),
-        ], 1),
-        "life_incr": ([
-            (Affix("ARMOR_LIFE_INCR_1", 0.10, [Flags.BOON, Flags.LIFE]), 1, 0, 25),
-            (Affix("ARMOR_LIFE_INCR_2", 0.15, [Flags.BOON, Flags.LIFE]), 0.6, 15, 40),
-            (Affix("ARMOR_LIFE_INCR_3", 0.20, [Flags.BOON, Flags.LIFE]), 0.3, 25, 60),
-            (Affix("ARMOR_LIFE_INCR_4", 0.30, [Flags.BOON, Flags.LIFE]), 0.15, 50, 999),
-            (Affix("ARMOR_LIFE_INCR_5", 0.50, [Flags.BOON, Flags.LIFE]), 0.01, 75, 999)
-        ], 0.8),
-        "life_more": ([
-            (Affix("ARMOR_LIFE_MORE_1", 0.5, [Flags.BLESS, Flags.LIFE]), 1, 25, 75),
-            (Affix("ARMOR_LIFE_MORE_2", 0.15, [Flags.BLESS, Flags.LIFE]), 0.6, 30, 999),
-            (Affix("ARMOR_LIFE_MORE_3", 0.20, [Flags.BLESS, Flags.LIFE]), 0.3, 75, 999),
-        ], 0.2),
-        "mana": ([
-            (Affix("ARMOR_MANA_1", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 1, 0, 25),
-            (Affix("ARMOR_MANA_2", 25, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.8, 0, 30),
-            (Affix("ARMOR_MANA_3", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.5, 10, 40),
-            (Affix("ARMOR_MANA_4", 75, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.3, 20, 60),
-            (Affix("ARMOR_MANA_5", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.2, 30, 80),
-            (Affix("ARMOR_MANA_6", 150, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.1, 50, 999),
-            (Affix("ARMOR_MANA_7", 250, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.05, 75, 999),
-        ], 1),
-        "mana_incr": ([
-            (Affix("ARMOR_MANA_INCR_1", 0.10, [Flags.BOON, Flags.MANA]), 1, 0, 25),
-            (Affix("ARMOR_MANA_INCR_2", 0.15, [Flags.BOON, Flags.MANA]), 0.6, 15, 40),
-            (Affix("ARMOR_MANA_INCR_3", 0.20, [Flags.BOON, Flags.MANA]), 0.3, 25, 60),
-            (Affix("ARMOR_MANA_INCR_4", 0.30, [Flags.BOON, Flags.MANA]), 0.15, 50, 999),
-            (Affix("ARMOR_MANA_INCR_5", 0.50, [Flags.BOON, Flags.MANA]), 0.01, 75, 999)
-        ], 0.8),
-        "mana_more": ([
-            (Affix("ARMOR_MANA_MORE_1", 0.05, [Flags.BLESS, Flags.MANA]), 1, 25, 75),
-            (Affix("ARMOR_MANA_MORE_2", 0.15, [Flags.BLESS, Flags.MANA]), 0.6, 30, 999),
-            (Affix("ARMOR_MANA_MORE_3", 0.20, [Flags.BLESS, Flags.MANA]), 0.3, 75, 999),
-        ], 0.2),
-        "endurance": ([
-            (Affix("ARMOR_DEF_1", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 1, 0, 30),
-            (Affix("ARMOR_DEF_2", 250, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.8, 0, 30),
-            (Affix("ARMOR_DEF_3", 500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.5, 10, 40),
-            (Affix("ARMOR_DEF_4", 750, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.3, 20, 60),
-            (Affix("ARMOR_DEF_5", 1000, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.2, 30, 80),
-            (Affix("ARMOR_DEF_6", 1500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.1, 50, 999),
-            (Affix("ARMOR_DEF_7", 2500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.05, 75, 999),
-        ], 1.2),
-        "dodge": ([
-            (Affix("ARMOR_DODGE_RATING_1", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 1, 0, 30),
-            (Affix("ARMOR_DODGE_RATING_2", 250, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.8, 0, 30),
-            (Affix("ARMOR_DODGE_RATING_3", 500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.5, 10, 40),
-            (Affix("ARMOR_DODGE_RATING_4", 750, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.3, 20, 60),
-            (Affix("ARMOR_DODGE_RATING_5", 1000, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.2, 30, 80),
-            (Affix("ARMOR_DODGE_RATING_6", 1500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.1, 50, 999),
-            (Affix("ARMOR_DODGE_RATING_7", 2500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.05, 75, 999),
-        ], 1.2),
-        "dodge": ([
-            (Affix("ARMOR_DODGE_1", 0.01, [Flags.FLAT, Flags.DESC_PERCENT, Flags.DODGE]), 1, 0, 999),
-            (Affix("ARMOR_DODGE_2", 0.02, [Flags.FLAT, Flags.DESC_PERCENT, Flags.DODGE]), 0.5, 25, 999),
-            (Affix("ARMOR_DODGE_3", 0.05, [Flags.FLAT, Flags.DESC_PERCENT, Flags.DODGE]), 0.1, 75, 999),
-        ], 0.2),
-        "phys_res": ([
-            (Affix("ARMOR_PHYS_RES_1", 0.10, [Flags.PHYS, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_PHYS_RES_2", 0.25, [Flags.PHYS, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_PHYS_RES_3", 0.40, [Flags.PHYS, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "fire_res": ([
-            (Affix("ARMOR_FIRE_RES_1", 0.10, [Flags.FIRE, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_FIRE_RES_2", 0.25, [Flags.FIRE, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_FIRE_RES_3", 0.40, [Flags.FIRE, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "ice_res": ([
-            (Affix("ARMOR_ICE_RES_1", 0.10, [Flags.ICE, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_ICE_RES_2", 0.25, [Flags.ICE, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_ICE_RES_3", 0.40, [Flags.ICE, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "elec_res": ([
-            (Affix("ARMOR_ELEC_RES_1", 0.10, [Flags.ELEC, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_ELEC_RES_2", 0.25, [Flags.ELEC, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_ELEC_RES_3", 0.40, [Flags.ELEC, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "light_res": ([
-            (Affix("ARMOR_LIGHT_RES_1", 0.10, [Flags.LIGHT, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_LIGHT_RES_2", 0.25, [Flags.LIGHT, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_LIGHT_RES_3", 0.40, [Flags.LIGHT, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "dark_res": ([
-            (Affix("ARMOR_DARK_RES_1", 0.10, [Flags.DARK, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_DARK_RES_2", 0.25, [Flags.DARK, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_DARK_RES_3", 0.40, [Flags.DARK, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "energ_res": ([
-            (Affix("ARMOR_ENERG_RES_1", 0.10, [Flags.ENERG, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_ENERG_RES_2", 0.25, [Flags.ENERG, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_ENERG_RES_3", 0.40, [Flags.ENERG, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "elemental_res": ([
-            (Affix("ARMOR_ELEMENTAL_RESISTANCES_1", 0.10, [Flags.ELEMENTAL_RESISTANCES,\
-                                                            Flags.FLAT]), 1, 20, 60),
-            (Affix("ARMOR_ELEMENTAL_RESISTANCES_2", 0.25, [Flags.ELEMENTAL_RESISTANCES,\
-                                                            Flags.FLAT]), 0.6, 40, 90),
-            (Affix("ARMOR_ELEMENTAL_RESISTANCES_3", 0.40, [Flags.ELEMENTAL_RESISTANCES,\
-                                                            Flags.FLAT]), 0.3, 60, 999),
-        ], 0.8),
-        "crit_res": ([
-            (Affix("ARMOR_CRIT_RES_1", 0.05, [Flags.CRIT_RES, Flags.FLAT]), 1, 0, 60),
-            (Affix("ARMOR_CRIT_RES_2", 0.1, [Flags.ENERG, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ARMOR_CRIT_RES_3", 0.2, [Flags.ENERG, Flags.FLAT]), 0.3, 25, 999),
-        ], 0.5),
-        "all_res": ([
-            (Affix("ARMOR_ALL_RESISTANCES_1", 0.10, [Flags.ALL_RESISTANCES,\
-                                                        Flags.FLAT]), 1, 20, 60),
-            (Affix("ARMOR_ALL_RESISTANCES_2", 0.25, [Flags.ALL_RESISTANCES,\
-                                                        Flags.FLAT]), 0.6, 40, 90),
-            (Affix("ARMOR_ALL_RESISTANCES_3", 0.40, [Flags.ALL_RESISTANCES,\
-                                                        Flags.FLAT]), 0.3, 60, 999),
-        ], 0.25),
-    },
-    "helms": {
-        "str": ([
-            (Affix("HELM_STR_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 1, 0, 25),
-            (Affix("HELM_STR_2", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.8, 0, 30),
-            (Affix("HELM_STR_3", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.5, 10, 40),
-            (Affix("HELM_STR_4", 20, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.3, 20, 60),
-            (Affix("HELM_STR_5", 30, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.2, 30, 80),
-            (Affix("HELM_STR_6", 40, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.1, 50, 999),
-            (Affix("HELM_STR_7", 65, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 0.05, 75, 999),
-        ], 1),
-        "dex": ([
-            (Affix("HELM_DEX_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 1, 0, 25),
-            (Affix("HELM_DEX_2", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.8, 0, 30),
-            (Affix("HELM_DEX_3", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.5, 10, 40),
-            (Affix("HELM_DEX_4", 20, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.3, 20, 60),
-            (Affix("HELM_DEX_5", 30, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.2, 30, 80),
-            (Affix("HELM_DEX_6", 40, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.1, 50, 999),
-            (Affix("HELM_DEX_7", 65, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEX]), 0.05, 75, 999),
-        ], 1),
-        "int": ([
-            (Affix("HELM_INT_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 1, 0, 25),
-            (Affix("HELM_INT_2", 10, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.8, 0, 30),
-            (Affix("HELM_INT_3", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.5, 10, 40),
-            (Affix("HELM_INT_4", 20, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.3, 20, 60),
-            (Affix("HELM_INT_5", 30, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.2, 30, 80),
-            (Affix("HELM_INT_6", 40, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.1, 50, 999),
-            (Affix("HELM_INT_7", 65, [Flags.FLAT, Flags.DESC_FLAT, Flags.INT]), 0.05, 75, 999),
-        ], 1),
-        "life": ([
-            (Affix("HELM_LIFE_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 1, 0, 25),
-            (Affix("HELM_LIFE_2", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.8, 0, 30),
-            (Affix("HELM_LIFE_3", 25, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.5, 10, 40),
-            (Affix("HELM_LIFE_4", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.3, 20, 60),
-            (Affix("HELM_LIFE_5", 80, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.2, 30, 80),
-            (Affix("HELM_LIFE_6", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.1, 50, 999),
-            (Affix("HELM_LIFE_7", 125, [Flags.FLAT, Flags.DESC_FLAT, Flags.LIFE]), 0.05, 75, 999),
-        ], 1),
-        "life_incr": ([
-            (Affix("HELM_LIFE_INCR_1", 0.05, [Flags.BOON, Flags.LIFE]), 1, 0, 25),
-            (Affix("HELM_LIFE_INCR_2", 0.1, [Flags.BOON, Flags.LIFE]), 0.6, 15, 40),
-            (Affix("HELM_LIFE_INCR_3", 0.15, [Flags.BOON, Flags.LIFE]), 0.3, 25, 60),
-            (Affix("HELM_LIFE_INCR_4", 0.20, [Flags.BOON, Flags.LIFE]), 0.15, 50, 999),
-            (Affix("HELM_LIFE_INCR_5", 0.25, [Flags.BOON, Flags.LIFE]), 0.01, 75, 999)
-        ], 0.8),
-        "mana": ([
-            (Affix("HELM_MANA_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 1, 0, 25),
-            (Affix("HELM_MANA_2", 15, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.8, 0, 30),
-            (Affix("HELM_MANA_3", 25, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.5, 10, 40),
-            (Affix("HELM_MANA_4", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.3, 20, 60),
-            (Affix("HELM_MANA_5", 80, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.2, 30, 80),
-            (Affix("HELM_MANA_6", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.1, 50, 999),
-            (Affix("HELM_MANA_7", 125, [Flags.FLAT, Flags.DESC_FLAT, Flags.MANA]), 0.05, 75, 999),
-        ], 1),
-        "mana_incr": ([
-            (Affix("HELM_MANA_INCR_1", 0.05, [Flags.BOON, Flags.MANA]), 1, 0, 25),
-            (Affix("HELM_MANA_INCR_2", 0.1, [Flags.BOON, Flags.MANA]), 0.6, 15, 40),
-            (Affix("HELM_MANA_INCR_3", 0.15, [Flags.BOON, Flags.MANA]), 0.3, 25, 60),
-            (Affix("HELM_MANA_INCR_4", 0.20, [Flags.BOON, Flags.MANA]), 0.15, 50, 999),
-            (Affix("HELM_MANA_INCR_5", 0.25, [Flags.BOON, Flags.MANA]), 0.01, 75, 999)
-        ], 0.8),
-        "endurance": ([
-            (Affix("HELM_DEF_1", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 1, 0, 30),
-            (Affix("HELM_DEF_2", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.8, 0, 30),
-            (Affix("HELM_DEF_3", 200, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.5, 10, 40),
-            (Affix("HELM_DEF_4", 300, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.3, 20, 60),
-            (Affix("HELM_DEF_5", 500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.2, 30, 80),
-            (Affix("HELM_DEF_6", 750, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.1, 50, 999),
-            (Affix("HELM_DEF_7", 1000, [Flags.FLAT, Flags.DESC_FLAT, Flags.DEF]), 0.05, 75, 999),
-        ], 1.2),
-        "dodge": ([
-            (Affix("HELM_DODGE_RATING_1", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 1, 0, 30),
-            (Affix("HELM_DODGE_RATING_2", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.8, 0, 30),
-            (Affix("HELM_DODGE_RATING_3", 200, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.5, 10, 40),
-            (Affix("HELM_DODGE_RATING_4", 300, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.3, 20, 60),
-            (Affix("HELM_DODGE_RATING_5", 500, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.2, 30, 80),
-            (Affix("HELM_DODGE_RATING_6", 750, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.1, 50, 999),
-            (Affix("HELM_DODGE_RATING_7", 1000, [Flags.FLAT, Flags.DESC_FLAT, Flags.DODGE_RATING]), 0.05, 75, 999),
-        ], 1.2),
-        "precision": ([
-            (Affix("HELM_PRECISION_1", 50, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 1, 0, 30),
-            (Affix("HELM_PRECISION_2", 100, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 0.8, 0, 30),
-            (Affix("HELM_PRECISION_3", 200, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 0.5, 10, 40),
-            (Affix("HELM_PRECISION_4", 300, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 0.3, 20, 60),
-            (Affix("HELM_PRECISION_5", 500, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 0.2, 30, 80),
-            (Affix("HELM_PRECISION_6", 750, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 0.1, 50, 999),
-            (Affix("HELM_PRECISION_7", 1000, [Flags.FLAT, Flags.DESC_FLAT, Flags.PRECISION]), 0.05, 75, 999),
-        ], 10.9),
-        "phys_res": ([
-            (Affix("HELM_PHYS_RES_1", 0.08, [Flags.PHYS, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_PHYS_RES_2", 0.12, [Flags.PHYS, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_PHYS_RES_3", 0.2, [Flags.PHYS, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "fire_res": ([
-            (Affix("HELM_FIRE_RES_1", 0.08, [Flags.FIRE, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_FIRE_RES_2", 0.12, [Flags.FIRE, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_FIRE_RES_3", 0.2, [Flags.FIRE, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "ice_res": ([
-            (Affix("HELM_ICE_RES_1", 0.08, [Flags.ICE, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_ICE_RES_2", 0.12, [Flags.ICE, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_ICE_RES_3", 0.2, [Flags.ICE, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "elec_res": ([
-            (Affix("HELM_ELEC_RES_1", 0.08, [Flags.ELEC, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_ELEC_RES_2", 0.12, [Flags.ELEC, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_ELEC_RES_3", 0.2, [Flags.ELEC, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "light_res": ([
-            (Affix("HELM_LIGHT_RES_1", 0.08, [Flags.LIGHT, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_LIGHT_RES_2", 0.12, [Flags.LIGHT, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_LIGHT_RES_3", 0.2, [Flags.LIGHT, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "dark_res": ([
-            (Affix("HELM_DARK_RES_1", 0.08, [Flags.DARK, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_DARK_RES_2", 0.12, [Flags.DARK, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_DARK_RES_3", 0.2, [Flags.DARK, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "energ_res": ([
-            (Affix("HELM_ENERG_RES_1", 0.08, [Flags.ENERG, Flags.FLAT]), 1, 0, 60),
-            (Affix("HELM_ENERG_RES_2", 0.12, [Flags.ENERG, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("HELM_ENERG_RES_3", 0.2, [Flags.ENERG, Flags.FLAT]), 0.3, 25, 999),
-        ], 1),
-        "elemental_res": ([
-            (Affix("HELM_ELEMENTAL_RESISTANCES_1", 0.08, [Flags.ELEMENTAL_RESISTANCES,\
-                                                            Flags.FLAT]), 1, 20, 60),
-            (Affix("HELM_ELEMENTAL_RESISTANCES_2", 0.12, [Flags.ELEMENTAL_RESISTANCES,\
-                                                            Flags.FLAT]), 0.6, 40, 90),
-            (Affix("HELM_ELEMENTAL_RESISTANCES_3", 0.2, [Flags.ELEMENTAL_RESISTANCES,\
-                                                            Flags.FLAT]), 0.3, 60, 999),
-        ], 0.8),
-        "all_res": ([
-            (Affix("HELM_ALL_RESISTANCES_1", 0.08, [Flags.ALL_RESISTANCES,\
-                                                        Flags.FLAT]), 1, 20, 60),
-            (Affix("HELM_ALL_RESISTANCES_2", 0.12, [Flags.ALL_RESISTANCES,\
-                                                        Flags.FLAT]), 0.6, 40, 90),
-            (Affix("HELM_ALL_RESISTANCES_3", 0.2, [Flags.ALL_RESISTANCES,\
-                                                        Flags.FLAT]), 0.3, 60, 999),
-        ], 0.25),
-    },
-    "boots": {
-        
-    },
-    "gloves": {
-        
-    },
-    "rings": {
-        
-    },
-    "amulets": {
-        
-    },
-    "relics": {
-        
-    },
-    "weapons": {
-        
-    },
-    "offhands": {
-        
-    }
-}
+from data.tables.affix_table import AFFIXES
+from data.tables.implicits_table import IMPLICITS
 
 class LootGenerator():
     """Creates the loot generator, and with it the base items."""
@@ -385,13 +42,17 @@ class LootGenerator():
                     0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["dark"]]), 0.1),
 
                 (Item("", "Robes", 5, 0, 1, SYSTEM["images"]["armors"][27],\
-                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["robes"]]), 1),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                                                                IMPLICITS["robes"]]), 1),
                 (Item("", "Gown", 25, 0, 1, SYSTEM["images"]["armors"][31],\
-                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["gown"]]), 0.8),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                                                                IMPLICITS["gown"]]), 0.8),
                 (Item("", "Mage coat", 100, 0, 1, SYSTEM["images"]["armors"][3],\
-                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["mage_coat"]]), 0.6),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                                                                IMPLICITS["mage_coat"]]), 0.6),
                 (Item("", "Arcane robes", 500, 0, 1, SYSTEM["images"]["armors"][30],\
-                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"], IMPLICITS["arcane_robes"]]), 0.5),
+                    0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
+                                                                IMPLICITS["arcane_robes"]]), 0.5),
                 (Item("", "Arcane gown", 1000, 0, 1, SYSTEM["images"]["armors"][33],\
                     0, [Flags.ARMOR, Flags.GEAR], implicits=[IMPLICITS["armor_mom"],\
                         IMPLICITS["arcane_gown"], IMPLICITS["arcane_gown2"]]), 0.33),
@@ -544,6 +205,16 @@ class LootGenerator():
             (Item("", "Diamond arrow", 250, 0, 1, SYSTEM["images"]["offhands"][12],\
                     0, [Flags.OFFHAND, Flags.GEAR], implicits=[]), 1),
         ]
+        self._belts = [
+            (Item("", "Iron Belt", 250, 0, 1, SYSTEM["images"]["belts"][0],\
+                    0, [Flags.BELT, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Barbed belt", 250, 0, 1, SYSTEM["images"]["belts"][1],\
+                    0, [Flags.BELT, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Gi belt", 250, 0, 1, SYSTEM["images"]["belts"][2],\
+                    0, [Flags.BELT, Flags.GEAR], implicits=[]), 1),
+            (Item("", "Mage belt", 250, 0, 1, SYSTEM["images"]["belts"][3],\
+                    0, [Flags.BELT, Flags.GEAR], implicits=[]), 1),
+        ]
 
     def pick_weighted(self, items_with_weights):
         """Picks items with the weights"""
@@ -603,19 +274,49 @@ class LootGenerator():
             if cress >= roll:
                 return item
 
-    def generate_armor(self, level, rarity):
+    def generate_item(self, level, rarity):
         """Generates a random armor."""
         match rarity:
             case 1:
                 affx = 2
             case 2:
-                affx = random.randint(3, 6)
+                affx = random.randint(3, 4)
             case 3:
-                affx = 8
+                affx = random.randint(5, 6)
             case _:
-                affx = 1
-        affixes = [a.roll() for a in self.generate_affixes("armors", affx, level)]
-        it = self.select_base(self._armors).copy()
+                affx = random.randint(0, 1)
+        item_type = random.randint(0, 9)
+        match item_type:
+            case 1:
+                affixes = [a.roll() for a in self.generate_affixes("helms", affx, level)]
+                it = self.select_base(self._helms).copy()
+            case 2:
+                affixes = [a.roll() for a in self.generate_affixes("boots", affx, level)]
+                it = self.select_base(self._boots).copy()
+            case 3:
+                affixes = [a.roll() for a in self.generate_affixes("gloves", affx, level)]
+                it = self.select_base(self._gloves).copy()
+            case 4:
+                affixes = [a.roll() for a in self.generate_affixes("amulets", affx, level)]
+                it = self.select_base(self._amulets).copy()
+            case 5:
+                affixes = [a.roll() for a in self.generate_affixes("rings", affx, level)]
+                it = self.select_base(self._rings).copy()
+            case 6:
+                affixes = [a.roll() for a in self.generate_affixes("relics", affx, level)]
+                it = self.select_base(self._relics).copy()
+            case 7:
+                affixes = [a.roll() for a in self.generate_affixes("weapons", affx, level)]
+                it = self.select_base(self._weapons).copy()
+            case 8:
+                affixes = [a.roll() for a in self.generate_affixes("offhands", affx, level)]
+                it = self.select_base(self._offhands).copy()
+            case 9:
+                affixes = [a.roll() for a in self.generate_affixes("belts", affx, level)]
+                it = self.select_base(self._belts).copy()
+            case _:
+                affixes = [a.roll() for a in self.generate_affixes("armors", affx, level)]
+                it = self.select_base(self._armors).copy()
         implicits = []
         for implicit in it.implicits:
             implicits.append(implicit.roll())
@@ -625,3 +326,25 @@ class LootGenerator():
         it.create_popup()
         it.create_popup_details()
         return it
+
+    def compute_adjusted_weights(self, base_weights, rarity):
+        adjusted = []
+        for i, weight in enumerate(base_weights):
+                exponent = 1.0 - SYSTEM["player"].creature.stats["item_qual"].get_value() * 0.15
+                exponent = max(0.1, exponent)
+                adjusted_weight = (weight ** exponent) * rarity 
+                adjusted.append(adjusted_weight)
+        return adjusted
+
+    def roll(self, quantity: int, level: int, rarity: int = 1):
+        """Rolls a certain amount of items."""
+        quant = quantity * (1 + SYSTEM["player"].creature.stats["item_quant"].get_value())
+        level_roll = min(max(level + random.randint(-3, 5), 0), 100)
+        loot = []
+        base_weights = [10, 7, 5, 2]
+        for _ in range(int(quant)):
+            weight = self.compute_adjusted_weights(base_weights, rarity)
+            rarities = [0, 1, 2, 3]
+            roll = random.choices(rarities, weights=weight, k=1)[0]
+            loot.append(self.generate_item(level_roll, roll))
+        return loot

@@ -203,6 +203,7 @@ class Flags(Enum):
     BLOCK = "block"
     DODGE_RATING = "dodge_rating"
     DODGE = "dodge"
+    ABS_DEF = "abs_def"
     PIERCE_BLOCK = "cant_be_blocked"
     PIERCE_DODGE = "cant_be_dodged"
     ALL_DAMAGE = "all_damage"

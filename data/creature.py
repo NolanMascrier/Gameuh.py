@@ -38,7 +38,7 @@ class Creature:
             "add_def": Stat(0, "add_def"),
 
             "exp_mult": Stat(1, "Exp Multiplier"),
-            "abs_def": Stat(0, "Absolute Defense", scaling_value=0.01),
+            "abs_def": Stat(0, "Absolute Defense", scaling_value=0.001),
             "heal_factor": Stat(1, "Healing Effectivness"),
             "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0.05, 0),
             "crit_rate": Stat(0.05, "Crit rate", 1, 0, scaling_value=0.001),

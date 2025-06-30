@@ -2,7 +2,7 @@
 characters and used."""
 
 import pygame
-from data.constants import Flags, trad, K_LALT, SYSTEM
+from data.constants import Flags, trad, SYSTEM
 from data.image.image import Image
 from data.image.animation import Animation
 from data.image.text import Text
@@ -33,7 +33,7 @@ class Item():
         self._max_held = max_held
         self._price = price
         self._power = power
-        self._image = image
+        self._image = image.clone()
         if flags is None:
             self._flags = []
         else:

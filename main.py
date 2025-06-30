@@ -45,24 +45,9 @@ def unequip(item: Item, slot: Slot):
 
 def debug_create_items():
     """Creates a bunch of items."""
-    aff = Affix("str_1", 10, [Flags.STR, Flags.FLAT, Flags.DESC_FLAT])
-    aff2 = Affix("fire_dmg_1", 0.1, [Flags.FIRE_DMG, Flags.BOON])
-    aff3 = Affix("life_1", 0.05, [Flags.LIFE, Flags.BLESS])
-    aff4 = Affix("def", 10, [Flags.DEF, Flags.FLAT, Flags.DESC_FLAT])
-    aff5 = Affix("fire_res", 0.25, [Flags.FIRE, Flags.FLAT])
-    aff6 = Affix("elec_res", 0.12, [Flags.ELEC, Flags.FLAT])
-    armor = Item("Bob's armor", "body armor", 999, 0, 1, SYSTEM["images"]["armors"][3], 2 \
-        ,[Flags.GEAR, Flags.ARMOR], [aff, aff3])
-    armor2 = Item("Bob's boots", "boots", 999, 0, 1, SYSTEM["images"]["item_bootsA"], 1 \
-        ,[Flags.GEAR, Flags.BOOTS], [aff2])
-    armor3 = Item("Bob's ring", "ring", 999, 0, 1, SYSTEM["images"]["item_ringA"], 3 \
-        ,[Flags.GEAR, Flags.RING], [aff4, aff5, aff6])
     lg = LootGenerator()
-    armor4 = lg.generate_armor(5, 0)
-    armor5 = lg.generate_armor(5, 1)
-    armor6 = lg.generate_armor(5, 2)
-    armor7 = lg.generate_armor(5, 3)
-    SYSTEM["player"].inventory.extend([armor, armor2, armor3, armor4, armor5, armor6, armor7])
+    base_loot = lg.roll(30, 5)
+    SYSTEM["player"].inventory.extend(base_loot)
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
@@ -90,7 +75,7 @@ def open_gear_screen():
     SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip,\
          Flags.WEAPON, SYSTEM["player"].creature.gear["weapon"])
     SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip,\
-         Flags.RING, SYSTEM["player"].creature.gear["ring"]["left"])
+         Flags.RING, SYSTEM["player"].creature.gear["ring"]["left"], True)
     SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip,\
          Flags.RING, SYSTEM["player"].creature.gear["ring"]["right"])
     SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip,\
@@ -145,6 +130,9 @@ def init_game():
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
     SYSTEM["images"]["slot_empty"] = Image("ui/item_top.png").scale(64, 64)
+    SYSTEM["images"]["slot_magic"] = Image("ui/item_top_m.png").scale(64, 64)
+    SYSTEM["images"]["slot_rare"] = Image("ui/item_top_r.png").scale(64, 64)
+    SYSTEM["images"]["slot_exalted"] = Image("ui/item_top_e.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png").image
     SYSTEM["images"][K_e] = Image("ui/kb_e.png").image
@@ -230,6 +218,7 @@ def init_game():
     SYSTEM["images"]["item_bootsA"] = Image("icons/bootsA.png")
     SYSTEM["images"]["item_ringA"] = Image("icons/ringA.png")
     SYSTEM["images"]["item_armorA"] = Image("icons/armorA.png")
+    SYSTEM["images"]["loot_icon"] = Image("loot.png").scale(32, 32)
     #Get all the items image
     SYSTEM["images"]["helmets"] = []
     SYSTEM["images"]["armors"] = []
@@ -562,6 +551,7 @@ if __name__ == "__main__":
     init_timers()
     SYSTEM["game_state"] = MENU_MAIN
     INTERNAL_COOLDOWN = 0
+    SYSTEM["looter"] = LootGenerator()
     #TODO: Put that in scene manager
     levels = []
     SYSTEM["buttons"] = []

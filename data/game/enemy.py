@@ -8,9 +8,8 @@ from math import sqrt
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.constants import Flags, PROJECTILE_GRID, SLASH_GRID, POWER_UP_TRACKER, SYSTEM
-from data.spell_list import *
-from data.projectile import Projectile
 from data.game.pickup import PickUp
+from data.spell_list import *
 
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
@@ -62,6 +61,12 @@ class Enemy():
                 pu = PickUp(x, y, value, flags=[Flags.GOLD], speed_mod=2.5)
                 POWER_UP_TRACKER.append(pu)
                 gold_left -= value
+        loot = SYSTEM["looter"].roll(1, self._creature.level)
+        for l in loot:
+            x = self.x + random.randint(-20, 20)
+            y = self.y + random.randint(-20, 20)
+            pu = PickUp(x, y, 1, flags=[Flags.ITEM], contained=l)
+            POWER_UP_TRACKER.append(pu)
         self._exploded = True
 
     def distance_to_player(self, player):

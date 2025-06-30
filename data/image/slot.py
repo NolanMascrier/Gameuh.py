@@ -104,9 +104,19 @@ class Slot():
 
     def draw_alt(self, surface, x, y):
         """Draws the component on the surface at specified position."""
-        surface.blit(self._empty_image.image, (x, y))
         if self._contains is not None:
+            match self._contains.contains.rarity:
+                case 0:
+                    surface.blit(self._empty_image.image, (x, y))
+                case 1:
+                    surface.blit(SYSTEM["images"]["slot_magic"].image, (x, y))
+                case 2:
+                    surface.blit(SYSTEM["images"]["slot_rare"].image, (x, y))
+                case 3:
+                    surface.blit(SYSTEM["images"]["slot_exalted"].image, (x, y))
             surface.blit(self._contains.get_image().image, (x, y))
+        else:
+            surface.blit(self._empty_image.image, (x, y))
 
     @property
     def contains(self):

@@ -27,7 +27,7 @@ class Affix():
         """Makes the affix into an affliction."""
         flags = self._flags.copy()
         flags.append(Flags.GEAR)
-        return Affliction(f"{self._name}_effect", self._value, -1, flags)
+        return Affliction(f"{self._name}_effect", self._value, -1, flags, True)
 
     def roll(self):
         """Creates a copy of the affix with a randomly rolled value."""

@@ -27,7 +27,7 @@ class Stat:
     """
     def __init__(self, val = 10, name = "stat",\
             max_cap:float = None, min_cap = None, precision:int = 2,\
-            scaling_value:float = 1, mult_scaling = False):
+            scaling_value:float = 0, mult_scaling = False):
         self._value = val
         self._name = name
         self._flats = []

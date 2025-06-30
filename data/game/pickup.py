@@ -9,7 +9,8 @@ from data.constants import Flags, TEXT_TRACKER, SYSTEM
 
 class PickUp():
     """Creates a pickup."""
-    def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1, flags = None):
+    def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
+                flags = None, contained = None):
         self._position = pygame.math.Vector2(x, y)
         self._value = value
         if flags is None:
@@ -27,6 +28,7 @@ class PickUp():
         angle = random.uniform(0, 2 * math.pi)
         speed = random.uniform(2, 4) * speed_mod
         self._velocity = pygame.math.Vector2(math.cos(angle), math.sin(angle)) * speed
+        self._contains = contained
 
     def get_image(self):
         """Returns the pickup image."""
@@ -57,7 +59,7 @@ class PickUp():
                 return SYSTEM["images"]["supra_moolah"].image
             return SYSTEM["images"]["maxi_moolah"].image
         if Flags.ITEM in self._flags:
-            return None
+            return SYSTEM["images"]["loot_icon"].image
         return None
 
     def move(self, player):
@@ -101,7 +103,8 @@ class PickUp():
         if Flags.GOLD in self._flags:
             SYSTEM["level"].gold += self._value
         if Flags.ITEM in self._flags:
-            pass #TODO
+            SYSTEM["player"].inventory.append(self._contains)
+            SYSTEM["level"].loot.append(self._contains)
         self._to_delete = True
 
     def tick(self, player):
