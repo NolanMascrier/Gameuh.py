@@ -15,7 +15,9 @@ class SlotPanel:
         self._padding = padding
         self._slots = []
         self._columns = (self._background.width - self._padding * 2) // slot_size - 1
+        self._lines = (self._background.height - self._padding * 2) // slot_size - 1
         self._default = default
+        self._scroll = 0
         if isinstance(default, Iterable):
             for item in default:
                 y, x = self.get_index()
@@ -77,6 +79,12 @@ class SlotPanel:
                             and not slot.contains.dragging]
         if not SYSTEM["mouse_click"][0]:
             self.try_insert(SYSTEM["dragged"])
+        if self.is_hovered():
+            if SYSTEM["mouse_wheel"][0][1] < SYSTEM["mouse_wheel"][1][1]:
+                self._scroll = max(self._scroll - 1, 0)
+            elif SYSTEM["mouse_wheel"][0][1] > SYSTEM["mouse_wheel"][1][1]:
+                self._scroll = min(self._scroll + 1, len(self._slots) // (self._columns + 1)\
+                    - (self._lines + 1) + 1)
         return self
 
     def try_insert(self, draggable: Draggable):
@@ -89,24 +97,32 @@ class SlotPanel:
     def draw(self):
         """Draws the component."""
         SYSTEM["windows"].blit(self._background.image, (self._x, self._y))
-        x = 0
-        y = 0
+        diff_x, x = 0, 0
+        diff_y, y = 0, 0
         real_x = self._x + self._padding + x * self._slot_size
         real_y = self._y + self._padding + y * self._slot_size
         for slot in self._slots:
+            diff_x += 1
+            if diff_x > self._columns:
+                diff_x = 0
+                diff_y += 1
+            if diff_y < self._scroll:
+                continue
             if slot.contains is SYSTEM["dragged"]:
                 continue
             real_x = self._x + self._padding + x * self._slot_size
             real_y = self._y + self._padding + y * self._slot_size
-            slot.draw_alt(SYSTEM["windows"], real_x, real_y)
-            slot.contains.set(real_x, real_y)
+            if y <= self._lines:
+                slot.draw_alt(SYSTEM["windows"], real_x, real_y)
+                slot.contains.set(real_x, real_y)
             x += 1
             if x > self._columns:
                 x = 0
                 y += 1
-        real_x = self._x + self._padding + x * self._slot_size
-        real_y = self._y + self._padding + y * self._slot_size
-        if x > self._columns:
-            x = 0
-            y += 1
-        SYSTEM["windows"].blit(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
+        if y <= self._lines:
+            real_x = self._x + self._padding + x * self._slot_size
+            real_y = self._y + self._padding + y * self._slot_size
+            if x > self._columns:
+                x = 0
+                y += 1
+            SYSTEM["windows"].blit(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))

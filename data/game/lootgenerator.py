@@ -280,11 +280,11 @@ class LootGenerator():
             case 1:
                 affx = 2
             case 2:
-                affx = random.randint(3, 4)
+                affx = random.randint(3, 6)
             case 3:
-                affx = random.randint(5, 6)
+                affx = random.randint(7, 8)
             case _:
-                affx = random.randint(0, 1)
+                affx = 1
         item_type = random.randint(0, 9)
         match item_type:
             case 1:
@@ -341,7 +341,7 @@ class LootGenerator():
         quant = quantity * (1 + SYSTEM["player"].creature.stats["item_quant"].get_value())
         level_roll = min(max(level + random.randint(-3, 5), 0), 100)
         loot = []
-        base_weights = [10, 7, 5, 2]
+        base_weights = [100, 40, 15, 3]
         for _ in range(int(quant)):
             weight = self.compute_adjusted_weights(base_weights, rarity)
             rarities = [0, 1, 2, 3]

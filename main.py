@@ -16,14 +16,9 @@ from data.tables.spell_table import generate_spell_list, Spell
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
-from data.numerics.affix import Affix
 from data.game.lootgenerator import LootGenerator
 
-SPEED = 4
 PLAYING = True
-PLAYER = (50, SCREEN_HEIGHT/2)
-
-SPEED_FACTOR = 5
 
 def equip(item: Item, slot: Slot):
     """Equips an item on the player character."""
@@ -46,7 +41,7 @@ def unequip(item: Item, slot: Slot):
 def debug_create_items():
     """Creates a bunch of items."""
     lg = LootGenerator()
-    base_loot = lg.roll(30, 5)
+    base_loot = lg.roll(300, 5)
     SYSTEM["player"].inventory.extend(base_loot)
 
 def start_level():
@@ -244,6 +239,7 @@ def init_game():
     SYSTEM["images"]["amulets"] = []
     SYSTEM["images"]["offhands"] = []
     SYSTEM["images"]["weapons"] = []
+    SYSTEM["images"]["runes"] = []
     pattern = re.compile(r"^(.+?)(\d+)\.png$")
     unsorted = []
     for filename in os.listdir(f"{RESSOURCES}/icons"):
@@ -253,29 +249,21 @@ def init_game():
             number = int(catch.group(2))
             unsorted.append((name, number, filename))
     unsorted.sort(key=lambda x: (x[0], x[1]))
+    corr = {
+        "he": "helmets",
+        "ar": "armors",
+        "gl": "gloves",
+        "bo": "boots",
+        "be": "belts",
+        "ri": "rings",
+        "rel": "relics",
+        "am": "amulets",
+        "oh": "offhands",
+        "wpn": "weapons",
+        "rune": "runes",
+    }
     for name, _, filename in unsorted:
-        match name:
-            case "he":
-                SYSTEM["images"]["helmets"].append(Image(f"icons/{filename}"))
-            case "ar":
-                SYSTEM["images"]["armors"].append(Image(f"icons/{filename}"))
-            case "gl":
-                SYSTEM["images"]["gloves"].append(Image(f"icons/{filename}"))
-            case "bo":
-                SYSTEM["images"]["boots"].append(Image(f"icons/{filename}"))
-            case "be":
-                SYSTEM["images"]["belts"].append(Image(f"icons/{filename}"))
-            case "ri":
-                SYSTEM["images"]["rings"].append(Image(f"icons/{filename}"))
-            case "rel":
-                SYSTEM["images"]["relics"].append(Image(f"icons/{filename}"))
-            case "am":
-                SYSTEM["images"]["amulets"].append(Image(f"icons/{filename}"))
-            case "oh":
-                SYSTEM["images"]["offhands"].append(Image(f"icons/{filename}"))
-            case "wpn":
-                SYSTEM["images"]["weapons"].append(Image(f"icons/{filename}"))
-
+        SYSTEM["images"][corr[name]].append(Image(f"icons/{filename}"))
 
     #Spells
     generate_spell_list()
@@ -589,11 +577,15 @@ if __name__ == "__main__":
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None
         SYSTEM["mouse"] = pygame.mouse.get_pos()
+        SYSTEM["mouse_wheel"] = [(0, 0), (0, 0)]
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT:
                 PLAYING = False
+            if event.type == MOUSEWHEEL:
+                SYSTEM["mouse_wheel"][0] = SYSTEM["mouse_wheel"][1]
+                SYSTEM["mouse_wheel"][1] = (event.x, event.y)
         keys = pygame.key.get_pressed()
         SYSTEM["keys"] = keys
         if keys[K_ESCAPE]:
