@@ -11,7 +11,7 @@ class SlotPanel:
         self._x = x
         self._y = y
         self._slot_size = slot_size
-        self._background = SYSTEM["images"]["panel_back"]
+        self._background = SYSTEM["images"]["tile_panel_back"]
         self._padding = padding
         self._slots = []
         self._columns = (self._background.width - self._padding * 2) // slot_size - 1
@@ -96,7 +96,7 @@ class SlotPanel:
 
     def draw(self):
         """Draws the component."""
-        SYSTEM["windows"].blit(self._background.image, (self._x, self._y))
+        SYSTEM["windows"].blit(self._background.get_image(), (self._x, self._y))
         diff_x, x = 0, 0
         diff_y, y = 0, 0
         real_x = self._x + self._padding + x * self._slot_size

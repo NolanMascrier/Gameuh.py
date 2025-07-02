@@ -1,11 +1,24 @@
 """An item is something that can be held by
 characters and used."""
 
+import random
 import pygame
 from data.constants import Flags, trad, SYSTEM
 from data.image.image import Image
 from data.image.animation import Animation
 from data.image.text import Text
+
+AFF_RARITY_TABLE = {
+    0: 0,
+    1: 0,
+    2: 1,
+    3: 2,
+    4: 2,
+    5: 2,
+    6: 2,
+    7: 3,
+    8: 3
+}
 
 class Item():
     """Creates an item.
@@ -51,6 +64,7 @@ class Item():
         self._popup_details = None
         self.create_popup()
         self.create_popup_details()
+        self._sealed = False
 
     def on_use(self, target):
         """Uses the item on the creature."""
@@ -155,6 +169,54 @@ class Item():
         sfc.blit(affixes.surface, (5, title.height + 20))
         self._popup_details = sfc
 
+    def reroll_values(self):
+        """Reroll the numerical values of the affixes.
+        ie Divine Orb
+        
+        Returns:
+            bool: Whether or not the item was changed."""
+        sealed = 0
+        for aff in self._affixes:
+            if aff.sealed:
+                sealed += 1
+        if sealed == len(self._affixes):
+            return False
+        for aff in self._affixes:
+            aff.reroll()
+        return True
+
+    def lock(self):
+        """Locks an affix; preventing it from being ever changed.
+        
+        Returns:
+            bool: Whether or not the item was changed."""
+        sealed = 0
+        for aff in self._affixes:
+            if aff.sealed:
+                sealed += 1
+        if sealed == len(self._affixes):
+            return False
+        while True:
+            roll = random.randint(0, len(self._affixes))
+            if not self._affixes[roll].sealed:
+                self._affixes[roll].seal()
+                break
+        return True
+
+    def scour(self):
+        """Removes all non sealed affixes from the item.
+                
+        Returns:
+            bool: Whether or not the item was changed."""
+        size = len(self._affixes)
+        for aff in self._affixes.copy():
+            if not aff.sealed:
+                self._affixes.remove(aff)
+        if len(self._affixes) == size:
+            return False
+        self._rarity = AFF_RARITY_TABLE[len(self._affixes)]
+        return True
+
     def get_image(self):
         """returns the item's image."""
         if self._image is None:
@@ -251,3 +313,9 @@ class Item():
     def popup_details(self) -> pygame.Surface:
         """Returns the detailed popup."""
         return self._popup_details
+
+    @property
+    def sealed(self) -> bool:
+        """Returns whether or not the item is sealed; ie
+        one of its affix is locked."""
+        return self._sealed

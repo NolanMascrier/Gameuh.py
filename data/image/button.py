@@ -1,7 +1,6 @@
 """A button is an image that can be clicked, and calls an
 action when doing so."""
 
-from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
 

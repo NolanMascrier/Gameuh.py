@@ -22,6 +22,7 @@ class Affix():
         self._value = value
         self._flags = flag
         self._bounds = (lower_bound, upper_bound)
+        self._seal = False
 
     def as_affliction(self) -> Affliction:
         """Makes the affix into an affliction."""
@@ -44,13 +45,22 @@ class Affix():
 
     def reroll(self):
         """Rerolls an affix within its bounds."""
-        self._value = random.uniform(self._bounds[0], self._bounds[1])
+        if not self._seal:
+            self._value = random.uniform(self._bounds[0], self._bounds[1])
+
+    def seal(self, seals: bool):
+        """Sets the seal or unseals it."""
+        self._seal = seals
 
     def describe(self):
         """Generates a description of the affix."""
         adds = ""
         if self._value == 0:
             return "\n"
+        if self._seal:
+            col = "#c#(194, 168, 107)"
+        else:
+            col = "#c#(255, 255, 255)"
         if Flags.DESC_FLAT in self._flags:
             value = f"{round(self._value)}"
         elif Flags.DESC_PERCENT in self._flags:
@@ -78,12 +88,16 @@ class Affix():
                 Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
-        return f"{adds} {lst}"
+        return f"{col}{adds} {lst}"
 
     def describe_details(self):
         """Generates a detailed description of the affix."""
         adds = ""
         deets = ""
+        if self._seal:
+            col = "#c#(194, 168, 107)"
+        else:
+            col = "#c#(255, 255, 255)"
         if self._value == 0:
             return "\n"
         if Flags.DESC_FLAT in self._flags:
@@ -117,7 +131,7 @@ class Affix():
         if Flags.DESC_UNIQUE in self._flags:
             deets = f"{trad('descript_alt', self._name)}"
             return f"{lst}\n{deets}"
-        return f"{adds} {deets} {lst}"
+        return f"{col}{adds} {deets} {lst}"
 
     @property
     def name(self):
@@ -145,3 +159,8 @@ class Affix():
     @flags.setter
     def flags(self, value):
         self._flags = value
+
+    @property
+    def sealed(self) -> bool:
+        """returns whether or not the affix is sealed."""
+        return self._seal

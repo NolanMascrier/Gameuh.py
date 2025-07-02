@@ -8,6 +8,7 @@ from data.generator import Generator
 from data.image.animation import Animation
 from data.image.parallaxe import Parallaxe
 from data.image.image import Image
+from data.image.tile import Tile
 from data.image.button import Button
 from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
@@ -103,6 +104,16 @@ def open_gear_screen():
             if Flags.GEAR in item.flags:
                 data.append(item)
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
+    
+def open_inventory():
+    """Sets up the inventory screen."""
+    SYSTEM["game_state"] = MENU_INVENTORY
+    data = []
+    for item in SYSTEM["player"].inventory:
+        if isinstance(item, Item):
+            if Flags.GEAR in item.flags:
+                data.append(item)
+    SYSTEM["items_panel"] = SlotPanel(250, 10, default=data)
 
 def init_game():
     """Loads the basic data for the game."""
@@ -180,8 +191,7 @@ def init_game():
                                              lambda : SYSTEM.__setitem__("game_state", MENU_TREE),\
                                              "Skill Tree")
     SYSTEM["images"]["button_inventory"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
-                                             lambda : SYSTEM.__setitem__("game_state",\
-                                             MENU_INVENTORY), "Inventory")
+                                             open_inventory, "Inventory")
     SYSTEM["images"]["button_options"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("game_state",\
                                              MENU_OPTIONS_GAME), "Options")
@@ -189,6 +199,8 @@ def init_game():
                                              start_level, "Begin the assault !")
     SYSTEM["images"]["char_details"] = Image("ui/char_back.png").scale(1050, 376)
     SYSTEM["images"]["panel_back"] = Image("ui/char_back.png").scale(1024, 448)
+    SYSTEM["images"]["tile_panel_back"] = Tile("ui/char_back.png", 8, 5)
+    SYSTEM["images"]["tile_panel_inv"] = Tile("ui/char_back.png", 16, 5)
     SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
     SYSTEM["images"]["mini_moolah"] = Image("minifric.png")
     SYSTEM["images"]["moolah"] = Image("fric.png")
@@ -556,6 +568,10 @@ def draw_gear(events):
         l.tick()
     draw_bottom_bar(events)
 
+def draw_inventory(events):
+    """Draws the inventory windows."""
+    draw_bottom_bar(events)
+
 if __name__ == "__main__":
     init_game()
     init_timers()
@@ -609,6 +625,8 @@ if __name__ == "__main__":
             draw_gear(events)
         if SYSTEM["game_state"] == MENU_SPELLBOOK:
             draw_spells(events)
+        if SYSTEM["game_state"] == MENU_INVENTORY:
+            draw_inventory(events)
 
         if SYSTEM["pop_up"] is not None:
             SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (SYSTEM["mouse"][0] - SYSTEM["pop_up"][1],\
