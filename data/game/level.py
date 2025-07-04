@@ -82,6 +82,7 @@ class Level():
         if self._current_wave > self._waves:
             if len(ENNEMY_TRACKER) <= 0:
                 self._finished = True
+                SYSTEM["player"].gold += self._gold
                 SYSTEM["game_state"] = GAME_VICTORY
             return
         self.summon_wave(self._area_level, self._current_wave)

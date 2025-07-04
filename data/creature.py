@@ -96,16 +96,16 @@ class Creature:
             "dark_pen": Stat(0, "Dark resistance penetration", 2, 0, scaling_value=0.01)
         }
         self._gear = {
-            "helm": None,
-            "hands": None,
-            "armor": None,
-            "belt": None,
+            "helms": None,
+            "gloves": None,
+            "armors": None,
+            "belts": None,
             "boots": None,
-            "weapon": None,
-            "off_hand": None,
-            "relic": None,
-            "amulet": None,
-            "ring": {
+            "weapons": None,
+            "offhand": None,
+            "relics": None,
+            "amulets": None,
+            "rings": {
                 "left": None,
                 "right": None
             }

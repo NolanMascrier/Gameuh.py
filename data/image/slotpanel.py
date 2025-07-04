@@ -7,11 +7,14 @@ from data.image.slot import Slot
 from data.image.draggable import Draggable
 
 class SlotPanel:
-    def __init__(self, x, y, slot_size=64, padding = 16, default = None):
+    def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None):
         self._x = x
         self._y = y
         self._slot_size = slot_size
-        self._background = SYSTEM["images"]["tile_panel_back"]
+        if background is None:
+            self._background = SYSTEM["images"]["tile_panel_back"]
+        else:
+            self._background = background
         self._padding = padding
         self._slots = []
         self._columns = (self._background.width - self._padding * 2) // slot_size - 1

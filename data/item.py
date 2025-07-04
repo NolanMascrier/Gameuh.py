@@ -17,7 +17,8 @@ AFF_RARITY_TABLE = {
     5: 2,
     6: 2,
     7: 3,
-    8: 3
+    8: 3,
+    9: 4
 }
 
 class Item():
@@ -65,6 +66,7 @@ class Item():
         self.create_popup()
         self.create_popup_details()
         self._sealed = False
+        self._level = 0
 
     def on_use(self, target):
         """Uses the item on the creature."""
@@ -169,6 +171,39 @@ class Item():
         sfc.blit(affixes.surface, (5, title.height + 20))
         self._popup_details = sfc
 
+    def __get_gear_flags(self):
+        """Returns which gear flag the item uses."""
+        for f in self._flags:
+            if f in [Flags.BOOTS, Flags.HELM, Flags.HANDS, Flags.ARMOR,\
+                Flags.RING, Flags.RELIC, Flags.AMULET, Flags.BELT,\
+                Flags.OFFHAND, Flags.WEAPON]:
+                return f.value
+
+    def apply_rune(self):
+        """Applies the rune contained in the system."""
+        if SYSTEM["rune"] == 0:
+            if self.scour():
+                pass
+                #SYSTEM["player"].runes[0] -= 1
+        elif SYSTEM["rune"] == 1 and self._rarity == 0:
+            self.rarify()
+        elif SYSTEM["rune"] == 2:
+            self.exalt()
+        elif SYSTEM["rune"] == 3:
+            self.reroll_values()
+        elif SYSTEM["rune"] == 4:
+            self.lock()
+        elif SYSTEM["rune"] == 5 and self._rarity == 2:
+            self.try_upgrade()
+        elif SYSTEM["rune"] == 6 and self._rarity == 2:
+            self.chaos()
+        elif SYSTEM["rune"] == 7 and self._rarity == 0:
+            self.enchant()
+        elif SYSTEM["rune"] == 8 and self._rarity == 1:
+            self.regal()
+        elif SYSTEM["rune"] == 9 and self._rarity == 1:
+            self.alteration()
+
     def reroll_values(self):
         """Reroll the numerical values of the affixes.
         ie Divine Orb
@@ -183,6 +218,8 @@ class Item():
             return False
         for aff in self._affixes:
             aff.reroll()
+        self.create_popup()
+        self.create_popup_details()
         return True
 
     def lock(self):
@@ -194,13 +231,15 @@ class Item():
         for aff in self._affixes:
             if aff.sealed:
                 sealed += 1
-        if sealed == len(self._affixes):
+        if sealed > 0:
             return False
         while True:
-            roll = random.randint(0, len(self._affixes))
+            roll = random.randint(0, len(self._affixes) - 1)
             if not self._affixes[roll].sealed:
-                self._affixes[roll].seal()
+                self._affixes[roll].seal(True)
                 break
+        self.create_popup()
+        self.create_popup_details()
         return True
 
     def scour(self):
@@ -215,7 +254,97 @@ class Item():
         if len(self._affixes) == size:
             return False
         self._rarity = AFF_RARITY_TABLE[len(self._affixes)]
+        self.create_popup()
+        self.create_popup_details()
         return True
+
+    def rarify(self):
+        """Transforms the item into a rare item."""
+        self._rarity = 2
+        roll = random.randint(3 - len(self._affixes), 6)
+        affixes = [f.roll() for f in SYSTEM["looter"].generate_affixes(self.__get_gear_flags(),\
+                                            roll, self._level, self._affixes)]
+        self._affixes.extend(affixes)
+        self.create_popup()
+        self.create_popup_details()
+        return True
+
+    def exalt(self):
+        """Adds a single modifier to an item."""
+        mods = len(self._affixes)
+        if AFF_RARITY_TABLE[mods + 1] > self._rarity:
+            return False
+        affix = SYSTEM["looter"].generate_affixes(self.__get_gear_flags(), 1,\
+                                    self._level, self._affixes)[0].roll()
+        self._affixes.append(affix)
+        self.create_popup()
+        self.create_popup_details()
+        return True
+
+    def try_upgrade(self):
+        """Attemps to make a rare item into an exalted item.
+        Scours the item if it fails."""
+        roll = random.randint(0, 1)
+        if roll == 0:
+            return self.scour()
+        mods = len(self._affixes)
+        roll = random.randint(7, 8)
+        roll -= mods
+        affixes = [f.roll() for f in SYSTEM["looter"].generate_affixes(self.__get_gear_flags(),\
+                        roll, self._level, self._affixes)]
+        self._affixes.extend(affixes)
+        self._rarity = 3
+        self.create_popup()
+        self.create_popup_details()
+        return True
+
+    def chaos(self):
+        """Reroll a rare item."""
+        roll = random.randint(3, 6)
+        affixes = [f.roll() for f in SYSTEM["looter"].generate_affixes(self.__get_gear_flags(),\
+                        roll, self._level)]
+        self._affixes = affixes
+        self.create_popup()
+        self.create_popup_details()
+        return True
+
+    def enchant(self):
+        """Makes a blank item magic."""
+        mods = len(self._affixes)
+        roll = random.randint(1, 2)
+        roll -= mods
+        if roll <= 0:
+            return False #should never happen anyway
+        affixes = [f.roll() for f in SYSTEM["looter"].generate_affixes(self.__get_gear_flags(),\
+                        roll, self._level, self._affixes)]
+        self._rarity = 1
+        self._affixes.extend(affixes)
+        self.create_popup()
+        self.create_popup_details()
+        return True
+
+    def regal(self):
+        """Makes a magic item rare."""
+        mods = len(self._affixes)
+        roll = 3 - mods
+        if roll <= 0:
+            return False #should never happen anyway
+        affixes = [f.roll() for f in SYSTEM["looter"].generate_affixes(self.__get_gear_flags(),\
+                        roll, self._level, self._affixes)]
+        self._rarity = 2
+        self._affixes.extend(affixes)
+        self.create_popup()
+        self.create_popup_details()
+        return True
+
+    def alteration(self):
+        """Rerolls a magic item."""
+        roll = random.randint(1, 2)
+        affixes = [f.roll() for f in SYSTEM["looter"].generate_affixes(self.__get_gear_flags(),\
+                        roll, self._level)]
+        self._affixes = affixes
+        self.create_popup()
+        self.create_popup_details()
 
     def get_image(self):
         """returns the item's image."""

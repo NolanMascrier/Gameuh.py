@@ -1,6 +1,7 @@
 """A button is an image that can be clicked, and calls an
 action when doing so."""
 
+from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
 
@@ -16,7 +17,10 @@ class Button():
         self._y = 0
         self._width = image.width
         self._height = image.height
-        self._text = Text(text, True, "font_detail", force_x=self._width)
+        if text is None:
+            self._text = None
+        else:
+            self._text = Text(text, True, "font_detail", force_x=self._width)
 
     def draw(self, surface):
         """Draws the image to the surface."""
@@ -24,8 +28,13 @@ class Button():
             surface.blit(self._pressed.image, (self._x, self._y))
         else:
             surface.blit(self._image.image, (self._x, self._y))
-        y = self._y + self._text.height / 2
-        surface.blit(self._text.surface, (self._x, y))
+        if self._text is not None:
+            y = self._y + self._text.height / 2
+            surface.blit(self._text.surface, (self._x, y))
+
+    def get_image(self):
+        """Returns the current image."""
+        return self._image.image
 
     def set(self, x, y):
         """Sets the button to the x;y position."""
@@ -38,8 +47,11 @@ class Button():
         If it is, executes the action."""
         if mouse_pos[0] >= self._x and mouse_pos[0] <= self._x + self._width and\
             mouse_pos[1] >= self._y and mouse_pos[1] <= self._y + self._height:
+            if SYSTEM["cooldown"] > 0:
+                return
             self._action()
             self._clicked = True
+            SYSTEM["cooldown"] = 0.5
         else:
             self._clicked = False
 

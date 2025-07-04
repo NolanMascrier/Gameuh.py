@@ -18,6 +18,8 @@ from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
 from data.game.lootgenerator import LootGenerator
+from data.image.text import Text
+from data.image.hoverable import Hoverable
 
 PLAYING = True
 
@@ -104,7 +106,12 @@ def open_gear_screen():
             if Flags.GEAR in item.flags:
                 data.append(item)
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
-    
+
+def rune(rune):
+    """Sets up the rune input."""
+    SYSTEM["rune"] = rune
+    SYSTEM["rune_display"] = SYSTEM["images"][f"rune_{rune}"].clone().opacity(155)
+
 def open_inventory():
     """Sets up the inventory screen."""
     SYSTEM["game_state"] = MENU_INVENTORY
@@ -113,7 +120,7 @@ def open_inventory():
         if isinstance(item, Item):
             if Flags.GEAR in item.flags:
                 data.append(item)
-    SYSTEM["items_panel"] = SlotPanel(250, 10, default=data)
+    SYSTEM["items_panel"] = SlotPanel(20, 20, default=data, background=SYSTEM["images"]["tile_panel_inv"])
 
 def init_game():
     """Loads the basic data for the game."""
@@ -166,6 +173,16 @@ def init_game():
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
     SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
     SYSTEM["images"]["menu_button"] = Image("ui/button.png").scale(55, 280)
+    SYSTEM["images"]["rune_0"] = Image("icons/rune01.png")
+    SYSTEM["images"]["rune_1"] = Image("icons/rune02.png")
+    SYSTEM["images"]["rune_2"] = Image("icons/rune03.png")
+    SYSTEM["images"]["rune_3"] = Image("icons/rune04.png")
+    SYSTEM["images"]["rune_4"] = Image("icons/rune05.png")
+    SYSTEM["images"]["rune_5"] = Image("icons/rune06.png")
+    SYSTEM["images"]["rune_6"] = Image("icons/rune07.png")
+    SYSTEM["images"]["rune_7"] = Image("icons/rune08.png")
+    SYSTEM["images"]["rune_8"] = Image("icons/rune09.png")
+    SYSTEM["images"]["rune_9"] = Image("icons/rune10.png")
     SYSTEM["images"]["button_quit"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("playing", False),\
                                              "Quit Game")
@@ -197,10 +214,50 @@ def init_game():
                                              MENU_OPTIONS_GAME), "Options")
     SYSTEM["images"]["button_assault"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              start_level, "Begin the assault !")
+    SYSTEM["images"]["button_rune_0"] = Button(SYSTEM["images"]["rune_0"], None,\
+                                            lambda: rune(0))
+    SYSTEM["images"]["pop_rune_0"] = Hoverable(0, 0, None, trad("runes", "blank"),\
+                            surface=SYSTEM["images"]["button_rune_0"].get_image())
+    SYSTEM["images"]["button_rune_1"] = Button(SYSTEM["images"]["rune_1"], None,\
+                                            lambda: rune(1))
+    SYSTEM["images"]["pop_rune_1"] = Hoverable(0, 0, None, trad("runes", "thurisaz"),\
+                            surface=SYSTEM["images"]["button_rune_1"].get_image())
+    SYSTEM["images"]["button_rune_2"] = Button(SYSTEM["images"]["rune_2"], None,\
+                                            lambda: rune(2))
+    SYSTEM["images"]["pop_rune_2"] = Hoverable(0, 0, None, trad("runes", "ansuz"),\
+                            surface=SYSTEM["images"]["button_rune_2"].get_image())
+    SYSTEM["images"]["button_rune_3"] = Button(SYSTEM["images"]["rune_3"], None,\
+                                            lambda: rune(3))
+    SYSTEM["images"]["pop_rune_3"] = Hoverable(0, 0, None, trad("runes", "ingwaz"),\
+                            surface=SYSTEM["images"]["button_rune_3"].get_image())
+    SYSTEM["images"]["button_rune_4"] = Button(SYSTEM["images"]["rune_4"], None,\
+                                            lambda: rune(4))
+    SYSTEM["images"]["pop_rune_4"] = Hoverable(0, 0, None, trad("runes", "othalan"),\
+                            surface=SYSTEM["images"]["button_rune_4"].get_image())
+    SYSTEM["images"]["button_rune_5"] = Button(SYSTEM["images"]["rune_5"], None,\
+                                            lambda: rune(5))
+    SYSTEM["images"]["pop_rune_5"] = Hoverable(0, 0, None, trad("runes", "uruz"),\
+                            surface=SYSTEM["images"]["button_rune_5"].get_image())
+    SYSTEM["images"]["button_rune_6"] = Button(SYSTEM["images"]["rune_6"], None,\
+                                            lambda: rune(6))
+    SYSTEM["images"]["pop_rune_6"] = Hoverable(0, 0, None, trad("runes", "raido"),\
+                            surface=SYSTEM["images"]["button_rune_6"].get_image())
+    SYSTEM["images"]["button_rune_7"] = Button(SYSTEM["images"]["rune_7"], None,\
+                                            lambda: rune(7))
+    SYSTEM["images"]["pop_rune_7"] = Hoverable(0, 0, None, trad("runes", "tiwaz"),\
+                            surface=SYSTEM["images"]["button_rune_7"].get_image())
+    SYSTEM["images"]["button_rune_8"] = Button(SYSTEM["images"]["rune_8"], None,\
+                                            lambda: rune(8))
+    SYSTEM["images"]["pop_rune_8"] = Hoverable(0, 0, None, trad("runes", "eihwaz"),\
+                            surface=SYSTEM["images"]["button_rune_8"].get_image())
+    SYSTEM["images"]["button_rune_9"] = Button(SYSTEM["images"]["rune_9"], None,\
+                                            lambda: rune(9))
+    SYSTEM["images"]["pop_rune_9"] = Hoverable(0, 0, None, trad("runes", "algiz"),\
+                                surface=SYSTEM["images"]["button_rune_9"].get_image())
     SYSTEM["images"]["char_details"] = Image("ui/char_back.png").scale(1050, 376)
     SYSTEM["images"]["panel_back"] = Image("ui/char_back.png").scale(1024, 448)
-    SYSTEM["images"]["tile_panel_back"] = Tile("ui/char_back.png", 8, 5)
-    SYSTEM["images"]["tile_panel_inv"] = Tile("ui/char_back.png", 16, 5)
+    SYSTEM["images"]["tile_panel_back"] = Tile("ui/char_back.png", 8, 16)
+    SYSTEM["images"]["tile_panel_inv"] = Tile("ui/char_back.png", 20, 16)
     SYSTEM["images"]["hoverable"] = Image("ui/hoverable.png")
     SYSTEM["images"]["mini_moolah"] = Image("minifric.png")
     SYSTEM["images"]["moolah"] = Image("fric.png")
@@ -570,14 +627,56 @@ def draw_gear(events):
 
 def draw_inventory(events):
     """Draws the inventory windows."""
+    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["items_panel"].tick().draw()
+    gold = SYSTEM["player"].gold
+    text = Text(str(gold), font="font_detail")
+    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (1500, 20))
+    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (1520, 40))
+    SYSTEM["windows"].blit(text.surface, (1584, 72))
+    SYSTEM["images"]["button_rune_0"].set(1520, 110).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_0"].set(1520, 110).tick()
+    SYSTEM["images"]["button_rune_1"].set(1520, 180).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_1"].set(1520, 180).tick()
+    SYSTEM["images"]["button_rune_2"].set(1520, 250).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_2"].set(1520, 250).tick()
+    SYSTEM["images"]["button_rune_3"].set(1520, 320).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_3"].set(1520, 320).tick()
+    SYSTEM["images"]["button_rune_4"].set(1520, 390).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_4"].set(1520, 390).tick()
+    SYSTEM["images"]["button_rune_5"].set(1520, 460).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_5"].set(1520, 460).tick()
+    SYSTEM["images"]["button_rune_6"].set(1520, 530).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_6"].set(1520, 530).tick()
+    SYSTEM["images"]["button_rune_7"].set(1520, 600).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_7"].set(1520, 600).tick()
+    SYSTEM["images"]["button_rune_8"].set(1520, 670).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_8"].set(1520, 670).tick()
+    SYSTEM["images"]["button_rune_9"].set(1520, 740).draw(SYSTEM["windows"])
+    SYSTEM["images"]["pop_rune_9"].set(1520, 740).tick()
     draw_bottom_bar(events)
+    if SYSTEM["rune"] != -1:
+        SYSTEM["windows"].blit(SYSTEM["rune_display"].image, SYSTEM["mouse"])
+    for event in events:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            SYSTEM["images"]["button_rune_0"].press(event.pos)
+            SYSTEM["images"]["button_rune_1"].press(event.pos)
+            SYSTEM["images"]["button_rune_2"].press(event.pos)
+            SYSTEM["images"]["button_rune_3"].press(event.pos)
+            SYSTEM["images"]["button_rune_4"].press(event.pos)
+            SYSTEM["images"]["button_rune_5"].press(event.pos)
+            SYSTEM["images"]["button_rune_6"].press(event.pos)
+            SYSTEM["images"]["button_rune_7"].press(event.pos)
+            SYSTEM["images"]["button_rune_8"].press(event.pos)
+            SYSTEM["images"]["button_rune_9"].press(event.pos)
 
 if __name__ == "__main__":
     init_game()
     init_timers()
     SYSTEM["game_state"] = MENU_MAIN
-    INTERNAL_COOLDOWN = 0
+    SYSTEM["cooldown"] = 0
     SYSTEM["looter"] = LootGenerator()
+    SYSTEM["rune"] = -1
     #TODO: Put that in scene manager
     levels = []
     SYSTEM["buttons"] = []
@@ -605,8 +704,8 @@ if __name__ == "__main__":
         keys = pygame.key.get_pressed()
         SYSTEM["keys"] = keys
         if keys[K_ESCAPE]:
-            if INTERNAL_COOLDOWN <= 0:
-                INTERNAL_COOLDOWN = 0.5
+            if SYSTEM["cooldown"] <= 0:
+                SYSTEM["cooldown"] = 0.5
                 if SYSTEM["game_state"] == GAME_LEVEL:
                     SYSTEM["game_state"] = GAME_PAUSE
                 elif SYSTEM["game_state"] == GAME_PAUSE:
@@ -629,14 +728,25 @@ if __name__ == "__main__":
             draw_inventory(events)
 
         if SYSTEM["pop_up"] is not None:
-            SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (SYSTEM["mouse"][0] - SYSTEM["pop_up"][1],\
-                                     SYSTEM["mouse"][1]))
+            x = SYSTEM["mouse"][0] - SYSTEM["pop_up"][1]
+            if x < 0:
+                x += SYSTEM["pop_up"][1]
+            y = SYSTEM["mouse"][1]
+            if y + SYSTEM["pop_up"][2] > SCREEN_HEIGHT:
+                y -= y + SYSTEM["pop_up"][2] - SCREEN_HEIGHT
+            SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (x, y))
 
-        INTERNAL_COOLDOWN -= 0.032
-        INTERNAL_COOLDOWN = max(INTERNAL_COOLDOWN, 0)
+        SYSTEM["cooldown"] -= 0.032
+        SYSTEM["cooldown"] = max(SYSTEM["cooldown"], 0)
         if SYSTEM["dragged"] is not None:
             SYSTEM["dragged"].tick().draw()
         if not SYSTEM["mouse_click"][0]:
             SYSTEM["dragged"] = None
+        if SYSTEM["mouse_click"][0] and SYSTEM["cooldown"] <= 0:
+            if SYSTEM["rune"] != -1 and not SYSTEM["keys"][K_LSHIFT]:
+                SYSTEM["rune"] = -1
+                SYSTEM["rune_display"] = None
+                SYSTEM["cooldown"] = 0.8
+            #TODO: force rune removal if player hasn't them anymore
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))

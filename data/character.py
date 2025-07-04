@@ -37,6 +37,7 @@ class Character():
             SYSTEM["spells"]["winddash"],
         ]
         self._inventory = []
+        self._gold = 0
 
     def get_pos(self):
         """Returns the position of the character as a
@@ -241,3 +242,12 @@ class Character():
     @inventory.setter
     def inventory(self, value):
         self._inventory = value
+
+    @property
+    def gold(self):
+        """Returns the character's gold."""
+        return self._gold
+
+    @gold.setter
+    def gold(self, value):
+        self._gold = value

@@ -239,11 +239,16 @@ class LootGenerator():
                     break
         return result
 
-    def generate_affixes(self, item_type: str, num_affixes: int, item_level: int):
+    def generate_affixes(self, item_type: str, num_affixes: int, item_level: int, already_exists = None):
         affix_pool = AFFIXES[item_type]
+        existing_keys = set()
+        if already_exists is not None:
+                existing_keys = {affix.name for affix in already_exists}
         # Step 1: Build list of usable affixes with their valid tiers
         candidates = []
         for affix_key, (tiers, affix_weight) in affix_pool.items():
+            if affix_key in existing_keys:
+                continue
             valid_tiers = [
                 (affix, weight)
                 for (affix, weight, min_lvl, max_lvl) in tiers

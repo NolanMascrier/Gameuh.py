@@ -10,6 +10,10 @@ class Tile(Image):
     """Creates a tiled image, an image that repeats subsections
     rather than stretch the original image.
     
+    For optimal result, use an image of a size divisible by 3
+    and a multiple of 64 (ie 192) since 64 is the default size
+    of "tiles" for this game (slots for items and spells)
+    
     Args:
         uri (str, optional): URI of the image to open. Defaults\
         to None (default image).
@@ -20,6 +24,7 @@ class Tile(Image):
     """
     def __init__(self, uri=None, width = 5, height = 5):
         super().__init__(uri)
+        self.scale(192, 192)
         self._tile_width = self._width // 3
         self._tile_height = self._height // 3
         self._render_height = height * self._tile_height

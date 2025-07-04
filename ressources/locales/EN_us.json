@@ -241,7 +241,7 @@
         ],
         "othalan": [
             "Rune of Othalan",
-            "Locks a random modifier of an item, making it impossible to change."
+            "Seals a random modifier of an item, making it impossible to change.\nThis rune can only be used on items with no seals."
         ],
         "uruz": [
             "Rune of Uruz",
@@ -249,19 +249,19 @@
         ],
         "raido": [
             "Rune of Raido",
-            "TBD"
+            "Changes the modifiers of a blessed item."
         ],
         "tiwaz": [
             "Rune of Tiwaz",
-            "TBD"
+            "Enchants a blank item."
         ],
         "eihwaz": [
             "Rune of Eihwaz",
-            "TBD"
+            "Blesses an enchanted item."
         ],
         "algiz": [
             "Rune of Algiz",
-            "TBD"
+            "Randomly changes the modifiers of an enchanted item."
         ]
     },
     "rarities": [

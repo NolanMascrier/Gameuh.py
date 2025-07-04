@@ -1,10 +1,10 @@
 """A draggable is a component that can be dragged
 around by the mouse."""
 
+from data.item import Item
 from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.hoverable import Hoverable
-from data.item import Item
 from data.game.spell import Spell
 
 class Draggable(Image):
@@ -59,6 +59,15 @@ class Draggable(Image):
                     self.opacity(180)
                 elif (self._x <= mouse_x <= self._x + self.width and
                         self._y <= mouse_y <= self._y + self.height):
+                    if SYSTEM["cooldown"] > 0:
+                        return
+                    if SYSTEM["rune"] != -1:
+                        self._contains.apply_rune()
+                        self._hover = Hoverable(self._x, self._y, None, None, surface=self._image,\
+                            override=self._contains.popup,\
+                            alternative=self._contains.popup_details)
+                        SYSTEM["cooldown"] = 0.1
+                        return self
                     self._dragging = True
                     self._slotted = False
                     if self._parent_panel is not None:
@@ -70,6 +79,7 @@ class Draggable(Image):
                         self._parent_slot.remove()
                         self._parent_slot = None
                     SYSTEM["dragged"] = self
+                    SYSTEM["cooldown"] = 0.5
         elif not mouse_click[0]:
             if not self._slotted:
                 if self._last_panel is not None:
