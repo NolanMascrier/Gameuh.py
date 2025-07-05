@@ -3,7 +3,7 @@
 import random
 from data.constants import Flags
 from data.numerics.affliction import Affliction
-from data.constants import trad
+from data.constants import trad, META_FLAGS, GEAR_FLAGS
 
 class Affix():
     """An affix a single modifier for an item.
@@ -164,3 +164,20 @@ class Affix():
     def sealed(self) -> bool:
         """returns whether or not the affix is sealed."""
         return self._seal
+
+    @property
+    def price_factor(self) -> tuple:
+        """Returns the price factor depending on how well the affix
+        is rolled."""
+        tier = int(self._name[len(self._name) - 1:len(self._name)])
+        roll = (self._value - self._bounds[0]) / (self._bounds[1] - self._bounds[0])
+        return tier, roll
+
+    @property
+    def flag_key(self):
+        """Get the name of the first flag of the affix.
+        Used for name generation."""
+        for f in self._flags:
+            if f not in META_FLAGS and f not in GEAR_FLAGS:
+                return f.value
+        return None

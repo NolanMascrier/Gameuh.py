@@ -109,6 +109,8 @@ def open_gear_screen():
 
 def rune(rune):
     """Sets up the rune input."""
+    if SYSTEM["player"].runes[rune] <= 0:
+        return
     SYSTEM["rune"] = rune
     SYSTEM["rune_display"] = SYSTEM["images"][f"rune_{rune}"].clone().opacity(155)
 
@@ -634,26 +636,12 @@ def draw_inventory(events):
     SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (1500, 20))
     SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (1520, 40))
     SYSTEM["windows"].blit(text.surface, (1584, 72))
-    SYSTEM["images"]["button_rune_0"].set(1520, 110).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_0"].set(1520, 110).tick()
-    SYSTEM["images"]["button_rune_1"].set(1520, 180).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_1"].set(1520, 180).tick()
-    SYSTEM["images"]["button_rune_2"].set(1520, 250).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_2"].set(1520, 250).tick()
-    SYSTEM["images"]["button_rune_3"].set(1520, 320).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_3"].set(1520, 320).tick()
-    SYSTEM["images"]["button_rune_4"].set(1520, 390).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_4"].set(1520, 390).tick()
-    SYSTEM["images"]["button_rune_5"].set(1520, 460).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_5"].set(1520, 460).tick()
-    SYSTEM["images"]["button_rune_6"].set(1520, 530).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_6"].set(1520, 530).tick()
-    SYSTEM["images"]["button_rune_7"].set(1520, 600).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_7"].set(1520, 600).tick()
-    SYSTEM["images"]["button_rune_8"].set(1520, 670).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_8"].set(1520, 670).tick()
-    SYSTEM["images"]["button_rune_9"].set(1520, 740).draw(SYSTEM["windows"])
-    SYSTEM["images"]["pop_rune_9"].set(1520, 740).tick()
+    c = 0
+    for i in [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]: 
+        SYSTEM["images"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
+        SYSTEM["images"][f"pop_rune_{i}"].set(1520, 110 + c * 74).tick()
+        Text(f"{SYSTEM['player'].runes[i]}", font="font_detail").draw(1584, 132 + c * 74)
+        c += 1
     draw_bottom_bar(events)
     if SYSTEM["rune"] != -1:
         SYSTEM["windows"].blit(SYSTEM["rune_display"].image, SYSTEM["mouse"])
@@ -747,6 +735,9 @@ if __name__ == "__main__":
                 SYSTEM["rune"] = -1
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
-            #TODO: force rune removal if player hasn't them anymore
+            if SYSTEM["rune"] != -1 and SYSTEM["player"].runes[SYSTEM["rune"]] <= 0:
+                SYSTEM["rune"] = -1
+                SYSTEM["rune_display"] = None
+                SYSTEM["cooldown"] = 0.8
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))

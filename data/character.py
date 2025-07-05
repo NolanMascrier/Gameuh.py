@@ -37,6 +37,9 @@ class Character():
             SYSTEM["spells"]["winddash"],
         ]
         self._inventory = []
+        self._runes = [
+            100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+        ]
         self._gold = 0
 
     def get_pos(self):
@@ -251,3 +254,12 @@ class Character():
     @gold.setter
     def gold(self, value):
         self._gold = value
+
+    @property
+    def runes(self):
+        """Return's the character's runes."""
+        return self._runes
+
+    @runes.setter
+    def runes(self, value):
+        self._runes = value

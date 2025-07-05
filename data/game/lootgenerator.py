@@ -283,13 +283,13 @@ class LootGenerator():
         """Generates a random armor."""
         match rarity:
             case 1:
-                affx = 2
+                affx = random.randint(1, 2)
             case 2:
                 affx = random.randint(3, 6)
             case 3:
                 affx = random.randint(7, 8)
             case _:
-                affx = 1
+                affx = 0
         item_type = random.randint(0, 9)
         match item_type:
             case 1:
@@ -327,9 +327,9 @@ class LootGenerator():
             implicits.append(implicit.roll())
         it.implicits = implicits
         it.affixes.extend(affixes)
+        it.level = level
         it.rarity = rarity
-        it.create_popup()
-        it.create_popup_details()
+        it.update()
         return it
 
     def compute_adjusted_weights(self, base_weights, rarity):
@@ -344,9 +344,9 @@ class LootGenerator():
     def roll(self, quantity: int, level: int, rarity: int = 1):
         """Rolls a certain amount of items."""
         quant = quantity * (1 + SYSTEM["player"].creature.stats["item_quant"].get_value())
-        level_roll = min(max(level + random.randint(-3, 5), 0), 100)
+        level_roll = min(max(level + random.randint(-3, 5), 1), 100)
         loot = []
-        base_weights = [100, 40, 15, 3]
+        base_weights = [100, 80, 20, 3]
         for _ in range(int(quant)):
             weight = self.compute_adjusted_weights(base_weights, rarity)
             rarities = [0, 1, 2, 3]

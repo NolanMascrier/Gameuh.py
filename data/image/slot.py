@@ -117,7 +117,10 @@ class Slot():
                         surface.blit(SYSTEM["images"]["slot_rare"].image, (x, y))
                     case 3:
                         surface.blit(SYSTEM["images"]["slot_exalted"].image, (x, y))
-                surface.blit(self._contains.contains.get_image().image, (x, y))
+                if self._contains.contains.gray_out():
+                    surface.blit(self._contains.contains.get_image().opacity(100).image, (x, y))
+                else:
+                    surface.blit(self._contains.contains.get_image().opacity(255).image, (x, y))
             else:
                 surface.blit(self._contains.contains.icon.get_image(), (x, y))
                 surface.blit(SYSTEM["images"]["skill_top"].image, (x, y))

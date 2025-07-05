@@ -269,3 +269,8 @@ class Flags(Enum):
     DESC_FLAT = "description_flat_attribute"
     DESC_PERCENT = "force_percentage_in_desc"
     DESC_UNIQUE = "desc_unique_effect"
+
+META_FLAGS = [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.DESC_UNIQUE,\
+                Flags.BOON, Flags.HEX, Flags.BLESS, Flags.CURSE, Flags.FLAT]
+GEAR_FLAGS = [Flags.HELM, Flags.BOOTS, Flags.ARMOR, Flags.HANDS, Flags.BELT,\
+                Flags.RING, Flags.AMULET, Flags.RELIC, Flags.AMULET]
