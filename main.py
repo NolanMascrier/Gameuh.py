@@ -79,25 +79,25 @@ def open_gear_screen():
     x = SCREEN_WIDTH / 2- 32
     y = SCREEN_HEIGHT / 2 - 128
     SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip,\
-         Flags.HELM, SYSTEM["player"].creature.gear["helm"])
+         Flags.HELM, SYSTEM["player"].creature.gear["helms"])
     SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip, unequip,\
-         Flags.AMULET, SYSTEM["player"].creature.gear["amulet"])
+         Flags.AMULET, SYSTEM["player"].creature.gear["amulets"])
     SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip, unequip,\
-         Flags.ARMOR, SYSTEM["player"].creature.gear["armor"])
+         Flags.ARMOR, SYSTEM["player"].creature.gear["armors"])
     SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip,\
-         Flags.WEAPON, SYSTEM["player"].creature.gear["weapon"])
+         Flags.WEAPON, SYSTEM["player"].creature.gear["weapons"])
     SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip,\
-         Flags.RING, SYSTEM["player"].creature.gear["ring"]["left"], True)
+         Flags.RING, SYSTEM["player"].creature.gear["rings"]["left"], True)
     SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip,\
-         Flags.RING, SYSTEM["player"].creature.gear["ring"]["right"])
+         Flags.RING, SYSTEM["player"].creature.gear["rings"]["right"])
     SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip,\
-         Flags.OFFHAND, SYSTEM["player"].creature.gear["off_hand"])
+         Flags.OFFHAND, SYSTEM["player"].creature.gear["offhand"])
     SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip, unequip,\
-         Flags.HANDS, SYSTEM["player"].creature.gear["hands"])
+         Flags.HANDS, SYSTEM["player"].creature.gear["gloves"])
     SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip, unequip,\
-         Flags.RELIC, SYSTEM["player"].creature.gear["relic"])
+         Flags.RELIC, SYSTEM["player"].creature.gear["relics"])
     SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip, unequip,\
-         Flags.BELT, SYSTEM["player"].creature.gear["belt"])
+         Flags.BELT, SYSTEM["player"].creature.gear["belts"])
     SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip,\
          Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
     data = []

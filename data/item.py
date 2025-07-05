@@ -122,8 +122,8 @@ class Item():
                 name_pool = names_data["2"]
                 key1 = self._affixes[0].flag_key
                 key2 = self._affixes[1].flag_key
-                word1 = random.choice(name_pool.get(key1, [key1]))
-                word2 = random.choice(name_pool.get(key2, [key2]))
+                word1 = random.choice(name_pool.get(key1, [key1]))[0]
+                word2 = random.choice(name_pool.get(key2, [key2]))[1]
                 self._name = f"{word1.capitalize()} {word2.capitalize()}"
             case _:
                 return
@@ -171,11 +171,12 @@ class Item():
             case _:
                 sfc.blit(SYSTEM["images"]["ui_normal"].clone()\
                     .scale(title.height + 10, title.width + 10).image, (0, 0))
-        sfc.blit(SYSTEM["images"]["hoverable"].clone().scale(affixes.height,\
-                                                            affixes.width + 10).image,\
-                                                            (0, title.height + 10))
         sfc.blit(title.surface, (5, 5))
-        sfc.blit(affixes.surface, (5, title.height + 20))
+        if self._rarity > 0 or len(self._implicits) > 0:
+            sfc.blit(SYSTEM["images"]["hoverable"].clone().scale(affixes.height,\
+                                                                affixes.width + 10).image,\
+                                                                (0, title.height + 10))
+            sfc.blit(affixes.surface, (5, title.height + 20))
         self._popup = sfc
 
     def create_popup_details(self):
@@ -198,10 +199,10 @@ class Item():
             case _:
                 sfc.blit(SYSTEM["images"]["ui_normal"].clone()\
                     .scale(title.height + 10, title.width + 10).image, (0, 0))
-        sfc.blit(SYSTEM["images"]["hoverable"].clone().scale(affixes.height,\
-                                                            affixes.width + 10).image,\
-                                                            (0, title.height + 10))
         sfc.blit(title.surface, (5, 5))
+        sfc.blit(SYSTEM["images"]["hoverable"].clone().scale(affixes.height,\
+                                                                affixes.width + 10).image,\
+                                                                (0, title.height + 10))
         sfc.blit(affixes.surface, (5, title.height + 20))
         self._popup_details = sfc
 
