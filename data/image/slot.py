@@ -132,6 +132,10 @@ class Slot():
         """Returns the component's contained draggable."""
         return self._contains
 
+    @contains.setter
+    def contains(self, value):
+        self._contains = value
+
     @property
     def empty(self):
         """Returns whether or not the slot contains something."""

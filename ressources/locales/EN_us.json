@@ -148,7 +148,19 @@
         "Void damage is often #c#(71, 0, 125)black and purple #c#(255, 255, 255)in color. It disrupts",
         "the very laws of the universe."
     ],
-    "lorem": "Lorem ipsum\ndolorem sic #c#(185, 0, 0) amet #c#(255, 255, 255) consulus",
+    "buttons":{
+        "map": "World map",
+        "gear": "Gear",
+        "tree": "Skill tree",
+        "spells": "Spellbook",
+        "inventory": "Inventory",
+        "options": "Options",
+        "sort": "Sort",
+        "by_name": "by name",
+        "by_rarity": "by rarity",
+        "by_value": "by price",
+        "by_date": "by data"
+    },
     "meta_words": {
         "more": "more",
         "less": "less",

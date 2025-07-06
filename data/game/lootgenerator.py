@@ -330,7 +330,7 @@ class LootGenerator():
         it.level = level
         it.rarity = rarity
         it.update()
-        return it
+        return it.stamp
 
     def compute_adjusted_weights(self, base_weights, rarity):
         adjusted = []

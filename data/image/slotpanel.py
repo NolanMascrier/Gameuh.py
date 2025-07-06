@@ -129,3 +129,12 @@ class SlotPanel:
                 x = 0
                 y += 1
             SYSTEM["windows"].blit(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
+
+    @property
+    def slots(self):
+        """Returns the slots."""
+        return self._slots
+
+    @slots.setter
+    def slots(self, value):
+        self._slots = value

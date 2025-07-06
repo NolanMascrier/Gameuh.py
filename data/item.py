@@ -1,6 +1,7 @@
 """An item is something that can be held by
 characters and used."""
 
+import time
 import random
 import pygame
 from data.constants import Flags, trad, SYSTEM, K_LSHIFT
@@ -66,6 +67,7 @@ class Item():
         self._popup_details = None
         self._sealed = False
         self._level = 0
+        self._drop_time = 0
         self.create_popup()
         self.create_popup_details()
 
@@ -130,7 +132,7 @@ class Item():
 
     def update(self):
         """Updates the name and the price of the item."""
-        self._price = self._base_price * (1 + self._rarity * 0.3) * (1 + self._level / 66)
+        self._price = self._base_price * (1 + self._rarity * 1.2) * (1 + self._level * 0.1)
         for aff in self._affixes:
             tier, roll = aff.price_factor
             self._price += tier * roll * 100
@@ -540,3 +542,19 @@ class Item():
         """Returns whether or not the item is sealed; ie
         one of its affix is locked."""
         return self._sealed
+
+    @property
+    def stamp(self):
+        """Stamps the item's drop time"""
+        self._drop_time = time.gmtime()
+        return self
+
+    @property
+    def drop_time(self):
+        """returns the items drop time."""
+        return self._drop_time
+
+    @drop_time.setter
+    def drop_time(self, value):
+        self._drop_time = value
+
