@@ -19,9 +19,9 @@ def draw_bottom_bar(events):
     SYSTEM["images"]["button_options"].draw(SYSTEM["windows"])
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_map"].press(event.pos)
-            SYSTEM["images"]["button_gear"].press(event.pos)
-            SYSTEM["images"]["button_tree"].press(event.pos)
-            SYSTEM["images"]["button_inventory"].press(event.pos)
-            SYSTEM["images"]["button_options"].press(event.pos)
-            SYSTEM["images"]["button_spells"].press(event.pos)
+            SYSTEM["images"]["button_map"].press()
+            SYSTEM["images"]["button_gear"].press()
+            SYSTEM["images"]["button_tree"].press()
+            SYSTEM["images"]["button_inventory"].press()
+            SYSTEM["images"]["button_options"].press()
+            SYSTEM["images"]["button_spells"].press()

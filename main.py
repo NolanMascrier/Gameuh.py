@@ -19,6 +19,7 @@ from data.image.slot import Slot
 from data.item import Item
 from data.game.lootgenerator import LootGenerator
 from data.interface.inventory import open_inventory, draw_inventory
+from data.image.scrollable import Scrollable
 
 PLAYING = True
 
@@ -215,7 +216,8 @@ def init_game():
     SYSTEM["images"]["supra_moolah"] = Image("grail.png").scale(64, 64)
     SYSTEM["images"]["maxi_moolah"] = Image("maxigrail.png").scale(64, 64)
     SYSTEM["images"]["gold_icon"] = Image("thune.png")
-    SYSTEM["images"]["mission_map"] = Image("mission.png").scale(1024, 1024)
+    SYSTEM["images"]["mission_map"] = Image("mission.png")
+    SYSTEM["images"]["mission_scroller"] = Scrollable(10, 10, 1000, 800, contains=SYSTEM["images"]["mission_map"].image)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
     SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
     SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
@@ -409,7 +411,7 @@ def draw_victory(events):
     SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_continue"].press(event.pos)
+            SYSTEM["images"]["button_continue"].press()
 
 def draw_game_over(events):
     """Draws the defeat screen."""
@@ -429,7 +431,7 @@ def draw_game_over(events):
     SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_continue"].press(event.pos)
+            SYSTEM["images"]["button_continue"].press()
 
 def draw_pause(events):
     """Draws the pause menu."""
@@ -445,9 +447,9 @@ def draw_pause(events):
     SYSTEM["images"]["button_quit"].draw(SYSTEM["windows"])
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_resume"].press(event.pos)
-            SYSTEM["images"]["button_abandon"].press(event.pos)
-            SYSTEM["images"]["button_quit"].press(event.pos)
+            SYSTEM["images"]["button_resume"].press()
+            SYSTEM["images"]["button_abandon"].press()
+            SYSTEM["images"]["button_quit"].press()
 
 def draw_small_card():
     """Draws a small character card."""
@@ -475,12 +477,12 @@ def draw_bottom_bar(events):
     SYSTEM["images"]["button_options"].draw(SYSTEM["windows"])
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_map"].press(event.pos)
-            SYSTEM["images"]["button_gear"].press(event.pos)
-            SYSTEM["images"]["button_tree"].press(event.pos)
-            SYSTEM["images"]["button_inventory"].press(event.pos)
-            SYSTEM["images"]["button_options"].press(event.pos)
-            SYSTEM["images"]["button_spells"].press(event.pos)
+            SYSTEM["images"]["button_map"].press()
+            SYSTEM["images"]["button_gear"].press()
+            SYSTEM["images"]["button_tree"].press()
+            SYSTEM["images"]["button_inventory"].press()
+            SYSTEM["images"]["button_options"].press()
+            SYSTEM["images"]["button_spells"].press()
 
 def generate_random_level():
     """Creates a random level."""
@@ -509,11 +511,14 @@ def generate_random_level():
 def draw_menu(events):
     """Draws the main game menu."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
-    SYSTEM["windows"].blit(SYSTEM["images"]["mission_map"].image, (200, 10))
-    SYSTEM["buttons"][0].set(350, 680).draw(SYSTEM["windows"])
-    SYSTEM["buttons"][1].set(860, 250).draw(SYSTEM["windows"])
-    SYSTEM["buttons"][2].set(900, 900).draw(SYSTEM["windows"])
-    SYSTEM["buttons"][3].set(478, 420).draw(SYSTEM["windows"])
+    sfc = pygame.Surface((2000, 2000), pygame.SRCALPHA)
+    sfc.blit(SYSTEM["images"]["mission_map"].image, (0, 0))
+    SYSTEM["buttons"][0].set(350, 680, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons"][1].set(860, 250, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons"][2].set(900, 900, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons"][3].set(478, 420, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["images"]["mission_scroller"].contains = sfc
+    SYSTEM["images"]["mission_scroller"].tick().draw()
     draw_small_card()
     if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
         name = SYSTEM["font_detail"].render(f'{SYSTEM["selected"].name}',\
@@ -528,11 +533,11 @@ def draw_menu(events):
     draw_bottom_bar(events)
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"][0].press(event.pos)
-            SYSTEM["buttons"][1].press(event.pos)
-            SYSTEM["buttons"][2].press(event.pos)
-            SYSTEM["buttons"][3].press(event.pos)
-            SYSTEM["images"]["button_assault"].press(event.pos)
+            SYSTEM["buttons"][0].press()
+            SYSTEM["buttons"][1].press()
+            SYSTEM["buttons"][2].press()
+            SYSTEM["buttons"][3].press()
+            SYSTEM["images"]["button_assault"].press()
 
 def draw_spells(events):
     """Draws the gear menu."""
@@ -573,10 +578,12 @@ def draw_gear(events):
 if __name__ == "__main__":
     init_game()
     init_timers()
+    held = False
     SYSTEM["game_state"] = MENU_MAIN
     SYSTEM["cooldown"] = 0
     SYSTEM["looter"] = LootGenerator()
     SYSTEM["rune"] = -1
+    SYSTEM["mouse"] = pygame.mouse.get_pos()
     #TODO: Put that in scene manager
     levels = []
     SYSTEM["buttons"] = []
@@ -587,13 +594,19 @@ if __name__ == "__main__":
                                              levels[i]))
         SYSTEM["buttons"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
+    SYSTEM["mouse_previous"] = SYSTEM["mouse"]
     debug_create_items()
     ###
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None
         SYSTEM["mouse"] = pygame.mouse.get_pos()
-        SYSTEM["mouse_wheel"] = [(0, 0), (0, 0)]
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
+        if SYSTEM["mouse_click"][0] and not held:
+            held = True
+            SYSTEM["mouse_previous"] = SYSTEM["mouse"]
+        if held and not SYSTEM["mouse_click"][0]:
+            held = False
+        SYSTEM["mouse_wheel"] = [(0, 0), (0, 0)]
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT:

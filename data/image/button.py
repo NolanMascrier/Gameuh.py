@@ -4,11 +4,13 @@ action when doing so."""
 from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
+from data.image.scrollable import Scrollable
 
 class Button():
     """Defines a button. A button is a clickable image with two states (clicked
     and not clicked), and does an action when clicked."""
-    def __init__(self, image:Image, pressed:Image = None, action = None, text:str = ""):
+    def __init__(self, image:Image, pressed:Image = None, action = None, text:str = "",\
+        scrollable_area: Scrollable = None):
         self._image = image
         self._pressed = pressed
         self._clicked = False
@@ -21,6 +23,40 @@ class Button():
             self._text = None
         else:
             self._text = Text(text, True, "font_detail", force_x=self._width)
+        self._scrollable = scrollable_area
+
+    def __mouse_default(self):
+        """For mouse_inside() with no scrollable."""
+        if SYSTEM["mouse"][0] < self._x :
+            return False
+        if SYSTEM["mouse"][0] > self._x + self._width:
+            return False
+        if SYSTEM["mouse"][1] < self._y:
+            return False
+        if SYSTEM["mouse"][1] > self._y + self._height:
+            return False
+        return True
+
+    def __mouse_scrollable(self):
+        """For mouse_inside() within a scrollable."""
+        x, y = self._scrollable.coordinates(self._x, self._y)
+        if SYSTEM["mouse"][0] < x :
+            return False
+        if SYSTEM["mouse"][0] > x + self._width:
+            return False
+        if SYSTEM["mouse"][1] < y:
+            return False
+        if SYSTEM["mouse"][1] > y + self._height:
+            return False
+        return True
+
+    def mouse_inside(self):
+        """Checks whether or not the mouse is inside the button's area.
+        Should the button be inside a scrollable area, it'll check if the
+        mouse is within the button's area with the scrollable's diffs."""
+        if self._scrollable is not None:
+            return self.__mouse_scrollable()
+        return self.__mouse_default()
 
     def draw(self, surface):
         """Draws the image to the surface."""
@@ -36,17 +72,17 @@ class Button():
         """Returns the current image."""
         return self._image.image
 
-    def set(self, x, y):
+    def set(self, x, y, scrollable: Scrollable = None):
         """Sets the button to the x;y position."""
         self._x = x
         self._y = y
+        self._scrollable = scrollable
         return self
 
-    def press(self, mouse_pos):
+    def press(self):
         """Checks if the mouse is clicking on the button.
         If it is, executes the action."""
-        if mouse_pos[0] >= self._x and mouse_pos[0] <= self._x + self._width and\
-            mouse_pos[1] >= self._y and mouse_pos[1] <= self._y + self._height:
+        if self.mouse_inside():
             if SYSTEM["cooldown"] > 0:
                 return
             self._action()
