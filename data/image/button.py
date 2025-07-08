@@ -1,6 +1,7 @@
 """A button is an image that can be clicked, and calls an
 action when doing so."""
 
+import pygame
 from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
@@ -10,7 +11,7 @@ class Button():
     """Defines a button. A button is a clickable image with two states (clicked
     and not clicked), and does an action when clicked."""
     def __init__(self, image:Image, pressed:Image = None, action = None, text:str = "",\
-        scrollable_area: Scrollable = None):
+        scrollable_area: Scrollable = None, superimage: pygame.Surface = None):
         self._image = image
         self._pressed = pressed
         self._clicked = False
@@ -24,6 +25,7 @@ class Button():
         else:
             self._text = Text(text, True, "font_detail", force_x=self._width)
         self._scrollable = scrollable_area
+        self._superimage = superimage
 
     def __mouse_default(self):
         """For mouse_inside() with no scrollable."""
@@ -39,14 +41,19 @@ class Button():
 
     def __mouse_scrollable(self):
         """For mouse_inside() within a scrollable."""
-        x, y = self._scrollable.coordinates(self._x, self._y)
+        rect = self._scrollable.coordinates_rectangle(self._x, self._y, self._height, self._width)
+        if rect is None:
+            return False
+        x, y, w, h = rect
+        if x == -1 and y == -1:
+            return False
         if SYSTEM["mouse"][0] < x :
             return False
-        if SYSTEM["mouse"][0] > x + self._width:
+        if SYSTEM["mouse"][0] > x + w:
             return False
         if SYSTEM["mouse"][1] < y:
             return False
-        if SYSTEM["mouse"][1] > y + self._height:
+        if SYSTEM["mouse"][1] > y + h:
             return False
         return True
 
@@ -67,6 +74,10 @@ class Button():
         if self._text is not None:
             y = self._y + self._text.height / 2
             surface.blit(self._text.surface, (self._x, y))
+        if self._superimage is not None:
+            x_offset = self._x + self._width / 2 - self._superimage.get_width() / 2
+            y_offset = self._y + self._height / 2 - self._superimage.get_height() / 2
+            surface.blit(self._superimage, (x_offset, y_offset))
 
     def get_image(self):
         """Returns the current image."""
@@ -77,6 +88,12 @@ class Button():
         self._x = x
         self._y = y
         self._scrollable = scrollable
+        return self
+
+    def tick(self):
+        """Ticks the button, checking if is pressed."""
+        if SYSTEM["mouse_click"][0]:
+            self.press()
         return self
 
     def press(self):

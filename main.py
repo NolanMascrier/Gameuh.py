@@ -13,12 +13,13 @@ from data.image.button import Button
 from data.image.text_generator import TextGenerator
 from data.interface.gameui import draw_ui
 from data.game.level import Level
-from data.tables.spell_table import generate_spell_list, Spell
+from data.tables.spell_table import generate_spell_list
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.item import Item
 from data.game.lootgenerator import LootGenerator
 from data.interface.inventory import open_inventory, draw_inventory
+from data.interface.spellbook import open_spell_screen, draw_spells
 from data.image.scrollable import Scrollable
 
 PLAYING = True
@@ -58,20 +59,6 @@ def quit_level():
     """Quits the current level and resets the player."""
     SYSTEM["game_state"] = MENU_MAIN
     reset()
-
-def open_spell_screen():
-    """Sets up the spell screen menu."""
-    SYSTEM["game_state"] = MENU_SPELLBOOK
-    spells = []
-    dashes = []
-    for spell in SYSTEM["player"].spellbook:
-        if isinstance(spell, Spell):
-            if Flags.DASH in spell.flags:
-                dashes.append(spell)
-            else:
-                spells.append(spell)
-    SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells)
-    SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes)
 
 def open_gear_screen():
     """Sets up the gear screen."""
@@ -154,6 +141,8 @@ def init_game():
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"]["btn"] = Image("ui/button.png").scale(55, 280)
+    SYSTEM["images"]["btn_fat"] = Image("ui/button.png").scale(55, 100)
+    SYSTEM["images"]["btn_fat_pressed"] = Image("ui/button_press.png").scale(55, 100)
     SYSTEM["images"]["btn_small"] = Image("ui/button.png").scale(35, 200)
     SYSTEM["images"]["btn_p"] = Image("ui/button_press.png").scale(55, 280)
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
@@ -217,7 +206,7 @@ def init_game():
     SYSTEM["images"]["maxi_moolah"] = Image("maxigrail.png").scale(64, 64)
     SYSTEM["images"]["gold_icon"] = Image("thune.png")
     SYSTEM["images"]["mission_map"] = Image("mission.png")
-    SYSTEM["images"]["mission_scroller"] = Scrollable(10, 10, 1000, 800, contains=SYSTEM["images"]["mission_map"].image)
+    SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000, contains=SYSTEM["images"]["mission_map"].image)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
     SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
     SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
@@ -302,13 +291,13 @@ def reset():
     SLASH_TRACKER.clear()
     TEXT_TRACKER.clear()
     levels = []
-    SYSTEM["buttons"] = []
+    SYSTEM["buttons_e"] = []
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
         butt = Button(levels[i].icon, None, lambda i=i:SYSTEM.__setitem__("selected",\
                                              levels[i]))
-        SYSTEM["buttons"].append(butt)
+        SYSTEM["buttons_e"].append(butt)
     init_timers()
 
 def init_timers():
@@ -513,10 +502,10 @@ def draw_menu(events):
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
     sfc = pygame.Surface((2000, 2000), pygame.SRCALPHA)
     sfc.blit(SYSTEM["images"]["mission_map"].image, (0, 0))
-    SYSTEM["buttons"][0].set(350, 680, SYSTEM["images"]["mission_scroller"]).draw(sfc)
-    SYSTEM["buttons"][1].set(860, 250, SYSTEM["images"]["mission_scroller"]).draw(sfc)
-    SYSTEM["buttons"][2].set(900, 900, SYSTEM["images"]["mission_scroller"]).draw(sfc)
-    SYSTEM["buttons"][3].set(478, 420, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons_e"][0].set(350, 680, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons_e"][1].set(860, 250, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons_e"][2].set(900, 900, SYSTEM["images"]["mission_scroller"]).draw(sfc)
+    SYSTEM["buttons_e"][3].set(478, 420, SYSTEM["images"]["mission_scroller"]).draw(sfc)
     SYSTEM["images"]["mission_scroller"].contains = sfc
     SYSTEM["images"]["mission_scroller"].tick().draw()
     draw_small_card()
@@ -533,20 +522,11 @@ def draw_menu(events):
     draw_bottom_bar(events)
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"][0].press()
-            SYSTEM["buttons"][1].press()
-            SYSTEM["buttons"][2].press()
-            SYSTEM["buttons"][3].press()
+            SYSTEM["buttons_e"][0].press()
+            SYSTEM["buttons_e"][1].press()
+            SYSTEM["buttons_e"][2].press()
+            SYSTEM["buttons_e"][3].press()
             SYSTEM["images"]["button_assault"].press()
-
-def draw_spells(events):
-    """Draws the gear menu."""
-    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
-    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
-    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
-    SYSTEM["spell_panel"].tick().draw()
-    draw_bottom_bar(events)
 
 def draw_gear(events):
     """Draws the gear menu."""
@@ -586,13 +566,13 @@ if __name__ == "__main__":
     SYSTEM["mouse"] = pygame.mouse.get_pos()
     #TODO: Put that in scene manager
     levels = []
-    SYSTEM["buttons"] = []
+    SYSTEM["buttons_e"] = []
     for _ in range(4):
         levels.append(generate_random_level())
     for i in range(4):
         butt = Button(levels[i].icon, None, lambda i=i:SYSTEM.__setitem__("selected",\
                                              levels[i]))
-        SYSTEM["buttons"].append(butt)
+        SYSTEM["buttons_e"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
     SYSTEM["mouse_previous"] = SYSTEM["mouse"]
     debug_create_items()

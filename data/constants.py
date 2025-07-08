@@ -113,6 +113,10 @@ SYSTEM = {
     "spells": {
 
     },
+    "buttons": {
+        "tab_e": None,
+        "tab_r": None,
+    },
     "ui": {},
     "player": None,
     "level": None,

@@ -41,22 +41,50 @@ class Scrollable():
         """Converts the x;y position of the contained surface
         into 'real' coordinates (on screen).
         Returns -1; -1 if the coordinates are not on screen."""
-        #Not on surface in the first place
-        if x < 0 or x > self._contains.get_width():
+        screen_x = self._x + self._padding + x + self._diff_x
+        screen_y = self._y + self._padding + y + self._diff_y
+
+        # Determine bounds of the visible area
+        view_x1 = self._x + self._padding
+        view_y1 = self._y + self._padding
+        view_x2 = view_x1 + self._width - self._padding * 2
+        view_y2 = view_y1 + self._height - self._padding * 2
+
+        # If the adjusted coordinate is outside the visible area, return -1, -1
+        if not (view_x1 <= screen_x < view_x2 and view_y1 <= screen_y < view_y2):
             return -1, -1
-        if y < 0 or y > self._contains.get_height():
-            return -1, -1
-        real_x = 0 - self._diff_x
-        real_y = 0 - self._diff_y
-        #Not on screen
-        if x < real_x or x > real_x + self._subsurface.get_width():
-            return -1, -1
-        if y < real_y or y > real_y + self._subsurface.get_height():
-            return -1, -1
-        #On screen, need to convert
-        conv_x = x - real_x
-        conv_y = y - real_y
-        return conv_x, conv_y
+
+        return screen_x, screen_y
+
+    def coordinates_rectangle(self, x, y, h, w):
+        """Converts a rectangle made of 4 data (x;y position of
+        upper left corner, width and height) into a rectangle that
+        is within the scrollable area (ie resize the clickable area
+        of a button). Returns None if the button is fully unreachable.
+        """
+        screen_x = self._x + self._padding + x + self._diff_x
+        screen_y = self._y + self._padding + y + self._diff_y
+
+        view_x1 = self._x + self._padding
+        view_y1 = self._y + self._padding
+        view_x2 = view_x1 + self._width - self._padding * 2
+        view_y2 = view_y1 + self._height - self._padding * 2
+
+        rect_x2 = screen_x + w
+        rect_y2 = screen_y + h
+
+        # Fully outside
+        if screen_x >= view_x2 or rect_x2 <= view_x1 or \
+        screen_y >= view_y2 or rect_y2 <= view_y1:
+            return None
+
+        # Clip to viewport
+        clipped_x = max(screen_x, view_x1)
+        clipped_y = max(screen_y, view_y1)
+        clipped_w = min(rect_x2, view_x2) - clipped_x
+        clipped_h = min(rect_y2, view_y2) - clipped_y
+
+        return clipped_x, clipped_y, clipped_w, clipped_h
 
     def tick(self):
         """Ticks down the scrollable."""
