@@ -1,7 +1,7 @@
 """To render text with more options than basic pygame"""
 
 import pygame
-from data.constants import SYSTEM
+from data.constants import SYSTEM, RESSOURCES
 
 class Text():
     """Reads a text in str form to create a pygame surface
@@ -19,13 +19,17 @@ class Text():
         to -1 (disabled).
     """
     def __init__(self, text: str, centered = False,\
-                font = "font_detail_small", force_x = -1, force_y = -1):
+                font = "tiny", force_x = -1, force_y = -1,\
+                size = 20, bold = False, italic = False):
         self._data = []
         self._surfaces = []
         self._centered = centered
         self._surface = None
         self._width = 0
         self._height = 0
+        self._font = pygame.freetype.Font(f'{RESSOURCES}/fonts/{font}.ttf', size)
+        if bold:
+            self._font.strong = True
         data = text.split('\n')
         #Creates the list
         buffer = [t.split('#c') for t in data]
@@ -45,8 +49,9 @@ class Text():
         for tab in self._data:
             cell_buffer = []
             for cell in tab:
-                cell_buffer.append(SYSTEM[font].render(\
-                    f'{cell[1]}', False, cell[0]))
+                sfc, _ = self._font.render(\
+                    f'{cell[1]}', fgcolor=cell[0])
+                cell_buffer.append(sfc)
             self._surfaces.append(cell_buffer)
         self.generate_surface(force_x, force_y)
 

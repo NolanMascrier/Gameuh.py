@@ -95,7 +95,7 @@ SYSTEM = {
         "screen_height": 1080,
         "fps": 0.016,
         "fps_selector": (0, 0.008, 0.016, 0.032),
-        "resolutions": [(1138, 640), (1280, 720), (1600, 900), (1920, 1080)],
+        "resolutions": [(1138, 640), (1280, 720), (1366, 768), (1600, 900), (1920, 1080)],
         "fullscreen": True,
         "vsync": 1,
         "lang_selec": "EN_us",
@@ -124,6 +124,21 @@ SYSTEM = {
     "dragged": None,
     "pop-up": None
 }
+
+def factor() -> int:
+    """Returns the resolution factor"""
+    x = SYSTEM["options"]["screen_width"] / SCREEN_WIDTH
+    y = SYSTEM["options"]["screen_height"] / SCREEN_HEIGHT
+    return x, y
+
+def get_mouse_pos():
+    """Updates the mouse position."""
+    x_factor = SCREEN_WIDTH / SYSTEM["options"]["screen_width"]
+    y_factor = SCREEN_HEIGHT / SYSTEM["options"]["screen_height"]
+    x, y = pygame.mouse.get_pos()
+    x *= x_factor
+    y *= y_factor
+    SYSTEM["mouse"] = (x, y)
 
 def trad(keys, subkey = None):
     """Returns the translation data for the given key."""

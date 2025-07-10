@@ -468,114 +468,11 @@ class Creature:
     def generate_stat_simple(self, x, y):
         """Generates a simple report of the creature's data."""
         lines = []
-        name = SYSTEM["font_detail"].render(f'{self._name}', False, (255, 255, 255))
-        SYSTEM["windows"].blit(name, (x, y))
-        life = Hoverable(x, y + 20, f"{self._stats['life'].get_value()}", SYSTEM["lang"]["life"])
-        mana = Hoverable(x + 150, y + 20, f"{self._stats['mana'].get_value()}",\
-                         SYSTEM["lang"]["mana"])
-        exp1 = Hoverable(x + 90, y + 45, f"Level : {self._level}", SYSTEM["lang"]["exp"])
-        exp2 = Hoverable(x + 70, y + 65, f"{self._exp}/{self._exp_to_next}", SYSTEM["lang"]["exp"])
-        lines.append(life)
-        lines.append(mana)
-        lines.extend([exp1, exp2])
         return lines
 
     def generate_stat_details(self, x, y):
         """Generates a detailed report of the creature's data."""
         lines = []
-        name = SYSTEM["font_detail"].render(f'{self._name}', False, (255, 255, 255))
-        SYSTEM["windows"].blit(name, (x, y))
-        life = Hoverable(x, y + 20, f"{self._stats['life'].get_value()}", trad("life"))
-        mana = Hoverable(x + 150, y + 20, f"{self._stats['mana'].get_value()}",\
-                         trad("mana"))
-        exp1 = Hoverable(x + 90, y + 45, f"Level : {self._level}", trad("exp"))
-        exp2 = Hoverable(x + 70, y + 65, f"{self._exp}/{self._exp_to_next}", trad("exp"))
-        str = Hoverable(x, y + 90, f"{self._stats['str'].get_value()}", trad("str"), (255, 0, 0))
-        int = Hoverable(x + 80, y + 90, f"{self._stats['int'].get_value()}",\
-            trad("int"), (0, 0, 255))
-        dex = Hoverable(x + 160, y + 90, f"{self._stats['dex'].get_value()}",\
-            trad("dex"), (0, 255, 0))
-        expb = Hoverable(x, y + 120, f"Exp Multiplier: {self._stats['exp_mult'].get_value()*100}%",\
-             trad("exp_mult"))
-        end = Hoverable(x, y + 135, f"Endurance: {self._stats['def'].get_value()}"\
-            + f"(Estimated mitigation : {self.__get_armor_mitigation()*100}%)",\
-            trad("def"))
-        absdef = Hoverable(x, y + 150, f"Absolute defense: {self._stats['abs_def'].get_value()}",\
-            trad("abs_def"))
-        cr = Hoverable(x, y + 165, f"Crit chance: {self._stats['crit_rate'].get_value()*100}%",\
-             trad("crit_rate"))
-        cd = Hoverable(x, y + 180, f"Crit damage: {self._stats['crit_dmg'].get_value()*100}%",\
-             trad("crit_dmg"))
-        hf = Hoverable(x, y + 195,\
-            f"Mana Efficiency: {self._stats['mana_efficiency'].get_value()*100}%",\
-            trad("mana_efficiency"))
-        me = Hoverable(x, y + 210, f"Heal Factor: {self._stats['heal_factor'].get_value()*100}%",\
-             trad("heal_factor"))
-        iir = Hoverable(x, y + 225, f"Item quantity: {self._stats['item_quant'].get_value()*100}%",\
-             trad("item_quant"))
-        iiq = Hoverable(x, y + 240, f"Item quality : {self._stats['item_qual'].get_value()*100}%",\
-             trad("item_qual"))
-        sp = Hoverable(x, y + 255, f"Move speed: {self._stats['speed'].get_value()*100}%",\
-             trad("speed"))
-        cs = Hoverable(x, y + 270, f"Cast speed: {self._stats['cast_speed'].get_value()*100}%",\
-             trad("cast_speed"))
-        md = Hoverable(x, y + 285, f"Melee damage: {self._stats['melee_dmg'].get_value()*100}%",\
-             trad("melee_dmg"))
-        sp = Hoverable(x, y + 300, f"Spell damage: {self._stats['spell_dmg'].get_value()*100}%",\
-             trad("spell_dmg"))
-        rd = Hoverable(x, y + 315, f"Ranged damage: {self._stats['ranged_dmg'].get_value()*100}%",\
-             trad("ranged_dmg"))
-        res = Hoverable(x, y + 350, "Resistances :", trad("res"))
-        rp = Hoverable(x, y + 370, f"{self._stats['phys'].get_value()*100}%", trad("phys"),\
-            (168, 168, 168))
-        rf = Hoverable(x, y + 385, f"{self._stats['fire'].get_value()*100}%", trad("fire"),\
-            (255, 119, 0))
-        ri = Hoverable(x, y + 400, f"{self._stats['ice'].get_value()*100}%", trad("ice"),\
-            (89, 219, 255))
-        rt = Hoverable(x, y + 415, f"{self._stats['elec'].get_value()*100}%", trad("elec"),\
-            (250, 233, 0))
-        re = Hoverable(x, y + 430, f"{self._stats['energy'].get_value()*100}%", trad("energy"),\
-            (156, 0, 5))
-        rl = Hoverable(x, y + 445, f"{self._stats['light'].get_value()*100}%", trad("light"),\
-            (255, 254, 219))
-        rda = Hoverable(x, y + 460, f"{self._stats['dark'].get_value()*100}%", trad("dark"),\
-            (71, 0, 125))
-        dmg = Hoverable(x, y + 500, "Damages :", trad("dmg"))
-        dp = Hoverable(x, y + 520, f"{self._stats['phys_dmg'].get_value()*100}%", trad("phys"),\
-            (168, 168, 168))
-        df = Hoverable(x, y + 535, f"{self._stats['fire_dmg'].get_value()*100}%", trad("fire"),\
-            (255, 119, 0))
-        di = Hoverable(x, y + 550, f"{self._stats['ice_dmg'].get_value()*100}%", trad("ice"),\
-            (89, 219, 255))
-        dt = Hoverable(x, y + 565, f"{self._stats['elec_dmg'].get_value()*100}%", trad("elec"),\
-            (250, 233, 0))
-        de = Hoverable(x, y + 580, f"{self._stats['energy_dmg'].get_value()*100}%", trad("energy"),\
-            (156, 0, 5))
-        dl = Hoverable(x, y + 595, f"{self._stats['light_dmg'].get_value()*100}%", trad("light"),\
-            (255, 254, 219))
-        dda = Hoverable(x, y + 610, f"{self._stats['dark_dmg'].get_value()*100}%", trad("dark"),\
-            (71, 0, 125))
-        pen = Hoverable(x, y + 650, "Penetration :", trad("pen"))
-        pp = Hoverable(x, y + 670, f"{self._stats['phys_pen'].get_value()*100}%", trad("phys"),\
-            (168, 168, 168))
-        pf = Hoverable(x, y + 685, f"{self._stats['fire_pen'].get_value()*100}%", trad("fire"),\
-            (255, 119, 0))
-        pi = Hoverable(x, y + 700, f"{self._stats['ice_pen'].get_value()*100}%", trad("ice"),\
-            (89, 219, 255))
-        pt = Hoverable(x, y + 715, f"{self._stats['elec_pen'].get_value()*100}%", trad("elec"),\
-            (250, 233, 0))
-        pe = Hoverable(x, y + 730, f"{self._stats['energy_pen'].get_value()*100}%", trad("energy"),\
-            (156, 0, 5))
-        pl = Hoverable(x, y + 745, f"{self._stats['light_pen'].get_value()*100}%", trad("light"),\
-            (255, 254, 219))
-        pda = Hoverable(x, y + 760, f"{self._stats['dark_pen'].get_value()*100}%", trad("dark"),\
-            (71, 0, 125))
-        lines.append(life)
-        lines.append(mana)
-        lines.extend([exp1, exp2, str, int, dex, expb, absdef, cr, cd,\
-                hf, me, iir, iiq, sp, cs, md, sp, rd, res, dmg, pen,\
-                rp, rf, ri, rt, re, rl, rda, dp, df, di, dt, de, dl, dda,\
-                pp, pf, pi, pt, pe, pl, pda, end])
         return lines
 
     def reset(self):

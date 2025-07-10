@@ -2,6 +2,8 @@ import random
 import os
 import re
 from time import sleep
+
+import pygame.freetype
 from data.constants import *
 from data.character import Character
 from data.generator import Generator
@@ -100,12 +102,15 @@ def init_game():
     pygame.font.init()
     #TODO: Load options
     flags = pygame.SCALED|pygame.FULLSCREEN
-    SYSTEM["windows"] = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
+    SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_width"],\
+        SYSTEM["options"]["screen_height"]), flags, vsync=1)
+    SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
-    SYSTEM["font"] = pygame.font.SysFont('ressources/dmg.ttf', 30)
-    SYSTEM["font_detail"] = pygame.font.SysFont('ressources/dogica.ttf', 25)
-    SYSTEM["font_detail_small"] = pygame.font.SysFont('ressources/dogica.ttf', 20)
-    SYSTEM["font_crit"] = pygame.font.SysFont('ressources/dmg.ttf', 35, True)
+    SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
+    SYSTEM["font_detail"] = pygame.freetype.Font('ressources/dmg.ttf', 30)
+    SYSTEM["font_detail_small"] = pygame.freetype.Font('ressources/dmg.ttf', 30)
+    SYSTEM["font_crit"] = pygame.freetype.Font('ressources/dmg.ttf', 35)
+    SYSTEM["font_crit"].strong = True
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.25).scale(300, 256)
@@ -579,7 +584,7 @@ if __name__ == "__main__":
     ###
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None
-        SYSTEM["mouse"] = pygame.mouse.get_pos()
+        get_mouse_pos()
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
         if SYSTEM["mouse_click"][0] and not held:
             held = True
@@ -644,5 +649,8 @@ if __name__ == "__main__":
                 SYSTEM["rune"] = -1
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
+        window = pygame.transform.smoothscale(SYSTEM["windows"],\
+            (SYSTEM["options"]["screen_width"], SYSTEM["options"]["screen_height"]))
+        SYSTEM["real_windows"].blit(window, (0, 0))
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))
