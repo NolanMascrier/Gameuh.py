@@ -2,6 +2,7 @@
 exp bar, enemy life, boss life ..."""
 
 import pygame
+from data.image.text import Text
 from pygame.constants import K_1, K_2
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 
@@ -12,9 +13,9 @@ UI_SKILLS_INPUT_OFFSET = 48
 def draw_gold():
     """Draws the gold and item counter."""
     gold = SYSTEM["level"].gold
-    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    text = Text(f"#c#(255, 179, 0){gold}")
     SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (10, 10))
-    SYSTEM["windows"].blit(text, (80, 42))
+    SYSTEM["windows"].blit(text.surface, (80, 42))
 
 def draw_exp_bar():
     """Draws the EXP bar."""
@@ -41,25 +42,22 @@ def draw_life_mana():
     SYSTEM["windows"].blit(SYSTEM["images"]["mana_jauge"].get_image(),\
                            (SCREEN_WIDTH - 524, SCREEN_HEIGHT - 200))
 
-    life_buff = f"{round(char.creature.stats['life'].current_value)}"\
-        + f"/{char.creature.stats['life'].get_value()}"
-    mana_buff = f"{round(char.creature.stats['mana'].current_value)}"\
-        + f"/{char.creature.stats['mana'].get_value()}"
-
-    text_life = SYSTEM["font_crit"].render(life_buff, False, (0, 37, 97))
-    text_mana = SYSTEM["font_crit"].render(mana_buff, False, (97, 0, 0))
+    life_buff = Text(f"#c#(0, 37, 97){round(char.creature.stats['life'].current_value)}"\
+        + f"/{char.creature.stats['life'].get_value()}")
+    mana_buff = Text(f"#c#(97, 0, 0){round(char.creature.stats['mana'].current_value)}"\
+        + f"/{char.creature.stats['mana'].get_value()}")
 
     life_size_img = SYSTEM["images"]["life_jauge"].get_image().get_size()
     mana_size_img = SYSTEM["images"]["mana_jauge"].get_image().get_size()
-    life_size = text_life.get_size()
-    mana_size = text_mana.get_size()
+    life_size = life_buff.get_size()
+    mana_size = mana_buff.get_size()
     life_center = (380 + life_size_img[0] / 2 - life_size[0] / 2,\
                    SCREEN_HEIGHT - 200 + life_size_img[1] / 2 - life_size[1] / 2)
     mana_center = (SCREEN_WIDTH - 524 + mana_size_img[0] / 2 - mana_size[0] / 2,\
                    SCREEN_HEIGHT - 200 + mana_size_img[1] / 2 - mana_size[1] / 2)
 
-    SYSTEM["windows"].blit(text_life, life_center)
-    SYSTEM["windows"].blit(text_mana, mana_center)
+    SYSTEM["windows"].blit(life_buff.surface, life_center)
+    SYSTEM["windows"].blit(mana_buff.surface, mana_center)
 
 def draw_potions():
     """Draw the potions icons and use count."""
@@ -67,20 +65,20 @@ def draw_potions():
     #Life potions
     SYSTEM["windows"].blit(SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130))
     SYSTEM["windows"].blit(SYSTEM["images"]["life_potion"].get_image(), (524, SCREEN_HEIGHT - 130))
-    life_amount = SYSTEM["font_crit"].render(f'x{char.potions[0]}', False, (255, 255, 255))
+    life_amount = Text(f"x{char.potions[0]}")
     SYSTEM["windows"].blit(SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130))
     SYSTEM["windows"].blit(SYSTEM["images"][K_1], (508, SCREEN_HEIGHT - 82))
-    SYSTEM["windows"].blit(life_amount, (572, SCREEN_HEIGHT - 82))
+    SYSTEM["windows"].blit(life_amount.surface, (572, SCREEN_HEIGHT - 82))
     #Mana potions
     SYSTEM["windows"].blit(SYSTEM["images"]["item_bottom"].image,\
                         (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
     SYSTEM["windows"].blit(SYSTEM["images"]["mana_potion"].get_image(),\
                         (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
-    mana_amount = SYSTEM["font_crit"].render(f'x{char.potions[1]}', False, (255, 255, 255))
+    mana_amount = Text(f"x{char.potions[1]}")
     SYSTEM["windows"].blit(SYSTEM["images"]["item_top"].image,\
                            (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130))
     SYSTEM["windows"].blit(SYSTEM["images"][K_2], (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82))
-    SYSTEM["windows"].blit(mana_amount, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82))
+    SYSTEM["windows"].blit(mana_amount.surface, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82))
 
 def draw_skills():
     """Draws the skill bar."""

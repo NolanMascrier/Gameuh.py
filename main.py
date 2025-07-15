@@ -4,6 +4,7 @@ import re
 from time import sleep
 
 import pygame.freetype
+from data.image.text import Text
 from data.constants import *
 from data.character import Character
 from data.generator import Generator
@@ -22,6 +23,7 @@ from data.item import Item
 from data.game.lootgenerator import LootGenerator
 from data.interface.inventory import open_inventory, draw_inventory
 from data.interface.spellbook import open_spell_screen, draw_spells
+from data.interface.general import tick, draw_game
 from data.image.scrollable import Scrollable
 
 PLAYING = True
@@ -224,6 +226,7 @@ def init_game():
     SYSTEM["images"]["gear_amulet"] = Image("ui/gear_amulet.png").scale(64, 64)
     SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
     SYSTEM["images"]["test_armor"] = Image("icons/elementalfury.png").scale(64, 64)
+    SYSTEM["images"]["sell_slot"] = Image("ui/gear_helm.png").scale(128, 128)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
@@ -312,60 +315,6 @@ def init_timers():
     pygame.time.set_timer(USEREVENT+2, 100)
     pygame.time.set_timer(TICKER_TIMER, 20)
 
-def draw_game(show_player = True, show_enemies = True,\
-    show_loot = True, show_projectiles = True, show_slashes = True,\
-    show_text = True):
-    """Draws the main game component."""
-    if show_player:
-        SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
-    if show_loot:
-        for bubble in POWER_UP_TRACKER:
-            SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
-    if show_enemies:
-        for baddie in ENNEMY_TRACKER:
-            SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
-    if show_projectiles:
-        for p in PROJECTILE_TRACKER:
-            SYSTEM["windows"].blit(p.get_image(), p.get_pos())
-    if show_slashes:
-        for s in SLASH_TRACKER:
-            SYSTEM["windows"].blit(s.get_image(), s.get_pos())
-    if show_text:
-        for txt in TEXT_TRACKER:
-            SYSTEM["windows"].blit(txt[0], (txt[1], txt[2]))
-
-def tick():
-    """Ticks all there is to tick."""
-    generate_grids()
-    SYSTEM["player"].tick()
-    for bubble in POWER_UP_TRACKER.copy():
-        bubble.tick(SYSTEM["player"])
-        if bubble.flagged_for_deletion:
-            POWER_UP_TRACKER.remove(bubble)
-    for baddie in ENNEMY_TRACKER.copy():
-        baddie.tick(SYSTEM["player"])
-        if baddie.destroyed:
-            ENNEMY_TRACKER.remove(baddie)
-    for p in PROJECTILE_TRACKER.copy():
-        if isinstance(p, Generator):
-            p.tick(SYSTEM["player"])
-            continue
-        p.tick()
-        if p.can_be_destroyed():
-            PROJECTILE_TRACKER.remove(p)
-    for s in SLASH_TRACKER.copy():
-        s.tick()
-        if s.finished:
-            SLASH_TRACKER.remove(s)
-    for txt in TEXT_TRACKER.copy():
-        sfc = txt[0]
-        sfc.set_alpha(txt[3])
-        txt[3] -= 5
-        txt[2] -= 3
-        if txt[3] < 10:
-            TEXT_TRACKER.remove(txt)
-    clean_grids()
-
 def game_loop(keys, events):
     """Main game loop."""
     #Handle Events
@@ -400,9 +349,9 @@ def draw_victory(events):
     SYSTEM["images"]["button_continue"].set(x_offset + 200, y_offset + 300)
     SYSTEM["images"]["button_continue"].draw(SYSTEM["windows"])
     gold = SYSTEM["level"].gold
-    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    text = Text(f"#c#{(255, 179, 0)}{gold}")
     SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
-    SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
+    SYSTEM["windows"].blit(text.surface, (x_offset + 80, y_offset + 32))
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["images"]["button_continue"].press()
@@ -420,9 +369,9 @@ def draw_game_over(events):
     SYSTEM["images"]["button_continue"].set(x_offset + 200, y_offset + 300)
     SYSTEM["images"]["button_continue"].draw(SYSTEM["windows"])
     gold = SYSTEM["level"].gold
-    text = SYSTEM["font_crit"].render(f"{gold}", False, (255, 179, 0))
+    text = Text(f"#c#{(255, 179, 0)}{gold}")
     SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
-    SYSTEM["windows"].blit(text, (x_offset + 80, y_offset + 32))
+    SYSTEM["windows"].blit(text.surface, (x_offset + 80, y_offset + 32))
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["images"]["button_continue"].press()
@@ -515,13 +464,11 @@ def draw_menu(events):
     SYSTEM["images"]["mission_scroller"].tick().draw()
     draw_small_card()
     if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
-        name = SYSTEM["font_detail"].render(f'{SYSTEM["selected"].name}',\
-            False, (255, 255, 255))
-        lvl = SYSTEM["font_detail"].render(f'Area level: {SYSTEM["selected"].area_level}',\
-            False, (255, 255, 255))
+        name = Text(f'{SYSTEM["selected"].name}', True)
+        lvl = Text(f'Area level: {SYSTEM["selected"].area_level}', True)
         #TODO: modifiers ...
-        SYSTEM["windows"].blit(name, (1500, 750))
-        SYSTEM["windows"].blit(lvl, (1500, 775))
+        SYSTEM["windows"].blit(name.surface, (1500, 750))
+        SYSTEM["windows"].blit(lvl.surface, (1500, 775))
         SYSTEM["images"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
         SYSTEM["windows"].blit(SYSTEM["selected"].icon.image, (1500, 800))
     draw_bottom_bar(events)

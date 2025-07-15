@@ -165,7 +165,10 @@
         "more": "more",
         "less": "less",
         "increased": "increased",
-        "decreased": "decreased"
+        "decreased": "decreased",
+        "remove":"Removes",
+        "adds": "Adds",
+        "to": "to"
     },
     "descripts": {
         "life": "Life",

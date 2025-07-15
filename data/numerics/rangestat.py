@@ -44,8 +44,12 @@ class RangeStat():
         
         Args:
             affliction (Affliction): affliction to afflict."""
-        self._upper.afflict(affliction)
-        self._lower.afflict(affliction)
+        if isinstance(affliction, tuple):
+            self._upper.afflict(affliction[1])
+            self._lower.afflict(affliction[0])
+        else:
+            self._upper.afflict(affliction)
+            self._lower.afflict(affliction)
 
     def remove_affliction(self, affliction: Affliction):
         """Removes an affliction.
@@ -53,8 +57,12 @@ class RangeStat():
         Args:
             affliction (Afflicton): Affliction to remove.
         """
-        self._upper.remove_affliction(affliction)
-        self._lower.remove_affliction(affliction)
+        if isinstance(affliction, tuple):
+            self._upper.remove_affliction(affliction[1])
+            self._lower.remove_affliction(affliction[0])
+        else:
+            self._upper.remove_affliction(affliction)
+            self._lower.remove_affliction(affliction)
 
     def tick(self):
         """Ticks down all increases and multipliers durations.

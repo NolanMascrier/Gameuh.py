@@ -55,6 +55,15 @@ class Text():
             self._surfaces.append(cell_buffer)
         self.generate_surface(force_x, force_y)
 
+    def get_size(self):
+        """Returns the surface's size"""
+        return self._surface.get_size()
+
+    def opacity(self, opacity: int):
+        """Sets the opacity of the text."""
+        opacity = min(max(opacity, 0), 255)
+        self._surface.set_alpha(opacity)
+
     def generate_surface(self, force_x, force_y):
         """Creates the text surface."""
         self._height = 0
@@ -99,5 +108,10 @@ class Text():
 
     @property
     def surface(self):
+        """Returns the text's surface."""
+        return self._surface
+
+    @property
+    def image(self):
         """Returns the text's surface."""
         return self._surface

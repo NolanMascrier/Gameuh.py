@@ -1,8 +1,8 @@
 """Handles the inventory tab of the main menu."""
 
 import pygame
-from data.interface.general import draw_bottom_bar
-from data.constants import SYSTEM, MENU_INVENTORY, Flags, trad
+from data.interface.general import draw_bottom_bar, draw_game, tick
+from data.constants import SYSTEM, MENU_INVENTORY, Flags, trad, TEXT_TRACKER
 from data.image.button import Button
 from data.image.slotpanel import SlotPanel
 from data.item import Item
@@ -12,6 +12,7 @@ from data.image.slot import Slot
 
 def sell(item: Item, slot: Slot):
     """Sells the item."""
+    TEXT_TRACKER.append([item.get_image(), SYSTEM["mouse"][0], SYSTEM["mouse"][1], 255])
     SYSTEM["player"].gold += item.price
     slot.contains = None
     SYSTEM["player"].inventory.remove(item)
@@ -71,19 +72,19 @@ def open_inventory():
         if isinstance(item, Item):
             if Flags.GEAR in item.flags:
                 data.append(item)
-    SYSTEM["ui"]["sell_slot"] = Slot(1620, 900, "gear_helm", sell)
+    SYSTEM["ui"]["sell_slot"] = Slot(1556, 850, "sell_slot", sell)
     SYSTEM["images"]["button_sort_name"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(0, False),\
-                                    f"{trad("buttons", "sort")} {trad("buttons", "by_name")}")
+                                    f"{trad('buttons', 'sort')} {trad('buttons', 'by_name')}")
     SYSTEM["images"]["button_sort_rarity"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(1, False),\
-                                    f"{trad("buttons", "sort")} {trad("buttons", "by_rarity")}")
+                                    f"{trad('buttons', 'sort')} {trad('buttons', 'by_rarity')}")
     SYSTEM["images"]["button_sort_value"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(2, False),\
-                                    f"{trad("buttons", "sort")} {trad("buttons", "by_value")}")
+                                    f"{trad('buttons', 'sort')} {trad('buttons', 'by_value')}")
     SYSTEM["images"]["button_sort_date"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(3, False),\
-                                    f"{trad("buttons", "sort")} {trad("buttons", "by_date")}")
+                                    f"{trad('buttons', 'sort')} {trad('buttons', 'by_date')}")
     SYSTEM["images"]["button_rune_0"] = Button(SYSTEM["images"]["rune_0"], None,\
                                             lambda: rune(0))
     SYSTEM["images"]["pop_rune_0"] = Hoverable(0, 0, None, trad("runes", "blank"),\
@@ -150,6 +151,8 @@ def draw_inventory(events):
     draw_bottom_bar(events)
     if SYSTEM["rune"] != -1:
         SYSTEM["windows"].blit(SYSTEM["rune_display"].image, SYSTEM["mouse"])
+    tick()
+    draw_game(False, False, False, False, False)
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["images"]["button_rune_0"].press()

@@ -5,6 +5,7 @@ import random
 import math
 import pygame
 from data.physics.hitbox import HitBox
+from data.image.text import Text
 from data.constants import Flags, TEXT_TRACKER, SYSTEM
 
 class PickUp():
@@ -100,7 +101,7 @@ class PickUp():
             (128, 0, 255),     # Rare - Purple shimmer
             (255, 140, 0),     # Epic - Orange shimmer
         ]
-        text = SYSTEM["font"].render(f'{self._contains.base}', False, color[rare])
+        text = Text(f"#c#{color[rare]}{self._contains.base})")
         TEXT_TRACKER.append([text, self.x, self.y, 255])
 
     def pickup(self, player):

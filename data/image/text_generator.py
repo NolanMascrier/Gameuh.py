@@ -1,6 +1,7 @@
 """A class that allows creation and display of text on the screen."""
 
 from data.constants import TEXT_TRACKER, SYSTEM
+from data.image.text import Text
 
 class TextGenerator():
     def __init__(self):
@@ -8,10 +9,12 @@ class TextGenerator():
 
     def generate_damage_text(self, x, y, color, crit, dmg):
         """Shows a damage pop up."""
+        if not isinstance(color, tuple):
+            color = (255, 255, 255)
         if crit:
-            text = SYSTEM["font_crit"].render(f'{dmg} !', False, color)
+            text = Text(f"#c#{color}{dmg} !", size=35, bold=True)
         else:
-            text = SYSTEM["font"].render(f'{dmg}', False, color)
+            text = Text(f"#c#{color}{dmg}", size=25)
         TEXT_TRACKER.append([text, x, y, 255])
 
     def generate_level_up(self):

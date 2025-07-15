@@ -404,9 +404,9 @@ class Creature:
         old = self.unequip(slot, left_hand)
         if slot == Flags.RING:
             if left_hand:
-                self._gear["ring"]["left"] = item
+                self._gear["rings"]["left"] = item
             else:
-                self._gear["ring"]["right"] = item
+                self._gear["rings"]["right"] = item
         else:
             self._gear[slot.value] = item
         for affix in item.affixes:
@@ -433,11 +433,11 @@ class Creature:
             return None
         if slot == Flags.RING:
             if left_hand:
-                item = self._gear["ring"]["left"]
-                self._gear["ring"]["left"] = None
+                item = self._gear["rings"]["left"]
+                self._gear["rings"]["left"] = None
             else:
-                item = self._gear["ring"]["right"]
-                self._gear["ring"]["right"] = None
+                item = self._gear["rings"]["right"]
+                self._gear["rings"]["right"] = None
         else:
             item = self._gear[slot.value]
             self._gear[slot.value] = None
