@@ -60,6 +60,44 @@ class Tile(Image):
         self._width = self._render_width
         self._height = self._render_height
 
+    def redraw(self, width, height):
+        """Resize the tile."""
+        self._tile_width = self._width // 3
+        self._tile_height = self._height // 3
+        self._render_height = height * self._tile_height
+        self._render_width = width * self._tile_width
+        self._lin = self._render_height // self._tile_height
+        self._col = self._render_width // self._tile_width
+        self._tiles = {
+            0 : {
+                0: self.extracts(0, 0, self._tile_width, self._tile_height),
+                1: self.extracts(self._tile_width, 0, self._tile_width,\
+                                            self._tile_height),
+                self._col - 1: self.extracts(self._tile_width * 2, 0,\
+                                            self._tile_width, self._tile_height),    
+            },
+            1: {
+                0: self.extracts(0, self._tile_height,\
+                                            self._tile_width, self._tile_height),
+                1: self.extracts(self._tile_width, self._tile_height,\
+                                            self._tile_width, self._tile_height),
+                self._col - 1: self.extracts(self._tile_width * 2, self._tile_height,\
+                                            self._tile_width, self._tile_height),    
+            },
+            self._lin - 1: {
+                0: self.extracts(0, self._tile_height * 2,\
+                                            self._tile_width, self._tile_height),
+                1:  self.extracts(self._tile_width, self._tile_height * 2,\
+                                            self._tile_width, self._tile_height),
+                self._col - 1: self.extracts(self._tile_width * 2, self._tile_height * 2,\
+                                            self._tile_width, self._tile_height),    
+            }
+        }
+        self._image = self.create_image()
+        self._width = self._render_width
+        self._height = self._render_height
+        return self
+
     def create_image(self) -> pygame.Surface:
         """Generates the surface."""
         sfc = pygame.Surface((self._render_width, self._render_height), pygame.SRCALPHA)
@@ -80,6 +118,6 @@ class Tile(Image):
                         sfc.blit(self._tiles[y][x].image,\
                                     (x * self._tile_width, y * self._tile_height))
         return sfc
-    
+
     def get_image(self):
         return self._image

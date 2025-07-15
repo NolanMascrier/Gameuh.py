@@ -155,30 +155,27 @@ class Item():
 
     def create_popup(self):
         """Creates the popup surface."""
-        affixes = Text(self.describe(), True, force_x=250)
+        affixes = Text(self.describe(), True)
         text = f"{self._name}\n{trad('rarities', self._rarity)}{self._base}"
-        title = Text(text, True, force_x=affixes.width)
-        sfc = pygame.Surface((affixes.width + 10, affixes.height + title.height + 10),\
-                            pygame.SRCALPHA)
+        title = Text(text, True)
+        width = max(affixes.width, title.width) + 20
+        height = affixes.height + title.height + 10
+        sfc = pygame.Surface((width, height), pygame.SRCALPHA)
         match self._rarity:
             case 1:
-                sfc.blit(SYSTEM["images"]["ui_magic"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                sfc.blit(SYSTEM["images"]["ui_magic"].image, (0, 0))
             case 2:
-                sfc.blit(SYSTEM["images"]["ui_rare"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                sfc.blit(SYSTEM["images"]["ui_rare"].image, (0, 0))
             case 3:
-                sfc.blit(SYSTEM["images"]["ui_legendary"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                sfc.blit(SYSTEM["images"]["ui_legendary"].image, (0, 0))
             case _:
-                sfc.blit(SYSTEM["images"]["ui_normal"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                sfc.blit(SYSTEM["images"]["ui_normal"].image, (0, 0))
         sfc.blit(title.surface, (5, 5))
         if self._rarity > 0 or len(self._implicits) > 0:
-            sfc.blit(SYSTEM["images"]["hoverable"].clone().scale(affixes.height,\
-                                                                affixes.width + 10).image,\
-                                                                (0, title.height + 10))
-            sfc.blit(affixes.surface, (5, title.height + 20))
+            sfc.blit(SYSTEM["images"]["hoverable"].scale(affixes.height + 5,\
+                                                                width).image,\
+                                                                (0, title.height + 5))
+            sfc.blit(affixes.surface, (5, title.height + 15))
         self._popup = sfc
 
     def create_popup_details(self):
