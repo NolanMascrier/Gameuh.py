@@ -4,6 +4,7 @@ will section the image in 9 and will repeat those sections
 as needed."""
 
 import pygame
+from functools import lru_cache
 from data.image.image import Image
 
 class Tile(Image):
@@ -22,101 +23,67 @@ class Tile(Image):
         height (int, optional): How many times should the tile be\
         repeated y-wise. Defaults to 5.
     """
-    def __init__(self, uri=None, width = 5, height = 5):
+    def __init__(self, uri=None, width = 5, height = 5, scale_factor:int = 1):
         super().__init__(uri)
-        self.scale(192, 192)
+        self.scale(72 * scale_factor, 72 * scale_factor)
         self._tile_width = self._width // 3
         self._tile_height = self._height // 3
         self._render_height = height * self._tile_height
         self._render_width = width * self._tile_width
         self._lin = self._render_height // self._tile_height
         self._col = self._render_width // self._tile_width
-        self._tiles = {
-            0 : {
-                0: self.extracts(0, 0, self._tile_width, self._tile_height),
-                1: self.extracts(self._tile_width, 0, self._tile_width,\
+        self._tiles = [
+            [
+                self.extracts(0, 0, self._tile_width, self._tile_height),
+                self.extracts(self._tile_width, 0, self._tile_width,\
                                             self._tile_height),
-                self._col - 1: self.extracts(self._tile_width * 2, 0,\
+                self.extracts(self._tile_width * 2, 0,\
                                             self._tile_width, self._tile_height),    
-            },
-            1: {
-                0: self.extracts(0, self._tile_height,\
+            ],
+            [
+                self.extracts(0, self._tile_height,\
                                             self._tile_width, self._tile_height),
-                1: self.extracts(self._tile_width, self._tile_height,\
+                self.extracts(self._tile_width, self._tile_height,\
                                             self._tile_width, self._tile_height),
-                self._col - 1: self.extracts(self._tile_width * 2, self._tile_height,\
+                self.extracts(self._tile_width * 2, self._tile_height,\
                                             self._tile_width, self._tile_height),    
-            },
-            self._lin - 1: {
-                0: self.extracts(0, self._tile_height * 2,\
+            ],
+            [
+                self.extracts(0, self._tile_height * 2,\
                                             self._tile_width, self._tile_height),
-                1:  self.extracts(self._tile_width, self._tile_height * 2,\
+                self.extracts(self._tile_width, self._tile_height * 2,\
                                             self._tile_width, self._tile_height),
-                self._col - 1: self.extracts(self._tile_width * 2, self._tile_height * 2,\
-                                            self._tile_width, self._tile_height),    
-            }
-        }
+                self.extracts(self._tile_width * 2, self._tile_height * 2,\
+                                            self._tile_width, self._tile_height),
+            ]
+        ]
         self._image = self.create_image()
         self._width = self._render_width
         self._height = self._render_height
+        self._scale_factor = scale_factor
 
-    def redraw(self, width, height):
-        """Resize the tile."""
-        self._tile_width = self._width // 3
-        self._tile_height = self._height // 3
-        self._render_height = height * self._tile_height
-        self._render_width = width * self._tile_width
-        self._lin = self._render_height // self._tile_height
-        self._col = self._render_width // self._tile_width
-        self._tiles = {
-            0 : {
-                0: self.extracts(0, 0, self._tile_width, self._tile_height),
-                1: self.extracts(self._tile_width, 0, self._tile_width,\
-                                            self._tile_height),
-                self._col - 1: self.extracts(self._tile_width * 2, 0,\
-                                            self._tile_width, self._tile_height),    
-            },
-            1: {
-                0: self.extracts(0, self._tile_height,\
-                                            self._tile_width, self._tile_height),
-                1: self.extracts(self._tile_width, self._tile_height,\
-                                            self._tile_width, self._tile_height),
-                self._col - 1: self.extracts(self._tile_width * 2, self._tile_height,\
-                                            self._tile_width, self._tile_height),    
-            },
-            self._lin - 1: {
-                0: self.extracts(0, self._tile_height * 2,\
-                                            self._tile_width, self._tile_height),
-                1:  self.extracts(self._tile_width, self._tile_height * 2,\
-                                            self._tile_width, self._tile_height),
-                self._col - 1: self.extracts(self._tile_width * 2, self._tile_height * 2,\
-                                            self._tile_width, self._tile_height),    
-            }
-        }
-        self._image = self.create_image()
-        self._width = self._render_width
-        self._height = self._render_height
-        return self
+    @lru_cache(maxsize=32)
+    def duplicate(self, width, height):
+        """Duplicate the tile."""
+        w = width // self._tile_width + 1
+        h = height // self._tile_height + 1
+        return self.create_image(w, h)
 
-    def create_image(self) -> pygame.Surface:
+    def create_image(self, w = None, h = None) -> pygame.Surface:
         """Generates the surface."""
-        sfc = pygame.Surface((self._render_width, self._render_height), pygame.SRCALPHA)
-        for y in range(0, self._lin):
-            for x in range(0, self._col):
-                if y not in self._tiles:
-                    if x not in self._tiles[1]:
-                        sfc.blit(self._tiles[1][1].image,\
-                                    (x * self._tile_width, y * self._tile_height))
-                    else:
-                        sfc.blit(self._tiles[1][x].image,\
-                                    (x * self._tile_width, y * self._tile_height))
-                else:
-                    if x not in self._tiles[y]:
-                        sfc.blit(self._tiles[y][1].image,\
-                                    (x * self._tile_width, y * self._tile_height))
-                    else:
-                        sfc.blit(self._tiles[y][x].image,\
-                                    (x * self._tile_width, y * self._tile_height))
+        if w is None:
+            w = self._col
+        if h is None:
+            h = self._lin
+        rw = self._tile_width * w
+        rh = self._tile_height * h
+        sfc = pygame.Surface((rw, rh), pygame.SRCALPHA)
+        for y in range(0, h):
+            for x in range(0, w):
+                y_sel = min(1, y) if y < h - 1 else 2
+                x_sel = min(1, x) if x < w - 1 else 2
+                sfc.blit(self._tiles[y_sel][x_sel].image,\
+                        (x * self._tile_width, y * self._tile_height))
         return sfc
 
     def get_image(self):

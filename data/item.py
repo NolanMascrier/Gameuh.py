@@ -63,13 +63,11 @@ class Item():
         else:
             self._implicits = implicits
         self._rarity = rarity
-        self._popup = None
-        self._popup_details = None
         self._sealed = False
         self._level = 0
         self._drop_time = 0
-        self.create_popup()
-        self.create_popup_details()
+        self._popup = self.create_popup()
+        self._popup_details = self.create_popup(True)
 
     def on_use(self, target):
         """Uses the item on the creature."""
@@ -138,8 +136,8 @@ class Item():
             self._price += tier * roll * 100
         self._price = int(round(self._price))
         self.genrate_name()
-        self.create_popup()
-        self.create_popup_details()
+        self._popup = self.create_popup()
+        self._popup_details = self.create_popup(True)
 
     def describe_details(self):
         """Returns a detailed text description of the item."""
@@ -153,57 +151,45 @@ class Item():
             text += f"{affx.describe_details()}\n"
         return text
 
-    def create_popup(self):
-        """Creates the popup surface."""
-        affixes = Text(self.describe(), True)
-        text = f"{self._name}\n{trad('rarities', self._rarity)}{self._base}"
-        title = Text(text, True)
-        width = max(affixes.width, title.width) + 20
-        height = affixes.height + title.height + 10
-        sfc = pygame.Surface((width, height), pygame.SRCALPHA)
-        match self._rarity:
-            case 1:
-                sfc.blit(SYSTEM["images"]["ui_magic"].image, (0, 0))
-            case 2:
-                sfc.blit(SYSTEM["images"]["ui_rare"].image, (0, 0))
-            case 3:
-                sfc.blit(SYSTEM["images"]["ui_legendary"].image, (0, 0))
-            case _:
-                sfc.blit(SYSTEM["images"]["ui_normal"].image, (0, 0))
-        sfc.blit(title.surface, (5, 5))
-        if self._rarity > 0 or len(self._implicits) > 0:
-            sfc.blit(SYSTEM["images"]["hoverable"].scale(affixes.height + 5,\
-                                                                width).image,\
-                                                                (0, title.height + 5))
-            sfc.blit(affixes.surface, (5, title.height + 15))
-        self._popup = sfc
-
-    def create_popup_details(self):
+    def create_popup(self, is_details = False):
         """Creates the detailed popup surface."""
-        affixes = Text(self.describe_details(), True, force_x=250)
+        if is_details:
+            affixes = Text(self.describe_details(), True)
+        else:
+            affixes = Text(self.describe(), True)
         text = f"{self._name}\n{trad('rarities', self._rarity)}{self._base}"
-        title = Text(text, True, force_x=affixes.width)
-        sfc = pygame.Surface((affixes.width + 10, affixes.height + title.height + 10),\
-                            pygame.SRCALPHA)
+        title = Text(text)
+        width = max(affixes.width, title.width) + 20
+        if is_details:
+            affixes = Text(self.describe_details(), True, force_x=width)
+        else:
+            affixes = Text(self.describe(), True, force_x=width)
+        title = Text(text, True, force_x=width)
         match self._rarity:
             case 1:
-                sfc.blit(SYSTEM["images"]["ui_magic"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                title_card = SYSTEM["images"]["ui_magic"]\
+                    .duplicate(width, title.height + 10)
             case 2:
-                sfc.blit(SYSTEM["images"]["ui_rare"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                title_card = SYSTEM["images"]["ui_rare"]\
+                    .duplicate(width, title.height + 10)
             case 3:
-                sfc.blit(SYSTEM["images"]["ui_legendary"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
+                title_card = SYSTEM["images"]["ui_legendary"]\
+                    .duplicate(width, title.height + 10)
+            case 4:
+                title_card = SYSTEM["images"]["ui_unique"]\
+                    .duplicate(width, title.height + 10)
             case _:
-                sfc.blit(SYSTEM["images"]["ui_normal"].clone()\
-                    .scale(title.height + 10, title.width + 10).image, (0, 0))
-        sfc.blit(title.surface, (5, 5))
-        sfc.blit(SYSTEM["images"]["hoverable"].clone().scale(affixes.height,\
-                                                                affixes.width + 10).image,\
-                                                                (0, title.height + 10))
-        sfc.blit(affixes.surface, (5, title.height + 20))
-        self._popup_details = sfc
+                title_card = SYSTEM["images"]["ui_normal"]\
+                    .duplicate(width, title.height + 10)
+        affix_card = SYSTEM["images"]["item_desc"].duplicate(width, affixes.height)
+        sfc = pygame.Surface((title_card.get_width(), title_card.get_height()\
+                                + affix_card.get_height()), pygame.SRCALPHA)
+        sfc.blit(title_card, (0, 0))
+        sfc.blit(title.surface, (5, 10))
+        if is_details or self._rarity > 0:
+            sfc.blit(affix_card, (0, title_card.get_height()))
+            sfc.blit(affixes.surface, (5, title_card.get_height() + 20))
+        return sfc
 
     def __get_gear_flags(self):
         """Returns which gear flag the item uses."""
