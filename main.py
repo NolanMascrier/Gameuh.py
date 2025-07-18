@@ -213,6 +213,7 @@ def init_game():
     SYSTEM["images"]["supra_moolah"] = Image("grail.png").scale(64, 64)
     SYSTEM["images"]["maxi_moolah"] = Image("maxigrail.png").scale(64, 64)
     SYSTEM["images"]["gold_icon"] = Image("thune.png")
+    SYSTEM["images"]["line_break"] = Image("exp.png").scale(32, 128)
     SYSTEM["images"]["mission_map"] = Image("mission.png")
     SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000, contains=SYSTEM["images"]["mission_map"].image)
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")

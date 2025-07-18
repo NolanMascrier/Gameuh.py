@@ -153,42 +153,41 @@ class Item():
 
     def create_popup(self, is_details = False):
         """Creates the detailed popup surface."""
-        if is_details:
-            affixes = Text(self.describe_details(), True)
-        else:
-            affixes = Text(self.describe(), True)
-        text = f"{self._name}\n{trad('rarities', self._rarity)}{self._base}"
-        title = Text(text)
+        method = self.describe_details if is_details else self.describe
+        affixes = Text(method(), True, font="item_desc")
+        text = f"{self._name}\n#s#(24)#c#(128, 128, 128){trad('rarities', self._rarity)}{self._base}"
+        title = Text(text, size=30, bold=True, font="item_titles")
         width = max(affixes.width, title.width) + 20
-        if is_details:
-            affixes = Text(self.describe_details(), True, force_x=width)
-        else:
-            affixes = Text(self.describe(), True, force_x=width)
-        title = Text(text, True, force_x=width)
+        affixes = Text(method(), True, force_x=width, font="item_desc")
+        title = Text(text, True, force_x=width, size=30, bold=True, font="item_titles")
         match self._rarity:
             case 1:
                 title_card = SYSTEM["images"]["ui_magic"]\
-                    .duplicate(width, title.height + 10)
+                    .duplicate(width, 48)
             case 2:
                 title_card = SYSTEM["images"]["ui_rare"]\
-                    .duplicate(width, title.height + 10)
+                    .duplicate(width, 48)
             case 3:
                 title_card = SYSTEM["images"]["ui_legendary"]\
-                    .duplicate(width, title.height + 10)
+                    .duplicate(width, 48)
             case 4:
                 title_card = SYSTEM["images"]["ui_unique"]\
-                    .duplicate(width, title.height + 10)
+                    .duplicate(width, 48)
             case _:
                 title_card = SYSTEM["images"]["ui_normal"]\
-                    .duplicate(width, title.height + 10)
+                    .duplicate(width, 48)
         affix_card = SYSTEM["images"]["item_desc"].duplicate(width, affixes.height)
         sfc = pygame.Surface((title_card.get_width(), title_card.get_height()\
                                 + affix_card.get_height()), pygame.SRCALPHA)
+        title_pos = (title_card.get_width() / 2 - title.width / 2,
+                     title_card.get_height() / 2 - title.height / 2)
+        affix_pos = (affix_card.get_width() / 2 - affixes.width / 2,
+                     affix_card.get_height() / 2 - affixes.height / 2)
         sfc.blit(title_card, (0, 0))
-        sfc.blit(title.surface, (5, 10))
+        sfc.blit(title.surface, title_pos)
         if is_details or self._rarity > 0:
+            affix_card.blit(affixes.surface, affix_pos)
             sfc.blit(affix_card, (0, title_card.get_height()))
-            sfc.blit(affixes.surface, (5, title_card.get_height() + 20))
         return sfc
 
     def __get_gear_flags(self):

@@ -1,7 +1,11 @@
 """To render text with more options than basic pygame"""
 
 import pygame
+import re
 from data.constants import SYSTEM, RESSOURCES
+
+MARKER_REGEX = re.compile(r"#([a-z])#\((.*?)\)")
+
 
 class Text():
     """Reads a text in str form to create a pygame surface
@@ -21,36 +25,58 @@ class Text():
     def __init__(self, text: str, centered = False,\
                 font = "tiny", force_x = -1, force_y = -1,\
                 size = 20, bold = False, italic = False):
+        style = {"color": (255, 255, 255), "size": size, "bold": bold, "italic": italic}
         self._data = []
         self._surfaces = []
+        self._styles = []
         self._centered = centered
         self._surface = None
         self._width = 0
         self._height = 0
         self._font = pygame.freetype.Font(f'{RESSOURCES}/fonts/{font}.ttf', size)
-        if bold:
-            self._font.strong = True
         data = text.split('\n')
         #Creates the list
-        buffer = [t.split('#c') for t in data]
-        for tab in buffer:
-            cell_buffer = []
-            for cell in tab:
-                if cell[0:2] == "#(":
-                    index = cell.find(")")
-                    colors = tuple(map(int, cell[2:index].split(",")))
-                    value = cell[index + 1:]
-                else:
-                    colors = (255, 255, 255)
-                    value = cell
-                cell_buffer.append((colors, value))
-            self._data.append(cell_buffer)
+        for line in data:
+            pos = 0
+            style_buff = style.copy()
+            styled_line = []
+            while pos < len(line):
+                match = MARKER_REGEX.search(line, pos)
+                if match is None:
+                    if pos < len(line):
+                        styled_line.append((style_buff.copy(), line[pos:]))
+                    break
+                start, end = match.span()
+                if start > pos:
+                    styled_line.append((style_buff.copy(), line[pos:start]))
+                key, value = match.groups()
+                match key:
+                    case 'c':
+                        style_buff["color"] = tuple(map(int, value.split(',')))
+                    case 's':
+                        style_buff["size"] = int(value)
+                    case 'b':
+                        style_buff["bold"] = value == "1"
+                    case 'i':
+                        style_buff["italic"] = value == "1"
+                pos = end
+            if len(styled_line) == 0:
+                continue
+            self._data.append(styled_line)
         #Generating the surfaces
         for tab in self._data:
             cell_buffer = []
             for cell in tab:
-                sfc, _ = self._font.render(\
-                    f'{cell[1]}', fgcolor=cell[0])
+                style_buff, text_buff = cell
+                flags = 0
+                if style["bold"]:
+                    flags |= pygame.freetype.STYLE_STRONG
+                if style["italic"]:
+                    flags |= pygame.freetype.STYLE_OBLIQUE
+                font_buff = pygame.freetype.Font(f'{RESSOURCES}/fonts/{font}.ttf',\
+                    style_buff["size"])
+                sfc, _ = font_buff.render(\
+                    f'{text_buff}', fgcolor=style_buff["color"], style=flags)
                 cell_buffer.append(sfc)
             self._surfaces.append(cell_buffer)
         self.generate_surface(force_x, force_y)
