@@ -3,6 +3,8 @@
 import random
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
+from data.constants import trad
+from data.image.hoverable import Hoverable
 
 class RangeStat():
     """Defines a range stat.
@@ -78,12 +80,27 @@ class RangeStat():
         self._upper.scale(level)
         self._lower.scale(level)
 
+    def describe(self, is_percentage = True):
+        """Describe the stat as a surface."""
+        is_percentage = not is_percentage
+        name = f"{trad('descripts', self._name)}: "
+        name_hover = Hoverable(0, 0, name, trad(self._name))
+        value = f"{round(self.get_value()[0])}-{round(self.get_value()[1])}"
+        desc = f"{trad('meta_words', 'base')}: {self._lower.value}-{self._upper.value}\n" +\
+            f"{trad('meta_words', 'flat')}: " +\
+                f"{self._lower.get_flats()}-{self._upper.get_flats()}\n" +\
+            f"{trad('meta_words', 'increase')}: " +\
+                f"{self._lower.get_increases() * 100}-{self._upper.get_increases() * 100}%\n" +\
+            f"{trad('meta_words', 'mult')}: " +\
+                f"{self._lower.get_multipliers() * 100}-{self._upper.get_multipliers() * 100}%\n"
+        value_hover = Hoverable(0, 0, value, desc)
+        return name_hover, value_hover
+
     def roll(self):
         """Rolls a random value between the upper and the lower
         bounds."""
         roll = random.uniform(self._lower.get_value(),\
                               self._upper.get_value())
-        
         return roll
 
     def reset(self):

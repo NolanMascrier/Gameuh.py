@@ -6,7 +6,8 @@ The actual initial value should only be increased through level up, as it's gonn
 definitive."""
 
 from data.numerics.affliction import Affliction
-from data.constants import Flags
+from data.constants import Flags, trad
+from data.image.hoverable import Hoverable
 
 class Stat:
     """Initialize the stat.
@@ -38,21 +39,36 @@ class Stat:
         self._mult_scaling = mult_scaling
         self._round = int(precision)
 
+    def get_flats(self):
+        """Returns the sum of the flat values"""
+        final_flats = 0
+        for flats in self._flats:
+            final_flats += flats.value
+        return final_flats
+
+    def get_multipliers(self):
+        """Returns the product of the mult values"""
+        final_mults = 1
+        for multiplier in self._mults:
+            final_mults *= 1 + multiplier.value
+        return final_mults
+
+    def get_increases(self):
+        """Returns the sum of the increases."""
+        final_incr = 0
+        for increase in self._incr:
+            final_incr += increase.value
+        return final_incr
+
     def get_value(self):
         """Returns the computed final value of the stat.
         
         Returns:
             float: value of the stat with computed increases \
             and multipliers."""
-        final_mults = 1
-        final_incr = 0
-        final_flats = 0
-        for flats in self._flats:
-            final_flats += flats.value
-        for multiplier in self._mults:
-            final_mults *= 1 + multiplier.value
-        for increase in self._incr:
-            final_incr += increase.value
+        final_incr = self.get_increases()
+        final_flats = self.get_flats()
+        final_mults = self.get_multipliers()
         final_value = round((self._value + final_flats) *\
                             (1 + final_incr) * final_mults, self._round)
         if self._cap[0] is not None:
@@ -136,6 +152,25 @@ class Stat:
             self._value *= self._scaling_value * level
         else:
             self._value += self._scaling_value * level
+
+    def describe(self, is_percentage = True):
+        """Describe the stat as a surface."""
+        name = f"{trad('descripts', self.name)}: "
+        name_hover = Hoverable(0, 0, name, trad(self.name))
+        if is_percentage:
+            value = f"{round(self.get_value() * 100)}%"
+            desc = f"{trad('meta_words', 'base')}: {self._value * 100}%\n" +\
+                f"{trad('meta_words', 'flat')}: {self.get_flats() * 100}%\n" +\
+                f"{trad('meta_words', 'increase')}: {self.get_increases() * 100}%\n" +\
+                f"{trad('meta_words', 'mult')}: {self.get_multipliers() * 100}%\n"
+        else:
+            value = f"{round(self.get_value())}"
+            desc = f"{trad('meta_words', 'base')}: {self._value}\n" +\
+                f"{trad('meta_words', 'flat')}: {self.get_flats()}\n" +\
+                f"{trad('meta_words', 'increase')}: {self.get_increases() * 100}%\n" +\
+                f"{trad('meta_words', 'mult')}: {self.get_multipliers() * 100}%\n"
+        value_hover = Hoverable(0, 0, value, desc)
+        return name_hover, value_hover
 
     def export(self):
         """Exports the stat data as a JSON list.

@@ -6,7 +6,8 @@ each tick. It can also have increases and multipliers."""
 
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
-from data.constants import Flags
+from data.constants import Flags, trad
+from data.image.hoverable import Hoverable
 
 class Ressource(Stat):
     """Defines a ressource. A ressource has a maximum \
@@ -127,6 +128,27 @@ class Ressource(Stat):
         self._buffs.clear()
         self._buffs_multi.clear()
         self.refill()
+
+    def describe(self, is_percentage = True):
+        """Describe the stat as a surface."""
+        name = f"{trad('descripts', self.name)}: "
+        name_hover = Hoverable(0, 0, name, trad(self.name))
+        refresh = f"{trad('meta_words', 'refresh')}:" +\
+            f"{self.get_value() * self._rate.get_value()}/s"
+        if is_percentage:
+            value = f"{round(self.get_value() * 100)}%, {refresh}"
+            desc = f"{trad('meta_words', 'base')}: {self._value * 100}%\n" +\
+                f"{trad('meta_words', 'flat')}: {self.get_flats() * 100}%\n" +\
+                f"{trad('meta_words', 'increase')}: {self.get_increases() * 100}%\n" +\
+                f"{trad('meta_words', 'mult')}: {self.get_multipliers() * 100}%\n"
+        else:
+            value = f"{round(self.get_value())}, {refresh}"
+            desc = f"{trad('meta_words', 'base')}: {self._value}\n" +\
+                f"{trad('meta_words', 'flat')}: {self.get_flats()}\n" +\
+                f"{trad('meta_words', 'increase')}: {self.get_increases() * 100}%\n" +\
+                f"{trad('meta_words', 'mult')}: {self.get_multipliers() * 100}%\n"
+        value_hover = Hoverable(0, 0, value, desc)
+        return name_hover, value_hover
 
     @property
     def current_value(self) -> float:

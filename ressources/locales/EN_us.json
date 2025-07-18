@@ -148,6 +148,8 @@
         "Void damage is often #c#(71, 0, 125)black and purple #c#(255, 255, 255)in color. It disrupts",
         "the very laws of the universe."
     ],
+    "estimate_armor": "This value cannot go beyond 80%.",
+    "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "buttons":{
         "map": "World map",
         "gear": "Gear",
@@ -168,7 +170,12 @@
         "decreased": "decreased",
         "remove":"Removes",
         "adds": "Adds",
-        "to": "to"
+        "to": "to",
+        "base": "Base",
+        "flat": "Flat bonus",
+        "increase": "Increases",
+        "mult": "Multiplier",
+        "refresh": "Regeneration"
     },
     "descripts": {
         "life": "Life",
@@ -232,7 +239,9 @@
         "all_resistances": "All resistances",
         "elemental_resistances": "Elemental resistances",
         "armor_mind_over_matter": "Lesser Spirit Shield",
-        "crit_res": "Critical damage resistance"
+        "crit_res": "Critical damage resistance",
+        "estimate_armor": "Damage reduction",
+        "estimate_dodge": "Dodge chance:"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"

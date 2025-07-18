@@ -155,7 +155,8 @@ class Item():
         """Creates the detailed popup surface."""
         method = self.describe_details if is_details else self.describe
         affixes = Text(method(), True, font="item_desc")
-        text = f"{self._name}\n#s#(24)#c#(128, 128, 128){trad('rarities', self._rarity)}{self._base}"
+        text = f"{self._name}\n#s#(24)#c#(128, 128, 128)" +\
+            f"{trad('rarities', self._rarity)}{self._base}"
         title = Text(text, size=30, bold=True, font="item_titles")
         width = max(affixes.width, title.width) + 20
         affixes = Text(method(), True, force_x=width, font="item_desc")

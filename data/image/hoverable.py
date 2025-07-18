@@ -15,9 +15,13 @@ class Hoverable():
         if text is None:
             self._text = None
         else:
-            self._text = Text('\n'.join(text), font="font_detail")
+            if isinstance(text, str):
+                text = [text]
+            self._text = Text('\n'.join(text), font="item_desc")
         if hoverable_text is not None:
-            self._hoverable = Text('\n'.join(hoverable_text), font="font_detail")
+            if isinstance(hoverable_text, str):
+                hoverable_text = [hoverable_text]
+            self._hoverable = Text('\n'.join(hoverable_text), font="item_desc")
         else:
             self._hoverable = None
         self._attach = surface
@@ -54,7 +58,7 @@ class Hoverable():
         """Checks whether or not the mouse is within the hoverable's\
         area, and displays the text if it does."""
         if self._text is not None:
-            txt = self._text.get_size()
+            txt = self._text.width, self._text.height
         elif self._attach is not None:
             txt = self._attach.get_size()
         else:
@@ -74,4 +78,14 @@ class Hoverable():
 
     def draw(self, surface):
         """Draws the text to the window."""
-        surface.blit(self._text, (self._x, self._y))
+        surface.blit(self._text.surface, (self._x, self._y))
+
+    @property
+    def height(self):
+        """Returns the height of the hoverable surface."""
+        return self._text.height
+
+    @property
+    def width(self):
+        """Returns the width of the hoverable surface."""
+        return self._text.width

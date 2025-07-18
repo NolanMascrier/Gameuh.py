@@ -12,6 +12,9 @@ from data.constants import Flags, SYSTEM, trad
 from data.item import Item
 from data.image.hoverable import Hoverable
 
+NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",\
+    "proj_quantity", "dodge_rating"]
+
 class Creature:
     """Defines a creature. A creature can be interacted with\
     and attacked.
@@ -26,74 +29,74 @@ class Creature:
         life_regen = Stat(0, "life_regen")
         mana_regen = Stat(0.001, "life_regen", precision=4)
         self._stats = {
-            "life": Ressource(90, "Life", life_regen),
-            "mana": Ressource(40, "Mana", mana_regen),
+            "life": Ressource(90, "life", life_regen),
+            "mana": Ressource(40, "mana", mana_regen),
 
             "life_regen": life_regen,
             "mana_regen": mana_regen,
 
-            "str": Stat(10, "Strength"),
-            "dex": Stat(10, "Dexterity"),
-            "int": Stat(10, "Intelligence"),
-            "def": Stat(0, "Endurance"),
+            "str": Stat(10, "str"),
+            "dex": Stat(10, "dex"),
+            "int": Stat(10, "int"),
+            "def": Stat(0, "def"),
             "add_def": Stat(0, "add_def"),
 
-            "exp_mult": Stat(1, "Exp Multiplier"),
-            "abs_def": Stat(0, "Absolute Defense", scaling_value=0.001),
-            "heal_factor": Stat(1, "Healing Effectivness"),
-            "mana_efficiency": Stat(1, "Mana Efficiency", 1.95, 0.05, 0),
-            "crit_rate": Stat(0.05, "Crit rate", 1, 0, scaling_value=0.001),
-            "crit_dmg": Stat(1.5, "Crit Damage", scaling_value=0.02),
-            "item_quant": Stat(0, "Item Quantity"),
-            "item_qual": Stat(0, "Item Rarity"),
-            "speed": Stat(1, "Move Speed", scaling_value=0.001),
-            "cast_speed": Stat(1, "Cast Speed", scaling_value=0.001),
+            "exp_mult": Stat(1, "exp_mult"),
+            "abs_def": Stat(0, "abs_def", scaling_value=0.001),
+            "heal_factor": Stat(1, "heal_factor"),
+            "mana_efficiency": Stat(1, "mana_efficiency", 1.95, 0.05, 0),
+            "crit_rate": Stat(0.05, "crit_rate", 1, 0, scaling_value=0.001),
+            "crit_dmg": Stat(1.5, "crit_dmg", scaling_value=0.02),
+            "item_quant": Stat(0, "item_quant"),
+            "item_qual": Stat(0, "item_qual"),
+            "speed": Stat(1, "speed", scaling_value=0.001),
+            "cast_speed": Stat(1, "cast_speed", scaling_value=0.001),
 
             "proj_quant": Stat(1, "proj_quant", scaling_value=0),
             "proj_speed": Stat(1, "proj_speed", scaling_value=0.001),
             "chains": Stat(0, "chains", scaling_value=0),
 
-            "melee_dmg": Stat(1, "Melee Damage", scaling_value=0.01),
-            "spell_dmg": Stat(1, "Spell Damage", scaling_value=0.01),
-            "ranged_dmg": Stat(1, "Ranged Damage", scaling_value=0.01),
+            "melee_dmg": Stat(1, "melee_dmg", scaling_value=0.01),
+            "spell_dmg": Stat(1, "spell_dmg", scaling_value=0.01),
+            "ranged_dmg": Stat(1, "ranged_dmg", scaling_value=0.01),
 
             "precision": Stat(1, "precision", scaling_value=0.01, min_cap=0),
             "block": Stat(0, "block", scaling_value=0, min_cap=0, max_cap=0.9),
             "dodge_rating": Stat(0, "dodge_rating", scaling_value=0, min_cap=0),
             "dodge": Stat(0, "dodge", scaling_value=0, min_cap=0, max_cap=0.95),
 
-            "phys": Stat(0, "Physical resistance", 0.9, -2, scaling_value=0.005),
-            "fire": Stat(0, "Fire resistance", 0.9, -2, scaling_value=0.005),
-            "ice": Stat(0, "Ice resistance", 0.9, -2, scaling_value=0.005),
-            "elec": Stat(0, "Electric resistance", 0.9, -2, scaling_value=0.005),
-            "energy": Stat(0, "Energy resistance", 0.9, -2, scaling_value=0.005),
-            "light": Stat(0, "Light resistance", 0.9, -2, scaling_value=0.005),
-            "dark": Stat(0, "Dark resistance", 0.9, -2, scaling_value=0.005),
-            "crit_res": Stat(0, "Crit res", 1, 0, scaling_value=0),
+            "phys": Stat(0, "phys", 0.9, -2, scaling_value=0.005),
+            "fire": Stat(0, "fire", 0.9, -2, scaling_value=0.005),
+            "ice": Stat(0, "ice", 0.9, -2, scaling_value=0.005),
+            "elec": Stat(0, "elec", 0.9, -2, scaling_value=0.005),
+            "energy": Stat(0, "energy", 0.9, -2, scaling_value=0.005),
+            "light": Stat(0, "light", 0.9, -2, scaling_value=0.005),
+            "dark": Stat(0, "dark", 0.9, -2, scaling_value=0.005),
+            "crit_res": Stat(0, "crit_res", 1, 0, scaling_value=0),
 
-            "phys_flat": RangeStat(0, 0, "Physical damage", scaling_value=0.05),
-            "fire_flat": RangeStat(0, 0, "Fire damage", scaling_value=0.05),
-            "ice_flat": RangeStat(0, 0, "Ice damage", scaling_value=0.05),
-            "elec_flat": RangeStat(0, 0, "Electric damage", scaling_value=0.05),
-            "energy_flat": RangeStat(0, 0, "Energy damage", scaling_value=0.05),
-            "light_flat": RangeStat(0, 0, "Light damage", scaling_value=0.05),
-            "dark_flat": RangeStat(0, 0, "Dark damage", scaling_value=0.05),
+            "phys_flat": RangeStat(0, 0, "phys_flat", scaling_value=0.05),
+            "fire_flat": RangeStat(0, 0, "fire_flat", scaling_value=0.05),
+            "ice_flat": RangeStat(0, 0, "ice_flat", scaling_value=0.05),
+            "elec_flat": RangeStat(0, 0, "elec_flat", scaling_value=0.05),
+            "energy_flat": RangeStat(0, 0, "energy_flat", scaling_value=0.05),
+            "light_flat": RangeStat(0, 0, "light_flat", scaling_value=0.05),
+            "dark_flat": RangeStat(0, 0, "dark_flat", scaling_value=0.05),
 
-            "phys_dmg": Stat(1, "Physical damage", scaling_value=0.05),
-            "fire_dmg": Stat(1, "Fire damage", scaling_value=0.05),
-            "ice_dmg": Stat(1, "Ice damage", scaling_value=0.05),
-            "elec_dmg": Stat(1, "Electric damage", scaling_value=0.05),
-            "energy_dmg": Stat(1, "Energy damage", scaling_value=0.05),
-            "light_dmg": Stat(1, "Light damage", scaling_value=0.05),
-            "dark_dmg": Stat(1, "Dark damage", scaling_value=0.05),
+            "phys_dmg": Stat(1, "phys_dmg", scaling_value=0.05),
+            "fire_dmg": Stat(1, "fire_dmg", scaling_value=0.05),
+            "ice_dmg": Stat(1, "ice_dmg", scaling_value=0.05),
+            "elec_dmg": Stat(1, "elec_dmg", scaling_value=0.05),
+            "energy_dmg": Stat(1, "energy_dmg", scaling_value=0.05),
+            "light_dmg": Stat(1, "light_dmg", scaling_value=0.05),
+            "dark_dmg": Stat(1, "dark_dmg", scaling_value=0.05),
 
-            "phys_pen": Stat(0, "Physical resistance penetration", 2, 0, scaling_value=0.01),
-            "fire_pen": Stat(0, "Fire resistance penetration", 2, 0, scaling_value=0.01),
-            "ice_pen": Stat(0, "Ice resistance penetration", 2, 0, scaling_value=0.01),
-            "elec_pen": Stat(0, "Electric resistance penetration", 2, 0, scaling_value=0.01),
-            "energy_pen": Stat(0, "Energy resistance penetration", 2, 0, scaling_value=0.01),
-            "light_pen": Stat(0, "Light resistance penetration", 2, 0, scaling_value=0.01),
-            "dark_pen": Stat(0, "Dark resistance penetration", 2, 0, scaling_value=0.01)
+            "phys_pen": Stat(0, "phys_pen", 2, 0, scaling_value=0.01),
+            "fire_pen": Stat(0, "fire_pen", 2, 0, scaling_value=0.01),
+            "ice_pen": Stat(0, "ice_pen", 2, 0, scaling_value=0.01),
+            "elec_pen": Stat(0, "elec_pen", 2, 0, scaling_value=0.01),
+            "energy_pen": Stat(0, "energy_pen", 2, 0, scaling_value=0.01),
+            "light_pen": Stat(0, "light_pen", 2, 0, scaling_value=0.01),
+            "dark_pen": Stat(0, "dark_pen", 2, 0, scaling_value=0.01)
         }
         self._gear = {
             "helms": None,
@@ -297,12 +300,8 @@ class Creature:
         value = base * self._stats["mana_efficiency"].get_value()
         return value
 
-    def afflict(self, affliction: Affliction):
-        """Afflicts the creature with an affliction.
-        
-        Args:
-            affliction (Affliction): Affliction to afflict.
-        """
+    def __apply_afflict(self, affliction: Affliction):
+        """Applies the affliction."""
         for flag in affliction.flags:
             stat_key = flag.value
             if stat_key in self._stats:
@@ -339,6 +338,18 @@ class Creature:
                     self._buffs[i] = affliction
                     return
             self._buffs.append(affliction)
+
+    def afflict(self, affliction):
+        """Afflicts the creature with an affliction.
+        
+        Args:
+            affliction (Affliction): Affliction to afflict.
+        """
+        if isinstance(affliction, tuple):
+            for a in affliction:
+                self.__apply_afflict(a)
+        elif isinstance(affliction, Affliction):
+            self.__apply_afflict(affliction)
 
     def remove_affliction(self, affliction: Affliction):
         """Removes an affliction from the character.
@@ -473,6 +484,19 @@ class Creature:
     def generate_stat_details(self, x, y):
         """Generates a detailed report of the creature's data."""
         lines = []
+        coeff = 0
+        for s in self._stats:
+            name, value = self._stats[s].describe(s not in NOT_PERCENT)
+            name.set(x, y + coeff)
+            value.set(x + name.width, y + coeff)
+            coeff += max(name.height, value.height) + 5
+            lines.extend([name, value])
+            if s == "def":
+                text = f"{trad('descripts', 'estimate_armor')}: " +\
+                    f"{round(self.__get_armor_mitigation() * 100)}%"
+                addition = Hoverable(x, y + coeff, text, trad('estimate_armor'))
+                coeff += addition.height + 5
+                lines.append(addition)
         return lines
 
     def reset(self):
