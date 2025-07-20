@@ -99,7 +99,7 @@ class Button():
     def press(self):
         """Checks if the mouse is clicking on the button.
         If it is, executes the action."""
-        if self.mouse_inside():
+        if self.mouse_inside() and self._action is not None:
             if SYSTEM["cooldown"] > 0:
                 return
             self._action()
@@ -134,3 +134,10 @@ class Button():
     @action.setter
     def action(self, value):
         self._action = value
+
+    @property
+    def image(self):
+        """Returns the image."""
+        if self._pressed and self._pressed is not None:
+            return self._pressed
+        return self._image

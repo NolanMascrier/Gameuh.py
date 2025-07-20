@@ -153,9 +153,12 @@ class Stat:
         else:
             self._value += self._scaling_value * level
 
-    def describe(self, is_percentage = True):
+    def describe(self, is_percentage = True, is_tab = False):
         """Describe the stat as a surface."""
-        name = f"{trad('descripts', self.name)}: "
+        if is_tab:
+            name = f"{trad('descripts', f'{self.name}_tab')}: "
+        else:
+            name = f"{trad('descripts', self.name)}: "
         name_hover = Hoverable(0, 0, name, trad(self.name))
         if is_percentage:
             value = f"{round(self.get_value() * 100)}%"

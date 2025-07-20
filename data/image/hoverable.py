@@ -75,6 +75,7 @@ class Hoverable():
             w = sfc.get_width()
             h = sfc.get_height()
             SYSTEM["pop_up"] = (sfc, w, h)
+        return self
 
     def draw(self, surface):
         """Draws the text to the window."""

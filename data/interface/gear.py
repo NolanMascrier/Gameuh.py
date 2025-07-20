@@ -5,8 +5,17 @@ from data.constants import SYSTEM, MENU_GEAR, Flags, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.image.slotpanel import SlotPanel
 from data.item import Item
 from data.image.slot import Slot
+from data.image.tabs import Tabs
 
-STAT_LIST = []
+STAT_LIST = {}
+DEFAULT_STATS = ["life", "mana", "int", "str", "dex"]
+DEFENSE_STATS = ["def", "abs_def", "block", "dodge_rating", "crit_res"\
+    "phys", "fire", "ice", "elec", "energy", "light", "dark", "heal_factor"]
+OFFENSE_STATS = ["crit_rate", "crit_dmg", "mana_efficiency", "cast_speed",
+    "melee_dmg", "spell_dmg", "ranged_dmg", "precision", "phys_dmg", "fire_dmg",
+    "ice_dmg", "elec_dmg", "energy_dmg", "light_dmg", "dark_dmg"]
+OTHER_STATS = ["exp_mult", "item_quant", "item_qual", "speed", "proj_quant", "proj_speed", "chains"]
+STATES = ["defenses", "damages", "other"]
 
 def equip(item: Item, slot: Slot):
     """Equips an item on the player character."""
@@ -18,8 +27,9 @@ def equip(item: Item, slot: Slot):
     else:
         SYSTEM["player"].creature.equip(slot.flag, item, slot.left)
         SYSTEM["player"].inventory.remove(item)
-    STAT_LIST.clear()
-    STAT_LIST.extend(SYSTEM["player"].creature.generate_stat_details(20, 20))
+    lst = SYSTEM["player"].creature.generate_stat_details(20, 20)
+    for f in lst:
+        STAT_LIST[f] = lst[f]
 
 def unequip(item: Item, slot: Slot):
     """Removes the equiped item from the slot."""
@@ -31,6 +41,8 @@ def unequip(item: Item, slot: Slot):
 def open_gear_screen():
     """Sets up the gear screen."""
     SYSTEM["game_state"] = MENU_GEAR
+    SYSTEM["gear_tab"] = STATES[0]
+    SYSTEM["gear_tabs"] = Tabs(15, 200, STATES, STATES, "gear_tab")
     x = SCREEN_WIDTH / 2- 32
     y = SCREEN_HEIGHT / 2 - 128
     SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip,\
@@ -61,8 +73,9 @@ def open_gear_screen():
             if Flags.GEAR in item.flags:
                 data.append(item)
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
-    STAT_LIST.clear()
-    STAT_LIST.extend(SYSTEM["player"].creature.generate_stat_details(20, 20))
+    lst = SYSTEM["player"].creature.generate_stat_details(20, 20)
+    for f in lst:
+        STAT_LIST[f] = lst[f]
 
 def draw_gear(events):
     """Draws the gear menu."""
@@ -85,7 +98,40 @@ def draw_gear(events):
     x = 10
     y = 10
     SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (x, y))
-    for l in STAT_LIST:
-        l.draw(SYSTEM["windows"])
-        l.tick()
+    SYSTEM["gear_tabs"].tick()
+    y_offset = 0
+    y_offset_tab = 220
+    for l, line in STAT_LIST.items():
+        if l in DEFAULT_STATS:
+            x_offset = 20
+            count = 0
+            for data in line:
+                if count >= 2:
+                    count = 0
+                    y_offset += 20
+                    x_offset = 20
+                if data is None:
+                    count += 1
+                    continue
+                data.set(x_offset, 20 + y_offset).tick().draw(SYSTEM["windows"])
+                count += 1
+                x_offset += data.width
+            y_offset += 20
+        if (SYSTEM["gear_tab"] == STATES[0] and l in DEFENSE_STATS) or\
+            (SYSTEM["gear_tab"] == STATES[1] and l in OFFENSE_STATS) or\
+            (SYSTEM["gear_tab"] == STATES[2] and l in OTHER_STATS):
+            x_offset = 20
+            count = 0
+            for data in line:
+                if count >= 2:
+                    count = 0
+                    y_offset_tab += 20
+                    x_offset = 20
+                if data is None:
+                    count += 1
+                    continue
+                data.set(x_offset, 20 + y_offset_tab).tick().draw(SYSTEM["windows"])
+                x_offset += data.width
+                count += 1
+            y_offset_tab += 20
     draw_bottom_bar(events)

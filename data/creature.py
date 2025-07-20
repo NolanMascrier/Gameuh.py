@@ -13,7 +13,12 @@ from data.item import Item
 from data.image.hoverable import Hoverable
 
 NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",\
-    "proj_quantity", "dodge_rating"]
+    "proj_quantity", "dodge_rating", "precision", "abs_def"]
+IGNORE_STAT = ["fire_flat", "fire_pen", "phys_flat", "phys_pen",
+    "ice_flat", "ice_pen", "elec_flat", "elec_pen", "energy_flat", "energy_pen"
+    "light_flat", "light_pen", "dark_flat", "dark_pen"]
+DAMAGE_STAT = ["fire_dmg", "phys_dmg", "ice_dmg", "elec_dmg", "energy_dmg",
+    "light_dmg", "dark_dmg"]
 
 class Creature:
     """Defines a creature. A creature can be interacted with\
@@ -43,10 +48,10 @@ class Creature:
 
             "exp_mult": Stat(1, "exp_mult"),
             "abs_def": Stat(0, "abs_def", scaling_value=0.001),
-            "heal_factor": Stat(1, "heal_factor"),
-            "mana_efficiency": Stat(1, "mana_efficiency", 1.95, 0.05, 0),
             "crit_rate": Stat(0.05, "crit_rate", 1, 0, scaling_value=0.001),
             "crit_dmg": Stat(1.5, "crit_dmg", scaling_value=0.02),
+            "heal_factor": Stat(1, "heal_factor"),
+            "mana_efficiency": Stat(1, "mana_efficiency", 1.95, 0.05, 0),
             "item_quant": Stat(0, "item_quant"),
             "item_qual": Stat(0, "item_qual"),
             "speed": Stat(1, "speed", scaling_value=0.001),
@@ -60,10 +65,11 @@ class Creature:
             "spell_dmg": Stat(1, "spell_dmg", scaling_value=0.01),
             "ranged_dmg": Stat(1, "ranged_dmg", scaling_value=0.01),
 
-            "precision": Stat(1, "precision", scaling_value=0.01, min_cap=0),
+            "precision": Stat(0, "precision", scaling_value=0.01, min_cap=0),
             "block": Stat(0, "block", scaling_value=0, min_cap=0, max_cap=0.9),
             "dodge_rating": Stat(0, "dodge_rating", scaling_value=0, min_cap=0),
             "dodge": Stat(0, "dodge", scaling_value=0, min_cap=0, max_cap=0.95),
+            "crit_res": Stat(0, "crit_res", 1, 0, scaling_value=0),
 
             "phys": Stat(0, "phys", 0.9, -2, scaling_value=0.005),
             "fire": Stat(0, "fire", 0.9, -2, scaling_value=0.005),
@@ -72,7 +78,6 @@ class Creature:
             "energy": Stat(0, "energy", 0.9, -2, scaling_value=0.005),
             "light": Stat(0, "light", 0.9, -2, scaling_value=0.005),
             "dark": Stat(0, "dark", 0.9, -2, scaling_value=0.005),
-            "crit_res": Stat(0, "crit_res", 1, 0, scaling_value=0),
 
             "phys_flat": RangeStat(0, 0, "phys_flat", scaling_value=0.05),
             "fire_flat": RangeStat(0, 0, "fire_flat", scaling_value=0.05),
@@ -483,20 +488,30 @@ class Creature:
 
     def generate_stat_details(self, x, y):
         """Generates a detailed report of the creature's data."""
-        lines = []
-        coeff = 0
+        lines = {}
         for s in self._stats:
+            if s in IGNORE_STAT:
+                continue
+            if s in DAMAGE_STAT:
+                elmt = s[:len(s) - 4]
+                name = Hoverable(0, 0, trad('descripts', f"{elmt}_tab"), trad(elmt))
+                flat, flat_value = self._stats[f"{elmt}_flat"].describe(False, True)
+                dmg, dmg_value = self._stats[f"{elmt}_dmg"].describe(True, True)
+                pen, pen_value = self._stats[f"{elmt}_pen"].describe(False, True)
+                lines[s] = (name, None, flat, flat_value, dmg, dmg_value, pen, pen_value)
+                continue
             name, value = self._stats[s].describe(s not in NOT_PERCENT)
-            name.set(x, y + coeff)
-            value.set(x + name.width, y + coeff)
-            coeff += max(name.height, value.height) + 5
-            lines.extend([name, value])
+            lines[s] = (name, value)
             if s == "def":
                 text = f"{trad('descripts', 'estimate_armor')}: " +\
                     f"{round(self.__get_armor_mitigation() * 100)}%"
-                addition = Hoverable(x, y + coeff, text, trad('estimate_armor'))
-                coeff += addition.height + 5
-                lines.append(addition)
+                addition = Hoverable(0, 0, text, trad('estimate_armor'))
+                lines[s] = (name, value, addition)
+            if s == "dodge_rating":
+                text = f"{trad('descripts', 'estimate_dodge')}: " +\
+                    f"{round(self.__get_dodge_chance(0) * 100)}%"
+                addition = Hoverable(0, 0, text, trad('estimate_dodge'))
+                lines[s] = (name, value, addition)
         return lines
 
     def reset(self):

@@ -46,9 +46,10 @@ class RangeStat():
         
         Args:
             affliction (Affliction): affliction to afflict."""
-        if isinstance(affliction, tuple):
-            self._upper.afflict(affliction[1])
-            self._lower.afflict(affliction[0])
+        if affliction.name[len(affliction.name) - 4:] == "_min":
+            self._upper.afflict(affliction)
+        elif affliction.name[len(affliction.name) - 4:] == "_max":
+            self._lower.afflict(affliction)
         else:
             self._upper.afflict(affliction)
             self._lower.afflict(affliction)
@@ -59,9 +60,10 @@ class RangeStat():
         Args:
             affliction (Afflicton): Affliction to remove.
         """
-        if isinstance(affliction, tuple):
-            self._upper.remove_affliction(affliction[1])
-            self._lower.remove_affliction(affliction[0])
+        if affliction.name[len(affliction.name) - 4:] == "_min":
+            self._upper.remove_affliction(affliction)
+        elif affliction.name[len(affliction.name) - 4:] == "_max":
+            self._lower.remove_affliction(affliction)
         else:
             self._upper.remove_affliction(affliction)
             self._lower.remove_affliction(affliction)
@@ -80,10 +82,13 @@ class RangeStat():
         self._upper.scale(level)
         self._lower.scale(level)
 
-    def describe(self, is_percentage = True):
+    def describe(self, is_percentage = True,  is_tab = False):
         """Describe the stat as a surface."""
         is_percentage = not is_percentage
-        name = f"{trad('descripts', self._name)}: "
+        if is_tab:
+            name = f"{trad('descripts', f'{self._name}_tab')}: "
+        else:
+            name = f"{trad('descripts', self._name)}: "
         name_hover = Hoverable(0, 0, name, trad(self._name))
         value = f"{round(self.get_value()[0])}-{round(self.get_value()[1])}"
         desc = f"{trad('meta_words', 'base')}: {self._lower.value}-{self._upper.value}\n" +\

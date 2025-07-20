@@ -148,7 +148,7 @@
         "Void damage is often #c#(71, 0, 125)black and purple #c#(255, 255, 255)in color. It disrupts",
         "the very laws of the universe."
     ],
-    "estimate_armor": "This value cannot go beyond 80%.",
+    "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "buttons":{
         "map": "World map",
@@ -229,6 +229,34 @@
         "dark_pen": "Void penetration",
         "proj_quant": "Projectiles",
         "proj_speed": "Projectile speed",
+        "phys_tab": "#c#(150, 150, 150)Physical damage",
+        "phys_dmg_tab": "* Bonus",
+        "phys_pen_tab": "* Penetration",
+        "phys_flat_tab": "* Flat damage",
+        "fire_tab": "#c#(255, 119, 0)Fire damage",
+        "fire_dmg_tab": "* Bonus",
+        "fire_pen_tab": "* Penetration",
+        "fire_flat_tab": "* Flat damage",
+        "ice_tab": "#c#(89, 219, 255)Ice damage",
+        "ice_dmg_tab": "* Bonus",
+        "ice_pen_tab": "* Penetration",
+        "ice_flat_tab": "* Flat damage",
+        "elec_tab": "#c#(250, 233, 0)Thunder damage",
+        "elec_dmg_tab": "* Bonus",
+        "elec_pen_tab": "* Penetration",
+        "elec_flat_tab": "* Flat damage",
+        "energy_tab": "#c#(156, 0, 5)Energy damage",
+        "energy_dmg_tab": "* Bonus",
+        "energy_pen_tab": "* Penetration",
+        "energy_flat_tab": "* Flat damage",
+        "dark_tab": "#c#(71, 0, 125)Void damage",
+        "dark_dmg_tab": "* Bonus",
+        "dark_pen_tab": "* Penetration",
+        "dark_flat_tab": "* Flat damage",
+        "light_tab": "#c#(255, 254, 219)Divine damage",
+        "light_dmg_tab": "* Bonus",
+        "light_pen_tab": "* Penetration",
+        "light_flat_tab": "* Flat damage",
         "chains":"Chains",
         "dodge": "Dodge chance",
         "dodge_rating": "Evasion",
@@ -241,50 +269,50 @@
         "armor_mind_over_matter": "Lesser Spirit Shield",
         "crit_res": "Critical damage resistance",
         "estimate_armor": "Damage reduction",
-        "estimate_dodge": "Dodge chance:"
+        "estimate_dodge": "Dodge chance"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"
     },
     "runes": {
         "blank": [
-            "Blank Rune",
+            "#s(35)Blank Rune",
             "Removes all modifiers from an item."
         ],
         "thurisaz": [
-            "Rune of Thurisaz",
+            "#s#(35)Rune of Thurisaz",
             "Transform a blank item into a rare item, adding 3 to 6 modifiers."
         ],
         "ansuz": [
-            "Rune of Ansuz",
+            "#s#(35)Rune of Ansuz",
             "Adds a random modifier to an item.\nBlank items can have one modifier, Enchanted items two,\nBlessed up to 6 and Exalted up to 8. "
         ],
         "ingwaz": [
-            "Rune of Ingwaz",
+            "#s#(35)Rune of Ingwaz",
             "Reroll all values of the modifiers on an item."
         ],
         "othalan": [
-            "Rune of Othalan",
+            "#s#(35)Rune of Othalan",
             "Seals a random modifier of an item, making it impossible to change.\nThis rune can only be used on items with no seals."
         ],
         "uruz": [
-            "Rune of Uruz",
+            "#s#(35)Rune of Uruz",
             "Either exalts a blessed item or destroy it."
         ],
         "raido": [
-            "Rune of Raido",
+            "#s#(35)Rune of Raido",
             "Changes the modifiers of a blessed item."
         ],
         "tiwaz": [
-            "Rune of Tiwaz",
+            "#s#(35)Rune of Tiwaz",
             "Enchants a blank item."
         ],
         "eihwaz": [
-            "Rune of Eihwaz",
+            "#s#(35)Rune of Eihwaz",
             "Blesses an enchanted item."
         ],
         "algiz": [
-            "Rune of Algiz",
+            "#s#(35)Rune of Algiz",
             "Randomly changes the modifiers of an enchanted item."
         ]
     },

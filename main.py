@@ -100,6 +100,9 @@ def init_game():
     SYSTEM["images"]["btn_fat"] = Image("ui/button.png").scale(55, 100)
     SYSTEM["images"]["btn_fat_pressed"] = Image("ui/button_press.png").scale(55, 100)
     SYSTEM["images"]["btn_small"] = Image("ui/button.png").scale(35, 200)
+    SYSTEM["images"]["btn_small_pressed"] = Image("ui/button_press.png").scale(35, 200)
+    SYSTEM["images"]["btn_tab"] = Image("ui/button.png").scale(35, 100)
+    SYSTEM["images"]["btn_tab_pressed"] = Image("ui/button_press.png").scale(35, 100)
     SYSTEM["images"]["btn_p"] = Image("ui/button_press.png").scale(55, 280)
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
     SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
