@@ -73,58 +73,58 @@ def open_inventory():
             if Flags.GEAR in item.flags:
                 data.append(item)
     SYSTEM["ui"]["sell_slot"] = Slot(1556, 850, "sell_slot", sell)
-    SYSTEM["images"]["button_sort_name"] = Button(SYSTEM["images"]["btn_small"], None,\
+    SYSTEM["buttons"]["button_sort_name"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(0, False),\
                                     f"{trad('buttons', 'sort')} {trad('buttons', 'by_name')}")
-    SYSTEM["images"]["button_sort_rarity"] = Button(SYSTEM["images"]["btn_small"], None,\
+    SYSTEM["buttons"]["button_sort_rarity"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(1, False),\
                                     f"{trad('buttons', 'sort')} {trad('buttons', 'by_rarity')}")
-    SYSTEM["images"]["button_sort_value"] = Button(SYSTEM["images"]["btn_small"], None,\
+    SYSTEM["buttons"]["button_sort_value"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(2, False),\
                                     f"{trad('buttons', 'sort')} {trad('buttons', 'by_value')}")
-    SYSTEM["images"]["button_sort_date"] = Button(SYSTEM["images"]["btn_small"], None,\
+    SYSTEM["buttons"]["button_sort_date"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(3, False),\
                                     f"{trad('buttons', 'sort')} {trad('buttons', 'by_date')}")
-    SYSTEM["images"]["button_rune_0"] = Button(SYSTEM["images"]["rune_0"], None,\
+    SYSTEM["buttons"]["button_rune_0"] = Button(SYSTEM["images"]["rune_0"], None,\
                                             lambda: rune(0))
     SYSTEM["images"]["pop_rune_0"] = Hoverable(0, 0, None, trad("runes", "blank"),\
-                            surface=SYSTEM["images"]["button_rune_0"].get_image())
-    SYSTEM["images"]["button_rune_1"] = Button(SYSTEM["images"]["rune_1"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_0"].get_image())
+    SYSTEM["buttons"]["button_rune_1"] = Button(SYSTEM["images"]["rune_1"], None,\
                                             lambda: rune(1))
     SYSTEM["images"]["pop_rune_1"] = Hoverable(0, 0, None, trad("runes", "thurisaz"),\
-                            surface=SYSTEM["images"]["button_rune_1"].get_image())
-    SYSTEM["images"]["button_rune_2"] = Button(SYSTEM["images"]["rune_2"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_1"].get_image())
+    SYSTEM["buttons"]["button_rune_2"] = Button(SYSTEM["images"]["rune_2"], None,\
                                             lambda: rune(2))
     SYSTEM["images"]["pop_rune_2"] = Hoverable(0, 0, None, trad("runes", "ansuz"),\
-                            surface=SYSTEM["images"]["button_rune_2"].get_image())
-    SYSTEM["images"]["button_rune_3"] = Button(SYSTEM["images"]["rune_3"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_2"].get_image())
+    SYSTEM["buttons"]["button_rune_3"] = Button(SYSTEM["images"]["rune_3"], None,\
                                             lambda: rune(3))
     SYSTEM["images"]["pop_rune_3"] = Hoverable(0, 0, None, trad("runes", "ingwaz"),\
-                            surface=SYSTEM["images"]["button_rune_3"].get_image())
-    SYSTEM["images"]["button_rune_4"] = Button(SYSTEM["images"]["rune_4"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_3"].get_image())
+    SYSTEM["buttons"]["button_rune_4"] = Button(SYSTEM["images"]["rune_4"], None,\
                                             lambda: rune(4))
     SYSTEM["images"]["pop_rune_4"] = Hoverable(0, 0, None, trad("runes", "othalan"),\
-                            surface=SYSTEM["images"]["button_rune_4"].get_image())
-    SYSTEM["images"]["button_rune_5"] = Button(SYSTEM["images"]["rune_5"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_4"].get_image())
+    SYSTEM["buttons"]["button_rune_5"] = Button(SYSTEM["images"]["rune_5"], None,\
                                             lambda: rune(5))
     SYSTEM["images"]["pop_rune_5"] = Hoverable(0, 0, None, trad("runes", "uruz"),\
-                            surface=SYSTEM["images"]["button_rune_5"].get_image())
-    SYSTEM["images"]["button_rune_6"] = Button(SYSTEM["images"]["rune_6"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_5"].get_image())
+    SYSTEM["buttons"]["button_rune_6"] = Button(SYSTEM["images"]["rune_6"], None,\
                                             lambda: rune(6))
     SYSTEM["images"]["pop_rune_6"] = Hoverable(0, 0, None, trad("runes", "raido"),\
-                            surface=SYSTEM["images"]["button_rune_6"].get_image())
-    SYSTEM["images"]["button_rune_7"] = Button(SYSTEM["images"]["rune_7"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_6"].get_image())
+    SYSTEM["buttons"]["button_rune_7"] = Button(SYSTEM["images"]["rune_7"], None,\
                                             lambda: rune(7))
     SYSTEM["images"]["pop_rune_7"] = Hoverable(0, 0, None, trad("runes", "tiwaz"),\
-                            surface=SYSTEM["images"]["button_rune_7"].get_image())
-    SYSTEM["images"]["button_rune_8"] = Button(SYSTEM["images"]["rune_8"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_7"].get_image())
+    SYSTEM["buttons"]["button_rune_8"] = Button(SYSTEM["images"]["rune_8"], None,\
                                             lambda: rune(8))
     SYSTEM["images"]["pop_rune_8"] = Hoverable(0, 0, None, trad("runes", "eihwaz"),\
-                            surface=SYSTEM["images"]["button_rune_8"].get_image())
-    SYSTEM["images"]["button_rune_9"] = Button(SYSTEM["images"]["rune_9"], None,\
+                            surface=SYSTEM["buttons"]["button_rune_8"].get_image())
+    SYSTEM["buttons"]["button_rune_9"] = Button(SYSTEM["images"]["rune_9"], None,\
                                             lambda: rune(9))
     SYSTEM["images"]["pop_rune_9"] = Hoverable(0, 0, None, trad("runes", "algiz"),\
-                                surface=SYSTEM["images"]["button_rune_9"].get_image())
+                                surface=SYSTEM["buttons"]["button_rune_9"].get_image())
     SYSTEM["items_panel"] = SlotPanel(20, 20, default=data,\
         background=SYSTEM["images"]["tile_panel_inv"])
 
@@ -139,14 +139,14 @@ def draw_inventory(events):
     SYSTEM["windows"].blit(text.surface, (1584, 72))
     c = 0
     for i in [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]: 
-        SYSTEM["images"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
+        SYSTEM["buttons"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
         SYSTEM["images"][f"pop_rune_{i}"].set(1520, 110 + c * 74).tick()
         Text(f"{SYSTEM['player'].runes[i]}", font="font_detail").draw(1584, 132 + c * 74)
         c += 1
-    SYSTEM["images"]["button_sort_name"].set(1300, 20).draw(SYSTEM["windows"])
-    SYSTEM["images"]["button_sort_rarity"].set(1300, 50).draw(SYSTEM["windows"])
-    SYSTEM["images"]["button_sort_value"].set(1300, 80).draw(SYSTEM["windows"])
-    SYSTEM["images"]["button_sort_date"].set(1300, 110).draw(SYSTEM["windows"])
+    SYSTEM["buttons"]["button_sort_name"].set(1300, 20).draw(SYSTEM["windows"])
+    SYSTEM["buttons"]["button_sort_rarity"].set(1300, 50).draw(SYSTEM["windows"])
+    SYSTEM["buttons"]["button_sort_value"].set(1300, 80).draw(SYSTEM["windows"])
+    SYSTEM["buttons"]["button_sort_date"].set(1300, 110).draw(SYSTEM["windows"])
     SYSTEM["ui"]["sell_slot"].tick().draw()
     draw_bottom_bar(events)
     if SYSTEM["rune"] != -1:
@@ -155,17 +155,17 @@ def draw_inventory(events):
     draw_game(False, False, False, False, False)
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["images"]["button_rune_0"].press()
-            SYSTEM["images"]["button_rune_1"].press()
-            SYSTEM["images"]["button_rune_2"].press()
-            SYSTEM["images"]["button_rune_3"].press()
-            SYSTEM["images"]["button_rune_4"].press()
-            SYSTEM["images"]["button_rune_5"].press()
-            SYSTEM["images"]["button_rune_6"].press()
-            SYSTEM["images"]["button_rune_7"].press()
-            SYSTEM["images"]["button_rune_8"].press()
-            SYSTEM["images"]["button_rune_9"].press()
-            SYSTEM["images"]["button_sort_name"].press()
-            SYSTEM["images"]["button_sort_rarity"].press()
-            SYSTEM["images"]["button_sort_value"].press()
-            SYSTEM["images"]["button_sort_date"].press()
+            SYSTEM["buttons"]["button_rune_0"].press()
+            SYSTEM["buttons"]["button_rune_1"].press()
+            SYSTEM["buttons"]["button_rune_2"].press()
+            SYSTEM["buttons"]["button_rune_3"].press()
+            SYSTEM["buttons"]["button_rune_4"].press()
+            SYSTEM["buttons"]["button_rune_5"].press()
+            SYSTEM["buttons"]["button_rune_6"].press()
+            SYSTEM["buttons"]["button_rune_7"].press()
+            SYSTEM["buttons"]["button_rune_8"].press()
+            SYSTEM["buttons"]["button_rune_9"].press()
+            SYSTEM["buttons"]["button_sort_name"].press()
+            SYSTEM["buttons"]["button_sort_rarity"].press()
+            SYSTEM["buttons"]["button_sort_value"].press()
+            SYSTEM["buttons"]["button_sort_date"].press()

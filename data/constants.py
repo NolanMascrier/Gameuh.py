@@ -84,8 +84,11 @@ MENU_SPELLBOOK_T = 1315
 MENU_SPELLBOOK_SHIFT = 1316
 MENU_OPTIONS_GAME = 14
 MENU_TREE = 15
+LOADING = 999
 
 SYSTEM = {
+    "loaded": False,
+    "progress": 0,
     "playing": True,
     "font": None,
     "font_crit": None,
