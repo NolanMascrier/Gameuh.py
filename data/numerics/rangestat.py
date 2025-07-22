@@ -47,9 +47,9 @@ class RangeStat():
         Args:
             affliction (Affliction): affliction to afflict."""
         if affliction.name[len(affliction.name) - 4:] == "_min":
-            self._upper.afflict(affliction)
-        elif affliction.name[len(affliction.name) - 4:] == "_max":
             self._lower.afflict(affliction)
+        elif affliction.name[len(affliction.name) - 4:] == "_max":
+            self._upper.afflict(affliction)
         else:
             self._upper.afflict(affliction)
             self._lower.afflict(affliction)
@@ -61,9 +61,9 @@ class RangeStat():
             affliction (Afflicton): Affliction to remove.
         """
         if affliction.name[len(affliction.name) - 4:] == "_min":
-            self._upper.remove_affliction(affliction)
-        elif affliction.name[len(affliction.name) - 4:] == "_max":
             self._lower.remove_affliction(affliction)
+        elif affliction.name[len(affliction.name) - 4:] == "_max":
+            self._upper.remove_affliction(affliction)
         else:
             self._upper.remove_affliction(affliction)
             self._lower.remove_affliction(affliction)
@@ -112,3 +112,30 @@ class RangeStat():
         """Resets the stats."""
         self._upper.reset()
         self._lower.reset()
+
+    @property
+    def name(self):
+        """Returns the range state's name."""
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    @property
+    def upper(self):
+        """Returns the range state's upper value."""
+        return self._upper
+
+    @upper.setter
+    def upper(self, value):
+        self._upper = value
+
+    @property
+    def lower(self):
+        """Returns the range state's lower value."""
+        return self._lower
+
+    @lower.setter
+    def lower(self, value):
+        self._lower = value

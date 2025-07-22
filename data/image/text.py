@@ -24,8 +24,11 @@ class Text():
     """
     def __init__(self, text: str, centered = False,\
                 font = "tiny", force_x = -1, force_y = -1,\
-                size = 20, bold = False, italic = False):
-        style = {"color": (255, 255, 255), "size": size, "bold": bold, "italic": italic}
+                size = 20, bold = False, italic = False,\
+                default_color = (255, 255, 255)):
+        style = {"color": default_color, "size": size, "bold": bold, "italic": italic}
+        if text is None:
+            text = ""
         self._data = []
         self._surfaces = []
         self._styles = []
@@ -34,7 +37,10 @@ class Text():
         self._width = 0
         self._height = 0
         self._font = pygame.freetype.Font(f'{RESSOURCES}/fonts/{font}.ttf', size)
-        data = text.split('\n')
+        if isinstance(text, str):
+            data = text.split('\n')
+        else:
+            data = text
         #Creates the list
         for line in data:
             pos = 0

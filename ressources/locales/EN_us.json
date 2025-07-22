@@ -175,7 +175,40 @@
         "flat": "Flat bonus",
         "increase": "Increases",
         "mult": "Multiplier",
-        "refresh": "Regeneration"
+        "refresh": "Regeneration",
+        "level": "Level",
+        "deal": "Deal",
+        "damage": "damage",
+        "phys": "#c#(180, 180, 180)Physical",
+        "fire": "#c#(255, 119, 0)Fire",
+        "ice": "#c#(89, 219, 255)Ice",
+        "elec": "#c#(250, 233, 0)Thunder",
+        "energy": "#c#(156, 0, 5)Energy",
+        "light": "#c#(255, 254, 219)Divine",
+        "dark": "#c#(71, 0, 125)Dark",
+        "dash": "Displace the user",
+        "meters": "meters",
+        "teleport": "Teleports the user to the mouse.",
+        "buffs": "Gain status effect",
+        "debuffs": "Inflict status effect"
+    },
+    "spells_name": {
+        "none": "Nothing",
+        "voidbolt": "Voidbolt",
+        "firebolt": "Firebolt",
+        "icebolt": "Ice Spears",
+        "elefury": "Elemental Fury",
+        "wdash": "Wind Dash",
+        "fslash": "Fury Slash"
+    },
+    "spells_desc": {
+        "none": "No spell equipped.",
+        "voidbolt": "Shoot a flurry of void spheres, dealing\nminor void damage.",
+        "firebolt": "Shoot a firebolt toward the mouse, dealing \nfire damage.",
+        "icebolt": "Creates a barrage of ice spears that deals\nmajor ice damage in a straight line,\npiercing enemies.",
+        "elefury": "Unleash the fury of the elements, increasing\nelemental damage dealt.",
+        "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",
+        "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage."
     },
     "descripts": {
         "life": "Life",

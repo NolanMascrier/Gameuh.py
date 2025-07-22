@@ -6,7 +6,7 @@ from data.physics.entity import Entity
 from data.numerics.stat import Stat
 from data.slash import Slash
 from data.numerics.damage import Damage
-from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER
+from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER, trad
 from data.numerics.affliction import Affliction
 
 class Spell():
@@ -43,6 +43,7 @@ class Spell():
         self._icon = icon
         self._attack_anim = attack_anim
         self._base_damage = base_damage
+        self._level = 1
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
             "life_cost": Stat(life_cost, "life_cost"),
@@ -71,6 +72,29 @@ class Spell():
     def reset(self):
         """Resets the spell's data."""
         self._cooldown = 0
+
+    def __damage_describe(self, caster):
+        """Describes the damage and buffs components."""
+        descript = ""
+        if self._base_damage is not None:
+            descript += self._base_damage.describe(caster)
+        if Flags.DASH in self._flags:
+            descript += f"{trad('meta_words', 'dash')} {self._stats["distance"].c_value\
+                } {trad('meta_words', 'meters')}\n"
+        if Flags.BUFF in self._flags:
+            for afflic in self._afflictions:
+                descript += f"{trad('meta_words', 'buffs')} {afflic.name}\n"
+        return descript
+
+    def describe(self):
+        """Returns a description of the spell."""
+        data = {
+            "name": trad('spells_name', self._name),
+            "desc": trad('spells_desc', self._name),
+            "level": str(self._level),
+            "damage": self.__damage_describe(SYSTEM["player"].creature)
+        }
+        return data
 
     def cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
         """Shoots the spell."""

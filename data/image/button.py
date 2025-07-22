@@ -20,14 +20,15 @@ class Button():
         self._y = 0
         self._width = image.width
         self._height = image.height
+        self._scrollable = scrollable_area
+        self._superimage = superimage
         if text is None:
             self._text = None
         elif isinstance(text, Image):
-            self._text = text
+            self._superimage = text.image
+            self._text = None
         else:
             self._text = Text(text, True, "font_detail", force_x=self._width)
-        self._scrollable = scrollable_area
-        self._superimage = superimage
 
     def __mouse_default(self):
         """For mouse_inside() with no scrollable."""
@@ -106,7 +107,7 @@ class Button():
                 return
             self._action()
             self._clicked = True
-            SYSTEM["cooldown"] = 0.5
+            SYSTEM["cooldown"] = 0.1
         else:
             self._clicked = False
 

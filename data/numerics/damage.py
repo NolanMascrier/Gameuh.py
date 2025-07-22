@@ -7,6 +7,7 @@ P stands for penetration, ie how much of the
 resistance the damage source shall ignore."""
 
 import random
+from data.constants import trad
 
 class Damage():
     """A source of damage is a group of numbers that will \
@@ -126,6 +127,22 @@ class Damage():
                                         * self._coeff
         }
         return damages, self._penetration
+
+    def describe(self, caster):
+        """Returns a text description of the damage.
+        Simulates the damage from a caster."""
+        types = ["phys", "fire", "ice", "elec", "energy", "light", "dark"]
+        txt = ""
+        for typ in types:
+            low = (self._types[typ] + caster.stats[f"{typ}_flat"].lower.c_value) * self._bounds[0] *\
+                caster.stats[f"{typ}_dmg"].c_value
+            up = (self._types[typ] + caster.stats[f"{typ}_flat"].upper.c_value) * self._bounds[1] *\
+                caster.stats[f"{typ}_dmg"].c_value
+            if low == 0 and up == 0:
+                continue
+            txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} {\
+                trad('meta_words', typ)} {trad('meta_words', 'damage')}\n"
+        return txt
 
     @property
     def coeff(self):
