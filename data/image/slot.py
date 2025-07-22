@@ -30,9 +30,12 @@ class Slot():
         left (bool, optionnal): Very specific parameter only used for\
         rings slot. Denotes whether or not the slot is for the left hand\
         ring. Defaults to None.
+        immutable (bool, optional): Whether or not this slot is immutable.\
+        If it is, the user can take the content, but not replace it. Furthermore,\
+        taking the content will NOT remove it from the slot. Defualts to `False`.
     """
     def __init__(self, x, y, back_image = None, on_slot = None,\
-        on_remove = None, flag = None, default = None, left = False):
+        on_remove = None, flag = None, default = None, left = False, immutable = False):
         if back_image is None:
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
@@ -45,8 +48,9 @@ class Slot():
         self._on_remove = on_remove
         self._flag = flag
         self._left = left
+        self._immutable = immutable
         if default is not None:
-            dr = Draggable(contains=default)
+            dr = Draggable(contains=default, immutable=immutable)
             dr.set(self._x, self._y)
             dr.set_parent(self)
             self._contains = dr
@@ -86,6 +90,11 @@ class Slot():
         if draggable is None:
             return False
         if self.is_hovered():
+            if self._immutable:
+                draggable.set_panel(None)
+                draggable.set_parent(None)
+                SYSTEM["dragged"] = None
+                return True
             self.insert(draggable)
             return True
         return False

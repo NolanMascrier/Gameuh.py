@@ -77,6 +77,23 @@ def open_gear_screen():
     for f in lst:
         STAT_LIST[f] = lst[f]
 
+def unloader():
+    """Unloads all gear-specific data."""
+    SYSTEM["gear_tabs"] = None
+    SYSTEM["ui"]["gear_helm"] = None
+    SYSTEM["ui"]["gear_amulet"] = None
+    SYSTEM["ui"]["gear_armor"] = None
+    SYSTEM["ui"]["gear_weapon"] = None
+    SYSTEM["ui"]["gear_ring"] = None
+    SYSTEM["ui"]["gear_ring2"] = None
+    SYSTEM["ui"]["gear_offhand"] = None
+    SYSTEM["ui"]["gear_hands"] = None
+    SYSTEM["ui"]["gear_relic"] = None
+    SYSTEM["ui"]["gear_belt"] = None
+    SYSTEM["ui"]["gear_boots"] = None
+    SYSTEM["gear_panel"] = None
+    STAT_LIST.clear()
+
 def draw_gear(events):
     """Draws the gear menu."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))

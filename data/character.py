@@ -58,7 +58,8 @@ class Character():
         self._potions = [3, 3]
         self._cooldown = 0
         for spell in self._equipped_spells:
-            self._equipped_spells[spell].reset()
+            if self.equipped_spells[spell] is not None:
+                self._equipped_spells[spell].reset()
 
     def tick(self):
         """Ticks down the character."""

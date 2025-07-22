@@ -7,7 +7,26 @@ from data.image.slot import Slot
 from data.image.draggable import Draggable
 
 class SlotPanel:
-    def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None):
+    """Defines a slot pannel, a group of slots.
+    
+    Ags:
+        x (int): x position of the panel.
+        y (int): y position of the panel.
+        slot_size (int, optional): Size of a slot. Defaults\
+        to the default size of a slot, 64.
+        padding (int, optional): How much padding in pixels should\
+        be done on each inner side of the pannel. Defaults to 16.
+        default (list, optional): A list of default items that should\
+        be inside the panel by default. Can be anything containable inside\
+        a draggable. Defaults to []
+        background (Image, optional): Background image of the panel. Defaults\
+        to SYSTEM["images"]["tile_panel_back"].
+        immutable (bool, optional): Whether or not the panel should be immutable\
+        , ie the user can't add items inside, and if they take one, it'll stay inside.\
+        Defaults to `False`.
+    """
+    def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None,\
+        immutable = False):
         self._x = x
         self._y = y
         self._slot_size = slot_size
@@ -21,10 +40,11 @@ class SlotPanel:
         self._lines = (self._background.height - self._padding * 2) // slot_size - 1
         self._default = default
         self._scroll = 0
+        self._immutable = immutable
         if isinstance(default, Iterable):
             for item in default:
                 y, x = self.get_index()
-                drag = Draggable(None, x, y, item)
+                drag = Draggable(None, x, y, item, immutable)
                 self.insert(drag)
 
     def get_index(self):
@@ -58,7 +78,7 @@ class SlotPanel:
         if drag is None:
             return
         y, x = self.get_index()
-        sl = Slot(x, y)
+        sl = Slot(x, y, immutable=self._immutable)
         sl.insert(drag)
         drag.set_panel(self)
         SYSTEM["dragged"] = None
@@ -92,7 +112,14 @@ class SlotPanel:
 
     def try_insert(self, draggable: Draggable):
         """Attempts to insert draggable if it's dropped on the slot."""
+        if draggable is None:
+            return False
         if self.is_hovered():
+            if self._immutable:
+                draggable.set_panel(None)
+                draggable.set_parent(None)
+                SYSTEM["dragged"] = None
+                return True
             self.insert(draggable)
             return True
         return False

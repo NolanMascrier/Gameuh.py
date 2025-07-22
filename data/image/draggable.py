@@ -19,14 +19,18 @@ class Draggable(Image):
         Defaults to 0. 
         contains (Any, optionnal): Contained payload of\
         the draggable. Can be anything. Defaults to None.
+        immutable (bool, optional): Whether or not this draggable\
+        is immutable. If it is, dragging it will instead create a copy.\
+        Defaults to False.
     """
-    def __init__(self, uri=None, x = 0, y = 0, contains = None):
+    def __init__(self, uri=None, x = 0, y = 0, contains = None, immutable = False):
         super().__init__(uri)
         self._x = x
         self._y = y
         self._dragging = False
         self._contains = contains
         self._hover = None
+        self._immutable = immutable
         if isinstance(contains, Item):
             self._width = contains.get_image().width
             self._height = contains.get_image().height
@@ -60,13 +64,20 @@ class Draggable(Image):
                 elif (self._x <= mouse_x <= self._x + self.width and
                         self._y <= mouse_y <= self._y + self.height):
                     if SYSTEM["cooldown"] > 0:
-                        return
+                        return self
                     if SYSTEM["rune"] != -1:
                         self._contains.apply_rune()
                         self._hover = Hoverable(self._x, self._y, None, None, surface=self._image,\
                             override=self._contains.popup,\
                             alternative=self._contains.popup_details)
                         SYSTEM["cooldown"] = 0.1
+                        return self
+                    if self._immutable:
+                        copy = Draggable(self._uri, self._x, self._y,\
+                            self._contains, False)
+                        copy.dragging = True
+                        SYSTEM["dragged"] = copy
+                        SYSTEM["cooldown"] = 0.5
                         return self
                     self._dragging = True
                     self._slotted = False

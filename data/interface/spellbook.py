@@ -5,24 +5,29 @@ from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_
     MENU_SPELLBOOK_Q, MENU_SPELLBOOK_F, MENU_SPELLBOOK_E, MENU_SPELLBOOK_R,\
     MENU_SPELLBOOK_SHIFT, MENU_SPELLBOOK_T, K_q, K_t, K_e, K_r, K_f, K_LSHIFT
 from data.game.spell import Spell
-from data.image.button import Button
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
+from data.image.tabs import Tabs
 
 PAGES = {
-    0: MENU_SPELLBOOK_Q,
-    1: MENU_SPELLBOOK_E,
-    2: MENU_SPELLBOOK_F,
-    3: MENU_SPELLBOOK_T,
-    4: MENU_SPELLBOOK_R,
-    5: MENU_SPELLBOOK_SHIFT
+    MENU_SPELLBOOK_Q: 0,
+    MENU_SPELLBOOK_E: 1,
+    MENU_SPELLBOOK_F: 2,
+    MENU_SPELLBOOK_T: 3,
+    MENU_SPELLBOOK_R: 4,
+    MENU_SPELLBOOK_SHIFT: 5
 }
 
-def slot_in(self, spell):
+STATES = [MENU_SPELLBOOK_Q, MENU_SPELLBOOK_E, MENU_SPELLBOOK_F,\
+    MENU_SPELLBOOK_T, MENU_SPELLBOOK_R, MENU_SPELLBOOK_SHIFT]
+
+def slot_in(contain, slot):
     """SLots in a spell."""
+    SYSTEM["player"].equipped_spells[slot.flag] = contain
     
-def slot_out(self, spell):
+def slot_out(contain, slot):
     """Slots out a spell."""
+    SYSTEM["player"].equipped_spells[slot.flag] = None
 
 def set_page(page):
     """Changes the page of the spellbook."""
@@ -42,22 +47,44 @@ def open_spell_screen():
                 dashes.append(spell)
             else:
                 spells.append(spell)
-    SYSTEM["buttons"]["tab_q"] = Button(SYSTEM["images"]["btn_fat"], None,\
-                    lambda: set_page(0), superimage=SYSTEM["images"][K_q])
-    SYSTEM["buttons"]["tab_e"] = Button(SYSTEM["images"]["btn_fat"], None,\
-                    lambda: set_page(1), superimage=SYSTEM["images"][K_e])
-    SYSTEM["buttons"]["tab_f"] = Button(SYSTEM["images"]["btn_fat"], None,\
-                    lambda: set_page(2), superimage=SYSTEM["images"][K_f])
-    SYSTEM["buttons"]["tab_t"] = Button(SYSTEM["images"]["btn_fat"], None,\
-                    lambda: set_page(3), superimage=SYSTEM["images"][K_t])
-    SYSTEM["buttons"]["tab_r"] = Button(SYSTEM["images"]["btn_fat"], None,\
-                    lambda: set_page(4), superimage=SYSTEM["images"][K_r])
-    SYSTEM["buttons"]["tab_s"] = Button(SYSTEM["images"]["btn_fat"], None,\
-                    lambda: set_page(5), superimage=SYSTEM["images"][K_LSHIFT])
-    SYSTEM["ui"]["slot_q"] = Slot(0, 0, "skill_top", slot_in, slot_out,\
-        [], SYSTEM["player"].equipped_spells[K_q])
-    SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells)
-    SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes)
+    images = [
+        SYSTEM["images"][K_q],
+        SYSTEM["images"][K_e],
+        SYSTEM["images"][K_f],
+        SYSTEM["images"][K_r],
+        SYSTEM["images"][K_t],
+        SYSTEM["images"][K_LSHIFT]
+    ]
+    x_offset = SCREEN_WIDTH / 2 - 300
+    x_offset_slot = SCREEN_WIDTH / 2 - 32
+    SYSTEM["gear_tabs"] = Tabs(x_offset, 300, images, STATES, "spell_page",\
+        SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"])
+    SYSTEM["ui"]["slot_q"] = Slot(x_offset_slot, 450, "skill_top", lambda a,b: slot_in(a, b), lambda a,b: slot_out(a, b),\
+        default=SYSTEM["player"].equipped_spells[K_q], flag=K_q)
+    SYSTEM["ui"]["slot_e"] = Slot(x_offset_slot, 450, "skill_top", lambda a,b: slot_in(a, b), lambda a,b: slot_out(a, b),\
+        default=SYSTEM["player"].equipped_spells[K_e], flag=K_e)
+    SYSTEM["ui"]["slot_f"] = Slot(x_offset_slot, 450, "skill_top", lambda a,b: slot_in(a, b), lambda a,b: slot_out(a, b),\
+        default=SYSTEM["player"].equipped_spells[K_f], flag=K_f)
+    SYSTEM["ui"]["slot_r"] = Slot(x_offset_slot, 450, "skill_top", lambda a,b: slot_in(a, b), lambda a,b: slot_out(a, b),\
+        default=SYSTEM["player"].equipped_spells[K_r], flag=K_r)
+    SYSTEM["ui"]["slot_t"] = Slot(x_offset_slot, 450, "skill_top", lambda a,b: slot_in(a, b), lambda a,b: slot_out(a, b),\
+        default=SYSTEM["player"].equipped_spells[K_t], flag=K_t)
+    SYSTEM["ui"]["slot_shift"] = Slot(x_offset_slot, 450, "skill_top", lambda a,b: slot_in(a, b), lambda a,b: slot_out(a, b),\
+        default=SYSTEM["player"].equipped_spells[K_LSHIFT], flag=K_LSHIFT)
+    SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells, immutable=True)
+    SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes, immutable=True)
+
+def unloader():
+    """Unloads all spellbook-specific data."""
+    SYSTEM["gear_tabs"] = None
+    SYSTEM["spell_panel"] = None
+    SYSTEM["dash_panel"] = None
+    SYSTEM["ui"]["slot_q"] = None
+    SYSTEM["ui"]["slot_e"] = None
+    SYSTEM["ui"]["slot_f"] = None
+    SYSTEM["ui"]["slot_r"] = None
+    SYSTEM["ui"]["slot_t"] = None
+    SYSTEM["ui"]["slot_shift"] = None
 
 def draw_spells(events):
     """Draws the gear menu."""
@@ -65,12 +92,25 @@ def draw_spells(events):
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
     SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
-    SYSTEM["spell_panel"].tick().draw()
-    SYSTEM["buttons"]["tab_q"].set(x_offset - 200, y_offset - 200).tick().draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["tab_e"].set(x_offset - 100, y_offset - 200).tick().draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["tab_f"].set(x_offset, y_offset - 200).tick().draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["tab_t"].set(x_offset + 100, y_offset - 200).tick().draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["tab_r"].set(x_offset + 200, y_offset - 200).tick().draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["tab_s"].set(x_offset + 300, y_offset - 200).tick().draw(SYSTEM["windows"])
-    SYSTEM["ui"]["slot_q"].tick().draw()
+    val = PAGES[SYSTEM["spell_page"]]
+    SYSTEM["gear_tabs"].tick()
+    match val:
+        case 1:
+            SYSTEM["ui"]["slot_e"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 2:
+            SYSTEM["ui"]["slot_f"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 3:
+            SYSTEM["ui"]["slot_r"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 4:
+            SYSTEM["ui"]["slot_t"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 5:
+            SYSTEM["ui"]["slot_shift"].tick().draw()
+            SYSTEM["dash_panel"].tick().draw()
+        case _:
+            SYSTEM["ui"]["slot_q"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
     draw_bottom_bar(events)

@@ -188,11 +188,12 @@ def load_images():
     SYSTEM["images"]["slot_rare"] = Image("ui/item_top_r.png").scale(64, 64)
     SYSTEM["images"]["slot_exalted"] = Image("ui/item_top_e.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
-    SYSTEM["images"][K_q] = Image("ui/kb_q.png").image
-    SYSTEM["images"][K_e] = Image("ui/kb_e.png").image
-    SYSTEM["images"][K_f] = Image("ui/kb_f.png").image
-    SYSTEM["images"][K_r] = Image("ui/kb_r.png").image
-    SYSTEM["images"][K_t] = Image("ui/kb_t.png").image
+    SYSTEM["images"][K_q] = Image("ui/kb_q.png")
+    SYSTEM["images"][K_e] = Image("ui/kb_e.png")
+    SYSTEM["images"][K_f] = Image("ui/kb_f.png")
+    SYSTEM["images"][K_r] = Image("ui/kb_r.png")
+    SYSTEM["images"][K_t] = Image("ui/kb_t.png")
+    SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png")
     SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
     SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
     SYSTEM["images"]["btn"] = Image("ui/button.png").scale(55, 280)
@@ -203,7 +204,6 @@ def load_images():
     SYSTEM["images"]["btn_tab"] = Image("ui/button.png").scale(35, 100)
     SYSTEM["images"]["btn_tab_pressed"] = Image("ui/button_press.png").scale(35, 100)
     SYSTEM["images"]["btn_p"] = Image("ui/button_press.png").scale(55, 280)
-    SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png").image
     SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
     SYSTEM["images"]["menu_button"] = Image("ui/button.png").scale(55, 280)
     SYSTEM["images"]["rune_0"] = Image("icons/rune01.png")
@@ -361,3 +361,4 @@ def init_game():
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
+    SYSTEM["unloader"] = None

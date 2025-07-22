@@ -107,7 +107,7 @@ def draw_skills():
                 SCREEN_HEIGHT - 128))
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i,\
             SCREEN_HEIGHT - 130))
-        SYSTEM["windows"].blit(SYSTEM["images"][name], (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET\
+        SYSTEM["windows"].blit(SYSTEM["images"][name].image, (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET\
             + 104 * i,SCREEN_HEIGHT - 82))
         i += 1
 

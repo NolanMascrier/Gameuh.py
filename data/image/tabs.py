@@ -39,7 +39,7 @@ class Tabs:
         self._fake_buttons = []
         for i, v in enumerate(values):
             self._buttons.append(Button(image, image,\
-                lambda i=i: set_var(self._variable, self._values[i]), v))
+                lambda i=i: set_var(self._variable, self._states[i]), v))
             self._fake_buttons.append(Button(held, held, None, v))
 
     def tick(self):

@@ -128,6 +128,35 @@ def open_inventory():
     SYSTEM["items_panel"] = SlotPanel(20, 20, default=data,\
         background=SYSTEM["images"]["tile_panel_inv"])
 
+def unloader():
+    """Unloads all inventory-specific data."""
+    SYSTEM["ui"]["sell_slot"] = None
+    SYSTEM["buttons"]["button_sort_name"] = None
+    SYSTEM["buttons"]["button_sort_rarity"] = None
+    SYSTEM["buttons"]["button_sort_value"] = None
+    SYSTEM["buttons"]["button_sort_date"] = None
+    SYSTEM["buttons"]["button_rune_0"] = None
+    SYSTEM["images"]["pop_rune_0"] = None
+    SYSTEM["buttons"]["button_rune_1"] = None
+    SYSTEM["images"]["pop_rune_1"] = None
+    SYSTEM["buttons"]["button_rune_2"] = None
+    SYSTEM["images"]["pop_rune_2"] = None
+    SYSTEM["buttons"]["button_rune_3"] = None
+    SYSTEM["images"]["pop_rune_3"] = None
+    SYSTEM["buttons"]["button_rune_4"] = None
+    SYSTEM["images"]["pop_rune_4"] = None
+    SYSTEM["buttons"]["button_rune_5"] = None
+    SYSTEM["images"]["pop_rune_5"] = None
+    SYSTEM["buttons"]["button_rune_6"] = None
+    SYSTEM["images"]["pop_rune_6"] = None
+    SYSTEM["buttons"]["button_rune_7"] = None
+    SYSTEM["images"]["pop_rune_7"] = None
+    SYSTEM["buttons"]["button_rune_8"] = None
+    SYSTEM["images"]["pop_rune_8"] = None
+    SYSTEM["buttons"]["button_rune_9"] = None
+    SYSTEM["images"]["pop_rune_9"] = None
+    SYSTEM["items_panel"] = None
+
 def draw_inventory(events):
     """Draws the inventory windows."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))

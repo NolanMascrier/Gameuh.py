@@ -10,7 +10,7 @@ from data.image.scrollable import Scrollable
 class Button():
     """Defines a button. A button is a clickable image with two states (clicked
     and not clicked), and does an action when clicked."""
-    def __init__(self, image:Image, pressed:Image = None, action = None, text:str = "",\
+    def __init__(self, image:Image, pressed:Image = None, action = None, text:str|Image = "",\
         scrollable_area: Scrollable = None, superimage: pygame.Surface = None):
         self._image = image
         self._pressed = pressed
@@ -22,6 +22,8 @@ class Button():
         self._height = image.height
         if text is None:
             self._text = None
+        elif isinstance(text, Image):
+            self._text = text
         else:
             self._text = Text(text, True, "font_detail", force_x=self._width)
         self._scrollable = scrollable_area
@@ -73,7 +75,7 @@ class Button():
             surface.blit(self._image.image, (self._x, self._y))
         if self._text is not None:
             y = self._y + self._text.height / 2
-            surface.blit(self._text.surface, (self._x, y))
+            surface.blit(self._text.image, (self._x, y))
         if self._superimage is not None:
             x_offset = self._x + self._width / 2 - self._superimage.get_width() / 2
             y_offset = self._y + self._height / 2 - self._superimage.get_height() / 2
