@@ -73,7 +73,7 @@ class SlotPanel:
                 drag = Draggable(None, x, y, item)
                 self.insert(drag)
 
-    def insert(self, drag: Draggable):
+    def insert(self, drag: Draggable, pos = None):
         """Inserts the draggable into the panel."""
         if drag is None:
             return
@@ -82,7 +82,12 @@ class SlotPanel:
         sl.insert(drag)
         drag.set_panel(self)
         SYSTEM["dragged"] = None
-        self._slots.append(sl)
+        if pos is not None:
+            self._slots.insert(pos, sl)
+            self._default.remove(drag.contains)
+            self._default.insert(pos, drag.contains)
+        else:
+            self._slots.append(sl)
 
     def remove(self, drag: Draggable):
         """Removes stuff"""
@@ -110,17 +115,36 @@ class SlotPanel:
                     - (self._lines + 1) + 1)
         return self
 
+    def __get_pos(self):
+        """Attemps to search the position"""
+        i = 0
+        lin = 0
+        col = 0
+        for _ in self._slots:
+            x = self._x + col * self._slot_size
+            y = self._y + lin * self._slot_size
+            if SYSTEM["mouse"][0] > x and SYSTEM["mouse"][0] < x + self._slot_size and\
+                SYSTEM["mouse"][1] > y and SYSTEM["mouse"][1] < y + self._slot_size:
+                return i
+            col += 1
+            if col > self._columns:
+                col = 0
+                lin += 1
+            i += 1
+        return None
+
     def try_insert(self, draggable: Draggable):
         """Attempts to insert draggable if it's dropped on the slot."""
         if draggable is None:
             return False
         if self.is_hovered():
+            pos = self.__get_pos()
             if self._immutable:
                 draggable.set_panel(None)
                 draggable.set_parent(None)
                 SYSTEM["dragged"] = None
                 return True
-            self.insert(draggable)
+            self.insert(draggable, pos)
             return True
         return False
 
@@ -142,6 +166,15 @@ class SlotPanel:
                 continue
             real_x = self._x + self._padding + x * self._slot_size
             real_y = self._y + self._padding + y * self._slot_size
+            if SYSTEM["dragged"] is not None and not self._immutable and\
+                SYSTEM["mouse"][0] > real_x and SYSTEM["mouse"][0] < real_x + self._slot_size and\
+                SYSTEM["mouse"][1] > real_y and SYSTEM["mouse"][1] < real_y + self._slot_size:
+                x += 1
+                if x > self._columns:
+                    x = 0
+                    y += 1
+                real_x = self._x + self._padding + x * self._slot_size
+                real_y = self._y + self._padding + y * self._slot_size
             if y <= self._lines:
                 slot.draw_alt(SYSTEM["windows"], real_x, real_y)
                 slot.contains.set(real_x, real_y)

@@ -16,7 +16,7 @@ PLAYING = True
 def debug_create_items():
     """Creates a bunch of items."""
     lg = LootGenerator()
-    base_loot = lg.roll(300, 5)
+    base_loot = lg.roll(40, 5)
     SYSTEM["player"].inventory.extend(base_loot)
 
 def game_loop(keys, events):
@@ -181,6 +181,7 @@ if __name__ == "__main__":
         else:
             break
     held = False
+    debug_create_items()
     ###
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None

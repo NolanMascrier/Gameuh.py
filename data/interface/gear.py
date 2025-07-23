@@ -67,12 +67,7 @@ def open_gear_screen():
          Flags.BELT, SYSTEM["player"].creature.gear["belts"])
     SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip,\
          Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
-    data = []
-    for item in SYSTEM["player"].inventory:
-        if isinstance(item, Item):
-            if Flags.GEAR in item.flags:
-                data.append(item)
-    SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=data)
+    SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=SYSTEM["player"].inventory)
     lst = SYSTEM["player"].creature.generate_stat_details(20, 20)
     for f in lst:
         STAT_LIST[f] = lst[f]

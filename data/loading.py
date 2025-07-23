@@ -316,7 +316,6 @@ def load_start():
         SYSTEM["buttons_e"].append(butt)
     SYSTEM["def_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10)
     SYSTEM["mouse_previous"] = SYSTEM["mouse"]
-    #debug_create_items()
 
 def create_character():
     """Creates the player character."""

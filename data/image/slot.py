@@ -169,4 +169,22 @@ class Slot():
     def left(self):
         """Returns whether or not the slot is marked for\
         the left hand ring."""
-        return self._left 
+        return self._left
+
+    @property
+    def x(self):
+        """Returns the slot x position."""
+        return self._x
+
+    @x.setter
+    def x(self, value):
+        self._x = value
+
+    @property
+    def y(self):
+        """Returns the slot y position."""
+        return self._y
+
+    @y.setter
+    def y(self, value):
+        self._y = value

@@ -67,11 +67,6 @@ def rune(rune_id):
 def open_inventory():
     """Sets up the inventory screen."""
     SYSTEM["game_state"] = MENU_INVENTORY
-    data = []
-    for item in SYSTEM["player"].inventory:
-        if isinstance(item, Item):
-            if Flags.GEAR in item.flags:
-                data.append(item)
     SYSTEM["ui"]["sell_slot"] = Slot(1556, 850, "sell_slot", sell)
     SYSTEM["buttons"]["button_sort_name"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(0, False),\
@@ -125,7 +120,7 @@ def open_inventory():
                                             lambda: rune(9))
     SYSTEM["images"]["pop_rune_9"] = Hoverable(0, 0, None, trad("runes", "algiz"),\
                                 surface=SYSTEM["buttons"]["button_rune_9"].get_image())
-    SYSTEM["items_panel"] = SlotPanel(20, 20, default=data,\
+    SYSTEM["items_panel"] = SlotPanel(20, 20, default=SYSTEM["player"].inventory,\
         background=SYSTEM["images"]["tile_panel_inv"])
 
 def unloader():
