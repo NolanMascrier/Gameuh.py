@@ -2,12 +2,18 @@ import unittest
 import pygame
 import os
 from data.image.image import Image
-from data.constants import RESSOURCES
+from data.image.text import Text
+from data.image.animation import Animation
+from data.image.hoverable import Hoverable
+from data.constants import RESSOURCES, SYSTEM
+from data.loading import load_tiles
 
 RESSOURCES = "ressources/"
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 pygame.init()
-pygame.display.set_mode((1, 1))
+SYSTEM["windows"] = pygame.display.set_mode((1, 1))
+load_tiles()
+SYSTEM["mouse"] = (0, 0)
 
 class TestingImages(unittest.TestCase):
     def test_image_basic(self):
@@ -40,4 +46,64 @@ class TestingImages(unittest.TestCase):
         img2 = img.extracts(0, 0, 25, 25)
         self.assertEqual(img2.height, 25)
         self.assertEqual(img2.width, 25)
+        img2.opacity(125)
+        self.assertEqual(img2.image.get_alpha(), 125)
 
+class TestingText(unittest.TestCase):
+    def test_text_basic(self):
+        txt = Text("Truc", True, "tiny")
+        self.assertIsInstance(txt.image, pygame.Surface)
+        self.assertIsInstance(txt.surface, pygame.Surface)
+        txt.draw(0,0)
+        self.assertEqual(txt.get_size(), txt.surface.get_size())
+
+    def test_text_adv(self):
+        txt = Text("Truc\nMachin", True, "tiny", 100, 200, 20, True, True, (155,155,155))
+        self.assertEqual(txt.width, 100)
+        self.assertEqual(txt.height, 200)
+        txt.opacity(125)
+        self.assertEqual(txt.surface.get_alpha(), 125)
+
+class TestingAnimation(unittest.TestCase):
+    def test_anim_basic(self):
+        anim = Animation("default.png", 24, 24, lines=4)
+        self.assertEqual(anim.width, 24)
+        self.assertEqual(anim.height, 24)
+        self.assertEqual(len(anim._sequence), 16)
+        self.assertEqual(anim.get_image().get_width(), 24)
+        self.assertEqual(anim._current_frame, 0)
+        anim.tick()
+        self.assertEqual(anim.frame, 1)
+    
+    def test_no_loop(self):
+        anim = Animation("default.png", 48, 96, plays_once=True, loops=False)
+        anim.tick()
+        anim.tick()
+        anim.tick()
+        self.assertEqual(anim.finished, True)
+
+    def test_clone(self):
+        anim = Animation("default.png", 24, 24, lines=4)
+        anim2 = anim.clone()
+        self.assertEqual(anim2.width, 24)
+        self.assertEqual(anim2.height, 24)
+        self.assertEqual(len(anim2._sequence), 16)
+        self.assertEqual(anim2.get_image().get_width(), 24)
+    
+    def test_manipulation(self):
+        anim = Animation("default.png", 24, 24, lines=4)
+        anim.scale(100, 100)
+        self.assertEqual(len(anim._sequence), 16)
+        anim.rotate(90)
+        anim.flip(True, True)
+
+class TestingHoverable(unittest.TestCase):
+    def test_basic(self):
+        hv = Hoverable(0, 0, "truc", "shit")
+        hv.set(0, 0).tick().draw()
+
+    def test_override(self):
+        sfc = pygame.Surface((100, 100))
+        hv = Hoverable(0, 0, "truc", "shit", surface=sfc)
+        self.assertEqual(hv.height, 100)
+        self.assertEqual(hv.width, 100)

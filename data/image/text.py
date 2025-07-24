@@ -109,7 +109,7 @@ class Text():
         if force_x > 0:
             self._width = force_x
         if force_y > 0:
-            self._width = force_y
+            self._height = force_y
         self._surface = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
         y_temp = 0
         for tab in self._surfaces:

@@ -90,9 +90,13 @@ class Hoverable():
     @property
     def height(self):
         """Returns the height of the hoverable surface."""
+        if self._attach is not None:
+            return self._attach.get_height()
         return self._text.height
 
     @property
     def width(self):
         """Returns the width of the hoverable surface."""
+        if self._attach is not None:
+            return self._attach.get_width()
         return self._text.width
