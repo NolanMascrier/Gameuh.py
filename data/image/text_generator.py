@@ -19,5 +19,5 @@ class TextGenerator():
 
     def generate_level_up(self):
         """Shows a damage pop up."""
-        text = SYSTEM["font_crit"].render('Level up !', False, (252, 161, 3))
+        text = Text("Level Up !", default_color=(252, 161, 3), bold=True, size=35)
         TEXT_TRACKER.append([text, SYSTEM["player.x"], SYSTEM["player.y"], 255])

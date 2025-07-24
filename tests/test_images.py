@@ -3,9 +3,11 @@ import pygame
 import os
 from data.image.image import Image
 from data.image.text import Text
+from data.image.text_generator import TextGenerator
 from data.image.animation import Animation
 from data.image.hoverable import Hoverable
-from data.constants import RESSOURCES, SYSTEM
+from data.image.parallaxe import Parallaxe
+from data.constants import RESSOURCES, SYSTEM, TEXT_TRACKER
 from data.loading import load_tiles
 
 RESSOURCES = "ressources/"
@@ -14,6 +16,8 @@ pygame.init()
 SYSTEM["windows"] = pygame.display.set_mode((1, 1))
 load_tiles()
 SYSTEM["mouse"] = (0, 0)
+SYSTEM["player.x"] = 0
+SYSTEM["player.y"] = 0
 
 class TestingImages(unittest.TestCase):
     def test_image_basic(self):
@@ -56,6 +60,8 @@ class TestingText(unittest.TestCase):
         self.assertIsInstance(txt.surface, pygame.Surface)
         txt.draw(0,0)
         self.assertEqual(txt.get_size(), txt.surface.get_size())
+        txt = Text(None, True, "tiny")
+        txt = Text(["#c#(255,255,255)#s#(35)Truc", "#b#(1)#i#(1)machin"], True, "tiny")
 
     def test_text_adv(self):
         txt = Text("Truc\nMachin", True, "tiny", 100, 200, 20, True, True, (155,155,155))
@@ -74,6 +80,14 @@ class TestingAnimation(unittest.TestCase):
         self.assertEqual(anim._current_frame, 0)
         anim.tick()
         self.assertEqual(anim.frame, 1)
+        anim.tick()
+        anim.tick()
+        anim.tick()
+        anim.tick()
+        anim.tick()
+        anim.tick()
+        anim.tick()
+        anim.tick()
     
     def test_no_loop(self):
         anim = Animation("default.png", 48, 96, plays_once=True, loops=False)
@@ -81,6 +95,8 @@ class TestingAnimation(unittest.TestCase):
         anim.tick()
         anim.tick()
         self.assertEqual(anim.finished, True)
+        anim = Animation("default.png", 48, 96, animated=False)
+        anim.tick()
 
     def test_clone(self):
         anim = Animation("default.png", 24, 24, lines=4)
@@ -104,6 +120,23 @@ class TestingHoverable(unittest.TestCase):
 
     def test_override(self):
         sfc = pygame.Surface((100, 100))
+        SYSTEM["images"]["hoverable"].get_image()
         hv = Hoverable(0, 0, "truc", "shit", surface=sfc)
         self.assertEqual(hv.height, 100)
         self.assertEqual(hv.width, 100)
+
+class TestingParallaxes(unittest.TestCase):
+    def test_parallaxe(self):
+        para = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
+        self.assertIsInstance(para.draw(), pygame.Surface)
+        para.invert()
+        self.assertIsInstance(para.draw(), pygame.Surface)
+        para = Parallaxe("cybercity.png", 576, 324)
+
+class TestingTextGenerator(unittest.TestCase):
+    def test_generator(self):
+        tg = TextGenerator()
+        tg.generate_damage_text(0,0,(255,255,255), False, 5)
+        tg.generate_damage_text(0,0,(255,255,255), True, 5)
+        tg.generate_level_up()
+        self.assertIsInstance(TEXT_TRACKER[0][0], Text)
