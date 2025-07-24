@@ -7,9 +7,9 @@ from data.image.text import Text
 
 class Hoverable():
     """Defines an hoverable."""
-    def __init__(self, x:int, y:int, text:str, hoverable_text:str, color=(255, 255, 255),\
+    def __init__(self, x:int, y:int, text:str, hoverable_text:str, text_color=(255, 255, 255),\
         surface: pygame.Surface = None, override: pygame.Surface = None,\
-        alternative:pygame.Surface = None):
+        alternative:pygame.Surface = None, hover_color=(255,255,255)):
         self._x = x
         self._y = y
         if text is None:
@@ -17,11 +17,12 @@ class Hoverable():
         else:
             if isinstance(text, str):
                 text = [text]
-            self._text = Text('\n'.join(text), font="item_desc", default_color=color)
+            self._text = Text('\n'.join(text), font="item_desc", default_color=text_color)
         if hoverable_text is not None:
             if isinstance(hoverable_text, str):
                 hoverable_text = [hoverable_text]
-            self._hoverable = Text('\n'.join(hoverable_text), font="item_desc", default_color=color)
+            self._hoverable = Text('\n'.join(hoverable_text), font="item_desc",\
+                                default_color=hover_color)
         else:
             self._hoverable = None
         self._attach = surface
@@ -39,6 +40,9 @@ class Hoverable():
     def update_surface(self):
         """Updates the surface."""
         if self._override is None:
+            if self._hoverable is None:
+                self._surface = None
+                return
             w = self._hoverable.width
             h = self._hoverable.height
             surface = SYSTEM["images"]["hoverable"].duplicate(w + 5, h + 5)
@@ -61,8 +65,6 @@ class Hoverable():
             txt = self._text.width, self._text.height
         elif self._attach is not None:
             txt = self._attach.get_size()
-        else:
-            return
         if SYSTEM["mouse"][0] >= self._x and SYSTEM["mouse"][0] <= self._x + txt[0] and\
             SYSTEM["mouse"][1] >= self._y and SYSTEM["mouse"][1] <= self._y + txt[1]:
             if self._override is None:
@@ -72,6 +74,8 @@ class Hoverable():
                     sfc = self._alternative
                 else:
                     sfc = self._override
+            if sfc is None:
+                return self
             w = sfc.get_width()
             h = sfc.get_height()
             SYSTEM["pop_up"] = (sfc, w, h)

@@ -276,6 +276,7 @@ class Flags(Enum):
     SPREAD = "spread"
     CHANNELED = "channeled"
     BUFF = "buff"
+    DEBUFF = "debuff"
     DASH = "dash"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"

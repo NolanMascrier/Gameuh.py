@@ -97,6 +97,8 @@ class Button():
         """Ticks the button, checking if is pressed."""
         if SYSTEM["mouse_click"][0]:
             self.press()
+        else:
+            self._clicked = False
         return self
 
     def press(self):
@@ -108,8 +110,6 @@ class Button():
             self._action()
             self._clicked = True
             SYSTEM["cooldown"] = 0.1
-        else:
-            self._clicked = False
 
     @property
     def x(self):

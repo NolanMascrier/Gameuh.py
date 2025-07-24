@@ -1,6 +1,6 @@
 """Handles the gear tab."""
 
-from data.interface.general import draw_bottom_bar
+from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.constants import SYSTEM, MENU_GEAR, Flags, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.image.slotpanel import SlotPanel
 from data.item import Item
@@ -41,6 +41,7 @@ def unequip(item: Item, slot: Slot):
 def open_gear_screen():
     """Sets up the gear screen."""
     SYSTEM["game_state"] = MENU_GEAR
+    setup_bottom_bar()
     SYSTEM["gear_tab"] = STATES[0]
     SYSTEM["gear_tabs"] = Tabs(15, 200, STATES, STATES, "gear_tab")
     x = SCREEN_WIDTH / 2- 32

@@ -49,7 +49,10 @@ class Item():
         self._price = price
         self._base_price = price
         self._power = power
-        self._image = image.clone()
+        if image is None:
+            self._image = None
+        else:
+            self._image = image.clone()
         if flags is None:
             self._flags = []
         else:
@@ -153,6 +156,8 @@ class Item():
 
     def create_popup(self, is_details = False):
         """Creates the detailed popup surface."""
+        if self._image is None:
+            return None
         method = self.describe_details if is_details else self.describe
         affixes = Text(method(), True, font="item_desc")
         text = f"{self._name}\n#s#(24)#c#(128, 128, 128)" +\

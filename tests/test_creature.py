@@ -18,19 +18,19 @@ def print_gear(c: Creature):
 class TestingCreatureDamage(unittest.TestCase):
     def test_damage(self):
         bob = Creature("Bob")
-        fireball = Damage(10, 1.2, fire=1)
+        fireball = Damage(10, fire=1, origin=bob, upper_bound=1, lower_bound=1)
         bob.damage(fireball)
-        self.assertEqual(bob.stats["life"].current_value, 88.0)
+        self.assertEqual(bob.stats["life"].current_value, 90.0)
     
     def test_damage_penetrative(self):
         bob = Creature("Bob")
-        fireball = Damage(10, 1.2, fire=1, fp=0.5)
+        fireball = Damage(10, fire=1, fp=0.5, origin=bob, upper_bound=1, lower_bound=1)
         bob.damage(fireball)
-        self.assertEqual(bob.stats["life"].current_value, 82.0)
+        self.assertEqual(bob.stats["life"].current_value, 85.0)
     
     def test_healing(self):
         bob = Creature("Bob")
-        fireball = Damage(10, 1.2, fire=1)
+        fireball = Damage(10, fire=1, origin=bob)
         bob.damage(fireball)
         bob.heal(12)
         self.assertEqual(bob.stats["life"].current_value, 100.0)
@@ -45,28 +45,26 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.name = "Jean"
         self.assertEqual(bob.name, "Jean")
 
-    def test_dot(self):
-        bob = Creature("Bob")
-        dot = ["bobo_feu", 5, 3]
-
     def test_affliction(self):
         bob = Creature("Bob")
-        poison = Affliction("poison", -10, 3, [Flags.LIFE, Flags.DOT])
+        poison = Affliction("poison", -10, 5, [Flags.LIFE, Flags.DOT])
         bob.afflict(poison)
-        self.assertEqual(len(bob._buffs), 1)
+        self.assertEqual(len(bob._buffs), 6)
         bob.tick()
         bob.tick()
         bob.tick()
         bob.tick()
         bob.tick()
         self.assertEqual(bob.stats["life"].current_value, 50)
-        self.assertEqual(len(bob._buffs), 0)
+        for _ in range(500): #Simulates the time ...
+            bob.tick()
+        self.assertEqual(len(bob._buffs), 5)
 
     def test_buff(self):
         bob = Creature("Bob")
         self.assertEqual(bob.stats["str"].value, 10)
         potion = Affliction("potion", 0.10, 1, [Flags.STR, Flags.BOON], True)
-        benediction = Affliction("holy smite", 2, 1, [Flags.STR, Flags.BLESS])
+        benediction = Affliction("holy smite", 1, 1, [Flags.STR, Flags.BLESS])
         sword = Affliction("sword", 10, 1, [Flags.STR, Flags.FLAT])
         bob.afflict(sword)
         self.assertEqual(bob.stats["str"].get_value(), 20)
@@ -83,7 +81,7 @@ class TestingCreatureDamage(unittest.TestCase):
         bob = Creature("Bob")
         self.assertEqual(bob.level, 1)
         self.assertEqual(bob.exp, 0)
-        bob.grant_experience(100)
+        bob.grant_experience(1000)
         self.assertEqual(bob.level, 2)
         bob.grant_experience(100000)
         self.assertGreater(bob.level, 3)
@@ -93,13 +91,13 @@ class TestingCreatureDamage(unittest.TestCase):
         bob = Creature("Bob")
         self.assertEqual(bob.stats["str"].get_value(), 10)
         aff = Affix("def", 10, [Flags.STR, Flags.FLAT])
-        armor = Item("Bob's armor", 999, 0, 1, [Flags.GEAR, Flags.ARMOR], [aff])
+        armor = Item("Bob's armor", "", 999, 0, 1, flags=[Flags.GEAR, Flags.ARMOR], affixes=[aff])
         bob.equip(Flags.ARMOR, armor)
         self.assertEqual(bob.stats["str"].get_value(), 20)
-        self.assertEqual(bob.gear["armor"], armor)
+        self.assertEqual(bob.gear["armors"], armor)
         bob.unequip(Flags.ARMOR)
         self.assertEqual(bob.stats["str"].get_value(), 10)
-        self.assertEqual(bob.gear["armor"], None)
+        self.assertEqual(bob.gear["armors"], None)
 
     def test_mana(self):
         bob = Creature("Bob")

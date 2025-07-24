@@ -5,10 +5,13 @@ from data.constants import *
 from data.interface.gameui import draw_ui
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
+from data.interface.general import setup_bottom_bar, draw_bottom_bar
 from data.interface.inventory import draw_inventory
 from data.interface.spellbook import draw_spells
-from data.interface.gear import draw_gear
+from data.interface.skilltree import draw_skills
+from data.interface.options import draw_options
 from data.interface.general import tick, draw_game
+from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
 
 PLAYING = True
@@ -108,29 +111,6 @@ def draw_small_card():
         l.draw(SYSTEM["windows"])
         l.tick()
 
-def draw_bottom_bar(events):
-    """Draws the bottom bar, quick access to the menus."""
-    SYSTEM["buttons"]["button_map"].set(10, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_map"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_gear"].set(300, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_gear"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_spells"].set(590, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_spells"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_tree"].set(880, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_tree"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_inventory"].set(1170, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_inventory"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_options"].set(1460, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_options"].draw(SYSTEM["windows"])
-    for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"]["button_map"].press()
-            SYSTEM["buttons"]["button_gear"].press()
-            SYSTEM["buttons"]["button_tree"].press()
-            SYSTEM["buttons"]["button_inventory"].press()
-            SYSTEM["buttons"]["button_options"].press()
-            SYSTEM["buttons"]["button_spells"].press()
-
 def draw_menu(events):
     """Draws the main game menu."""
     SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
@@ -183,6 +163,7 @@ if __name__ == "__main__":
     held = False
     debug_create_items()
     ###
+    setup_bottom_bar()
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None
         get_mouse_pos()
@@ -225,6 +206,11 @@ if __name__ == "__main__":
             draw_spells(events)
         if SYSTEM["game_state"] == MENU_INVENTORY:
             draw_inventory(events)
+        if SYSTEM["game_state"] == MENU_TREE:
+            draw_skills(events)
+        if SYSTEM["game_state"] == MENU_OPTIONS:
+            draw_options(events)
+
 
         if SYSTEM["pop_up"] is not None:
             x = SYSTEM["mouse"][0] - SYSTEM["pop_up"][1]

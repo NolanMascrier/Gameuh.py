@@ -67,9 +67,11 @@ class Character():
         self._entity.tick(self, self._base_speed)
         if self._cooldown > 0:
             self._cooldown -= float(SYSTEM["options"]["fps"])
+        already_ticked = []
         for _, skill in self._equipped_spells.items():
-            if skill is not None:
+            if skill is not None and skill not in already_ticked:
                 skill.tick()
+                already_ticked.append(skill)
         SYSTEM["player.x"] = self.hitbox.center[0]
         SYSTEM["player.y"] = self.hitbox.center[1]
         for proj in PROJECTILE_GRID.query(self.hitbox):

@@ -48,6 +48,7 @@ class Affliction():
         """
         if self._duration >= 0:
             self._duration -= float(SYSTEM["options"]["fps"])
+        
 
     def clone(self):
         """Returns a copy of the affliction."""

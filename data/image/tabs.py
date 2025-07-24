@@ -18,10 +18,15 @@ class Tabs:
         states (list[str]): list of states value.
         variable (str): which variable will be changed.
         image (Image, optional): Image for the buttons.
-        held (Image, optional): Image for the held buttons.     
+        held (Image, optional): Image for the held buttons.
+        is_action (bool, False): Whether or not a click should
+        call an action rather than merely changing a state. Defaults\
+        to `False`.
+        actions (list, optional): List of function calls to use with\
+        the previous option. Defaults to None. 
     """
     def __init__(self, x, y, values, states, variable,\
-        image = None, held = None):
+        image = None, held = None, is_action = False, actions = None):
         self._x = x
         self._y = y
         if values is None:
@@ -39,7 +44,9 @@ class Tabs:
         self._fake_buttons = []
         for i, v in enumerate(values):
             self._buttons.append(Button(image, image,\
-                lambda i=i: set_var(self._variable, self._states[i]), v))
+                lambda i=i: set_var(self._variable, self._states[i])\
+                if not is_action else actions[i](),\
+                v))
             self._fake_buttons.append(Button(held, held, None, v))
 
     def tick(self):

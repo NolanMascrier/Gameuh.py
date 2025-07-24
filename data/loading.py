@@ -7,7 +7,7 @@ import random
 import pygame
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    MENU_TREE, RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, SLASH_TRACKER,\
+    RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, SLASH_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER
 from data.image.animation import Animation, Image
 from data.image.button import Button
@@ -18,9 +18,12 @@ from data.image.text_generator import TextGenerator
 from data.image.slotpanel import SlotPanel
 
 from data.game.lootgenerator import LootGenerator
-from data.interface.inventory import open_inventory
-from data.interface.spellbook import open_spell_screen
+from data.interface.general import setup_bottom_bar
 from data.interface.gear import open_gear_screen
+from data.interface.spellbook import open_spell_screen
+from data.interface.skilltree import open_skill_screen
+from data.interface.inventory import open_inventory
+from data.interface.options import open_option_screen
 from data.game.level import Level
 
 from data.character import Character
@@ -68,6 +71,7 @@ def reset():
                                              levels[i]))
         SYSTEM["buttons_e"].append(butt)
     init_timers()
+    setup_bottom_bar()
 
 def init_timers():
     """Inits Pygame's timers."""
@@ -139,6 +143,14 @@ def load_parallaxes():
 
 def load_buttons():
     """Load the buttons"""
+    SYSTEM["buttons"]["menu_states"] = [
+        lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),
+        open_gear_screen,
+        open_spell_screen,
+        open_skill_screen,
+        open_inventory,
+        open_option_screen
+    ]
     SYSTEM["buttons"]["button_quit"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
                                              lambda : SYSTEM.__setitem__("playing", False),\
                                              "Quit Game")
@@ -151,25 +163,6 @@ def load_buttons():
     SYSTEM["buttons"]["button_continue"] = Button(SYSTEM["images"]["btn"],\
                                             SYSTEM["images"]["btn_p"],\
                                             quit_level, "Return to base")
-    SYSTEM["buttons"]["button_map"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
-                                             lambda : SYSTEM.__setitem__("game_state", MENU_MAIN),\
-                                             "World Map")
-    SYSTEM["buttons"]["button_gear"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
-                                             open_gear_screen,\
-                                             "Gear")
-    SYSTEM["buttons"]["button_spells"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
-                                             open_spell_screen,\
-                                             "Spellbook")
-    SYSTEM["buttons"]["button_tree"] = Button(SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"],\
-                                             lambda : SYSTEM.__setitem__("game_state", MENU_TREE),\
-                                             "Skill Tree")
-    SYSTEM["buttons"]["button_inventory"] = Button(SYSTEM["images"]["btn"],\
-                                            SYSTEM["images"]["btn_p"],\
-                                            open_inventory, "Inventory")
-    SYSTEM["buttons"]["button_options"] = Button(SYSTEM["images"]["btn"],\
-                                            SYSTEM["images"]["btn_p"],\
-                                             lambda : SYSTEM.__setitem__("game_state",\
-                                             MENU_OPTIONS_GAME), "Options")
     SYSTEM["buttons"]["button_assault"] = Button(SYSTEM["images"]["btn"],\
                                             SYSTEM["images"]["btn_p"],\
                                              start_level, "Begin the assault !")
@@ -296,6 +289,8 @@ def load_others():
     """Loads everything else"""
     SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000,\
         contains=SYSTEM["images"]["mission_map"].image)
+    SYSTEM["images"]["tree_scroller"] = Scrollable(10, 10, SCREEN_WIDTH - 110, SCREEN_HEIGHT - 200,\
+        contains=None)
     SYSTEM["text_generator"] = TextGenerator()
 
 def load_start():

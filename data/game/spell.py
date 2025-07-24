@@ -91,6 +91,11 @@ class Spell():
         if Flags.BUFF in self._flags:
             for afflic in self._afflictions:
                 buffs.append(afflic.describe(True))
+        if Flags.DEBUFF in self._flags:
+            for afflic in self._afflictions:
+                buffs.append(afflic.describe(True))
+        if Flags.CUTS_PROJECTILE in self._flags:
+            buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, (0,0,0)))
         return buffs
 
     def describe(self):

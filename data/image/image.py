@@ -1,6 +1,7 @@
 """Simple wrapper for image surfaces in Pygame."""
 
 import pygame
+from functools import lru_cache
 from data.constants import RESSOURCES
 
 class Image():
@@ -92,6 +93,7 @@ class Image():
             self._image.set_alpha(opacity)
         return self
 
+    @lru_cache(maxsize=32)
     def clone(self):
         """Returns a deep copy of the image."""
         return Image(self._uri)

@@ -192,15 +192,18 @@
         "buffs": "Gain status effect",
         "debuffs": "Inflict status effect",
         "for": "for",
-        "seconds": "seconds"
+        "seconds": "seconds",
+        "cut_proj": "Can destroy enemy projectiles"
     },
     "affliction_name":{
         "elemetal_fury": "Elemental Fury",
-        "fury": "Fury slash"
+        "fury": "Fury slash",
+        "celerity": "Celerity"
     },
     "affliction_desc":{
         "elemetal_fury": "Grants 35% more elemental damage.",
-        "fury": "Grants 15% more physical damage. This effect can stack."
+        "fury": "Grants 15% more physical damage. This effect can stack.",
+        "celerity": "Grants 300% increased move speed."
     },
     "spells_name": {
         "none": "Nothing",
@@ -363,7 +366,8 @@
         "",
         "Enchanted ",
         "Blessed ",
-        "Exalted "
+        "Exalted ",
+        "Primaltouched"
     ],
   "item_names": {
     "0": [

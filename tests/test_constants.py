@@ -20,14 +20,12 @@ class TestConstants(unittest.TestCase):
         self.assertIsNone(FONT)
 
     def test_language(self):
-        global LANGUAGE
-        self.assertIsNone(LANGUAGE)
-        LANGUAGE = change_language("ressources/locales/RU_ru")
-        self.assertIsNone(LANGUAGE)
-        LANGUAGE = change_language("ressources/locales/FR_fr")
-        self.assertEqual(LANGUAGE["fire_dot"], "Brulures")
-        LANGUAGE = change_language("ressources/locales/EN_us")
-        self.assertEqual(LANGUAGE["fire_dot"], "Burning")
+        change_language("DD_dd")
+        self.assertIsNone(SYSTEM["lang"])
+        change_language("FR_fr")
+        self.assertEqual(SYSTEM["lang"]["fire_dot"], "Brulures")
+        change_language("EN_us")
+        self.assertEqual(SYSTEM["lang"]["fire_dot"], "Burning")
 
 class TestImports(unittest.TestCase):
     def test_import_pygame(self):

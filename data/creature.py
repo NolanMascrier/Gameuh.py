@@ -8,7 +8,7 @@ from data.numerics.rangestat import RangeStat
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.numerics.damage import Damage
-from data.constants import Flags, SYSTEM, trad
+from data.constants import Flags, SYSTEM, trad, GAME_LEVEL
 from data.item import Item
 from data.image.hoverable import Hoverable
 
@@ -384,7 +384,8 @@ class Creature:
         self._stats["mana"].refill()
         if self._level <= 150:
             self._ap += 1
-        SYSTEM["text_generator"].generate_level_up()
+        if SYSTEM["game_state"] == GAME_LEVEL:
+            SYSTEM["text_generator"].generate_level_up()
 
     def grant_experience(self, amount:int):
         """Grants a creature experience, leveling it up if needed.

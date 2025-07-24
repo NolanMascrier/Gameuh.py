@@ -1,6 +1,6 @@
 """Handles the spellbook tabs of the main menu."""
 
-from data.interface.general import draw_bottom_bar
+from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_WIDTH,\
     MENU_SPELLBOOK_Q, MENU_SPELLBOOK_F, MENU_SPELLBOOK_E, MENU_SPELLBOOK_R,\
     MENU_SPELLBOOK_SHIFT, MENU_SPELLBOOK_T, K_q, K_t, K_e, K_r, K_f, K_LSHIFT, trad
@@ -60,6 +60,7 @@ def set_page(page):
 def open_spell_screen():
     """Sets up the spell screen menu."""
     SYSTEM["game_state"] = MENU_SPELLBOOK
+    setup_bottom_bar()
     SYSTEM["spell_page"] = MENU_SPELLBOOK_Q
     spells = []
     dashes = []
@@ -160,9 +161,12 @@ def draw_spells(events):
         y = 530 + SYSTEM["ui"][key][2].height
         SYSTEM["ui"][key][3].draw(680, y)
         y += SYSTEM["ui"][key][3].height
-        for afflic in SYSTEM["ui"][key][4]:
-            afflic.set(680, y).tick().draw()
-            y += afflic.height
+        try:
+            for afflic in SYSTEM["ui"][key][4]:
+                afflic.set(680, y).tick().draw()
+                y += afflic.height
+        except IndexError:
+            pass
     else:
         SYSTEM["ui"]["no_spells"][0].draw(680, 450)
         SYSTEM["ui"]["no_spells"][1].draw(680, 490)

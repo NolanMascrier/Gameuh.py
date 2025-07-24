@@ -1,7 +1,7 @@
 """Handles the inventory tab of the main menu."""
 
 import pygame
-from data.interface.general import draw_bottom_bar, draw_game, tick
+from data.interface.general import draw_bottom_bar, draw_game, tick, setup_bottom_bar
 from data.constants import SYSTEM, MENU_INVENTORY, Flags, trad, TEXT_TRACKER
 from data.image.button import Button
 from data.image.slotpanel import SlotPanel
@@ -67,6 +67,7 @@ def rune(rune_id):
 def open_inventory():
     """Sets up the inventory screen."""
     SYSTEM["game_state"] = MENU_INVENTORY
+    setup_bottom_bar()
     SYSTEM["ui"]["sell_slot"] = Slot(1556, 850, "sell_slot", sell)
     SYSTEM["buttons"]["button_sort_name"] = Button(SYSTEM["images"]["btn_small"], None,\
                                     lambda: sort_inventory(0, False),\

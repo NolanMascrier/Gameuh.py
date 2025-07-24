@@ -3,30 +3,36 @@
 import pygame
 from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
-    PROJECTILE_TRACKER, SLASH_TRACKER, TEXT_TRACKER, generate_grids, clean_grids
+    PROJECTILE_TRACKER, SLASH_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
+    MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS
+from data.image.tabs import Tabs
+
+def setup_bottom_bar():
+    """Sets up the bottom bar."""
+    values = [
+        trad('buttons', 'map'),
+        trad('buttons', 'gear'),
+        trad('buttons', 'spells'),
+        trad('buttons', 'tree'),
+        trad('buttons', 'inventory'),
+        trad('buttons', 'options')
+    ]
+    states = [
+        MENU_MAIN,
+        MENU_GEAR,
+        MENU_SPELLBOOK,
+        MENU_TREE,
+        MENU_INVENTORY,
+        MENU_OPTIONS
+    ]
+    SYSTEM["ui"]["bottom_bar"] = Tabs(10, SCREEN_HEIGHT - 64, values,\
+                states, "game_state",\
+                SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"], True,\
+                SYSTEM["buttons"]["menu_states"])
 
 def draw_bottom_bar(events):
     """Draws the bottom bar, quick access to the menus."""
-    SYSTEM["buttons"]["button_map"].set(10, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_map"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_gear"].set(300, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_gear"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_spells"].set(590, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_spells"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_tree"].set(880, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_tree"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_inventory"].set(1170, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_inventory"].draw(SYSTEM["windows"])
-    SYSTEM["buttons"]["button_options"].set(1460, SCREEN_HEIGHT - 64)
-    SYSTEM["buttons"]["button_options"].draw(SYSTEM["windows"])
-    for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"]["button_map"].press()
-            SYSTEM["buttons"]["button_gear"].press()
-            SYSTEM["buttons"]["button_tree"].press()
-            SYSTEM["buttons"]["button_inventory"].press()
-            SYSTEM["buttons"]["button_options"].press()
-            SYSTEM["buttons"]["button_spells"].press()
+    SYSTEM["ui"]["bottom_bar"].tick()
 
 def draw_game(show_player = True, show_enemies = True,\
     show_loot = True, show_projectiles = True, show_slashes = True,\
