@@ -15,20 +15,19 @@ class Image():
         self._uri = uri
         if uri is None:
             self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
+            self._uri = "default.png"
         elif isinstance(uri, Image):
-            self._image = uri.clone()
+            self._image = uri.clone().image
+            self._uri = uri.uri
         else:
             try:
                 self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
             except FileNotFoundError:
                 print(f"Couldn't find file {uri}. Using default image.")
+                self._uri = "default.png"
                 self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
-        if uri is None:
-            self._width = 64
-            self._height = 64
-        else:
-            self._width = self._image.get_width()
-            self._height = self._image.get_height()
+        self._width = self._image.get_width()
+        self._height = self._image.get_height()
         self._visible = True
 
     def get_image(self) -> pygame.Surface:
@@ -134,3 +133,8 @@ class Image():
     @visible.setter
     def visible(self, value):
         self._visible = value
+
+    @property
+    def uri(self):
+        """Returns the image's uri."""
+        return self._uri
