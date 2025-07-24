@@ -61,7 +61,7 @@ class TestingText(unittest.TestCase):
         txt.draw(0,0)
         self.assertEqual(txt.get_size(), txt.surface.get_size())
         txt = Text(None, True, "tiny")
-        txt = Text(["#c#(255,255,255)#s#(35)Truc", "#b#(1)#i#(1)machin"], True, "tiny")
+        txt = Text(["#c#(255,255,255)#s#(35)Truc", "#b#(1)#i#(1)machin", "wiwi#c#(255, 125, 125)wi"], True, "tiny")
 
     def test_text_adv(self):
         txt = Text("Truc\nMachin", True, "tiny", 100, 200, 20, True, True, (155,155,155))
@@ -80,14 +80,8 @@ class TestingAnimation(unittest.TestCase):
         self.assertEqual(anim._current_frame, 0)
         anim.tick()
         self.assertEqual(anim.frame, 1)
-        anim.tick()
-        anim.tick()
-        anim.tick()
-        anim.tick()
-        anim.tick()
-        anim.tick()
-        anim.tick()
-        anim.tick()
+        for _ in range(100):
+            anim.tick()
     
     def test_no_loop(self):
         anim = Animation("default.png", 48, 96, plays_once=True, loops=False)
@@ -137,6 +131,6 @@ class TestingTextGenerator(unittest.TestCase):
     def test_generator(self):
         tg = TextGenerator()
         tg.generate_damage_text(0,0,(255,255,255), False, 5)
-        tg.generate_damage_text(0,0,(255,255,255), True, 5)
+        tg.generate_damage_text(0,0, None, True, 5)
         tg.generate_level_up()
         self.assertIsInstance(TEXT_TRACKER[0][0], Text)
