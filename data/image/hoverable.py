@@ -17,11 +17,11 @@ class Hoverable():
         else:
             if isinstance(text, str):
                 text = [text]
-            self._text = Text('\n'.join(text), font="item_desc")
+            self._text = Text('\n'.join(text), font="item_desc", default_color=color)
         if hoverable_text is not None:
             if isinstance(hoverable_text, str):
                 hoverable_text = [hoverable_text]
-            self._hoverable = Text('\n'.join(hoverable_text), font="item_desc")
+            self._hoverable = Text('\n'.join(hoverable_text), font="item_desc", default_color=color)
         else:
             self._hoverable = None
         self._attach = surface
@@ -77,8 +77,10 @@ class Hoverable():
             SYSTEM["pop_up"] = (sfc, w, h)
         return self
 
-    def draw(self, surface):
+    def draw(self, surface = None):
         """Draws the text to the window."""
+        if surface is None:
+            surface = SYSTEM["windows"]
         surface.blit(self._text.surface, (self._x, self._y))
 
     @property

@@ -90,7 +90,7 @@ class RangeStat():
         else:
             name = f"{trad('descripts', self._name)}: "
         name_hover = Hoverable(0, 0, name, trad(self._name))
-        value = f"{round(self.get_value()[0])}-{round(self.get_value()[1])}"
+        value = f"{round(self.get_value()[1])}-{round(self.get_value()[0])}"
         desc = f"{trad('meta_words', 'base')}: {self._lower.value}-{self._upper.value}\n" +\
             f"{trad('meta_words', 'flat')}: " +\
                 f"{self._lower.get_flats()}-{self._upper.get_flats()}\n" +\

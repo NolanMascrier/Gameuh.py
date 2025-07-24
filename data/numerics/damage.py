@@ -128,20 +128,27 @@ class Damage():
         }
         return damages, self._penetration
 
-    def describe(self, caster):
+    def describe(self, caster, is_melee = False, is_ranged = False, is_spell = False):
         """Returns a text description of the damage.
         Simulates the damage from a caster."""
         types = ["phys", "fire", "ice", "elec", "energy", "light", "dark"]
         txt = ""
+        mult = 1
+        if is_melee:
+            mult *= caster.stats["melee_dmg"].c_value
+        if is_ranged:
+            mult *= caster.stats["ranged_dmg"].c_value
+        if is_spell:
+            mult *= caster.stats["spell_dmg"].c_value
         for typ in types:
-            low = (self._types[typ] + caster.stats[f"{typ}_flat"].lower.c_value) * self._bounds[0] *\
-                caster.stats[f"{typ}_dmg"].c_value
-            up = (self._types[typ] + caster.stats[f"{typ}_flat"].upper.c_value) * self._bounds[1] *\
-                caster.stats[f"{typ}_dmg"].c_value
+            low = (self._types[typ] + caster.stats[f"{typ}_flat"].lower.c_value) *self._bounds[0]*\
+                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult
+            up = (self._types[typ] + caster.stats[f"{typ}_flat"].upper.c_value) * self._bounds[1]*\
+                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult
             if low == 0 and up == 0:
                 continue
-            txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} {\
-                trad('meta_words', typ)} {trad('meta_words', 'damage')}\n"
+            txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} " +\
+                f"{trad('meta_words', typ)} {trad('meta_words', 'damage')}\n"
         return txt
 
     @property

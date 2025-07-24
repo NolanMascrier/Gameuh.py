@@ -13,10 +13,10 @@ ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=10, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
 
-ELEFURY = Affliction("elemetal_fury", 1.25, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
+ELEFURY = Affliction("elemetal_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
-FURY = Affliction("FURY", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\
+FURY = Affliction("fury", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\
                 stackable=True, refreshable=True)
 
 def generate_spell_list():

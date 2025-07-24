@@ -8,6 +8,7 @@ from data.slash import Slash
 from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER, trad
 from data.numerics.affliction import Affliction
+from data.image.hoverable import Hoverable, Text
 
 class Spell():
     """Creates a spell. A spell is how creature interact with each other
@@ -77,14 +78,20 @@ class Spell():
         """Describes the damage and buffs components."""
         descript = ""
         if self._base_damage is not None:
-            descript += self._base_damage.describe(caster)
+            descript += self._base_damage.describe(caster, Flags.MELEE in self._flags,\
+                Flags.RANGED in self._flags, Flags.SPELL in self._flags)
         if Flags.DASH in self._flags:
-            descript += f"{trad('meta_words', 'dash')} {self._stats["distance"].c_value\
-                } {trad('meta_words', 'meters')}\n"
+            descript += f"{trad('meta_words', 'dash')} {self._stats['distance'].c_value}" +\
+                f" {trad('meta_words', 'meters')}\n"
+        return descript
+
+    def __describe_afflictions(self):
+        """Describe the spell's buff and debuff components."""
+        buffs = []
         if Flags.BUFF in self._flags:
             for afflic in self._afflictions:
-                descript += f"{trad('meta_words', 'buffs')} {afflic.name}\n"
-        return descript
+                buffs.append(afflic.describe(True))
+        return buffs
 
     def describe(self):
         """Returns a description of the spell."""
@@ -92,7 +99,8 @@ class Spell():
             "name": trad('spells_name', self._name),
             "desc": trad('spells_desc', self._name),
             "level": str(self._level),
-            "damage": self.__damage_describe(SYSTEM["player"].creature)
+            "damage": self.__damage_describe(SYSTEM["player"].creature),
+            "buffs": self.__describe_afflictions()
         }
         return data
 

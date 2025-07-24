@@ -1,7 +1,8 @@
 """An affliction is a debuff or a buff. It has
 a name, a value, a duration, flags."""
 
-from data.constants import SYSTEM
+from data.constants import SYSTEM, trad
+from data.image.hoverable import Hoverable
 
 class Affliction():
     """Defines an affliction. An affliction is a temporary \
@@ -68,6 +69,14 @@ class Affliction():
         if self._name == other._name:
             return True
         return False
+
+    def describe(self, is_buff = False) -> Hoverable:
+        """Returns a hoverable about the affliction."""
+        name = f"{trad('meta_words', 'buffs' if is_buff else 'debuffs')} " +\
+            f"{trad('affliction_name', self._name)} " +\
+            f"{trad('meta_words', 'for')} {self._duration} {trad('meta_words', 'seconds')}"
+        desc = trad('affliction_desc', self._name)
+        return Hoverable(0, 0, name, desc, (0,0,0))
 
     @property
     def name(self) -> str:

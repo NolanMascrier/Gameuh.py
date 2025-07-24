@@ -37,8 +37,8 @@ def slot_in(contain, slot):
     SYSTEM["ui"][slot.flag] = [
         Text(SYSTEM["player"].equipped_spells[slot.flag].describe()["name"],\
             font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[slot.flag].describe()["level"]}',\
+        Text(f"{trad('meta_words', 'level')} " +\
+            f"{SYSTEM['player'].equipped_spells[slot.flag].describe()['level']}",\
             font="item_desc", size=20, default_color=(0,0,0)),
         Text(SYSTEM["player"].equipped_spells[slot.flag].describe()["desc"],\
             font="item_desc", size=20, default_color=(0,0,0)),
@@ -73,8 +73,8 @@ def open_spell_screen():
         SYSTEM["images"][K_q],
         SYSTEM["images"][K_e],
         SYSTEM["images"][K_f],
-        SYSTEM["images"][K_r],
         SYSTEM["images"][K_t],
+        SYSTEM["images"][K_r],
         SYSTEM["images"][K_LSHIFT]
     ]
     x_offset = SCREEN_WIDTH / 2 - 300
@@ -93,72 +93,19 @@ def open_spell_screen():
         default=SYSTEM["player"].equipped_spells[K_t], flag=K_t)
     SYSTEM["ui"]["slot_shift"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["player"].equipped_spells[K_LSHIFT], flag=K_LSHIFT)
-    SYSTEM["ui"][K_q] = [
-        Text(SYSTEM["player"].equipped_spells[K_q].describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[K_q].describe()["level"]}',\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_q].describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_q].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
-    ] if SYSTEM["player"].equipped_spells[K_q] is not None else None
-    SYSTEM["ui"][K_e] = [
-        Text(SYSTEM["player"].equipped_spells[K_e].describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[K_e].describe()["level"]}',\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_e].describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_e].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
-    ] if SYSTEM["player"].equipped_spells[K_e] is not None else None
-    SYSTEM["ui"][K_r] = [
-        Text(SYSTEM["player"].equipped_spells[K_r].describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[K_r].describe()["level"]}',\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_r].describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_r].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
-    ] if SYSTEM["player"].equipped_spells[K_r] is not None else None
-    SYSTEM["ui"][K_f] = [
-        Text(SYSTEM["player"].equipped_spells[K_f].describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[K_f].describe()["level"]}',\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_f].describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_f].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
-    ] if SYSTEM["player"].equipped_spells[K_f] is not None else None
-    SYSTEM["ui"][K_t] = [
-        Text(SYSTEM["player"].equipped_spells[K_t].describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[K_t].describe()["level"]}',\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_t].describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_t].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
-    ] if SYSTEM["player"].equipped_spells[K_t] is not None else None
-    SYSTEM["ui"][K_LSHIFT] = [
-        Text(SYSTEM["player"].equipped_spells[K_LSHIFT].describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
-        Text(f'{trad('meta_words', 'level')} {SYSTEM["player"].\
-            equipped_spells[K_LSHIFT].describe()["level"]}',\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_LSHIFT].describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[K_LSHIFT].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
-    ] if SYSTEM["player"].equipped_spells[K_LSHIFT] is not None else None
+    for key in [K_q, K_e, K_f, K_t, K_r, K_LSHIFT]:
+        SYSTEM["ui"][key] = [
+            Text(SYSTEM["player"].equipped_spells[key].describe()["name"],\
+                font="item_titles", size=45, default_color=(0,0,0)),
+            Text(f"{trad('meta_words', 'level')} " +\
+                f"{SYSTEM['player'].equipped_spells[key].describe()['level']}",\
+                font="item_desc", size=20, default_color=(0,0,0)),
+            Text(SYSTEM["player"].equipped_spells[key].describe()["desc"],\
+                font="item_desc", size=20, default_color=(0,0,0)),
+            Text(SYSTEM["player"].equipped_spells[key].describe()["damage"],\
+                font="item_desc", size=20, default_color=(0,0,0)),
+            SYSTEM["player"].equipped_spells[key].describe()["buffs"]
+        ] if SYSTEM["player"].equipped_spells[key] is not None else None
     SYSTEM["ui"]["no_spells"] = [
         Text(trad('spells_name', 'none'), font="item_titles", size=45, default_color=(0,0,0)),
         Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=(0,0,0))
@@ -194,10 +141,10 @@ def draw_spells(events):
             SYSTEM["ui"]["slot_f"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 3:
-            SYSTEM["ui"]["slot_r"].tick().draw()
+            SYSTEM["ui"]["slot_t"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 4:
-            SYSTEM["ui"]["slot_t"].tick().draw()
+            SYSTEM["ui"]["slot_r"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 5:
             SYSTEM["ui"]["slot_shift"].tick().draw()
@@ -210,7 +157,12 @@ def draw_spells(events):
         SYSTEM["ui"][key][0].draw(680, 450)
         SYSTEM["ui"][key][1].draw(680, 490)
         SYSTEM["ui"][key][2].draw(680, 510)
-        SYSTEM["ui"][key][3].draw(680, 530 + SYSTEM["ui"][key][2].height)
+        y = 530 + SYSTEM["ui"][key][2].height
+        SYSTEM["ui"][key][3].draw(680, y)
+        y += SYSTEM["ui"][key][3].height
+        for afflic in SYSTEM["ui"][key][4]:
+            afflic.set(680, y).tick().draw()
+            y += afflic.height
     else:
         SYSTEM["ui"]["no_spells"][0].draw(680, 450)
         SYSTEM["ui"]["no_spells"][1].draw(680, 490)

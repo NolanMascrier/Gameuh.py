@@ -165,8 +165,8 @@ def draw_inventory(events):
     for i in [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]:
         SYSTEM["buttons"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
         SYSTEM["images"][f"pop_rune_{i}"].set(1520, 110 + c * 74).tick()
-        Text(f"{SYSTEM['player'].runes[i] if SYSTEM['player'].runes[i] < 1000 else "999+" \
-            }", font="font_detail").draw(1584, 132 + c * 74)
+        Text(f"{SYSTEM['player'].runes[i] if SYSTEM['player'].runes[i] < 1000 else '999+'}",\
+            font="font_detail").draw(1584, 132 + c * 74)
         c += 1
     SYSTEM["buttons"]["button_sort_name"].set(1300, 20).draw(SYSTEM["windows"])
     SYSTEM["buttons"]["button_sort_rarity"].set(1300, 50).draw(SYSTEM["windows"])

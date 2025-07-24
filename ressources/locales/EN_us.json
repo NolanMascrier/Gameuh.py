@@ -190,7 +190,17 @@
         "meters": "meters",
         "teleport": "Teleports the user to the mouse.",
         "buffs": "Gain status effect",
-        "debuffs": "Inflict status effect"
+        "debuffs": "Inflict status effect",
+        "for": "for",
+        "seconds": "seconds"
+    },
+    "affliction_name":{
+        "elemetal_fury": "Elemental Fury",
+        "fury": "Fury slash"
+    },
+    "affliction_desc":{
+        "elemetal_fury": "Grants 35% more elemental damage.",
+        "fury": "Grants 15% more physical damage. This effect can stack."
     },
     "spells_name": {
         "none": "Nothing",
