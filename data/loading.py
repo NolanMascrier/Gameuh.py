@@ -246,6 +246,9 @@ def load_images():
     SYSTEM["images"]["item_ringA"] = Image("icons/ringA.png")
     SYSTEM["images"]["item_armorA"] = Image("icons/armorA.png")
     SYSTEM["images"]["loot_icon"] = Image("loot.png").scale(32, 32)
+    SYSTEM["images"]["tree_start"] = Image("tree/start.png").scale(64, 64)
+    SYSTEM["images"]["tree_a"] = Image("tree/node2.png").scale(64, 64)
+    SYSTEM["images"]["tree_b"] = Image("tree/node3.png").scale(64, 64)
 
 def load_icons():
     """Loads the icons."""
@@ -289,8 +292,9 @@ def load_others():
     """Loads everything else"""
     SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000,\
         contains=SYSTEM["images"]["mission_map"].image)
+    SYSTEM["images"]["tree_surface"] = pygame.Surface((2000, 2000), pygame.SRCALPHA)
     SYSTEM["images"]["tree_scroller"] = Scrollable(10, 10, SCREEN_WIDTH - 110, SCREEN_HEIGHT - 200,\
-        contains=None)
+        contains=SYSTEM["images"]["tree_surface"])
     SYSTEM["text_generator"] = TextGenerator()
 
 def load_start():

@@ -1,7 +1,9 @@
 """For the skill trees."""
 
+import pygame
 from data.constants import SYSTEM
 from data.numerics.affliction import Affliction
+from data.image.animation import Animation, Image
 
 class Node:
     """
@@ -9,21 +11,62 @@ class Node:
 
     Args:
         name (str): Name of the node.
+        icon (Image|Animation): Icon of the node.
         effects (list[Affliction]): List of effects from the node.
         previous (Node, optional): Previous node connected to this
         one in the tree.
     """
-    def __init__(self, name, effects:list[Affliction], previous = None):
+    def __init__(self, name, icon: str, x, y,\
+        effects:list[Affliction], previous = None):
         self._name = name
+        self._x = x
+        self._y = y
+        self._icon = icon
         self._effects = effects
         self._previous = previous
+        self._connected = []
         self._learned = False
+        if self._previous is not None:
+            self._previous.connected.append(self)
+
+    def can_be_learned(self) -> bool:
+        """Checks whether or not the node can be learnt."""
+        if SYSTEM["player"].creature.ap >= 1 and \
+            (self._previous is None or self._previous.learned):
+            return True
+        return False
+
+    def can_be_unlearned(self) -> bool:
+        """Checks whether or not the node can be unlearnt."""
+        if len(self._connected) == 0:
+            return True
+        for f in self._connected:
+            if f.learned:
+                return False
+        return True
 
     def learn(self):
         """Attempt to learn the node."""
-        if SYSTEM["player"].creature.ap >= 1 and \
-            (self._previous is None or self._previous.learned):
-            pass
+        if self.can_be_learned():
+            SYSTEM["player"].creature.ap -= 1
+            self._learned = True
+            for f in self._effects:
+                SYSTEM["player"].creature.afflict(f)
+
+    def draw(self, surface: pygame.Surface):
+        """Draws the tree."""
+        pos_origin = (self._x - SYSTEM["images"][self._icon].width / 2,\
+            self._y - SYSTEM["images"][self._icon].height / 2)
+        if self._previous is not None:
+            color = (0, 255, 0) if self._learned else (255, 255, 255) if \
+                self.can_be_learned() else (150, 150, 150)
+            pos_destin = (self._previous.x - SYSTEM["images"][self._previous.icon].width / 2,\
+                self._previous.y - SYSTEM["images"][self._previous.icon].height / 2)
+            pygame.draw.line(surface, color, pos_origin, \
+                pos_destin, 5)
+        for f in self._connected:
+            f.draw(surface)
+        surface.blit(SYSTEM["images"][self._icon].image, pos_origin)
 
     @property
     def name(self):
@@ -60,3 +103,28 @@ class Node:
     @learned.setter
     def learned(self, value):
         self._learned = value
+
+    @property
+    def x(self):
+        """Returns the node's x position."""
+        return self._x
+
+    @property
+    def y(self):
+        """Returns the node's y position."""
+        return self._y
+
+    @property
+    def icon(self):
+        """Returns the node's icon."""
+        return self._icon
+
+    @property
+    def connected(self):
+        """Returns the node's connected nodes."""
+        return self._connected
+
+    @connected.setter
+    def connected(self, value):
+        self._connected = value
+
