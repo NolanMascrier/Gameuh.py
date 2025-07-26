@@ -12,6 +12,8 @@ class Button():
     and not clicked), and does an action when clicked."""
     def __init__(self, image:Image, pressed:Image = None, action = None, text:str|Image = "",\
         scrollable_area: Scrollable = None, superimage: pygame.Surface = None):
+        if isinstance(image, str):
+            image = SYSTEM["images"][image]
         self._image = image
         self._pressed = pressed
         self._clicked = False

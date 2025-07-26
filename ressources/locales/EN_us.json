@@ -150,6 +150,9 @@
     ],
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
+    "tree": {
+      "start": "Way of the warrior"
+    },
     "buttons":{
         "map": "World map",
         "gear": "Gear",
@@ -179,6 +182,7 @@
         "level": "Level",
         "deal": "Deal",
         "damage": "damage",
+        "grants":"Grants",
         "phys": "#c#(180, 180, 180)Physical",
         "fire": "#c#(255, 119, 0)Fire",
         "ice": "#c#(89, 219, 255)Ice",

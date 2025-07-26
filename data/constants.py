@@ -125,7 +125,8 @@ SYSTEM = {
     "level": None,
     "selected": None,
     "dragged": None,
-    "pop-up": None
+    "pop-up": None,
+    "mouse": (0,0)
 }
 
 def factor() -> int:

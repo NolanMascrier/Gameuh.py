@@ -9,7 +9,7 @@ class Hoverable():
     """Defines an hoverable."""
     def __init__(self, x:int, y:int, text:str, hoverable_text:str, text_color=(255, 255, 255),\
         surface: pygame.Surface = None, override: pygame.Surface = None,\
-        alternative:pygame.Surface = None, hover_color=(255,255,255)):
+        alternative:pygame.Surface = None, hover_color=(255,255,255), scrollable = None):
         self._x = x
         self._y = y
         if text is None:
@@ -28,6 +28,7 @@ class Hoverable():
         self._attach = surface
         self._override = override
         self._alternative = alternative
+        self._scrollable = scrollable
         self._surface = None
         self.update_surface()
 
@@ -58,15 +59,21 @@ class Hoverable():
                 sfc = self._override
         self._surface = sfc
 
-    def tick(self):
-        """Checks whether or not the mouse is within the hoverable's\
-        area, and displays the text if it does."""
+    def __is_mouse_over(self):
+        """Checks whether or not the mouse is over the hoverable surface."""
         if self._text is not None:
             txt = self._text.width, self._text.height
         elif self._attach is not None:
             txt = self._attach.get_size()
         if SYSTEM["mouse"][0] >= self._x and SYSTEM["mouse"][0] <= self._x + txt[0] and\
             SYSTEM["mouse"][1] >= self._y and SYSTEM["mouse"][1] <= self._y + txt[1]:
+                return True
+        return False
+
+    def tick(self):
+        """Checks whether or not the mouse is within the hoverable's\
+        area, and displays the text if it does."""
+        if self.__is_mouse_over():
             if self._override is None:
                 sfc = self._surface
             else:

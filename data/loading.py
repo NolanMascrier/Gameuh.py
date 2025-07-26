@@ -28,6 +28,7 @@ from data.game.level import Level
 
 from data.character import Character
 from data.tables.spell_table import generate_spell_list
+from data.tables.skilltree_table import generate_tree
 
 def generate_random_level():
     """Creates a random level."""
@@ -249,6 +250,7 @@ def load_images():
     SYSTEM["images"]["tree_start"] = Image("tree/start.png").scale(64, 64)
     SYSTEM["images"]["tree_a"] = Image("tree/node2.png").scale(64, 64)
     SYSTEM["images"]["tree_b"] = Image("tree/node3.png").scale(64, 64)
+    SYSTEM["images"]["skillpoints"] = Image("icons/skillpoints.png").scale(128, 128)
 
 def load_icons():
     """Loads the icons."""
@@ -295,6 +297,7 @@ def load_others():
     SYSTEM["images"]["tree_surface"] = pygame.Surface((2000, 2000), pygame.SRCALPHA)
     SYSTEM["images"]["tree_scroller"] = Scrollable(10, 10, SCREEN_WIDTH - 110, SCREEN_HEIGHT - 200,\
         contains=SYSTEM["images"]["tree_surface"])
+    generate_tree()
     SYSTEM["text_generator"] = TextGenerator()
 
 def load_start():
@@ -328,9 +331,9 @@ def load():
         (load_images, 3),
         (load_icons, 3),
         (load_animations, 2),
-        (load_others, 1),
         (load_tiles, 2),
         (load_parallaxes, 2),
+        (load_others, 1),
         (load_buttons, 2),
         (generate_spell_list, 4),
         (create_character, 1),

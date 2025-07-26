@@ -1,7 +1,7 @@
 """An affliction is a debuff or a buff. It has
 a name, a value, a duration, flags."""
 
-from data.constants import SYSTEM, trad
+from data.constants import SYSTEM, trad, META_FLAGS
 from data.image.hoverable import Hoverable
 
 class Affliction():
@@ -48,7 +48,6 @@ class Affliction():
         """
         if self._duration >= 0:
             self._duration -= float(SYSTEM["options"]["fps"])
-        
 
     def clone(self):
         """Returns a copy of the affliction."""
@@ -72,12 +71,21 @@ class Affliction():
         return False
 
     def describe(self, is_buff = False) -> Hoverable:
-        """Returns a hoverable about the affliction."""
+        """Returns a hoverable about the affliction. Used for skills description."""
         name = f"{trad('meta_words', 'buffs' if is_buff else 'debuffs')} " +\
             f"{trad('affliction_name', self._name)} " +\
             f"{trad('meta_words', 'for')} {self._duration} {trad('meta_words', 'seconds')}"
         desc = trad('affliction_desc', self._name)
         return Hoverable(0, 0, name, desc, (0,0,0))
+
+    def tree_describe(self):
+        """Returns a text description of the affliction. Used for the tree."""
+        desc = ""
+        for f in self._flags:
+            if f not in META_FLAGS:
+                desc += f"{trad('meta_words', 'grants')} {self._value}" +\
+                    f"{trad('descripts', f.value)} \n"
+        return desc
 
     @property
     def name(self) -> str:
