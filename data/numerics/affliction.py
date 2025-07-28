@@ -83,7 +83,7 @@ class Affliction():
         desc = ""
         for f in self._flags:
             if f not in META_FLAGS:
-                desc += f"{trad('meta_words', 'grants')} {self._value}" +\
+                desc += f"{trad('meta_words', 'grants')} {self._value} " +\
                     f"{trad('descripts', f.value)} \n"
         return desc
 

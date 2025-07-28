@@ -151,7 +151,8 @@
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "tree": {
-      "start": "Way of the warrior"
+      "start": "Way of the warrior",
+      "buffa": "Firebolt teaching"
     },
     "buttons":{
         "map": "World map",
@@ -183,6 +184,7 @@
         "deal": "Deal",
         "damage": "damage",
         "grants":"Grants",
+        "learns": "Learn skill",
         "phys": "#c#(180, 180, 180)Physical",
         "fire": "#c#(255, 119, 0)Fire",
         "ice": "#c#(89, 219, 255)Ice",
@@ -213,6 +215,7 @@
         "none": "Nothing",
         "voidbolt": "Voidbolt",
         "firebolt": "Firebolt",
+        "firebolt2": "Also Firebolt",
         "icebolt": "Ice Spears",
         "elefury": "Elemental Fury",
         "wdash": "Wind Dash",
@@ -222,6 +225,7 @@
         "none": "No spell equipped.",
         "voidbolt": "Shoot a flurry of void spheres, dealing\nminor void damage.",
         "firebolt": "Shoot a firebolt toward the mouse, dealing \nfire damage.",
+        "firebolt2": "Kinda like firebolt but not quite so ...",
         "icebolt": "Creates a barrage of ice spears that deals\nmajor ice damage in a straight line,\npiercing enemies.",
         "elefury": "Unleash the fury of the elements, increasing\nelemental damage dealt.",
         "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",

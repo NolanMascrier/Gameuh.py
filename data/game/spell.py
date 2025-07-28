@@ -1,5 +1,6 @@
 """For spells"""
 
+import pygame
 from data.projectile import Projectile
 from data.creature import Creature
 from data.physics.entity import Entity
@@ -9,6 +10,7 @@ from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable, Text
+from data.image.tile import Tile
 
 class Spell():
     """Creates a spell. A spell is how creature interact with each other
@@ -64,6 +66,36 @@ class Spell():
             self._afflictions = []
         else:
             self._afflictions = afflictions
+        self._surface = None
+        self.generate_surface()
+
+    def generate_surface(self):
+        """Creates the hoverable surface of the spell."""
+        if self._icon is None:
+            return
+        img = self._icon.get_image()
+        title = Text(trad('spells_name', self._name), size=35, font="item_titles")
+        desc = Text(trad('spells_desc', self._name), size=20, font="item_desc")
+        title_h = max(img.get_height(), title.height)
+        title_w = img.get_width() + 5 + title.width
+        real_w = max(title_w, desc.width)
+        title_card = SYSTEM["images"]["ui_rare"]\
+                    .duplicate(real_w, title_h)
+        affix_card = SYSTEM["images"]["item_desc"].duplicate(real_w, desc.height)
+        sfc = pygame.Surface((title_card.get_width(), title_card.get_height()\
+                                + affix_card.get_height()), pygame.SRCALPHA)
+        icon_pos = (title_card.get_width() / 2 - title_w / 2,\
+            title_card.get_height() / 2 - img.get_height() / 2)
+        title_pos = (title_card.get_width() / 2 - title_w / 2 + img.get_width() + 3,\
+            title_card.get_height() / 2 - title.height / 2)
+        desc_pos = (affix_card.get_width() / 2 - desc.width / 2,\
+            affix_card.get_height() / 2 - desc.height / 2 + title_card.get_height())
+        sfc.blit(title_card, (0, 0))
+        sfc.blit(affix_card, (0, title_card.get_height()))
+        sfc.blit(img, icon_pos)
+        sfc.blit(title.surface, title_pos)
+        sfc.blit(desc.surface, desc_pos)
+        self._surface = sfc
 
     def tick(self):
         """Ticks down the spell's cooldown."""
@@ -202,3 +234,7 @@ class Spell():
     @flags.setter
     def flags(self, value):
         self._flags = value
+
+    @property
+    def surface(self):
+        return self._surface

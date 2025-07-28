@@ -4,7 +4,7 @@ import pygame
 from data.constants import SYSTEM, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable
-from data.image.button import Button
+from data.image.button import Button, Text
 
 class Node:
     """
@@ -16,9 +16,14 @@ class Node:
         effects (list[Affliction]): List of effects from the node.
         previous (Node, optional): Previous node connected to this
         one in the tree.
+        skills (list[str], optionnal): List of spells taught by this\
+        node. Defaults to []
+        rarity (int, optional): Rarity of the node. Same rules as items.\
+        Defaults to 0 (common).
     """
     def __init__(self, name, icon: str, x, y,\
-        effects:list[Affliction], previous = None):
+        effects:list[Affliction], previous = None,\
+        skills:list[str] = None, rarity:int = 0):
         self._name = name
         self._x = x
         self._y = y
@@ -27,14 +32,70 @@ class Node:
         self._previous = previous
         self._connected = []
         self._learned = False
+        self._rarity = rarity
+        if skills is None:
+            skills = []
+        self._skills = skills
+        self._surface = None
+        self.generate_surface()
         if self._previous is not None:
             self._previous.connected.append(self)
         self._button = Button(icon, None, self.action)
-        hover_desc = f"#s#(35){trad('tree', name)}#s#(20)\n"
-        for f in effects:
-            hover_desc += f.tree_describe()
-        self._hover = Hoverable(x, y, None, hover_desc, surface= SYSTEM["images"][self._icon].image,\
-            scrollable=SYSTEM["images"]["tree_scroller"])
+        self._hover = Hoverable(x, y, None, None, surface=SYSTEM["images"][self._icon].image,\
+            scrollable=SYSTEM["images"]["tree_scroller"], override=self._surface)
+
+    def generate_surface(self):
+        """Generates the hoverable surface."""
+        surfaces = []
+        skill_desc = ""
+        h = 0
+        w = 0
+        for s in self._skills:
+            skill = SYSTEM["spells"][s]
+            surfaces.append(skill.surface)
+            h += skill.surface.get_height()
+            skill_desc += f"{trad('meta_words', 'learns')} {trad('spells_name', skill.name)}\n"
+            w = max(w, skill.surface.get_width())
+        effects_desc = ""
+        for e in self._effects:
+            effects_desc += e.tree_describe()
+        effects_desc += skill_desc
+        desc = Text(effects_desc,  size=20, font="item_desc", centered=True)
+        title = Text(f"{trad('tree', self._name)}", size=42, font="item_titles")
+        w = max(w, desc.width, title.width)
+        match self._rarity:
+            case 1:
+                title_card = SYSTEM["images"]["ui_magic"]\
+                    .duplicate(w, title.height + 32)
+            case 2:
+                title_card = SYSTEM["images"]["ui_rare"]\
+                    .duplicate(w, title.height + 32)
+            case 3:
+                title_card = SYSTEM["images"]["ui_legendary"]\
+                    .duplicate(w, title.height + 32)
+            case 4:
+                title_card = SYSTEM["images"]["ui_unique"]\
+                    .duplicate(w, title.height + 32)
+            case _:
+                title_card = SYSTEM["images"]["ui_normal"]\
+                    .duplicate(w, title.height + 32)
+        desc_card = SYSTEM["images"]["item_desc"].duplicate(w, desc.height)
+        h = title_card.get_height() + desc_card.get_height() + h + 10
+        w = max(title_card.get_width(), desc_card.get_width())
+        sfc = pygame.Surface((w, h), pygame.SRCALPHA)
+        sfc.blit(title_card, (0, 0))
+        sfc.blit(desc_card, (0, title_card.get_height()))
+        h_temp = title_card.get_height() + desc_card.get_height()
+        for s in surfaces:
+            sfc.blit(s, (w / 2 - s.get_width() / 2, h_temp))
+            h_temp += s.get_height()
+        title_pos = (title_card.get_width() / 2 - title.width / 2,\
+            title_card.get_height() / 2 - title.height / 2)
+        desc_pos = (desc_card.get_width() / 2 - desc.width / 2,\
+            desc_card.get_height() / 2 - desc.height / 2 + title_card.get_height())
+        sfc.blit(title.surface, title_pos)
+        sfc.blit(desc.surface, desc_pos)
+        self._surface = sfc
 
     def tick(self):
         """Ticks down the node."""
@@ -77,6 +138,8 @@ class Node:
             self._learned = True
             for f in self._effects:
                 SYSTEM["player"].creature.afflict(f)
+            for s in self._skills:
+                SYSTEM["player"].spellbook.append(SYSTEM["spells"][s])
 
     def unlearn(self):
         """Attempt to learn the node."""
@@ -85,6 +148,8 @@ class Node:
             self._learned = False
             for f in self._effects:
                 SYSTEM["player"].creature.remove_affliction(f)
+            for s in self._skills:
+                SYSTEM["player"].spellbook.remove(SYSTEM["spells"][s])
 
     def draw(self, surface: pygame.Surface):
         """Draws the tree."""
@@ -100,7 +165,22 @@ class Node:
         for f in self._connected:
             f.draw(surface)
         self._button.draw(surface)
-        #surface.blit(SYSTEM["images"][self._icon].image, (self.x, self.y))
+        if self._learned:
+            surface.blit(SYSTEM["images"]["slot_green"].image, (self._button.x, self._button.y))
+        else:
+            match self._rarity:
+                case 1:
+                    surface.blit(SYSTEM["images"]["slot_magic"].image,\
+                        (self._button.x, self._button.y))
+                case 1:
+                    surface.blit(SYSTEM["images"]["slot_rare"].image,\
+                        (self._button.x, self._button.y))
+                case 1:
+                    surface.blit(SYSTEM["images"]["slot_exalted"].image,\
+                        (self._button.x, self._button.y))
+                case _:
+                    surface.blit(SYSTEM["images"]["slot_empty"].image,\
+                        (self._button.x, self._button.y))
 
     @property
     def name(self):

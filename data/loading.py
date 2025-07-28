@@ -181,6 +181,7 @@ def load_images():
     SYSTEM["images"]["slot_magic"] = Image("ui/item_top_m.png").scale(64, 64)
     SYSTEM["images"]["slot_rare"] = Image("ui/item_top_r.png").scale(64, 64)
     SYSTEM["images"]["slot_exalted"] = Image("ui/item_top_e.png").scale(64, 64)
+    SYSTEM["images"]["slot_green"] = Image("ui/item_top_g.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png")
     SYSTEM["images"][K_e] = Image("ui/kb_e.png")
@@ -333,9 +334,9 @@ def load():
         (load_animations, 2),
         (load_tiles, 2),
         (load_parallaxes, 2),
+        (generate_spell_list, 4),
         (load_others, 1),
         (load_buttons, 2),
-        (generate_spell_list, 4),
         (create_character, 1),
         (load_start, 3)
     ]
@@ -351,6 +352,8 @@ def init_game():
     """Loads the basic data for the game."""
     pygame.init()
     pygame.font.init()
+    keys = pygame.key.get_pressed()
+    SYSTEM["keys"] = keys
     #TODO: Load options
     flags = pygame.SCALED|pygame.FULLSCREEN
     SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_width"],\
