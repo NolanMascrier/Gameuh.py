@@ -8,7 +8,7 @@ import pygame
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, SLASH_TRACKER,\
-    PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER
+    PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options
 from data.image.animation import Animation, Image
 from data.image.button import Button
 from data.image.tile import Tile
@@ -252,6 +252,8 @@ def load_images():
     SYSTEM["images"]["tree_a"] = Image("tree/node2.png").scale(64, 64)
     SYSTEM["images"]["tree_b"] = Image("tree/node3.png").scale(64, 64)
     SYSTEM["images"]["skillpoints"] = Image("icons/skillpoints.png").scale(128, 128)
+    SYSTEM["images"]["checkbox"] = Image("ui/checkbox.png").scale(64, 64)
+    SYSTEM["images"]["checkbox_ok"] = Image("ui/checkbox_ok.png").scale(64, 64)
 
 def load_icons():
     """Loads the icons."""
@@ -354,10 +356,7 @@ def init_game():
     pygame.font.init()
     keys = pygame.key.get_pressed()
     SYSTEM["keys"] = keys
-    #TODO: Load options
-    flags = pygame.SCALED|pygame.FULLSCREEN
-    SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_width"],\
-        SYSTEM["options"]["screen_height"]), flags, vsync=1)
+    load_options()
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)

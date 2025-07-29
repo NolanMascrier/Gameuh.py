@@ -100,7 +100,7 @@ SYSTEM = {
         "fps_selector": (0, 0.008, 0.016, 0.032),
         "resolutions": [(1138, 640), (1280, 720), (1366, 768), (1600, 900), (1920, 1080)],
         "fullscreen": True,
-        "vsync": 1,
+        "vsync": True,
         "lang_selec": "EN_us",
         "langs": ["EN_us", "FR_fr"],
         "show_hitboxes": False
@@ -129,11 +129,37 @@ SYSTEM = {
     "mouse": (0,0)
 }
 
-def factor() -> int:
-    """Returns the resolution factor"""
-    x = SYSTEM["options"]["screen_width"] / SCREEN_WIDTH
-    y = SYSTEM["options"]["screen_height"] / SCREEN_HEIGHT
-    return x, y
+def export_options():
+    """Exports the option portion of the SYSTEM as a json file."""
+    data = json.dumps(SYSTEM["options"])
+    with open("user_config.json", "w", encoding='utf-8') as file:
+        file.write(data)
+
+def reload_options():
+    """Reloads the options from the SYSTEM."""
+    flags = pygame.SCALED
+    if SYSTEM["options"]["fullscreen"]:
+        flags |= pygame.FULLSCREEN
+    SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_width"],\
+        SYSTEM["options"]["screen_height"]), flags, vsync=SYSTEM["options"]["vsync"])
+    
+def export_and_reload():
+    """Does what is says on the tincan"""
+    export_options()
+    reload_options()
+
+def load_options():
+    """Attemps to load the options."""
+    try:
+        with open("user_config.json", "r", encoding='utf-8') as f:
+            data = json.loads(f.read())
+            for d in data:
+                if d in SYSTEM["options"]:
+                    SYSTEM["options"][d] = data[d]
+    except FileNotFoundError:
+        print("No config file exists. Creating one")
+        export_options()
+    reload_options()
 
 def get_mouse_pos():
     """Updates the mouse position."""

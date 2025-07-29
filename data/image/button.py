@@ -70,8 +70,10 @@ class Button():
             return self.__mouse_scrollable()
         return self.__mouse_default()
 
-    def draw(self, surface):
+    def draw(self, surface = None):
         """Draws the image to the surface."""
+        if surface is None:
+            surface = SYSTEM["windows"]
         if self._clicked and self._pressed is not None:
             surface.blit(self._pressed.image, (self._x, self._y))
         else:

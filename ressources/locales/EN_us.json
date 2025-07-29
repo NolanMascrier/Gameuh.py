@@ -154,6 +154,16 @@
       "start": "Way of the warrior",
       "buffa": "Firebolt teaching"
     },
+    "options": {
+      "fullscreen": "Fullscreen",
+      "vsync": "Vertical Synchronisation",
+      "hitboxes": "Show Hitboxes"
+    },
+    "options_desc": {
+      "fullscreen": "Set the game in fullscreen or not.",
+      "vsync": "Enable or disable Vertical Synchronisation (Vsync).",
+      "hitboxes": "Show or hide Hitboxes for player, enemies and projectiles."
+    },
     "buttons":{
         "map": "World map",
         "gear": "Gear",
