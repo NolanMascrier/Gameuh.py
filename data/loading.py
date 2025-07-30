@@ -8,7 +8,8 @@ import pygame
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, SLASH_TRACKER,\
-    PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options
+    PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
+    change_language
 from data.image.animation import Animation, Image
 from data.image.button import Button
 from data.image.tile import Tile
@@ -128,6 +129,8 @@ def load_tiles():
     SYSTEM["images"]["tile_panel_back"] = Tile("ui/inventory_back.png", 7, 14, 3)
     SYSTEM["images"]["tile_panel_inv"] = Tile("ui/inventory_back.png", 17, 13, 3)
     SYSTEM["images"]["hoverable"] = Tile("ui/hoverable.png")
+    SYSTEM["images"]["dropdown"] = Tile("ui/inventory_back.png")
+    SYSTEM["images"]["dropdown_menu"] = Tile("ui/border_unique.png")
     SYSTEM["images"]["item_desc"] = Tile("ui/hoverable.png", scale_factor=2)
 
 def load_parallaxes():
@@ -357,6 +360,7 @@ def init_game():
     keys = pygame.key.get_pressed()
     SYSTEM["keys"] = keys
     load_options()
+    change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)

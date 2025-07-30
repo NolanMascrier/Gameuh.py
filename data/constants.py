@@ -94,14 +94,17 @@ SYSTEM = {
     "font_crit": None,
     "text_generator": None,
     "options": {
-        "screen_width": 1920,
-        "screen_height": 1080,
+        "screen_resolution": (1920, 1080),
+        "screen_resolution_temp": (1920, 1080),
         "fps": 0.016,
-        "fps_selector": (0, 0.008, 0.016, 0.032),
+        "fps_temp": 0.016,
+        "fps_selector": [0.008, 0.016, 0.032],
+        "fps_display": [120, 60, 30],
         "resolutions": [(1138, 640), (1280, 720), (1366, 768), (1600, 900), (1920, 1080)],
         "fullscreen": True,
         "vsync": True,
         "lang_selec": "EN_us",
+        "lang_temp": "EN_us",
         "langs": ["EN_us", "FR_fr"],
         "show_hitboxes": False
     },
@@ -129,8 +132,29 @@ SYSTEM = {
     "mouse": (0,0)
 }
 
+def change_language(lang):
+    """Changes the system's language.
+    
+    Args:
+        lang (str): Name of the language. Must correspond\
+        to a file in ressources/locales.
+    """
+    try:
+        with open(f"{RESSOURCES}/locales/{lang}.json", mode = 'r',\
+                encoding="utf-8") as file:
+            data = file.read()
+            SYSTEM["lang"] = json.loads(data)
+    except FileNotFoundError:
+        print("File not found, language unchanged.")
+        SYSTEM["lang"] = None
+
 def export_options():
     """Exports the option portion of the SYSTEM as a json file."""
+    SYSTEM["options"]["screen_resolution"] = SYSTEM["options"]["screen_resolution_temp"]
+    SYSTEM["options"]["fps"] = SYSTEM["options"]["fps_temp"]
+    if SYSTEM["options"]["lang_selec"] != SYSTEM["options"]["lang_temp"]:
+        SYSTEM["options"]["lang_selec"] = SYSTEM["options"]["lang_temp"]
+        change_language(SYSTEM["options"]["lang_temp"])
     data = json.dumps(SYSTEM["options"])
     with open("user_config.json", "w", encoding='utf-8') as file:
         file.write(data)
@@ -140,8 +164,8 @@ def reload_options():
     flags = pygame.SCALED
     if SYSTEM["options"]["fullscreen"]:
         flags |= pygame.FULLSCREEN
-    SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_width"],\
-        SYSTEM["options"]["screen_height"]), flags, vsync=SYSTEM["options"]["vsync"])
+    SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\
+        SYSTEM["options"]["screen_resolution"][1]), flags, vsync=SYSTEM["options"]["vsync"])
     
 def export_and_reload():
     """Does what is says on the tincan"""
@@ -163,8 +187,8 @@ def load_options():
 
 def get_mouse_pos():
     """Updates the mouse position."""
-    x_factor = SCREEN_WIDTH / SYSTEM["options"]["screen_width"]
-    y_factor = SCREEN_HEIGHT / SYSTEM["options"]["screen_height"]
+    x_factor = SCREEN_WIDTH / SYSTEM["options"]["screen_resolution"][0]
+    y_factor = SCREEN_HEIGHT / SYSTEM["options"]["screen_resolution"][1]
     x, y = pygame.mouse.get_pos()
     x *= x_factor
     y *= y_factor
@@ -183,24 +207,6 @@ def trad(keys, subkey = None):
 WAVE_TIMER = USEREVENT+4
 TICKER_TIMER = USEREVENT+5
 UPDATE_TIMER = USEREVENT+6
-
-def change_language(lang):
-    """Changes the system's language.
-    
-    Args:
-        lang (str): Name of the language. Must correspond\
-        to a file in ressources/locales.
-    """
-    try:
-        with open(f"{RESSOURCES}/locales/{lang}.json", mode = 'r',\
-                encoding="utf-8") as file:
-            data = file.read()
-            SYSTEM["lang"] = json.loads(data)
-    except FileNotFoundError:
-        print("File not found, language unchanged.")
-        SYSTEM["lang"] = None
-
-change_language("EN_us")
 
 class Flags(Enum):
     """Flags to use for skills and damage sources."""

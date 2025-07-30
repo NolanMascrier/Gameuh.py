@@ -152,9 +152,8 @@ if __name__ == "__main__":
             width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
             SYSTEM["windows"].blit(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
                 , (200, SCREEN_HEIGHT - 111))
-            #TODO: Loading bar
             window = pygame.transform.smoothscale(SYSTEM["windows"],\
-                (SYSTEM["options"]["screen_width"], SYSTEM["options"]["screen_height"]))
+                (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
             SYSTEM["real_windows"].blit(window, (0, 0))
             pygame.display.update()
             sleep(float(SYSTEM["options"]["fps"]))
@@ -237,7 +236,7 @@ if __name__ == "__main__":
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
         window = pygame.transform.smoothscale(SYSTEM["windows"],\
-            (SYSTEM["options"]["screen_width"], SYSTEM["options"]["screen_height"]))
+            (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].blit(window, (0, 0))
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))

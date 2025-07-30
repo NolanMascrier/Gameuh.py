@@ -164,6 +164,10 @@
       "vsync": "Enable or disable Vertical Synchronisation (Vsync).",
       "hitboxes": "Show or hide Hitboxes for player, enemies and projectiles."
     },
+    "langs": {
+      "EN_us": "English (American)",
+      "FR_fr": "French"
+    },
     "buttons":{
         "map": "World map",
         "gear": "Gear",
@@ -175,7 +179,12 @@
         "by_name": "by name",
         "by_rarity": "by rarity",
         "by_value": "by price",
-        "by_date": "by data"
+        "by_date": "by date",
+        "resolution": "Resolution",
+        "accept": "Accept",
+        "cancel": "Cancel",
+        "lang": "Language",
+        "fps": "FPS"
     },
     "meta_words": {
         "more": "more",
