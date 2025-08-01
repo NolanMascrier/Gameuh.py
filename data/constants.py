@@ -1,6 +1,7 @@
 """Stores the project's constants."""
 
 from enum import Enum
+import pickle
 import json
 import pygame
 from pygame import *
@@ -166,7 +167,7 @@ def reload_options():
         flags |= pygame.FULLSCREEN
     SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\
         SYSTEM["options"]["screen_resolution"][1]), flags, vsync=SYSTEM["options"]["vsync"])
-    
+
 def export_and_reload():
     """Does what is says on the tincan"""
     export_options()
@@ -184,6 +185,20 @@ def load_options():
         print("No config file exists. Creating one")
         export_options()
     reload_options()
+
+def save(filename = None):
+    """Save the character data."""
+    if filename is None:
+        filename = "default.char"
+    with open(filename, "w", encoding="utf-8") as file:
+        pickle.dump(SYSTEM["player"], file)
+
+def load(filename = None):
+    """Loads the character data."""
+    if filename is None:
+        filename = "default.char"
+    with open(filename, "w", encoding="utf-8") as file:
+        SYSTEM["player"] = pickle.load(file)
 
 def get_mouse_pos():
     """Updates the mouse position."""
@@ -208,7 +223,7 @@ WAVE_TIMER = USEREVENT+4
 TICKER_TIMER = USEREVENT+5
 UPDATE_TIMER = USEREVENT+6
 
-class Flags(Enum):
+class Flags(str, Enum):
     """Flags to use for skills and damage sources."""
     HOT = "heal_over_time"
     DOT = "damage_over_time"

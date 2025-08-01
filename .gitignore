@@ -9,3 +9,5 @@ __pycache__/
 /Gameuh.py/wrapper/git/
 *.png~
 ressources/*.png~
+user_config.json
+*.char

@@ -1,6 +1,7 @@
 """A double affix is a modifier for an item that adds a range."""
 
 import random
+import json
 from data.constants import Flags
 from data.numerics.affliction import Affliction
 from data.constants import trad, META_FLAGS, GEAR_FLAGS
@@ -114,6 +115,37 @@ class DoubleAffix():
             deets = f"{trad('descript_alt', self._name)}"
             return f"{lst}\n{deets}"
         return f"{col}{adds} {lst}"
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        data = {
+            "type":"double_affix",
+            "name": self._name,
+            "value_min": self._value_min,
+            "value_max": self._value_max,
+            "flags": self._flags,
+            "bounds_min": self._bounds_min,
+            "bounds_max": self._bounds_max,
+            "sealed": self._seal
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        afx = DoubleAffix(
+            data["name"],
+            data["value_min"],
+            data["value_max"],
+            data["flags"],
+            data["bounds_min"][0],
+            data["bounds_min"][1],
+            data["bounds_max"][0],
+            data["bounds_max"][1]
+        )
+        if bool(data["sealed"]):
+            afx.seal(True)
+        return afx
 
     @property
     def name(self):

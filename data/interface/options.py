@@ -1,6 +1,6 @@
 """Handles the options tab rendering."""
 
-from data.constants import SYSTEM, MENU_OPTIONS, export_and_reload, trad
+from data.constants import SYSTEM, MENU_OPTIONS, export_and_reload, trad, save, load
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.image.checkbox import Checkbox
 from data.image.button import Button
@@ -17,6 +17,10 @@ def open_option_screen():
         SYSTEM["images"]["btn_p"], export_and_reload, trad('buttons', 'accept'))
     SYSTEM["ui"]["button_cancel"] = Button(SYSTEM["images"]["btn"],\
         SYSTEM["images"]["btn_p"], open_option_screen, trad('buttons', 'cancel'))
+    SYSTEM["ui"]["button_save"] = Button(SYSTEM["images"]["btn"],\
+        SYSTEM["images"]["btn_p"], save, "Save")
+    SYSTEM["ui"]["button_load"] = Button(SYSTEM["images"]["btn"],\
+        SYSTEM["images"]["btn_p"], load, "Load")
     #Selecteur FPS
     #Selecteur résolution
     default_res = 0
@@ -64,4 +68,6 @@ def draw_options(events):
     SYSTEM["ui"]["drop_resolution"].set(450, 10).tick().draw()
     SYSTEM["ui"]["drop_fps"].set(750, 10).tick().draw()
     SYSTEM["ui"]["drop_lang"].set(1050, 10).tick().draw()
+    SYSTEM["ui"]["button_save"].set(10, 650).tick().draw()
+    SYSTEM["ui"]["button_load"].set(10, 750).tick().draw()
     draw_bottom_bar(events)

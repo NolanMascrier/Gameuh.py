@@ -4,6 +4,7 @@ that can be used, spent, damaged or replenished.
 A ressource can have buffs or debuffs that modify the value 
 each tick. It can also have increases and multipliers."""
 
+import json
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.constants import Flags, trad
@@ -29,10 +30,11 @@ class Ressource(Stat):
 
     """
     def __init__(self, val = 100.0, name = "ressource", refresh = None,\
-            max_cap = None, min_cap = None, scaling_value:float = 1, mult_scaling = False):
-        super().__init__(val, name, max_cap, min_cap, scaling_value, mult_scaling)
+            max_cap = None, min_cap = None, scaling_value:float = 1, mult_scaling = False,\
+            precision = 2):
+        super().__init__(val, name, max_cap, min_cap, precision, scaling_value, mult_scaling)
         self._current_value = val
-        if refresh is None:
+        if refresh is None or isinstance(refresh, (float, int)):
             self._rate = Stat(0, "refresh")
         else:
             self._rate = refresh
@@ -149,6 +151,51 @@ class Ressource(Stat):
                 f"{trad('meta_words', 'mult')}: {self.get_multipliers() * 100}%\n"
         value_hover = Hoverable(0, 0, value, desc)
         return name_hover, value_hover
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        data = {
+            "type": "stat",
+            "name": self._name,
+            "value": self._value,
+            "refresh": self._rate.export(),
+            "min_cap": self._cap[0],
+            "max_cap": self._cap[1],
+            "scaling": self._scaling_value,
+            "precision": self._round,
+            "multiplier_scaling": self._mult_scaling,
+            "mults": [f.export() for f in self._mults],
+            "incrs": [f.export() for f in self._incr],
+            "flats": [f.export() for f in self._flats],
+            "buffs": [f.export() for f in self._buffs],
+            "buff_multi": [f.export() for f in self._buffs_multi]
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        stat = Ressource(
+            float(data["value"]),
+            data["name"],
+            Stat.imports(json.loads(data["refresh"])),
+            float(data["max_cap"]) if data["max_cap"] is not None else None,
+            float(data["min_cap"]) if data["min_cap"] is not None else None,
+            float(data["scaling"]),
+            bool(data["multiplier_scaling"]),
+            int(data["precision"])
+        )
+        for f in data["mults"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        for f in data["incrs"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        for f in data["flats"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        for f in data["buffs"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        for f in data["buff_multi"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        return stat
 
     @property
     def current_value(self) -> float:

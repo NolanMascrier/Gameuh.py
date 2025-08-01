@@ -1,5 +1,6 @@
 """A range stat is a special stat that has an upper and lower bound."""
 
+import json
 import random
 from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
@@ -27,9 +28,19 @@ class RangeStat():
             max_cap:float = None, min_cap = None, precision:int = 2,\
             scaling_value:float = 0, mult_scaling = False):
         self._name = name
-        self._upper = Stat(upper, f"{name}_upper", max_cap, min_cap,\
+        self._cap = (min_cap, max_cap)
+        self._precision = precision
+        self._scaling_value = scaling_value
+        self._mult_scaling = mult_scaling
+        if isinstance(upper, Stat):
+            self._upper = upper
+        else:
+            self._upper = Stat(upper, f"{name}_upper", max_cap, min_cap,\
                            precision, scaling_value, mult_scaling)
-        self._lower = Stat(lower, f"{name}_lower", max_cap, min_cap,\
+        if isinstance(lower, Stat):
+            self._lower = lower
+        else:
+            self._lower = Stat(lower, f"{name}_lower", max_cap, min_cap,\
                            precision, scaling_value, mult_scaling)
 
     def get_value(self):
@@ -112,6 +123,36 @@ class RangeStat():
         """Resets the stats."""
         self._upper.reset()
         self._lower.reset()
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        data = {
+            "type": "rangestat",
+            "name": self._name,
+            "min_cap": self._cap[0],
+            "max_cap": self._cap[1],
+            "precision": self._precision,
+            "scaling": self._scaling_value,
+            "multiplier_scaling": self._mult_scaling,
+            "upper": self._upper.export(),
+            "lower": self._lower.export()
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        stat = RangeStat(
+            Stat.imports(json.loads(data["lower"])),
+            Stat.imports(json.loads(data["upper"])),
+            data["name"],
+            float(data["max_cap"]),
+            float(data["min_cap"]),
+            float(data["precision"]),
+            float(data["scaling"]),
+            bool(data["multiplier_scaling"]),
+        )
+        return stat
 
     @property
     def name(self):

@@ -1,6 +1,7 @@
 """An affliction is a debuff or a buff. It has
 a name, a value, a duration, flags."""
 
+import json
 from data.constants import SYSTEM, trad, META_FLAGS
 from data.image.hoverable import Hoverable
 
@@ -86,6 +87,31 @@ class Affliction():
                 desc += f"{trad('meta_words', 'grants')} {self._value} " +\
                     f"{trad('descripts', f.value)} \n"
         return desc
+
+    def export(self):
+        """Serializes the affliction as JSON."""
+        data = {
+            "type":"affliction",
+            "name": self._name,
+            "value": self._value,
+            "duration": self._duration,
+            "flags": self._flags,
+            "stackable": self._stackable,
+            "refreshable": self._refreshable
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affliction from it."""
+        return Affliction(
+            data["name"],
+            float(data["value"]),
+            float(data["duration"]),
+            data["flags"],
+            bool(data["stackable"]),
+            bool(data["refreshable"])
+        )
 
     @property
     def name(self) -> str:

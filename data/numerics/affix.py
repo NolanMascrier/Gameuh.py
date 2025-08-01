@@ -1,6 +1,7 @@
 """An affix is a modifier for an item."""
 
 import random
+import json
 from data.constants import Flags
 from data.numerics.affliction import Affliction
 from data.constants import trad, META_FLAGS, GEAR_FLAGS
@@ -132,6 +133,32 @@ class Affix():
             deets = f"{trad('descript_alt', self._name)}"
             return f"{lst}\n{deets}"
         return f"{col}{adds} {deets} {lst}"
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        data = {
+            "type":"affix",
+            "name": self._name,
+            "value": self._value,
+            "flags": self._flags,
+            "bounds": self._bounds,
+            "sealed": self._seal
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        afx = Affix(
+            data["name"],
+            float(data["value"]),
+            data["flags"],
+            float(data["bounds"][0]),
+            float(data["bounds"][1])
+        )
+        if bool(data["sealed"]):
+            afx.seal(True)
+        return afx
 
     @property
     def name(self):

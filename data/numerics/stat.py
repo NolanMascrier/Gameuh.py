@@ -5,6 +5,7 @@ Flat increase also exists, but should only be accessed through gear.
 The actual initial value should only be increased through level up, as it's gonna be
 definitive."""
 
+import json
 from data.numerics.affliction import Affliction
 from data.constants import Flags, trad
 from data.image.hoverable import Hoverable
@@ -66,7 +67,7 @@ class Stat:
         Returns:
             float: value of the stat with computed increases \
             and multipliers."""
-        final_incr = self.get_increases()
+        final_incr = (self.get_increases())
         final_flats = self.get_flats()
         final_mults = self.get_multipliers()
         final_value = round((self._value + final_flats) *\
@@ -175,42 +176,6 @@ class Stat:
         value_hover = Hoverable(0, 0, value, desc)
         return name_hover, value_hover
 
-    def export(self):
-        """Exports the stat data as a JSON list.
-        
-        Returns:
-            list: JSON-Readable data of the stat."""
-        export = {
-            "name": self._name,
-            "value": self._value,
-            "flats": self._flats,
-            "incrs": self._incr,
-            "mults": self._mults
-        }
-        return export
-
-    def import_json(self, json):
-        """Reads a JSON list and updates the stat
-        according to the data inside.
-        
-        Args:
-            json (list): Data to parse.
-        """
-        for data in json:
-            match (data):
-                case "name":
-                    self._name = str(json[data])
-                case "value":
-                    self._value = int(json[data])
-                case "flats":
-                    self._flats = [int(d) for d in json[data]]
-                case "incrs":
-                    self._incr = [float(d) for d in json[data]]
-                case "mults":
-                    self._mults = [float(d) for d in json[data]]
-                case _:
-                    raise IndexError("Unknown variable.")
-
     def gather_afflictions(self) -> list:
         """Gather all buffs and debuffs as a list. \
         Usefull for display purpose.
@@ -237,6 +202,43 @@ class Stat:
         self._incr.clear()
         self._mults.clear()
         self._flats.clear()
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        data = {
+            "type": "stat",
+            "name": self._name,
+            "value": self._value,
+            "min_cap": self._cap[0],
+            "max_cap": self._cap[1],
+            "precision": self._round,
+            "scaling": self._scaling_value,
+            "multiplier_scaling": self._mult_scaling,
+            "mults": [f.export() for f in self._mults],
+            "incrs": [f.export() for f in self._incr],
+            "flats": [f.export() for f in self._flats]
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        stat = Stat(
+            float(data["value"]),
+            data["name"],
+            float(data["max_cap"]) if data["max_cap"] is not None else None,
+            float(data["min_cap"]) if data["min_cap"] is not None else None,
+            float(data["precision"]),
+            float(data["scaling"]),
+            bool(data["multiplier_scaling"]),
+        )
+        for f in data["mults"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        for f in data["incrs"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        for f in data["flats"]:
+            stat.afflict(Affliction.imports(json.loads(f)))
+        return stat
 
     @property
     def value(self) -> float:
