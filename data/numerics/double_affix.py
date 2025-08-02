@@ -137,7 +137,7 @@ class DoubleAffix():
             data["name"],
             data["value_min"],
             data["value_max"],
-            data["flags"],
+            [Flags(f) for f in data["flags"]],
             data["bounds_min"][0],
             data["bounds_min"][1],
             data["bounds_max"][0],

@@ -34,8 +34,10 @@ class Ressource(Stat):
             precision = 2):
         super().__init__(val, name, max_cap, min_cap, precision, scaling_value, mult_scaling)
         self._current_value = val
-        if refresh is None or isinstance(refresh, (float, int)):
+        if refresh is None:
             self._rate = Stat(0, "refresh")
+        elif isinstance(refresh, (float, int)):
+            self._rate = Stat(refresh, "refresh")
         else:
             self._rate = refresh
         self._buffs = []
@@ -155,7 +157,7 @@ class Ressource(Stat):
     def export(self):
         """Serializes the affix as JSON."""
         data = {
-            "type": "stat",
+            "type": "ressource",
             "name": self._name,
             "value": self._value,
             "refresh": self._rate.export(),

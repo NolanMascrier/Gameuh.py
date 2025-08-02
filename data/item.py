@@ -1,6 +1,7 @@
 """An item is something that can be held by
 characters and used."""
 
+import json
 import time
 import random
 import pygame
@@ -8,6 +9,8 @@ from data.constants import Flags, trad, SYSTEM, K_LSHIFT
 from data.image.image import Image
 from data.image.animation import Animation
 from data.image.text import Text
+from data.numerics.double_affix import DoubleAffix
+from data.numerics.affix import Affix
 
 AFF_RARITY_TABLE = {
     0: 0,
@@ -424,6 +427,61 @@ class Item():
         if self._image is None:
             return None
         return self._image
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        data = {
+            "type": "item",
+            "name": self._name,
+            "base": self._base,
+            "price": self._price,
+            "base_price": self._base_price,
+            "implicits": [f.export() for f in self._implicits],
+            "affixes": [f.export() for f in self._affixes],
+            "flags": self._flags,
+            "image": self._image.uri,
+            "image_w": self._image.width,
+            "image_h": self._image.height,
+            "rarity": self._rarity,
+            "droptime": self._drop_time,
+            "sealed": self._sealed,
+            "level": self._level
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        affixes = []
+        implicits = []
+        afx = data["affixes"]
+        imp = data["implicits"]
+        for a in afx:
+            load = json.loads(a)
+            if load["type"] == "affix":
+                affixes.append(Affix.imports(load))
+            elif load["type"] == "double_affix":
+                affixes.append(DoubleAffix.imports(load))
+        for a in imp:
+            load = json.loads(a)
+            if load["type"] == "affix":
+                implicits.append(Affix.imports(load))
+            elif load["type"] == "double_affix":
+                implicits.append(DoubleAffix.imports(load))
+        item = Item(
+            data["name"],
+            data["base"],
+            float(data["price"]),
+            0,
+            1,
+            Image(data["image"]).scale(int(data["image_h"]), int(data["image_w"])),
+            int(data["rarity"]),
+            [Flags(f) for f in data["flags"]],
+            affixes,
+            implicits
+        )
+        item.name = data["name"]
+        return item
 
     @property
     def name(self):

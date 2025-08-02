@@ -1,6 +1,7 @@
 """A creature is the game's main entity, and represents
 both the player and the ennemies alike."""
 
+import json
 import random
 import math
 from data.numerics.ressource import Ressource
@@ -31,14 +32,14 @@ class Creature:
         self._level = 1
         self._exp = 0
         self._exp_to_next = 1000
-        life_regen = Stat(0, "life_regen")
-        mana_regen = Stat(0.001, "life_regen", precision=4)
+        self._life_regen = Stat(0, "life_regen")
+        self._mana_regen = Stat(0.001, "life_regen", precision=4)
         self._stats = {
-            "life": Ressource(90, "life", life_regen),
-            "mana": Ressource(40, "mana", mana_regen),
+            "life": Ressource(90, "life", self._life_regen),
+            "mana": Ressource(40, "mana", self._mana_regen),
 
-            "life_regen": life_regen,
-            "mana_regen": mana_regen,
+            "life_regen": self._life_regen,
+            "mana_regen": self._mana_regen,
 
             "str": Stat(10, "str"),
             "dex": Stat(10, "dex"),
@@ -537,6 +538,89 @@ class Creature:
         self.__get_bonuses_from_stat()
         self._stats["life"].refill()
         self._stats["mana"].refill()
+
+    def rereference_regens(self, life_regen, mana_regen):
+        """Imports new stats for the regen, and reupdate their
+        references in the stat dict."""
+        self._life_regen = life_regen
+        self._mana_regen = mana_regen
+        self._stats["life_regen"] = life_regen
+        self._stats["mana_regen"] = mana_regen
+        self._stats["life"].rate = life_regen
+        self._stats["mana"].rate = mana_regen
+
+    def export(self):
+        """Serializes the affix as JSON."""
+        stats = {}
+        gear = {}
+        for s in self._stats:
+            if s not in ["life_regen", "mana_regen"]:
+                stats[s] = self._stats[s].export()
+        for g in self._gear:
+            if isinstance(self._gear[g], dict):
+                gear[g] = {}
+                for gg in self._gear[g]:
+                    gear[g][gg] = self._gear[g][gg].export() \
+                        if self._gear[g][gg] is not None else None
+            else:
+                gear[g] = self._gear[g].export() if self._gear[g] is not None else None
+        data = {
+            "type": "creature",
+            "name": self._name,
+            "level": self._level,
+            "exp": self._exp,
+            "exp_next": self._exp_to_next,
+            "ap": self._ap,
+            "buffs": [b.export() for b in self._buffs],
+            "life_regen": self._life_regen.export(),
+            "mana_regen": self._mana_regen.export(),
+            "stats": stats,
+            "gear": gear
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a JSON tab and creates an affix from it."""
+        creature = Creature(
+            data["name"]
+        )
+        creature.level = int(data["level"])
+        creature.exp = int(data["exp"])
+        creature.exp_to_next = int(data["exp_next"])
+        creature.ap = int(data["ap"])
+        life_regen = Stat.imports(json.loads(data["life_regen"]))
+        mana_regen = Stat.imports(json.loads(data["mana_regen"]))
+        stats = {}
+        for s in data["stats"]:
+            comp = json.loads(data["stats"][s])
+            if comp["type"] == "stat":
+                stats[s] = Stat.imports(comp)
+            elif comp["type"] == "rangestat":
+                stats[s] = RangeStat.imports(comp)
+            elif comp["type"] == "ressource":
+                stats[s] = Ressource.imports(comp)
+        creature.stats = stats
+        creature.rereference_regens(life_regen, mana_regen)
+        gear = {}
+        for g in data["gear"]:
+            if data["gear"][g] is None:
+                gear[g] = None
+            elif isinstance(data["gear"][g], dict):
+                gear[g] = {}
+                for gg in data["gear"][g]:
+                    if data["gear"][g][gg] is None:
+                        gear[g][gg] = None
+                    else:
+                        gear[g][gg] = Item.imports(json.loads(data["gear"][g][gg]))
+            else:
+                gear[g] = Item.imports(json.loads(data["gear"][g]))
+        creature.gear = gear
+        buffs = []
+        for b in data["buffs"]:
+            buffs.append(Affliction.imports(json.loads(b)))
+        creature.buffs = buffs
+        return creature
 
     @property
     def name(self) -> str:

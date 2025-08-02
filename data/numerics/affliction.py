@@ -2,7 +2,7 @@
 a name, a value, a duration, flags."""
 
 import json
-from data.constants import SYSTEM, trad, META_FLAGS
+from data.constants import SYSTEM, trad, META_FLAGS, Flags
 from data.image.hoverable import Hoverable
 
 class Affliction():
@@ -108,7 +108,7 @@ class Affliction():
             data["name"],
             float(data["value"]),
             float(data["duration"]),
-            data["flags"],
+            [Flags(f) for f in data["flags"]],
             bool(data["stackable"]),
             bool(data["refreshable"])
         )

@@ -152,7 +152,7 @@ class Affix():
         afx = Affix(
             data["name"],
             float(data["value"]),
-            data["flags"],
+            [Flags(f) for f in data["flags"]],
             float(data["bounds"][0]),
             float(data["bounds"][1])
         )
