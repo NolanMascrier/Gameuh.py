@@ -2,6 +2,7 @@ import unittest
 import json
 import pygame
 from data.image.image import Image
+from data.image.animation import Animation
 from data.constants import Flags, change_language
 from data.numerics.affliction import Affliction
 from data.numerics.affix import Affix
@@ -11,6 +12,7 @@ from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
 from data.item import Item
 from data.creature import Creature
+from data.character import Character
 
 pygame.init()
 change_language("EN_us.json")
@@ -180,3 +182,35 @@ class TestingImages(unittest.TestCase):
         json_data = bob.export()
         read = Creature.imports(json.loads(json_data))
         self.cmp_creatures(bob, read)
+
+    def cmp_character(self, a:Character, b:Character):
+        self.assertEqual(a.gold, b.gold)
+        self.assertEqual(a.runes, b.runes)
+        self.assertEqual(a.spellbook, b.spellbook)
+        self.assertEqual(a.equipped_spells, b.equipped_spells)
+        self.cmp_creatures(a.creature, b.creature)
+        i = 0
+        for item in a.inventory:
+            self.cmp_item(a.inventory[i], b.inventory[i])
+            i+=1
+    
+    def test_character(self):
+        bob = Character(0, 0, Animation("default.png", 5, 5), 12)
+        it = Item("Bob's armor", "Armor", 12, 0, 1, Image("a"), 3, [Flags.ARMOR], [], [])
+        it2 = Item("Bob's gloves", "Armor", 12, 0, 1, Image("a"), 3, [Flags.HANDS], [], [])
+        it3 = Item("Bob's boots", "Armor", 12, 0, 1, Image("a"), 3, [Flags.BOOTS], [], [])
+        bob.inventory.extend([it, it2, it3])
+        bob.equipped_spells = {
+            "spell_1": "truc",
+            "spell_2": "machin",
+            "spell_3": None,
+            "spell_4": None,
+            "spell_5": None,
+            "dash": "thing"
+        }
+        bob.spellbook = ["truc", "machin", "thing"]
+        bob.gold = 151848181
+        bob.runes = [1, 2, 3, 4, 5, 6, 7, 8]
+        json_data = bob.export()
+        read = Character.imports(json.loads(json_data))
+        self.cmp_character(bob, read)

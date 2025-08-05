@@ -549,8 +549,8 @@ class Creature:
         self._stats["life"].rate = life_regen
         self._stats["mana"].rate = mana_regen
 
-    def export(self):
-        """Serializes the affix as JSON."""
+    def export(self) -> str:
+        """Serializes the creature as JSON."""
         stats = {}
         gear = {}
         for s in self._stats:

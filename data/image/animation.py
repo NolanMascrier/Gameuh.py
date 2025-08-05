@@ -1,5 +1,6 @@
 """An animation is a sequence of images."""
 
+import json
 import pygame
 from data.image.image import Image
 
@@ -131,6 +132,36 @@ class Animation():
         ).flip(self._flipped[0], self._flipped[1])\
         .rotate(self._rotated)\
         .scale(self._scaled[0], self._scaled[1])
+
+    def export(self) -> str:
+        """Serializes the animation as JSON."""
+        data = {
+            "uri": self._base_image.uri,
+            "frame_x": self._frame_x,
+            "frame_y": self._frame_y,
+            "lines": self._lines,
+            "frame_rate": self._frame_rate,
+            "frame_max": self._frame_max,
+            "loops": self._loops,
+            "animated": self._animated,
+            "play_once": self._play_once
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Creates an animation from a json data array."""
+        return Animation(
+            data["uri"],
+            int(data["frame_x"]),
+            int(data["frame_y"]),
+            int(data["lines"]),
+            int(data["frame_rate"]),
+            int(data["frame_max"]),
+            bool(data["loops"]),
+            bool(data["animated"]),
+            bool(data["play_once"])
+        )
 
     @property
     def width(self):

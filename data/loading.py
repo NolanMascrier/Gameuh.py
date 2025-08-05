@@ -80,7 +80,7 @@ def init_timers():
     pygame.time.set_timer(WAVE_TIMER, 1000)
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
-    pygame.time.set_timer(TICKER_TIMER, 20)
+    pygame.time.set_timer(TICKER_TIMER, int(SYSTEM["options"]["fps"] * 1000))
 
 def start_level():
     """Starts the level stored in the SYSTEM."""

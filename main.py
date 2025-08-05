@@ -210,7 +210,6 @@ if __name__ == "__main__":
         if SYSTEM["game_state"] == MENU_OPTIONS:
             draw_options(events)
 
-
         if SYSTEM["pop_up"] is not None:
             x = SYSTEM["mouse"][0] - SYSTEM["pop_up"][1]
             if x < 0:

@@ -1,6 +1,7 @@
 """Class for player characters."""
 
-from math import pi, atan2
+import json
+from math import atan2
 from data.constants import *
 from data.tables.spell_table import *
 from data.generator import Generator
@@ -8,6 +9,7 @@ from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.image.animation import Animation
+from data.item import Item
 
 KEY_TYPE = {
     0: "spell_1",
@@ -29,7 +31,10 @@ class Character():
     """Defines a character. A character is a creature/entity
     specifically made to be used by players."""
     def __init__(self, x = 10, y = SCREEN_HEIGHT / 2, imagefile:Animation = None, speed = 12):
-        box = HitBox(x, y, imagefile.width / 3, imagefile.height / 1.3)
+        if imagefile is None:
+            box = None
+        else:
+            box = HitBox(x, y, imagefile.width / 3, imagefile.height / 1.3)
         self._entity = Entity(x, y, imagefile, box, speed)
         self._creature = Creature("hero")
         self._cooldown = 0
@@ -145,14 +150,16 @@ class Character():
             "spell_4": lambda: self.__cast("spell_4"),
             "spell_5": lambda: self.__cast("spell_5"),
             "dash": lambda: self.__cast("dash"),
-            "potion_life": lambda: self.use_life_potion(),
-            "potion_mana": lambda: self.use_mana_potion(),
+            "potion_life": self.use_life_potion,
+            "potion_mana": self.use_mana_potion,
             "left": lambda: self.__set_movement(-1, 0),
             "right": lambda: self.__set_movement(1, 0),
             "up": lambda: self.__set_movement(0, -1),
             "down": lambda: self.__set_movement(0, 1),
         }
         for k in SYSTEM["key_chart"]:
+            if k == "pause":
+                continue
             if (SYSTEM["key_chart"][k][0] is not None and keys[SYSTEM["key_chart"][k][0]]) or\
                 (SYSTEM["key_chart"][k][1] is not None and keys[SYSTEM["key_chart"][k][1]]):
                     actions[k]()
@@ -178,6 +185,40 @@ class Character():
             self._cooldown = 0.5
             self._creature.stats["mana"].current_value +=\
                 self._creature.stats["mana"].get_value() * 0.4
+
+    def export(self) -> str:
+        """Serializes the character as JSON."""
+        inventory = []
+        for i in self._inventory:
+            inventory.append(i.export())
+        data = {
+            "type": "character",
+            "creature": self._creature.export(),
+            "entity": self._entity.export(),
+            "speed": self._base_speed,
+            "equiped_spells": self._equipped_spells,
+            "known_spells": self._spellbook,
+            "inventory": inventory,
+            "gold": self._gold,
+            "runes": self._runes
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Creates a character from a json data array."""
+        char = Character(
+            0, 0, None, int(data["speed"])
+        )
+        char.entity = Entity.imports(json.loads(data["entity"]))
+        char.creature = Creature.imports(json.loads(data["creature"]))
+        char.equipped_spells = data["equiped_spells"]
+        char.spellbook = data["known_spells"]
+        char.gold = int(data["gold"])
+        char.runes = data["runes"]
+        for i in data["inventory"]:
+            char.inventory.append(Item.imports(json.loads(i)))
+        return char
 
     @property
     def x(self):

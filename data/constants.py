@@ -1,12 +1,12 @@
 """Stores the project's constants."""
 
 from enum import Enum
-import pickle
 import json
 import pygame
 from pygame import *
 from pygame.constants import *
 from data.physics.spatialgrid import SpatialGrid
+
 
 ROOT = ""
 #ROOT = "Gameuh.py/"
@@ -215,14 +215,17 @@ def save(filename = None):
     if filename is None:
         filename = "default.char"
     with open(filename, "w", encoding="utf-8") as file:
-        pickle.dump(SYSTEM["player"], file)
+        data = SYSTEM["player"].export()
+        json.dump(data, file)
 
 def load(filename = None):
     """Loads the character data."""
+    from data.character import Character
     if filename is None:
         filename = "default.char"
-    with open(filename, "w", encoding="utf-8") as file:
-        SYSTEM["player"] = pickle.load(file)
+    with open(filename, "r", encoding="utf-8") as file:
+        read = json.load(file)
+        SYSTEM["player"] = Character.imports(json.loads(read))
 
 def get_mouse_pos():
     """Updates the mouse position."""

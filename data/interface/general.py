@@ -1,7 +1,5 @@
 """Handles the general UI operations such as the bottom bar."""
 
-from math import cos, sin
-import pygame
 from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, SLASH_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\

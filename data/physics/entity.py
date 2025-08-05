@@ -25,7 +25,7 @@ class Entity():
         self._y = y
         self._x_def = x
         self._y_def = y
-        self._image = imagefile.clone()
+        self._image = imagefile.clone() if imagefile is not None else None
         self._hitbox = hitbox
         self._move_speed = move_speed
         self._keys = []
@@ -44,7 +44,6 @@ class Entity():
         self._image.tick()
         base_speed = character.creature.stats["speed"].c_value * speed_mod
         self._move_speed = base_speed
-
         if self._dashing:
             if self._dash_time <= 0:
                 self._dashing = False
@@ -105,6 +104,27 @@ class Entity():
         """Flips the image."""
         self._image = self._image.flip(False, True)
         self._flipped = not self._flipped
+
+    def export(self) -> str:
+        """Serializes the entity as JSON."""
+        data = {
+            "type": "entity",
+            "image": self._image.export(),
+            "hit_box_w": self._hitbox.width,
+            "hit_box_h": self._hitbox.height,
+            "move_speed": self._move_speed
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Creates a entity from a json data array."""
+        return Entity(
+            0, 0,
+            Animation.imports(json.loads(data["image"])),
+            HitBox(0, 0, int(data["hit_box_w"]), int(data["hit_box_h"])),
+            float(data["move_speed"])
+        )
 
     @property
     def x(self):
