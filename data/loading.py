@@ -257,6 +257,7 @@ def load_images():
     SYSTEM["images"]["skillpoints"] = Image("icons/skillpoints.png").scale(128, 128)
     SYSTEM["images"]["checkbox"] = Image("ui/checkbox.png").scale(64, 64)
     SYSTEM["images"]["checkbox_ok"] = Image("ui/checkbox_ok.png").scale(64, 64)
+    SYSTEM["images"]["arrow_h"] = Image("arrow.png").scale(128, 128)
 
 def load_icons():
     """Loads the icons."""

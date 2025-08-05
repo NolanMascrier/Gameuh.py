@@ -1,8 +1,10 @@
 """An entity is something that physically exists in the game
 world. It has a position, an image and an hitbox."""
 
+from math import cos, sin
 from data.constants import *
 from data.image.animation import Animation
+from data.physics.hitbox import HitBox
 
 class Entity():
     """Defines an entity.
@@ -18,7 +20,7 @@ class Entity():
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
-    def __init__(self, x, y, imagefile: Animation, hitbox, move_speed = 1):
+    def __init__(self, x, y, imagefile: Animation, hitbox:HitBox, move_speed = 1):
         self._x = x
         self._y = y
         self._x_def = x
@@ -28,12 +30,30 @@ class Entity():
         self._move_speed = move_speed
         self._keys = []
         self._flipped = False
+        self._angle = 0
+        self._dash_speed = 1.35
+        self._dashing = False
+        self._x_dest = None
+        self._y_dest = None
+        self._dash_dx = 0
+        self._dash_dy = 0
+        self._dash_time = 0
 
     def tick(self, character, speed_mod = 1):
-        """Ticks down the entity. Does nothing by default and needs
-        to be overriden."""
+        """Ticks down the entity."""
         self._image.tick()
-        self._move_speed = character.creature.stats["speed"].c_value * speed_mod
+        base_speed = character.creature.stats["speed"].c_value * speed_mod
+        self._move_speed = base_speed
+
+        if self._dashing:
+            if self._dash_time <= 0:
+                self._dashing = False
+            self._dash_time -= float(SYSTEM["options"]["fps"])
+            self._x += self._dash_dx
+            self._y += self._dash_dy
+        self._x = max(0, min(self._x, SCREEN_WIDTH - self._image.width))
+        self._y = max(0, min(self._y, SCREEN_HEIGHT - self._image.height))
+        self._hitbox.move_center(self.center)
 
     def reset(self):
         """Resets the entity."""
@@ -59,32 +79,27 @@ class Entity():
             self._y -= self._move_speed
         self._hitbox.move_center(self.center)
 
-    def displace(self, pos, keys):
+    def displace(self, pos):
         """Moves the entity toward the x;y position."""
+        if self._dashing:
+            return
         self.x = pos[0]
         self.y = pos[1]
         self._hitbox.move_center(self.center)
-        self._keys = keys
 
-    def dash(self, distance):
-        """dash a certain distance depending on the last input keys."""
-        if self._keys[K_LEFT] or self._keys[K_a]:
-            if self._x - distance < 0:
-                distance = distance - self._x
-            self._x -= distance
-        if self._keys[K_RIGHT] or self._keys[K_d]:
-            if self._x + distance > SCREEN_WIDTH:
-                distance = self._x + distance - SCREEN_WIDTH
-            self._x += distance
-        if self._keys[K_UP] or self._keys[K_w]:
-            if self._y - distance < 0:
-                distance = distance - self._y
-            self._y -= distance
-        if self._keys[K_DOWN] or self._keys[K_s]:
-            if self._y + distance > SCREEN_HEIGHT:
-                distance = self._y + distance - SCREEN_HEIGHT
-            self._y += distance
-        self._hitbox.move_center(self.center)
+    def dash(self, distance, dash_time = 0.5):
+        """dash a certain distance depending on the last input angle."""
+        self._dash_dx = cos(self._angle)
+        self._dash_dy = sin(self._angle)
+        length = (self._dash_dx ** 2 + self._dash_dy ** 2) ** 0.5
+        if length != 0:
+            self._dash_dx /= length
+            self._dash_dy /= length
+        velocity = distance / dash_time
+        self._dash_dx *= velocity
+        self._dash_dy *= velocity
+        self._dash_time = dash_time
+        self._dashing = True
 
     def flip(self):
         """Flips the image."""
@@ -149,6 +164,16 @@ class Entity():
     @flipped.setter
     def flipped(self, value):
         self._flipped = value
+
+    @property
+    def angle(self):
+        """Returns the entity's angle. Useful only for players."""
+        return self._angle
+
+    @angle.setter
+    def angle(self, value):
+        if not self._dashing:
+            self._angle = value
 
     @property
     def center(self):

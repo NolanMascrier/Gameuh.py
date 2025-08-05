@@ -87,11 +87,12 @@ def draw_skills():
     for name, skill in char.equipped_spells.items():
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_bottom"].image,\
             (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
-        if skill is not None:
-            cdc = skill.cooldown
-            cdm = skill.stats["cooldown"].get_value()
+        spell = SYSTEM["spells"][skill]
+        if spell is not None:
+            cdc = spell.cooldown
+            cdm = spell.stats["cooldown"].get_value()
             cdl = cdc / cdm * 60
-            oom = bool(char.creature.get_efficient_value(skill.stats["mana_cost"]\
+            oom = bool(char.creature.get_efficient_value(spell.stats["mana_cost"]\
                 .get_value()) > char.creature.stats["mana"].current_value)
             s = pygame.Surface((cdl, 60))
             s.set_alpha(128)
@@ -99,7 +100,7 @@ def draw_skills():
             s2 = pygame.Surface((60, 60))
             s2.set_alpha(128 if oom else 0)
             s2.fill((255, 0, 0))
-            SYSTEM["windows"].blit(skill.icon.get_image(),\
+            SYSTEM["windows"].blit(spell.icon.get_image(),\
                 (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130))
             SYSTEM["windows"].blit(s2, (UI_SKILLS_OFFSET + UI_SKILLS_PANEL_OFFSET + 104 * i,\
                 SCREEN_HEIGHT - 128))
@@ -107,7 +108,7 @@ def draw_skills():
                 SCREEN_HEIGHT - 128))
         SYSTEM["windows"].blit(SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i,\
             SCREEN_HEIGHT - 130))
-        SYSTEM["windows"].blit(SYSTEM["images"][name].image, (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET\
+        SYSTEM["windows"].blit(SYSTEM["images"][SYSTEM["key_chart"][name][0]].image, (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET\
             + 104 * i,SCREEN_HEIGHT - 82))
         i += 1
 

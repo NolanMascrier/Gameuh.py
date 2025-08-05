@@ -20,30 +20,35 @@ PAGES = {
 }
 
 INPUT = {
-    MENU_SPELLBOOK_Q: K_q,
-    MENU_SPELLBOOK_E: K_e,
-    MENU_SPELLBOOK_F: K_f,
-    MENU_SPELLBOOK_T: K_t,
-    MENU_SPELLBOOK_R: K_r,
-    MENU_SPELLBOOK_SHIFT: K_LSHIFT
+    MENU_SPELLBOOK_Q: "spell_1",
+    MENU_SPELLBOOK_E: "spell_2",
+    MENU_SPELLBOOK_F: "spell_3",
+    MENU_SPELLBOOK_T: "spell_4",
+    MENU_SPELLBOOK_R: "spell_5",
+    MENU_SPELLBOOK_SHIFT: "dash"
 }
 
 STATES = [MENU_SPELLBOOK_Q, MENU_SPELLBOOK_E, MENU_SPELLBOOK_F,\
     MENU_SPELLBOOK_T, MENU_SPELLBOOK_R, MENU_SPELLBOOK_SHIFT]
 
 def slot_in(contain, slot):
-    """SLots in a spell."""
-    SYSTEM["player"].equipped_spells[slot.flag] = contain
+    """Slots in a spell."""
+    for f in SYSTEM["spells"]:
+        if SYSTEM["spells"][f] == contain:
+            key = f
+            break
+    SYSTEM["player"].equipped_spells[slot.flag] = key
     SYSTEM["ui"][slot.flag] = [
-        Text(SYSTEM["player"].equipped_spells[slot.flag].describe()["name"],\
+        Text(contain.describe()["name"],\
             font="item_titles", size=45, default_color=(0,0,0)),
         Text(f"{trad('meta_words', 'level')} " +\
-            f"{SYSTEM['player'].equipped_spells[slot.flag].describe()['level']}",\
+            f"{contain.describe()['level']}",\
             font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[slot.flag].describe()["desc"],\
+        Text(contain.describe()["desc"],\
             font="item_desc", size=20, default_color=(0,0,0)),
-        Text(SYSTEM["player"].equipped_spells[slot.flag].describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0))
+        Text(contain.describe()["damage"],\
+            font="item_desc", size=20, default_color=(0,0,0)),
+        contain.describe()["buffs"]
     ]
 
 def slot_out(contain, slot):
@@ -55,7 +60,6 @@ def set_page(page):
     """Changes the page of the spellbook."""
     if page in PAGES:
         SYSTEM["spell_page"] = PAGES[page]
-    print("caca")
 
 def open_spell_screen():
     """Sets up the spell screen menu."""
@@ -64,7 +68,8 @@ def open_spell_screen():
     SYSTEM["spell_page"] = MENU_SPELLBOOK_Q
     spells = []
     dashes = []
-    for spell in SYSTEM["player"].spellbook:
+    for spell_ref in SYSTEM["player"].spellbook:
+        spell = SYSTEM["spells"][spell_ref]
         if isinstance(spell, Spell):
             if Flags.DASH in spell.flags:
                 dashes.append(spell)
@@ -83,30 +88,32 @@ def open_spell_screen():
     SYSTEM["gear_tabs"] = Tabs(x_offset, 300, images, STATES, "spell_page",\
         SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"])
     SYSTEM["ui"]["slot_q"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["player"].equipped_spells[K_q], flag=K_q)
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1")
     SYSTEM["ui"]["slot_e"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["player"].equipped_spells[K_e], flag=K_e)
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_2"]], flag="spell_2")
     SYSTEM["ui"]["slot_f"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["player"].equipped_spells[K_f], flag=K_f)
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_3"]], flag="spell_3")
     SYSTEM["ui"]["slot_r"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["player"].equipped_spells[K_r], flag=K_r)
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_4"]], flag="spell_4")
     SYSTEM["ui"]["slot_t"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["player"].equipped_spells[K_t], flag=K_t)
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5")
     SYSTEM["ui"]["slot_shift"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["player"].equipped_spells[K_LSHIFT], flag=K_LSHIFT)
-    for key in [K_q, K_e, K_f, K_t, K_r, K_LSHIFT]:
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash")
+    for key in ["spell_1", "spell_2", "spell_3", "spell_4", "spell_5", "dash"]:
+        spell = SYSTEM["spells"][SYSTEM["player"].equipped_spells[key]]\
+            if SYSTEM["player"].equipped_spells[key] is not None else None
         SYSTEM["ui"][key] = [
-            Text(SYSTEM["player"].equipped_spells[key].describe()["name"],\
+            Text(spell.describe()["name"],\
                 font="item_titles", size=45, default_color=(0,0,0)),
             Text(f"{trad('meta_words', 'level')} " +\
-                f"{SYSTEM['player'].equipped_spells[key].describe()['level']}",\
+                f"{spell.describe()['level']}",\
                 font="item_desc", size=20, default_color=(0,0,0)),
-            Text(SYSTEM["player"].equipped_spells[key].describe()["desc"],\
+            Text(spell.describe()["desc"],\
                 font="item_desc", size=20, default_color=(0,0,0)),
-            Text(SYSTEM["player"].equipped_spells[key].describe()["damage"],\
+            Text(spell.describe()["damage"],\
                 font="item_desc", size=20, default_color=(0,0,0)),
-            SYSTEM["player"].equipped_spells[key].describe()["buffs"]
-        ] if SYSTEM["player"].equipped_spells[key] is not None else None
+            spell.describe()["buffs"]
+        ] if spell is not None else None
     SYSTEM["ui"]["no_spells"] = [
         Text(trad('spells_name', 'none'), font="item_titles", size=45, default_color=(0,0,0)),
         Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=(0,0,0))

@@ -1,5 +1,6 @@
 """Class for player characters."""
 
+from math import pi, atan2
 from data.constants import *
 from data.tables.spell_table import *
 from data.generator import Generator
@@ -7,6 +8,22 @@ from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.image.animation import Animation
+
+KEY_TYPE = {
+    0: "spell_1",
+    1: "spell_2",
+    2: "spell_3",
+    3: "spell_4",
+    4: "spell_5",
+    5: "dash",
+    6: "potion_life",
+    7: "potion_mana",
+    8: "up",
+    9: "down",
+    10: "left",
+    11: "right",
+    12: "pause"
+}
 
 class Character():
     """Defines a character. A character is a creature/entity
@@ -20,27 +37,28 @@ class Character():
         self._base_speed = speed
         self._potions = [3, 3]
         self._equipped_spells = {
-            K_q: SYSTEM["spells"]["firebolt"],
-            K_e: SYSTEM["spells"]["voidbolt"],
-            K_f: SYSTEM["spells"]["icebolt"],
-            K_t: SYSTEM["spells"]["elefury"],
-            K_r: SYSTEM["spells"]["furyslash"],
-            K_LSHIFT: SYSTEM["spells"]["winddash"]
+            "spell_1": "firebolt",
+            "spell_2": "voidbolt",
+            "spell_3": "icebolt",
+            "spell_4": "elefury",
+            "spell_5": "furyslash",
+            "dash": "winddash"
         }
         self._immune = []
         self._spellbook = [
-            SYSTEM["spells"]["firebolt"],
-            SYSTEM["spells"]["voidbolt"],
-            SYSTEM["spells"]["icebolt"],
-            SYSTEM["spells"]["elefury"],
-            SYSTEM["spells"]["furyslash"],
-            SYSTEM["spells"]["winddash"],
+            "firebolt",
+            "voidbolt",
+            "icebolt",
+            "elefury",
+            "furyslash",
+            "winddash",
         ]
         self._inventory = []
         self._runes = [
             100, 100, 100, 100, 100, 100, 100, 100, 100, 100
         ]
         self._gold = 0
+        self._input = [0, 0]
 
     def get_pos(self):
         """Returns the position of the character as a
@@ -59,7 +77,7 @@ class Character():
         self._cooldown = 0
         for spell in self._equipped_spells:
             if self.equipped_spells[spell] is not None:
-                self._equipped_spells[spell].reset()
+                SYSTEM["spells"][self._equipped_spells[spell]].reset()
 
     def tick(self):
         """Ticks down the character."""
@@ -68,9 +86,9 @@ class Character():
         if self._cooldown > 0:
             self._cooldown -= float(SYSTEM["options"]["fps"])
         already_ticked = []
-        for _, skill in self._equipped_spells.items():
+        for spell, skill in self._equipped_spells.items():
             if skill is not None and skill not in already_ticked:
-                skill.tick()
+                SYSTEM["spells"][self._equipped_spells[spell]].tick()
                 already_ticked.append(skill)
         SYSTEM["player.x"] = self.hitbox.center[0]
         SYSTEM["player.y"] = self.hitbox.center[1]
@@ -99,50 +117,49 @@ class Character():
             if self.hitbox.is_colliding(pickup.hitbox):
                 pickup.pickup(self)
 
+    def __cast(self, key):
+        """Cast a spell from the corresponding key."""
+        if self._equipped_spells[key] is not None:
+            SYSTEM["spells"][self._equipped_spells[key]]\
+                .cast(self._creature, self._entity, False)
+
+    def __move(self, dx, dy):
+        """Moves the character by dx, dy."""
+        new_x = self._entity.x + dx
+        new_y = self._entity.y + dy
+        self._entity.angle = atan2(new_y - self._entity.y,\
+            new_x - self._entity.x)
+        self._entity.displace((new_x, new_y))
+
+    def __set_movement(self, dx, dy):
+        """Prepares the movement."""
+        self._input[0] += dx
+        self._input[1] += dy
+
     def action(self, keys):
         """Acts depending on the input."""
-        if keys[K_LEFT] or keys[K_a]:
-            if self._entity.hitbox.left >= 0:
-                x = self._entity.x - self._entity.move_speed
-                y = self._entity.y
-                self._entity.displace((x, y), keys)
-        if keys[K_RIGHT] or keys[K_d]:
-            if self._entity.hitbox.right <= SCREEN_WIDTH:
-                x = self._entity.x + self._entity.move_speed
-                y = self._entity.y
-                self._entity.displace((x, y), keys)
-        if keys[K_UP] or keys[K_w]:
-            if self._entity.hitbox.top >= 0:
-                x = self._entity.x
-                y = self._entity.y - self._entity.move_speed
-                self._entity.displace((x, y), keys)
-        if keys[K_DOWN] or keys[K_s]:
-            if self._entity.hitbox.bottom <= SCREEN_HEIGHT:
-                x = self._entity.x
-                y = self._entity.y + self._entity.move_speed
-                self._entity.displace((x, y), keys)
-        if keys[K_q]:
-            if self._equipped_spells[K_q] is not None:
-                self._equipped_spells[K_q].cast(self._creature, self._entity, False)
-        if keys[K_e]:
-            if self._equipped_spells[K_e] is not None:
-                self._equipped_spells[K_e].cast(self._creature, self._entity, False)
-        if keys[K_f]:
-            if self._equipped_spells[K_f] is not None:
-                self._equipped_spells[K_f].cast(self._creature, self._entity, False)
-        if keys[K_t]:
-            if self._equipped_spells[K_t] is not None:
-                self._equipped_spells[K_t].cast(self._creature, self._entity, False)
-        if keys[K_r]:
-            if self._equipped_spells[K_r] is not None:
-                self._equipped_spells[K_r].cast(self._creature, self._entity, False)
-        if keys[K_LSHIFT]:
-            if self._equipped_spells[K_LSHIFT] is not None:
-                self._equipped_spells[K_LSHIFT].cast(self._creature, self._entity, False)
-        if keys[K_1]:
-            self.use_life_potion()
-        if keys[K_2]:
-            self.use_mana_potion()
+        actions = {
+            "spell_1": lambda: self.__cast("spell_1"),
+            "spell_2": lambda: self.__cast("spell_2"),
+            "spell_3": lambda: self.__cast("spell_3"),
+            "spell_4": lambda: self.__cast("spell_4"),
+            "spell_5": lambda: self.__cast("spell_5"),
+            "dash": lambda: self.__cast("dash"),
+            "potion_life": lambda: self.use_life_potion(),
+            "potion_mana": lambda: self.use_mana_potion(),
+            "left": lambda: self.__set_movement(-1, 0),
+            "right": lambda: self.__set_movement(1, 0),
+            "up": lambda: self.__set_movement(0, -1),
+            "down": lambda: self.__set_movement(0, 1),
+        }
+        for k in SYSTEM["key_chart"]:
+            if (SYSTEM["key_chart"][k][0] is not None and keys[SYSTEM["key_chart"][k][0]]) or\
+                (SYSTEM["key_chart"][k][1] is not None and keys[SYSTEM["key_chart"][k][1]]):
+                    actions[k]()
+        dx = self._input[0] * self._entity.move_speed
+        dy = self._input[1] * self._entity.move_speed
+        self.__move(dx, dy)
+        self._input = [0, 0]
 
     def use_life_potion(self):
         """Uses a life potion, which heals for 20% of the user's life."""

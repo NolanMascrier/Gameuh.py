@@ -87,6 +87,15 @@ MENU_OPTIONS_GAME = 14
 MENU_TREE = 15
 LOADING = 999
 
+"""self._equipped_spells = {
+            K_q: SYSTEM["spells"]["firebolt"],
+            K_e: SYSTEM["spells"]["voidbolt"],
+            K_f: SYSTEM["spells"]["icebolt"],
+            K_t: SYSTEM["spells"]["elefury"],
+            K_r: SYSTEM["spells"]["furyslash"],
+            K_LSHIFT: SYSTEM["spells"]["winddash"]
+        }"""
+
 SYSTEM = {
     "loaded": False,
     "progress": 0,
@@ -108,6 +117,21 @@ SYSTEM = {
         "lang_temp": "EN_us",
         "langs": ["EN_us", "FR_fr"],
         "show_hitboxes": False
+    },
+    "key_chart": {
+      "spell_1": (K_q, None),
+      "spell_2": (K_e, None),
+      "spell_3": (K_f, None),
+      "spell_4": (K_t, None),
+      "spell_5": (K_r, None),
+      "dash": (K_LSHIFT, None),
+      "potion_life": (K_1, None),
+      "potion_mana": (K_2, None),
+      "up": (K_UP, K_z),
+      "down": (K_DOWN, K_s),
+      "left": (K_LEFT, K_a),
+      "right": (K_RIGHT, K_d),
+      "pause": (K_ESCAPE, None)
     },
     "lang": [],
     "game_state": None,

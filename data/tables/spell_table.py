@@ -38,7 +38,7 @@ def generate_spell_list():
     icebolt = Spell("icebolt", icebolt_icon, icebolt_proj_img, ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
     voidolt = Spell("voidbolt", voidbolt_icon, voidbolt_proj_img, VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
     elementalfury = Spell("elefury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
-    dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=200, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
+    dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=10, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
     furyslash = Spell("fslash", fury_icon, furyslash_img, FURYSLASH, 5, 0, cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF], afflictions=[FURY])
     charge = Spell("Charge", fury_icon, furyslash_alt, CHARGE, flags=[Flags.MELEE])
     voidbolt_enemy = Spell("VoidboltE", None, darkbolt_img, DARKBOLT, projectiles=1, flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
