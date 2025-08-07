@@ -215,17 +215,22 @@ def save(filename = None):
     if filename is None:
         filename = "default.char"
     with open(filename, "w", encoding="utf-8") as file:
-        data = SYSTEM["player"].export()
+        data = {
+            "player": SYSTEM["player"].export(),
+            "tree": SYSTEM["tree"].export()
+        }
         json.dump(data, file)
 
 def load(filename = None):
     """Loads the character data."""
     from data.character import Character
+    from data.game.tree import Node
     if filename is None:
         filename = "default.char"
     with open(filename, "r", encoding="utf-8") as file:
         read = json.load(file)
-        SYSTEM["player"] = Character.imports(json.loads(read))
+        SYSTEM["player"] = Character.imports(json.loads(read["player"]))
+        SYSTEM["tree"] = Node.imports(json.loads(read["tree"]))
 
 def get_mouse_pos():
     """Updates the mouse position."""

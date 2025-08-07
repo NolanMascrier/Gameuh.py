@@ -3,7 +3,8 @@ import json
 import pygame
 from data.image.image import Image
 from data.image.animation import Animation
-from data.constants import Flags, change_language
+from data.constants import Flags, change_language, SYSTEM
+from data.loading import load
 from data.numerics.affliction import Affliction
 from data.numerics.affix import Affix
 from data.numerics.double_affix import DoubleAffix
@@ -13,9 +14,12 @@ from data.numerics.ressource import Ressource
 from data.item import Item
 from data.creature import Creature
 from data.character import Character
+from data.game.tree import Node,GENERATE_SURFACES
 
 pygame.init()
-change_language("EN_us.json")
+SYSTEM["keys"] = pygame.key.get_pressed()
+change_language("EN_us")
+load()
 
 class TestingImages(unittest.TestCase):
     def test_stack_serialization(self):
@@ -214,3 +218,28 @@ class TestingImages(unittest.TestCase):
         json_data = bob.export()
         read = Character.imports(json.loads(json_data))
         self.cmp_character(bob, read)
+
+    def cmp_nodes(self, a:Node, b:Node):
+        self.assertEqual(a.name, b.name)
+        self.assertEqual(a.icon, b.icon)
+        self.assertEqual(a._skills, b._skills)
+        self.assertEqual(a.x, b.x)
+        self.assertEqual(a.y, b.y)
+        i = 0
+        for _ in a.effects:
+            self.cmp_affliction(a.effects[i], b.effects[i])
+            i += 1
+        i = 0
+        for _ in a.connected:
+            self.cmp_nodes(a.connected[i], b.connected[i])
+            i+=1
+
+    def test_nodes(self):
+        tree = Node("TreeA", "rune_0", 0, 0, [], None, ["firebolt"], 3)
+        afx1 = Affliction("test1", 3, 5, [Flags.FLAT, Flags.DEF])
+        afx2 = Affliction("test2", 5, 3, [Flags.BOON, Flags.DEF])
+        tree2 = Node("TreeB", "rune_1", 10, 0, [afx1], tree, [])
+        tree3 = Node("TreeC", "rune_5", 20, 10 , [afx2], tree, ["icebolt", "voidbolt"])
+        json_data = tree.export()
+        read = Node.imports(json.loads(json_data))
+        self.cmp_nodes(tree, read)

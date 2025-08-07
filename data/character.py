@@ -190,7 +190,8 @@ class Character():
         """Serializes the character as JSON."""
         inventory = []
         for i in self._inventory:
-            inventory.append(i.export())
+            if isinstance(i, Item):
+                inventory.append(i.export())
         data = {
             "type": "character",
             "creature": self._creature.export(),

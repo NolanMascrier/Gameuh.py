@@ -1,10 +1,13 @@
 """For the skill trees."""
 
+import json
 import pygame
 from data.constants import SYSTEM, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable
 from data.image.button import Button, Text
+
+GENERATE_SURFACES = True
 
 class Node:
     """
@@ -37,12 +40,13 @@ class Node:
             skills = []
         self._skills = skills
         self._surface = None
-        self.generate_surface()
-        if self._previous is not None:
-            self._previous.connected.append(self)
-        self._button = Button(icon, None, self.action)
-        self._hover = Hoverable(x, y, None, None, surface=SYSTEM["images"][self._icon].image,\
-            scrollable=SYSTEM["images"]["tree_scroller"], override=self._surface)
+        if GENERATE_SURFACES:
+            self.generate_surface()
+            if self._previous is not None:
+                self._previous.connected.append(self)
+            self._button = Button(icon, None, self.action)
+            self._hover = Hoverable(x, y, None, None, surface=SYSTEM["images"][self._icon].image,\
+                scrollable=SYSTEM["images"]["tree_scroller"], override=self._surface)
 
     def generate_surface(self):
         """Generates the hoverable surface."""
@@ -52,6 +56,8 @@ class Node:
         w = 0
         for s in self._skills:
             skill = SYSTEM["spells"][s]
+            if skill is None:
+                continue
             surfaces.append(skill.surface)
             h += skill.surface.get_height()
             skill_desc += f"{trad('meta_words', 'learns')} {trad('spells_name', skill.name)}\n"
@@ -139,7 +145,7 @@ class Node:
             for f in self._effects:
                 SYSTEM["player"].creature.afflict(f)
             for s in self._skills:
-                SYSTEM["player"].spellbook.append(SYSTEM["spells"][s])
+                SYSTEM["player"].spellbook.append(s)
 
     def unlearn(self):
         """Attempt to learn the node."""
@@ -149,7 +155,7 @@ class Node:
             for f in self._effects:
                 SYSTEM["player"].creature.remove_affliction(f)
             for s in self._skills:
-                SYSTEM["player"].spellbook.remove(SYSTEM["spells"][s])
+                SYSTEM["player"].spellbook.remove(s)
 
     def draw(self, surface: pygame.Surface):
         """Draws the tree."""
@@ -181,6 +187,52 @@ class Node:
                 case _:
                     surface.blit(SYSTEM["images"]["slot_empty"].image,\
                         (self._button.x, self._button.y))
+
+    def export(self) -> str:
+        """Serialize the tree as JSON."""
+        effects = []
+        connected = []
+        for f in self._effects:
+            effects.append(f.export())
+        for c in self._connected:
+            connected.append(c.export())
+        data = {
+            "type": "tree",
+            "name": self._name,
+            "icon": self._icon,
+            "x": self._x,
+            "y": self._y,
+            "learned": self._learned,
+            "effects": effects,
+            "skills": self._skills,
+            "rarity": self._rarity,
+            "connected": connected,
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Recreates the tree from reading JSON."""
+        effects = []
+        connected = []
+        for f in data["effects"]:
+            effects.append(Affliction.imports(json.loads(f)))
+        node = Node(
+            data["name"],
+            data["icon"],
+            int(data["x"]),
+            int(data["y"]),
+            effects,
+            None,
+            data["skills"]
+        )
+        for c in data["connected"]:
+            connex = Node.imports(json.loads(c))
+            connex.previous = node
+            connected.append(connex)
+        node.connected = connected
+        node.learned = bool(data["learned"])
+        return node
 
     @property
     def name(self):

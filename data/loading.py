@@ -358,8 +358,7 @@ def init_game():
     """Loads the basic data for the game."""
     pygame.init()
     pygame.font.init()
-    keys = pygame.key.get_pressed()
-    SYSTEM["keys"] = keys
+    SYSTEM["keys"] = pygame.key.get_pressed()
     load_options()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)

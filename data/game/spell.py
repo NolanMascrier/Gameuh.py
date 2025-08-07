@@ -1,6 +1,7 @@
 """For spells"""
 
 import pygame
+import json
 from data.projectile import Projectile
 from data.creature import Creature
 from data.physics.entity import Entity
@@ -10,7 +11,6 @@ from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable, Text
-from data.image.tile import Tile
 
 class Spell():
     """Creates a spell. A spell is how creature interact with each other
@@ -195,8 +195,29 @@ class Spell():
                        aim_right, evil, self._flags)
             SLASH_TRACKER.append(sl)
 
+    def export(self) -> str:
+        """Serialize the spell as JSON."""
+        stats = {}
+        for s in self._stats:
+            stats[s] = self._stats[s].export()
+        data = {
+            "type": "spell",
+            "name": self._name,
+            "level": self._level,
+            "stats": stats,
+            "icon": self._icon,
+            "anim": self._attack_anim,
+            "damage": self._base_damage
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads a json data and creates a spell."""
+
     @property
     def name(self):
+        """Returns the spell's name."""
         return self._name
 
     @name.setter
@@ -205,6 +226,7 @@ class Spell():
 
     @property
     def icon(self):
+        """Returns the spell's icon."""
         return self._icon
 
     @icon.setter
@@ -213,6 +235,7 @@ class Spell():
 
     @property
     def cooldown(self):
+        """Returns the spell's cooldown."""
         return self._cooldown
 
     @cooldown.setter
@@ -221,6 +244,7 @@ class Spell():
 
     @property
     def stats(self):
+        """Returns the spell's stats."""
         return self._stats
 
     @stats.setter
@@ -229,6 +253,7 @@ class Spell():
 
     @property
     def flags(self):
+        """Returns the spell's flags."""
         return self._flags
 
     @flags.setter
@@ -237,4 +262,5 @@ class Spell():
 
     @property
     def surface(self):
+        """Returns the spell's description surface."""
         return self._surface
