@@ -14,6 +14,8 @@ from data.numerics.ressource import Ressource
 from data.item import Item
 from data.creature import Creature
 from data.character import Character
+from data.numerics.damage import Damage
+from data.game.spell import Spell
 from data.game.tree import Node,GENERATE_SURFACES
 
 pygame.init()
@@ -243,3 +245,44 @@ class TestingImages(unittest.TestCase):
         json_data = tree.export()
         read = Node.imports(json.loads(json_data))
         self.cmp_nodes(tree, read)
+
+    def cmp_damage(self, a:Damage, b:Damage):
+        self.assertEqual(a.coeff, b.coeff)
+        self.assertEqual(a._bounds, b._bounds)
+        self.assertEqual(a.flags, b.flags)
+        self.assertEqual(a.ignore_block, b.ignore_block)
+        self.assertEqual(a.ignore_dodge, b.ignore_dodge)
+        self.assertEqual(a.types, b.types)
+        self.assertEqual(a.penetration, b.penetration)
+        self.assertEqual(a.crit_mult, b.crit_mult)
+
+    def test_damage(self):
+        dmg = Damage(5, fire=10, dark=5, fp=0.8, flags=[Flags.FIRE, Flags.DARK], ignore_block=True, upper_bound=5.5)
+        json_data = dmg.export()
+        read = Damage.imports(json.loads(json_data))
+        self.cmp_damage(dmg, read)
+
+    def cmp_spell(self, a:Spell, b:Spell):
+        self.assertEqual(a.name, b.name)
+        self.assertEqual(a.level, b.level)
+        self.cmp_damage(a._base_damage, b._base_damage)
+        self.assertEqual(a.flags, b.flags)
+        i = 0
+        for _ in a._afflictions:
+            self.cmp_affliction(a._afflictions[i], b._afflictions[i])
+            i += 1
+        self.assertEqual(a.icon.uri, b.icon.uri)
+        i = 0
+        for i in a.stats:
+            if isinstance(a.stats[i], Stat):
+                self.cmp_stat(a.stats[i], b.stats[i])
+            if isinstance(a.stats[i], RangeStat):
+                self.cmp_rangestat(a.stats[i], b.stats[i])
+            if isinstance(a.stats[i], Ressource):
+                self.cmp_ressource(a.stats[i], b.stats[i])
+    
+    def test_spell(self):
+        spell = SYSTEM["spells"]["firebolt"]
+        json_data = spell.export()
+        read = Spell.imports(json.loads(json_data))
+        self.cmp_spell(spell, read)

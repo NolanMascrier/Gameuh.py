@@ -6,6 +6,7 @@ damage source also has a flat damage.
 P stands for penetration, ie how much of the
 resistance the damage source shall ignore."""
 
+import json
 import random
 from data.constants import trad
 
@@ -150,6 +151,38 @@ class Damage():
             txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} " +\
                 f"{trad('meta_words', typ)} {trad('meta_words', 'damage')}\n"
         return txt
+
+    def export(self) -> str:
+        """Serialize the damage as JSON data."""
+        data = {
+            "type": "damage",
+            "coeff": self._coeff,
+            "types": self._types,
+            "pen": self._penetration,
+            "min_bound": self._bounds[0],
+            "max_bound": self._bounds[1],
+            "ignore_block": self._ignore_block,
+            "ignore_dodge": self._ignore_dodge,
+            "flags": self._flags,
+            "crit": self._crit_mult
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads JSON data and creates a damage instance."""
+        dmg = Damage(
+            float(data["coeff"]),
+            crit_mult=float(data["crit"]),
+            flags=data["flags"],
+            ignore_block=bool(data["ignore_block"]),
+            ignore_dodge=bool(data["ignore_dodge"]),
+            lower_bound=float(data["min_bound"]),
+            upper_bound=float(data["max_bound"]),
+        )
+        dmg.types = data["types"]
+        dmg.penetration = data["pen"]
+        return dmg
 
     @property
     def coeff(self):

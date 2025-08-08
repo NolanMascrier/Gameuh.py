@@ -357,7 +357,7 @@ class Creature:
         elif isinstance(affliction, Affliction):
             self.__apply_afflict(affliction)
 
-    def remove_affliction(self, affliction: Affliction):
+    def __remove_afflic(self, affliction: Affliction):
         """Removes an affliction from the character.
         
         Args:
@@ -368,6 +368,18 @@ class Creature:
                 self._buffs.remove(d)
         for st in self._stats:
             self._stats[st].remove_affliction(affliction)
+
+    def remove_affliction(self, affliction: Affliction):
+        """Removes an affliction from the character.
+        
+        Args:
+            affliction (Affliction): Affliction to remove.
+        """
+        if isinstance(affliction, tuple):
+            for a in affliction:
+                self.__remove_afflic(a)
+        elif isinstance(affliction, Affliction):
+            self.__remove_afflic(affliction)
 
     def tick(self):
         """Ticks down all buffs and debuffs."""

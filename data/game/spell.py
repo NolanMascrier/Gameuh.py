@@ -2,10 +2,13 @@
 
 import pygame
 import json
+from data.image.animation import Animation, Image
 from data.projectile import Projectile
 from data.creature import Creature
 from data.physics.entity import Entity
 from data.numerics.stat import Stat
+from data.numerics.rangestat import RangeStat
+from data.numerics.ressource import Ressource
 from data.slash import Slash
 from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER, trad
@@ -198,22 +201,50 @@ class Spell():
     def export(self) -> str:
         """Serialize the spell as JSON."""
         stats = {}
+        afflictions = []
         for s in self._stats:
             stats[s] = self._stats[s].export()
+        for a in self._afflictions:
+            afflictions.append(a.export())
         data = {
             "type": "spell",
             "name": self._name,
             "level": self._level,
             "stats": stats,
-            "icon": self._icon,
-            "anim": self._attack_anim,
-            "damage": self._base_damage
+            "icon": self._icon.uri if self._icon  is not None else None,
+            "anim": self._attack_anim.export() if self._attack_anim is not None else None,
+            "damage": self._base_damage.export() if self._base_damage is not None else None,
+            "flags": self._flags,
+            "afflictions": afflictions
         }
         return json.dumps(data)
 
     @staticmethod
     def imports(data):
         """Reads a json data and creates a spell."""
+        stats = {}
+        afflictions = []
+        for s in data["stats"]:
+            val = json.loads(data["stats"][s])
+            if val["type"] == "stat":
+                stats[s] = Stat.imports(val)
+            elif val["type"] == "ressource":
+                stats[s] = Ressource.imports(val)
+            elif val["type"] == "rangestat":
+                stats[s] = RangeStat.imports(val)
+        for a in data["afflictions"]:
+            afflictions.append(Affliction.imports(json.loads(a)))
+        spell = Spell(
+            data["name"],
+            Image(data["icon"]).scale(64, 64) if data["icon"] is not None else None,
+            Animation.imports(json.loads(data["anim"])) if data["anim"] is not None else None,
+            Damage.imports(json.loads(data["damage"])) if data["damage"] is not None else None,
+            flags=data["flags"],
+            afflictions=afflictions
+        )
+        spell.stats = stats
+        spell.level = int(data["level"])
+        return spell
 
     @property
     def name(self):
@@ -259,6 +290,15 @@ class Spell():
     @flags.setter
     def flags(self, value):
         self._flags = value
+
+    @property
+    def level(self):
+        """Returns the spell's level."""
+        return self._level
+
+    @level.setter
+    def level(self, value):
+        self._level = value
 
     @property
     def surface(self):

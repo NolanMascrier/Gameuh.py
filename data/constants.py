@@ -215,9 +215,13 @@ def save(filename = None):
     if filename is None:
         filename = "default.char"
     with open(filename, "w", encoding="utf-8") as file:
+        spells = {}
+        for s in SYSTEM["spells"]:
+            spells[s] = SYSTEM["spells"][s].export()
         data = {
             "player": SYSTEM["player"].export(),
-            "tree": SYSTEM["tree"].export()
+            "tree": SYSTEM["tree"].export(),
+            "spells": spells
         }
         json.dump(data, file)
 
@@ -225,12 +229,15 @@ def load(filename = None):
     """Loads the character data."""
     from data.character import Character
     from data.game.tree import Node
+    from data.game.spell import Spell
     if filename is None:
         filename = "default.char"
     with open(filename, "r", encoding="utf-8") as file:
         read = json.load(file)
         SYSTEM["player"] = Character.imports(json.loads(read["player"]))
         SYSTEM["tree"] = Node.imports(json.loads(read["tree"]))
+        for s in read["spells"]:
+            SYSTEM["spells"][s] = Spell.imports(json.loads(read["spells"][s]))
 
 def get_mouse_pos():
     """Updates the mouse position."""

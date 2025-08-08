@@ -2,7 +2,7 @@
 
 from data.numerics.damage import Damage
 from data.constants import Flags, SYSTEM
-from data.image.animation import Animation
+from data.image.animation import Animation, Image
 from data.numerics.affliction import Affliction
 from data.game.spell import Spell
 
@@ -21,12 +21,12 @@ FURY = Affliction("fury", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\
 
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
-    firebolt_icon = Animation("icons/firebolt.png", 64, 64, loops=False)
-    icebolt_icon = Animation("icons/icebolt.png", 64, 64, loops=False)
-    voidbolt_icon = Animation("icons/darkbolt.png", 64, 64, loops=False)
-    elefury_icon = Animation("icons/elementalfury.png", 64, 64, loops=False)
-    heal_icon = Animation("icons/heal.png", 64, 64, loops=False)
-    fury_icon = Animation("icons/furyslash.png", 64, 64, loops=False)
+    firebolt_icon = Image("icons/firebolt.png").scale(64, 64)
+    icebolt_icon = Image("icons/icebolt.png").scale(64, 64)
+    voidbolt_icon = Image("icons/darkbolt.png").scale(64, 64)
+    elefury_icon = Image("icons/elementalfury.png").scale(64, 64)
+    heal_icon = Image("icons/heal.png").scale(64, 64)
+    fury_icon = Image("icons/furyslash.png").scale(64, 64)
     firebolt_proj_img = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     icebolt_proj_img = Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     voidbolt_proj_img = Animation("pew.png", 13, 13, frame_rate=0.25)
