@@ -212,7 +212,7 @@ class Spell():
             "level": self._level,
             "stats": stats,
             "icon": self._icon.uri if self._icon  is not None else None,
-            "animation": self._attack_anim.export() if self._attack_anim is not None else None,
+            "animation": self._attack_anim if self._attack_anim is not None else None,
             "damage": self._base_damage.export() if self._base_damage is not None else None,
             "flags": self._flags,
             "afflictions": afflictions
@@ -237,7 +237,7 @@ class Spell():
         spell = Spell(
             data["name"],
             Image(data["icon"]).scale(64, 64) if data["icon"] is not None else None,
-            Animation.imports(json.loads(data["animation"])) if data["animation"] is not None else None,
+            data["animation"],
             Damage.imports(json.loads(data["damage"])) if data["damage"] is not None else None,
             flags=data["flags"],
             afflictions=afflictions

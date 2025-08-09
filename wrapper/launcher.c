@@ -14,7 +14,7 @@
     #define VENV_PYTHON "Gameuh.py\\venv\\Scripts\\python.exe"
     #define VENV_PATH "Gameuh.py\\venv"
     #define PYTHON_VENV_CMD "python-win\\python.exe -m venv Gameuh.py\\venv"
-    #define LAUNCH_GAME "python-win\\python.exe Gameuh.py\\main.py"
+    #define LAUNCH_GAME "cd Gameuh.py && ..\\python-win\\python.exe main.py"
 #else
     #define PYTHON_PATH "python3"
     #define PIP_CMD "Gameuh.py/venv/bin/python3 -m pip"
@@ -24,7 +24,7 @@
     #define VENV_PYTHON "Gameuh.py/venv/bin/python3"
     #define VENV_PATH "Gameuh.py/venv"
     #define PYTHON_VENV_CMD "python3 -m venv Gameuh.py/venv"
-    #define LAUNCH_GAME "Gameuh.py/venv/bin/python3 Gameuh.py/main.py"
+    #define LAUNCH_GAME "cd Gameuh.py && venv/bin/python3 main.py"
 #endif
 
 int directory_exists(const char *path)

@@ -19,18 +19,19 @@ CC = gcc
 
 ifeq ($(OS),Windows_NT)
 BIN := $(BIN).exe
-LIBS = -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lm -lGLU32
+LIBS = -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lglew32 -lcurl -lm
+CFLAGS +=
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Darwin)
-		LIBS = -lSDL2 -framework OpenGL -lm
+		LIBS = -lSDL2 -framework OpenGL -lcurl -lm
 	else
-		LIBS = -lSDL2 -lGL -lm -lGLU
+		LIBS = -lSDL2 -lGL -lGLEW -lcurl -lm -lGLU
 	endif
 endif
 
 $(BIN):
-	$(CC) $(SRC) $(CFLAGS) -o $(BIN)
+	$(CC) $(SRC) $(CFLAGS) -o $(BIN) $(LIBS)
 
 clean:
 	ifeq ($(OS),Windows_NT)
