@@ -5,19 +5,19 @@ from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
-from data.image.animation import Animation
 from data.projectile import Projectile
-from data.constants import PROJECTILE_GRID, Flags
+from data.constants import PROJECTILE_GRID, Flags, SYSTEM
 
 class Slash():
-    def __init__(self, caster: Entity, origin: Creature, animation: Animation,\
+    def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None):
         self._caster = caster
         self._origin = origin
-        self._image = animation.clone()
+        self._image = animation
         self._damage = damage
         self._evil = evil
-        self._hitbox = HitBox(caster.x, caster.y, animation.height *2 , animation.width * 2)
+        self._hitbox = HitBox(caster.x, caster.y, SYSTEM["images"][self._image].height *2,\
+            SYSTEM["images"][self._image].width * 2)
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
@@ -25,25 +25,26 @@ class Slash():
         self._finished = False
         self._aim_right = aim_right
         self._immune = []
+        self._animation_state = [0, False]
 
     def get_image(self):
         """Returns the slash image."""
-        return self._image.get_image()
+        return SYSTEM["images"][self._image].get_image(self._animation_state)
 
     def get_pos(self):
         """Returns the slash's position."""
         if self._aim_right:
             return (self._caster.right + 30, self._caster.y)
-        return (self._caster.x - 30 - self._image.width, self._caster.y)
+        return (self._caster.x - 30 - SYSTEM["images"][self._image].width, self._caster.y)
 
     def tick(self):
         """Ticks down the slash."""
-        self._image.tick()
+        SYSTEM["images"][self._image].tick(self._animation_state)
         if self._aim_right:
             self._hitbox.move((self._caster.right + 30, self._caster.y))
         else:
-            self._hitbox.move((self._caster.x - 30 - self._image.width, self._caster.y))
-        if self._image.finished:
+            self._hitbox.move((self._caster.x - 30 - SYSTEM["images"][self._image].width, self._caster.y))
+        if self._animation_state[1]:
             self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
             for proj in PROJECTILE_GRID.query(self._hitbox):

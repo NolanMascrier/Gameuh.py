@@ -11,11 +11,10 @@ from data.image.animation import Animation
 
 class Projectile():
     """Defines a projectile."""
-    def __init__(self, x, y, angle, imagefile: Animation, damage: Damage, origin:Creature,\
+    def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, len = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
                 bounces = 0, delay = 0,\
-                clone_image = True,\
                 behaviours = None):
         self._x = x
         self._y = y
@@ -32,10 +31,7 @@ class Projectile():
         self._damage = origin.recalculate_damage(damage)
         self._evil = evil
         self._bounces = bounces
-        if clone_image:
-            self._image = imagefile.clone().rotate(-self._angle)
-        else:
-            self._image = imagefile
+        self._image = imagefile
         self._delay = delay
         if hitbox_len is None:
             hitbox_len = len
@@ -51,10 +47,11 @@ class Projectile():
         if caster is not None:
             self._offset = (self.x - caster.x, self.y - caster.y)
         self._flagged = False
+        self._animation_state = [0, False]
 
     def get_image(self):
         """Returns the projectile image."""
-        return self._image.get_image()
+        return SYSTEM["images"][self._image].get_image(self._animation_state)
 
     def can_be_destroyed(self):
         """Checks whether or not the projectile is out of the screen
@@ -73,7 +70,7 @@ class Projectile():
 
     def tick(self):
         """Ticks down the projectile."""
-        self._image.tick()
+        SYSTEM["images"][self._image].tick(self._animation_state)
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None:
@@ -184,7 +181,7 @@ class Projectile():
     @property
     def image(self) -> Animation:
         """Returns the projectile's image."""
-        return self._image
+        return SYSTEM["images"][self._image]
 
     @image.setter
     def image(self, value):

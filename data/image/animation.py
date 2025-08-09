@@ -65,14 +65,25 @@ class Animation():
             self._frame_max = max_frame
         self._frame_max = min(max_frame, self._frame_max)
 
-    def get_image(self) -> pygame.Surface:
+    def get_image(self, caller = None) -> pygame.Surface:
         """Returns the current image of the sequence."""
+        if caller is not None:
+            return self._sequence[int(caller[0])].image
         return self._sequence[int(self._current_frame)].image
 
-    def tick(self):
+    def tick(self, caller = None):
         """Advance the sequence."""
         if not self._animated:
             return
+        if caller is not None:
+            caller[0] += self._frame_rate
+            if caller[0] > self._frame_max:
+                if self._loops:
+                    caller[0] = 0
+                else:
+                    if self._play_once:
+                        caller[1] = True
+                    caller[0] = self._frame_max
         self._current_frame += self._frame_rate
         if self._current_frame > self._frame_max:
             if self._loops:
@@ -144,14 +155,17 @@ class Animation():
             "frame_max": self._frame_max,
             "loops": self._loops,
             "animated": self._animated,
-            "play_once": self._play_once
+            "play_once": self._play_once,
+            "flipped": self._flipped,
+            "rotated": self._rotated,
+            "scaled": self._scaled
         }
         return json.dumps(data)
 
     @staticmethod
     def imports(data):
         """Creates an animation from a json data array."""
-        return Animation(
+        anim = Animation(
             data["uri"],
             int(data["frame_x"]),
             int(data["frame_y"]),
@@ -162,6 +176,11 @@ class Animation():
             bool(data["animated"]),
             bool(data["play_once"])
         )
+        anim.flip(bool(data["flipped"][0]), bool(data["flipped"][1]))
+        anim.rotate(int(data["rotated"]))
+        anim.scale(float(data["scaled"][0]), float(data["scaled"][1]))
+        anim.frame = 0
+        return anim
 
     @property
     def width(self):

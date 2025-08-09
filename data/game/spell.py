@@ -161,9 +161,9 @@ class Spell():
         caster.stats["life"].current_value -= life_cost
         if Flags.PROJECTILE in self._flags:
             if Flags.BARRAGE in self._flags:
-                for i in range (0, self._stats["projectiles"].c_value):
+                for i in range (0, int(self._stats["projectiles"].c_value)):
                     proj = Projectile(entity.center[0], entity.center[1] + i * 20, 0 ,\
-                                      self._attack_anim.clone(),\
+                                      self._attack_anim,\
                                       self._base_damage, caster, evil,\
                                       delay=self._stats["delay"].c_value * (i + 1),\
                                       bounces=self._stats["bounces"].c_value, \
@@ -172,16 +172,16 @@ class Spell():
             elif Flags.SPREAD in self._flags:
                 if self._stats["projectiles"].c_value == 1:
                     proj = Projectile(entity.center[0], entity.center[1], 0,\
-                                      self._attack_anim.clone(), self._base_damage, caster, evil,\
+                                      self._attack_anim, self._base_damage, caster, evil,\
                                       delay=self._stats["delay"].c_value,\
                                       bounces=self._stats["bounces"].c_value, \
                                       behaviours=self._flags, caster=entity)
                     PROJECTILE_TRACKER.append(proj)
                 else:
                     spread = 90 / self._stats["projectiles"].c_value
-                    for i in range(0, self._stats["projectiles"].c_value):
+                    for i in range(0, int(self._stats["projectiles"].c_value)):
                         proj = Projectile(entity.center[0], entity.center[1], -45 + spread * i,\
-                                        self._attack_anim.clone(), self._base_damage, caster, evil,\
+                                        self._attack_anim, self._base_damage, caster, evil,\
                                         delay=self._stats["delay"].c_value * (i + 1),\
                                         bounces=self._stats["bounces"].c_value, \
                                         behaviours=self._flags, caster=entity)
@@ -212,7 +212,7 @@ class Spell():
             "level": self._level,
             "stats": stats,
             "icon": self._icon.uri if self._icon  is not None else None,
-            "anim": self._attack_anim.export() if self._attack_anim is not None else None,
+            "animation": self._attack_anim.export() if self._attack_anim is not None else None,
             "damage": self._base_damage.export() if self._base_damage is not None else None,
             "flags": self._flags,
             "afflictions": afflictions
@@ -237,7 +237,7 @@ class Spell():
         spell = Spell(
             data["name"],
             Image(data["icon"]).scale(64, 64) if data["icon"] is not None else None,
-            Animation.imports(json.loads(data["anim"])) if data["anim"] is not None else None,
+            Animation.imports(json.loads(data["animation"])) if data["animation"] is not None else None,
             Damage.imports(json.loads(data["damage"])) if data["damage"] is not None else None,
             flags=data["flags"],
             afflictions=afflictions
