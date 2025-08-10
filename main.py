@@ -1,5 +1,9 @@
 from time import sleep
 
+import cProfile
+import pstats
+import tracemalloc
+
 from data.image.text import Text
 from data.constants import *
 from data.interface.gameui import draw_ui
@@ -32,7 +36,7 @@ def game_loop(keys, events):
             SYSTEM["level"].next_wave()
         if event.type == TICKER_TIMER:
             tick()
-    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    SYSTEM["level"].background.draw()
     #Handle logic
     SYSTEM["player"].action(keys)
     #Handle printing on screen
@@ -48,7 +52,7 @@ def draw_victory(events):
     for event in events:
         if event.type == TICKER_TIMER:
             tick()
-    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    SYSTEM["level"].background.draw()
     draw_game()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
@@ -68,7 +72,7 @@ def draw_game_over(events):
     for event in events:
         if event.type == TICKER_TIMER:
             tick()
-    SYSTEM["windows"].blit(SYSTEM["level"].background.draw(), (0, 0))
+    SYSTEM["level"].background.draw()
     draw_game(False)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
@@ -113,7 +117,7 @@ def draw_small_card():
 
 def draw_menu(events):
     """Draws the main game menu."""
-    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["city_back"].draw()
     sfc = pygame.Surface((2000, 2000), pygame.SRCALPHA)
     sfc.blit(SYSTEM["images"]["mission_map"].image, (0, 0))
     SYSTEM["buttons_e"][0].set(350, 680, SYSTEM["images"]["mission_scroller"]).draw(sfc)
@@ -140,38 +144,17 @@ def draw_menu(events):
             SYSTEM["buttons_e"][3].press()
             SYSTEM["buttons"]["button_assault"].press()
 
-if __name__ == "__main__":
-    init_game()
-    init_timers()
-    while True:
-        if not SYSTEM["loaded"]:
-            SYSTEM["windows"].fill((0, 0, 0))
-            SYSTEM["images"]["load_orb"].tick()
-            SYSTEM["windows"].blit(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
-            SYSTEM["windows"].blit(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
-            width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
-            SYSTEM["windows"].blit(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
-                , (200, SCREEN_HEIGHT - 111))
-            window = pygame.transform.smoothscale(SYSTEM["windows"],\
-                (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
-            SYSTEM["real_windows"].blit(window, (0, 0))
-            pygame.display.update()
-            sleep(float(SYSTEM["options"]["fps"]))
-        else:
-            break
-    held = False
-    debug_create_items()
-    ###
-    setup_bottom_bar()
+def main_loop():
+    """Main loop. Temporary"""
     while SYSTEM["playing"]:
         SYSTEM["pop_up"] = None
         get_mouse_pos()
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
-        if SYSTEM["mouse_click"][0] and not held:
-            held = True
+        if SYSTEM["mouse_click"][0] and not SYSTEM["held"]:
+            SYSTEM["held"] = True
             SYSTEM["mouse_previous"] = SYSTEM["mouse"]
-        if held and not SYSTEM["mouse_click"][0]:
-            held = False
+        if SYSTEM["held"] and not SYSTEM["mouse_click"][0]:
+            SYSTEM["held"] = False
         SYSTEM["mouse_wheel"] = [(0, 0), (0, 0)]
         events = pygame.event.get()
         for event in events:
@@ -234,8 +217,39 @@ if __name__ == "__main__":
                 SYSTEM["rune"] = -1
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
-        window = pygame.transform.smoothscale(SYSTEM["windows"],\
+        window = pygame.transform.scale(SYSTEM["windows"],\
             (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].blit(window, (0, 0))
         pygame.display.update()
         sleep(float(SYSTEM["options"]["fps"]))
+
+if __name__ == "__main__":
+    init_game()
+    init_timers()
+    while True:
+        if not SYSTEM["loaded"]:
+            SYSTEM["windows"].fill((0, 0, 0))
+            SYSTEM["images"]["load_orb"].tick()
+            SYSTEM["windows"].blit(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
+            SYSTEM["windows"].blit(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
+            width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
+            SYSTEM["windows"].blit(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
+                , (200, SCREEN_HEIGHT - 111))
+            window = pygame.transform.scale(SYSTEM["windows"],\
+                (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
+            SYSTEM["real_windows"].blit(window, (0, 0))
+            pygame.display.update()
+            sleep(float(SYSTEM["options"]["fps"]))
+        else:
+            break
+    profiler = cProfile.Profile()
+    profiler.enable()
+    debug_create_items()
+    setup_bottom_bar()
+    try:
+        main_loop()
+    except KeyboardInterrupt:
+        pass
+    profiler.disable()
+    stats = pstats.Stats(profiler).sort_stats("cumtime")
+    stats.print_stats(40)  # show top 20 slowest

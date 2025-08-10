@@ -155,7 +155,7 @@ def unloader():
 
 def draw_inventory(events):
     """Draws the inventory windows."""
-    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["city_back"].draw()
     SYSTEM["items_panel"].tick().draw()
     gold = SYSTEM["player"].gold
     text = Text(str(gold), font="font_detail")

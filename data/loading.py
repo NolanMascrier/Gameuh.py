@@ -369,3 +369,4 @@ def init_game():
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None
+    SYSTEM["held"] = False

@@ -14,11 +14,15 @@ class Image():
     def __init__(self, uri = None):
         self._uri = uri
         if uri is None:
-            self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
-            self._uri = "default.png"
+            self._image = None
+            self._uri = None
+            self._width = 0
+            self._height = 0
         elif isinstance(uri, Image):
             self._image = uri.clone().image
             self._uri = uri.uri
+            self._width = self._image.get_width()
+            self._height = self._image.get_height()
         else:
             try:
                 self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
@@ -26,8 +30,8 @@ class Image():
                 print(f"Couldn't find file {uri}. Using default image.")
                 self._uri = "default.png"
                 self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
-        self._width = self._image.get_width()
-        self._height = self._image.get_height()
+            self._width = self._image.get_width()
+            self._height = self._image.get_height()
         self._visible = True
 
     def get_image(self) -> pygame.Surface:
@@ -95,7 +99,12 @@ class Image():
     @lru_cache(maxsize=32)
     def clone(self):
         """Returns a deep copy of the image."""
-        return Image(self._uri)
+        new = Image.__new__(Image)
+        new.uri = self._uri
+        new.image = self._image.copy()
+        new.width, new._height = self._width, self._height
+        new.visible = self._visible
+        return new
 
     @property
     def image(self) -> pygame.Surface:
@@ -138,3 +147,7 @@ class Image():
     def uri(self):
         """Returns the image's uri."""
         return self._uri
+
+    @uri.setter
+    def uri(self, value):
+        self._uri = value

@@ -40,20 +40,15 @@ def draw_game(show_player = True, show_enemies = True,\
     if show_player:
         SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
     if show_loot:
-        for bubble in POWER_UP_TRACKER:
-            SYSTEM["windows"].blit(bubble.get_image(), (bubble.x, bubble.y))
+        SYSTEM["windows"].blits([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
     if show_enemies:
-        for baddie in ENNEMY_TRACKER:
-            SYSTEM["windows"].blit(baddie.get_image(), (baddie.x, baddie.y))
+        SYSTEM["windows"].blits([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
     if show_projectiles:
-        for p in PROJECTILE_TRACKER:
-            SYSTEM["windows"].blit(p.get_image(), p.get_pos())
+        SYSTEM["windows"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_slashes:
-        for s in SLASH_TRACKER:
-            SYSTEM["windows"].blit(s.get_image(), s.get_pos())
+        SYSTEM["windows"].blits([s.get_image(), s.get_pos()] for s in SLASH_TRACKER)
     if show_text:
-        for txt in TEXT_TRACKER:
-            SYSTEM["windows"].blit(txt[0].image, (txt[1], txt[2]))
+        SYSTEM["windows"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
 
 def tick():
     """Ticks all there is to tick."""

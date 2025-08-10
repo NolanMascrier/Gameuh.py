@@ -120,6 +120,7 @@ class Creature:
             }
         }
         self._buffs = []
+        self._changed = []
         self._ap = 5
         self.__get_bonuses_from_stat()
         self._stats["life"].refill()

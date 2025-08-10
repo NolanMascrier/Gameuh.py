@@ -59,7 +59,7 @@ def unloader():
 
 def draw_options(events):
     """Draws the optino tree menu."""
-    SYSTEM["windows"].blit(SYSTEM["city_back"].draw(), (0, 0))
+    SYSTEM["city_back"].draw()
     SYSTEM["ui"]["button_validate"].set(10, 250).tick().draw()
     SYSTEM["ui"]["button_cancel"].set(10, 350).tick().draw()
     SYSTEM["ui"]["box_fullscreen"].set(10, 10).tick().draw()

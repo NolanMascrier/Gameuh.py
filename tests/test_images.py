@@ -122,9 +122,7 @@ class TestingHoverable(unittest.TestCase):
 class TestingParallaxes(unittest.TestCase):
     def test_parallaxe(self):
         para = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
-        self.assertIsInstance(para.draw(), pygame.Surface)
         para.invert()
-        self.assertIsInstance(para.draw(), pygame.Surface)
         para = Parallaxe("cybercity.png", 576, 324)
 
 class TestingTextGenerator(unittest.TestCase):
