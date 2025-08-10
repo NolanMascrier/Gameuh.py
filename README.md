@@ -1,8 +1,10 @@
 ![Tests](https://github.com/NolanMascrier/Gameuh.py/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/NolanMascrier/Gameuh.py/branch/main/graph/badge.svg)](https://codecov.io/gh/NolanMascrier/Gameuh.py) ![Pylint](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/NolanMascrier/Gameuh.py/refs/heads/gh-pages/pylint-badge.json?refresh=true)
 
-Not currently in a playable state. 
+Currently in a playble state !
 # Gameuh.py
 A python rewrite of my favourite University project, a small incremental dungeon crawler.
+
+Instead, it's now a looter bullet hell. Yeah
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
