@@ -20,12 +20,12 @@ class Entity():
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
-    def __init__(self, x, y, imagefile: Animation, hitbox:HitBox, move_speed = 1):
+    def __init__(self, x, y, imagefile: str, hitbox:HitBox, move_speed = 1):
         self._x = x
         self._y = y
         self._x_def = x
         self._y_def = y
-        self._image = imagefile.clone() if imagefile is not None else None
+        self._image = imagefile
         self._hitbox = hitbox
         self._move_speed = move_speed
         self._keys = []
@@ -38,10 +38,11 @@ class Entity():
         self._dash_dx = 0
         self._dash_dy = 0
         self._dash_time = 0
+        self._animation_state = [0, False]
 
     def tick(self, character, speed_mod = 1):
         """Ticks down the entity."""
-        self._image.tick()
+        SYSTEM["images"][self._image].tick(self._animation_state)
         base_speed = character.creature.stats["speed"].c_value * speed_mod
         self._move_speed = base_speed
         if self._dashing:
@@ -50,8 +51,8 @@ class Entity():
             self._dash_time -= float(SYSTEM["options"]["fps"])
             self._x += self._dash_dx
             self._y += self._dash_dy
-        self._x = max(0, min(self._x, SCREEN_WIDTH - self._image.width))
-        self._y = max(0, min(self._y, SCREEN_HEIGHT - self._image.height))
+        self._x = max(0, min(self._x, SCREEN_WIDTH - SYSTEM["images"][self._image].width))
+        self._y = max(0, min(self._y, SCREEN_HEIGHT - SYSTEM["images"][self._image].height))
         self._hitbox.move_center(self.center)
 
     def reset(self):
@@ -64,7 +65,9 @@ class Entity():
 
     def get_image(self):
         """Returns the current image."""
-        return self._image.get_image()
+        if self._flipped:
+            return SYSTEM["images"][f"{self._image}_flipped"].get_image(self._animation_state)
+        return SYSTEM["images"][self._image].get_image(self._animation_state)
 
     def move(self, pos):
         """Moves the entity toward the x;y position."""
@@ -102,14 +105,13 @@ class Entity():
 
     def flip(self):
         """Flips the image."""
-        self._image = self._image.flip(False, True)
         self._flipped = not self._flipped
 
     def export(self) -> str:
         """Serializes the entity as JSON."""
         data = {
             "type": "entity",
-            "image": self._image.export(),
+            "image": self._image,
             "hit_box_w": self._hitbox.width,
             "hit_box_h": self._hitbox.height,
             "move_speed": self._move_speed
@@ -121,8 +123,8 @@ class Entity():
         """Creates a entity from a json data array."""
         return Entity(
             0, 0,
-            Animation.imports(json.loads(data["image"])),
-            HitBox(0, 0, int(data["hit_box_w"]), int(data["hit_box_h"])),
+            data["image"],
+            HitBox(10, SCREEN_HEIGHT/2, int(data["hit_box_w"]), int(data["hit_box_h"])),
             float(data["move_speed"])
         )
 
@@ -198,6 +200,6 @@ class Entity():
     @property
     def center(self):
         """Returns the entity's center."""
-        x = self._x + self._image.width / 2
-        y = self._y + self._image.height / 2
+        x = self._x + SYSTEM["images"][self._image].width / 2
+        y = self._y + SYSTEM["images"][self._image].height / 2
         return (x, y)

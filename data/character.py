@@ -30,11 +30,11 @@ KEY_TYPE = {
 class Character():
     """Defines a character. A character is a creature/entity
     specifically made to be used by players."""
-    def __init__(self, x = 10, y = SCREEN_HEIGHT / 2, imagefile:Animation = None, speed = 12):
+    def __init__(self, x = 10, y = SCREEN_HEIGHT / 2, imagefile:str = None, speed = 12):
         if imagefile is None:
             box = None
         else:
-            box = HitBox(x, y, imagefile.width / 3, imagefile.height / 1.3)
+            box = HitBox(x, y, SYSTEM["images"][imagefile].width / 3, SYSTEM["images"][imagefile].height / 1.3)
         self._entity = Entity(x, y, imagefile, box, speed)
         self._creature = Creature("hero")
         self._cooldown = 0
@@ -121,6 +121,10 @@ class Character():
         for pickup in POWER_UP_GRID.query(self.hitbox):
             if self.hitbox.is_colliding(pickup.hitbox):
                 pickup.pickup(self)
+        if SYSTEM["mouse"][0] < self.entity.center[0] and not self.entity.flipped:
+            self.entity.flipped = True
+        elif SYSTEM["mouse"][0] > self.entity.center[0] and self.entity.flipped:
+            self.entity.flipped = False
 
     def __cast(self, key):
         """Cast a spell from the corresponding key."""

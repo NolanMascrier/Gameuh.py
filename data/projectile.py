@@ -12,7 +12,7 @@ from data.image.animation import Animation
 class Projectile():
     """Defines a projectile."""
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
-                evil = False, len = 64, height = 32, speed = 20, \
+                evil = False, width = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
                 bounces = 0, delay = 0,\
                 behaviours = None):
@@ -26,7 +26,7 @@ class Projectile():
         if Flags.AIMED_AT_MOUSE in behaviours:
             self._angle = 90 - atan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
-        self._length = len
+        self._length = width
         self._height = height
         self._damage = origin.recalculate_damage(damage)
         self._evil = evil
@@ -34,7 +34,7 @@ class Projectile():
         self._image = imagefile
         self._delay = delay
         if hitbox_len is None:
-            hitbox_len = len
+            hitbox_len = width
         if hitbox_height is None:
             hitbox_height = height
         self._box = HitBox(x, y, hitbox_len, hitbox_height)

@@ -177,6 +177,8 @@ def load_images():
     SYSTEM["images"]["exp_bar2"] = Image("exp_back.png")
     SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png")
     SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
+    SYSTEM["images"]["badguy_flipped"] = Animation("badguy.png", 60, 130, frame_rate=0.25)\
+        .flip(False, False)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
@@ -258,6 +260,9 @@ def load_images():
     SYSTEM["images"]["checkbox"] = Image("ui/checkbox.png").scale(64, 64)
     SYSTEM["images"]["checkbox_ok"] = Image("ui/checkbox_ok.png").scale(64, 64)
     SYSTEM["images"]["arrow_h"] = Image("arrow.png").scale(128, 128)
+    SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
+    SYSTEM["images"]["witch_flipped"] = Animation("witch.png", 64, 64, frame_rate = 0.25)\
+        .flip(False, True)
 
 def load_icons():
     """Loads the icons."""
@@ -328,7 +333,7 @@ def load_start():
 
 def create_character():
     """Creates the player character."""
-    SYSTEM["player"] = Character(imagefile=Animation("witch.png", 64, 64, frame_rate = 0.25))
+    SYSTEM["player"] = Character(imagefile="witch")
 
 def load():
     """Loads everything inside the system.
