@@ -201,7 +201,7 @@ class TestingImages(unittest.TestCase):
             i+=1
     
     def test_character(self):
-        bob = Character(0, 0, Animation("default.png", 5, 5), 12)
+        bob = Character(0, 0, "witch", 12)
         it = Item("Bob's armor", "Armor", 12, 0, 1, Image("a"), 3, [Flags.ARMOR], [], [])
         it2 = Item("Bob's gloves", "Armor", 12, 0, 1, Image("a"), 3, [Flags.HANDS], [], [])
         it3 = Item("Bob's boots", "Armor", 12, 0, 1, Image("a"), 3, [Flags.BOOTS], [], [])
