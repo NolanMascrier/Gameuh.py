@@ -3,19 +3,72 @@ exp bar, enemy life, boss life ..."""
 
 import pygame
 from data.image.text import Text
-from pygame.constants import K_1, K_2
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2
+from data.interface.render import renders
 
 UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2
 UI_SKILLS_INPUT_OFFSET = 48
+
+DYNAMIC    = []
+
+def generate_background():
+    """Generates the background surface of the UI. To be called only once when the
+    level loads !"""
+    SYSTEM["ui_background"].fill((0,0,0,0))
+    char = SYSTEM["player"]
+    data = []
+    #POTIONS
+    data.append((SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130)))
+    data.append((SYSTEM["images"]["life_potion"].get_image(), (524, SCREEN_HEIGHT - 130)))
+    data.append((SYSTEM["images"]["item_bottom"].image,\
+                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
+    data.append((SYSTEM["images"]["mana_potion"].get_image(),\
+                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
+    #GOLD
+    data.append((SYSTEM["images"]["gold_icon"].image, (10, 10)))
+    #EXP
+    data.append((SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60)))
+    #SKILLS
+    i = 0
+    for name, _ in char.equipped_spells.items():
+        data.append((SYSTEM["images"]["skill_bottom"].image,\
+            (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130)))
+        i += 1
+    #
+    SYSTEM["ui_background"].blits(data)
+    
+
+def generate_foreground():
+    """Generates the foreground of the UI. To be called only once when 
+    the level loads !"""
+    SYSTEM["ui_foreground"].fill((0,0,0,0))
+    char = SYSTEM["player"]
+    data = []
+    #POTIONS
+    data.append((SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130)))
+    data.append((SYSTEM["images"][K_1], (508, SCREEN_HEIGHT - 82)))
+    data.append((SYSTEM["images"]["item_top"].image,\
+                           (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
+    data.append((SYSTEM["images"][K_2], (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82)))
+    #EXP
+    data.append((SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60)))
+    #SKILLS
+    i = 0
+    for name, _ in char.equipped_spells.items():
+        data.append((SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i,\
+            SCREEN_HEIGHT - 130)))
+        data.append((SYSTEM["images"][SYSTEM["key_chart"][name][0]].image,\
+            (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 82)))
+        i += 1
+    #
+    SYSTEM["ui_foreground"].blits(data)
 
 def draw_gold():
     """Draws the gold and item counter."""
     data = []
     gold = SYSTEM["level"].gold
     text = Text(f"#c#(255, 179, 0){gold}")
-    data.append((SYSTEM["images"]["gold_icon"].image, (10, 10)))
     data.append((text.surface, (80, 42)))
     return data
 
@@ -23,13 +76,11 @@ def draw_exp_bar():
     """Draws the EXP bar."""
     data = []
     char = SYSTEM["player"]
-    data.append((SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60)))
     exp_len = char.creature.exp / char.creature.exp_to_next * 1434
     exp_len = min(max(exp_len, 0), SYSTEM["images"]["exp_jauge"].width - 1)
     #c = pygame.transform.scale(SYSTEM["images"]["exp_jauge"].image, (exp_len, 9))
     c = SYSTEM["images"]["exp_jauge"].image.subsurface(0, 0, exp_len, 9)
     data.append((c, (243, SCREEN_HEIGHT - 39)))
-    data.append((SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60)))
     return data
 
 def draw_life_mana():
@@ -71,21 +122,10 @@ def draw_potions():
     data = []
     char = SYSTEM["player"]
     #Life potions
-    data.append((SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"]["life_potion"].get_image(), (524, SCREEN_HEIGHT - 130)))
-    life_amount = Text(f"x{char.potions[0]}")
-    data.append((SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"][K_1], (508, SCREEN_HEIGHT - 82)))
+    life_amount = Text(f"{char.potions[0]}")
     data.append((life_amount.surface, (572, SCREEN_HEIGHT - 82)))
     #Mana potions
-    data.append((SYSTEM["images"]["item_bottom"].image,\
-                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"]["mana_potion"].get_image(),\
-                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    mana_amount = Text(f"x{char.potions[1]}")
-    data.append((SYSTEM["images"]["item_top"].image,\
-                           (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"][K_2], (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82)))
+    mana_amount = Text(f"{char.potions[1]}")
     data.append((mana_amount.surface, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82)))
     return data
 
@@ -95,8 +135,6 @@ def draw_skills():
     i = 0
     char = SYSTEM["player"]
     for name, skill in char.equipped_spells.items():
-        data.append((SYSTEM["images"]["skill_bottom"].image,\
-            (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130)))
         spell = SYSTEM["spells"][skill]
         if spell is not None:
             cdc = spell.cooldown
@@ -116,29 +154,18 @@ def draw_skills():
                 SCREEN_HEIGHT - 128)))
             data.append((s, (UI_SKILLS_OFFSET + UI_SKILLS_PANEL_OFFSET + 104 * i,\
                 SCREEN_HEIGHT - 128)))
-        data.append((SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i,\
-            SCREEN_HEIGHT - 130)))
-        data.append((SYSTEM["images"][SYSTEM["key_chart"][name][0]].image,\
-            (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 82)))
         i += 1
     return data
 
 def draw_ui(boss_here = False, boss = None):
     """Draws the user interface."""
+    SYSTEM["ui_surface"].fill((0,0,0,0))
     to_draw = []
     to_draw.extend(draw_life_mana())
     to_draw.extend(draw_potions())
     to_draw.extend(draw_exp_bar())
     to_draw.extend(draw_skills())
     to_draw.extend(draw_gold())
-    SYSTEM["windows"].blits([d[0], d[1]] for d in to_draw)
-    #Boss life bar
-    if boss_here:
-        boss_name = SYSTEM["font_crit"].render(f'{boss.creature.name}',\
-                                      False, (255, 255, 255))
-        bossl = (boss.creature.stats["life"].current_value/boss.creature.stats["life"].c_value) * 1500
-        b = pygame.transform.scale(SYSTEM["images"]["boss_jauge"].image, (bossl, 80))
-        bb = pygame.transform.scale(SYSTEM["images"]["boss_jauge_back"].image, (1500, 80))
-        SYSTEM["windows"].blit(bb, (200, 20))
-        SYSTEM["windows"].blit(b, (200, 20))
-        SYSTEM["windows"].blit(boss_name, (200, 20))
+    SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
+    SYSTEM["ui_surface"].blits(to_draw)
+    SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0))

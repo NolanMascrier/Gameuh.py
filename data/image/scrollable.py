@@ -4,6 +4,7 @@ by clicking and dragging the mouse."""
 import pygame
 from data.constants import SYSTEM
 from data.image.animation import Animation, Image
+from data.interface.render import render, renders
 
 class Scrollable():
     """Defines a scrollable surface, which contains another that
@@ -106,14 +107,13 @@ class Scrollable():
     def draw(self):
         """Draws the surface and the contained surface."""
         if self._background is not None:
-            SYSTEM["windows"].blit(self._background.get_image(), (self._x, self._y))
+            render(self._background.get_image(), (self._x, self._y))
         self._subsurface = pygame.Surface((self._width - self._padding * 2,\
                                             self._height - self._padding * 2),\
                                                                     pygame.SRCALPHA)
         if self._contains is not None:
             self._subsurface.blit(self._contains, (self._diff_x, self._diff_y))
-        SYSTEM["windows"].blit(self._subsurface, (self._x + self._padding,\
-                                                    self._y + self._padding))
+        render(self._subsurface, (self._x + self._padding, self._y + self._padding))
 
     @property
     def x(self):

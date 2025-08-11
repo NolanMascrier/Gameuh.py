@@ -2,9 +2,12 @@
 
 from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
-    PROJECTILE_TRACKER, SLASH_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
+    PROJECTILE_TRACKER, PROJECTILE_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS
 from data.image.tabs import Tabs
+from data.interface.render import render, renders
+from data.projectile import Projectile
+from data.slash import Slash
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""
@@ -38,17 +41,17 @@ def draw_game(show_player = True, show_enemies = True,\
     show_text = True):
     """Draws the main game component."""
     if show_player:
-        SYSTEM["windows"].blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
+        render(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
     if show_loot:
-        SYSTEM["windows"].blits([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
+        renders([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
     if show_enemies:
-        SYSTEM["windows"].blits([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
+        renders([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
     if show_projectiles:
-        SYSTEM["windows"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
+        renders([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_slashes:
-        SYSTEM["windows"].blits([s.get_image(), s.get_pos()] for s in SLASH_TRACKER)
+        renders([s.get_image(), s.get_pos()] for s in PROJECTILE_TRACKER)
     if show_text:
-        SYSTEM["windows"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
+        renders([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
 
 def tick():
     """Ticks all there is to tick."""
@@ -67,12 +70,9 @@ def tick():
             p.tick(SYSTEM["player"])
             continue
         p.tick()
-        if p.can_be_destroyed():
+        if (isinstance(p, Projectile) and p.can_be_destroyed()) or \
+            (isinstance(p, Slash) and p.finished):
             PROJECTILE_TRACKER.remove(p)
-    for s in SLASH_TRACKER.copy():
-        s.tick()
-        if s.finished:
-            SLASH_TRACKER.remove(s)
     for txt in TEXT_TRACKER.copy():
         sfc = txt[0]
         sfc.opacity(txt[3])

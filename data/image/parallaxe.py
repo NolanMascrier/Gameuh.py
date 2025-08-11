@@ -4,6 +4,7 @@ are scrolling background images."""
 import pygame
 from data.constants import SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.image.animation import Animation
+from data.interface.render import renders
 
 class Parallaxe(Animation):
     """Defines a parallaxe.
@@ -36,7 +37,7 @@ class Parallaxe(Animation):
         """Flips the scrolling animation."""
         self._scroll_left = not self._scroll_left
 
-    def draw(self) -> pygame.Surface:
+    def draw(self):
         """Draws the parallaxe."""
         values = [(self._sequence[0].image, (0, 0))]
         if self._scroll_left:
@@ -55,4 +56,4 @@ class Parallaxe(Animation):
                 for y in range(0, 2):
                     x = int((y * SCREEN_WIDTH) - self._diff_x[layer])
                     values.append((image.image, (x, 0)))
-        SYSTEM["windows"].blits(values)
+        renders(values)

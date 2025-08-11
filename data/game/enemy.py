@@ -4,12 +4,15 @@ and also an entity.
 They can move toward the player, or fire projectiles."""
 
 import random
-from math import sqrt
 from data.physics.entity import Entity
 from data.creature import Creature
-from data.constants import Flags, PROJECTILE_GRID, SLASH_GRID, POWER_UP_TRACKER, SYSTEM
+from data.constants import Flags, PROJECTILE_GRID, POWER_UP_TRACKER, SYSTEM
 from data.game.pickup import PickUp
 from data.game.spell import Spell
+from data.projectile import Projectile
+from data.slash import Slash
+
+DAMAGE_COLOR = (255, 30, 30)
 
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
@@ -29,7 +32,7 @@ class Enemy():
         self._gold_value = gold_value
         self._exp_value = exp_value
         self._exploded = False
-        self._immune = []
+        self._immune = {}
         self._stopped = False
         self._aim_right = False
 
@@ -71,7 +74,9 @@ class Enemy():
 
     def distance_to_player(self, player):
         """Returns the distance to the player."""
-        return sqrt((self.x - player.x) ** 2 + (self.y - player.y) ** 2)
+        dx = player.x - self.x
+        dy = player.y - self.y
+        return dx*dx + dy*dy
 
     def tick(self, player):
         """Ticks down the entity."""
@@ -95,7 +100,7 @@ class Enemy():
                 if self._entity.flipped and player.x < self.x:
                     self.entity.flip()
                     self._aim_right = False
-                if self.distance_to_player(player) < 100:
+                if self.distance_to_player(player) < 100000:
                     self._stopped = True
                     self._counter = 0
                 else:
@@ -109,21 +114,19 @@ class Enemy():
             if not proj.evil and proj.hitbox.is_colliding(self._entity.hitbox):
                 if proj in self._immune:
                     return
-                dmg, crit = self.creature.damage(proj.damage)
-                SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
-                                                              (255, 30, 30), crit, dmg)
-                if Flags.PIERCING not in proj.behaviours:
-                    proj.flag()
-                else:
-                    self._immune.append(proj)
-        for slash in SLASH_GRID.query(self.hitbox):
-            if not slash.evil and slash.hitbox.is_colliding(self._entity.hitbox):
-                if slash in self._immune:
-                    return
-                dmg, crit = slash.on_hit(self._creature)
-                SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
-                                                              (255, 30, 30), crit, dmg)
-                self._immune.append(slash)
+                if isinstance(proj, Projectile):
+                    dmg, crit = self.creature.damage(proj.damage)
+                    SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
+                                                                DAMAGE_COLOR, crit, dmg)
+                    if Flags.PIERCING not in proj.behaviours:
+                        proj.flag()
+                    else:
+                        self._immune[proj] = True
+                elif isinstance(proj, Slash):
+                    dmg, crit = proj.on_hit(self._creature)
+                    SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
+                                                                DAMAGE_COLOR, crit, dmg)
+                    self._immune[proj] = True
 
     def attack(self):
         """Launches a random attack from the enemy's arsenal."""

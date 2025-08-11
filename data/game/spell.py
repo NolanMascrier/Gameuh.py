@@ -11,7 +11,7 @@ from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
 from data.slash import Slash
 from data.numerics.damage import Damage
-from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, SLASH_TRACKER, trad
+from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, PROJECTILE_TRACKER, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable, Text
 
@@ -196,7 +196,7 @@ class Spell():
         if Flags.MELEE in self._flags:
             sl = Slash(entity, caster, self._attack_anim, self._base_damage,\
                        aim_right, evil, self._flags)
-            SLASH_TRACKER.append(sl)
+            PROJECTILE_TRACKER.append(sl)
 
     def export(self) -> str:
         """Serialize the spell as JSON."""

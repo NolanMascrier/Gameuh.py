@@ -7,7 +7,7 @@ import random
 import pygame
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, SLASH_TRACKER,\
+    RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, PROJECTILE_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language
 from data.image.animation import Animation, Image
@@ -25,6 +25,7 @@ from data.interface.spellbook import open_spell_screen
 from data.interface.skilltree import open_skill_screen
 from data.interface.inventory import open_inventory
 from data.interface.options import open_option_screen
+from data.interface.gameui import generate_foreground, generate_background
 from data.game.level import Level
 
 from data.character import Character
@@ -62,7 +63,7 @@ def reset():
     ENNEMY_TRACKER.clear()
     PROJECTILE_TRACKER.clear()
     POWER_UP_TRACKER.clear()
-    SLASH_TRACKER.clear()
+    PROJECTILE_TRACKER.clear()
     TEXT_TRACKER.clear()
     levels = []
     SYSTEM["buttons_e"] = []
@@ -85,6 +86,8 @@ def init_timers():
 def start_level():
     """Starts the level stored in the SYSTEM."""
     SYSTEM["player"].reset()
+    generate_background()
+    generate_foreground()
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["game_state"] = GAME_LEVEL
     init_timers()
@@ -367,6 +370,9 @@ def init_game():
     load_options()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["ui_surface"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["ui_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["ui_foreground"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)

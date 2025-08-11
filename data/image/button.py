@@ -6,6 +6,7 @@ from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
 from data.image.scrollable import Scrollable
+from data.interface.render import render, renders
 
 class Button():
     """Defines a button. A button is a clickable image with two states (clicked
@@ -72,8 +73,19 @@ class Button():
 
     def draw(self, surface = None):
         """Draws the image to the surface."""
-        if surface is None:
-            surface = SYSTEM["windows"]
+        if surface is None or surface == SYSTEM["windows"]:
+            if self._clicked and self._pressed is not None:
+                render(self._pressed.image, (self._x, self._y))
+            else:
+                render(self._image.image, (self._x, self._y))
+            if self._text is not None:
+                y = self._y + self._text.height / 2
+                render(self._text.image, (self._x, y))
+            if self._superimage is not None:
+                x_offset = self._x + self._width / 2 - self._superimage.get_width() / 2
+                y_offset = self._y + self._height / 2 - self._superimage.get_height() / 2
+                render(self._superimage, (x_offset, y_offset))
+            return
         if self._clicked and self._pressed is not None:
             surface.blit(self._pressed.image, (self._x, self._y))
         else:

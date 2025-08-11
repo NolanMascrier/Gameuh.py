@@ -17,6 +17,7 @@ from data.interface.options import draw_options
 from data.interface.general import tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
+from data.interface.render import render_all, render
 
 PLAYING = True
 
@@ -45,7 +46,6 @@ def game_loop(keys, events):
     draw_ui()
     if SYSTEM["player"].creature.stats["life"].current_value <= 0:
         SYSTEM["game_state"] = GAME_DEATH
-    SYSTEM["latest_frame"] = SYSTEM["windows"].copy()
 
 def draw_victory(events):
     """Draws the victory screen."""
@@ -56,13 +56,13 @@ def draw_victory(events):
     draw_game()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     SYSTEM["buttons"]["button_continue"].set(x_offset + 200, y_offset + 300)
     SYSTEM["buttons"]["button_continue"].draw(SYSTEM["windows"])
     gold = SYSTEM["level"].gold
     text = Text(f"#c#{(255, 179, 0)}{gold}")
-    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
-    SYSTEM["windows"].blit(text.surface, (x_offset + 80, y_offset + 32))
+    render(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
+    render(text.surface, (x_offset + 80, y_offset + 32))
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["buttons"]["button_continue"].press()
@@ -76,13 +76,13 @@ def draw_game_over(events):
     draw_game(False)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     SYSTEM["buttons"]["button_continue"].set(x_offset + 200, y_offset + 300)
     SYSTEM["buttons"]["button_continue"].draw(SYSTEM["windows"])
     gold = SYSTEM["level"].gold
     text = Text(f"#c#{(255, 179, 0)}{gold}")
-    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
-    SYSTEM["windows"].blit(text.surface, (x_offset + 80, y_offset + 32))
+    render(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
+    render(text.surface, (x_offset + 80, y_offset + 32))
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["buttons"]["button_continue"].press()
@@ -91,8 +91,7 @@ def draw_pause(events):
     """Draws the pause menu."""
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    SYSTEM["windows"].blit(SYSTEM["latest_frame"], (0, 0))
-    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     SYSTEM["buttons"]["button_resume"].set(x_offset + 200, y_offset + 100)
     SYSTEM["buttons"]["button_abandon"].set(x_offset + 200, y_offset + 200)
     SYSTEM["buttons"]["button_quit"].set(x_offset + 200, y_offset + 300)
@@ -109,7 +108,7 @@ def draw_small_card():
     """Draws a small character card."""
     x = SCREEN_WIDTH - SYSTEM["images"]["char_details"].width
     y = 0
-    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (x, y))
+    render(SYSTEM["images"]["char_details"].image, (x, y))
     li = SYSTEM["player"].creature.generate_stat_simple(x + 10, y + 10)
     for l in li:
         l.draw(SYSTEM["windows"])
@@ -131,10 +130,10 @@ def draw_menu(events):
         name = Text(f'{SYSTEM["selected"].name}', True)
         lvl = Text(f'Area level: {SYSTEM["selected"].area_level}', True)
         #TODO: modifiers ...
-        SYSTEM["windows"].blit(name.surface, (1500, 750))
-        SYSTEM["windows"].blit(lvl.surface, (1500, 775))
+        render(name.surface, (1500, 750))
+        render(lvl.surface, (1500, 775))
         SYSTEM["buttons"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
-        SYSTEM["windows"].blit(SYSTEM["selected"].icon.image, (1500, 800))
+        render(SYSTEM["selected"].icon.image, (1500, 800))
     draw_bottom_bar(events)
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -200,7 +199,7 @@ def main_loop():
             y = SYSTEM["mouse"][1]
             if y + SYSTEM["pop_up"][2] > SCREEN_HEIGHT:
                 y -= y + SYSTEM["pop_up"][2] - SCREEN_HEIGHT
-            SYSTEM["windows"].blit(SYSTEM["pop_up"][0], (x, y))
+            render(SYSTEM["pop_up"][0], (x, y))
 
         SYSTEM["cooldown"] -= 0.032
         SYSTEM["cooldown"] = max(SYSTEM["cooldown"], 0)
@@ -217,10 +216,7 @@ def main_loop():
                 SYSTEM["rune"] = -1
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
-        window = pygame.transform.scale(SYSTEM["windows"],\
-            (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
-        SYSTEM["real_windows"].blit(window, (0, 0))
-        pygame.display.update()
+        render_all()
         sleep(float(SYSTEM["options"]["fps"]))
 
 if __name__ == "__main__":
@@ -230,15 +226,12 @@ if __name__ == "__main__":
         if not SYSTEM["loaded"]:
             SYSTEM["windows"].fill((0, 0, 0))
             SYSTEM["images"]["load_orb"].tick()
-            SYSTEM["windows"].blit(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
-            SYSTEM["windows"].blit(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
+            render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
+            render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
             width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
-            SYSTEM["windows"].blit(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
+            render(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
                 , (200, SCREEN_HEIGHT - 111))
-            window = pygame.transform.scale(SYSTEM["windows"],\
-                (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
-            SYSTEM["real_windows"].blit(window, (0, 0))
-            pygame.display.update()
+            render_all()
             sleep(float(SYSTEM["options"]["fps"]))
         else:
             break

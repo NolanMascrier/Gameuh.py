@@ -17,21 +17,18 @@ SCREEN_HEIGHT = 1080
 
 PROJECTILE_TRACKER = []
 ENNEMY_TRACKER = []
-SLASH_TRACKER = []
 POWER_UP_TRACKER = []
 TEXT_TRACKER = []
 IMAGE_TRACKER = []
 
 PROJECTILE_GRID = SpatialGrid()
 ENNEMY_GRID = SpatialGrid()
-SLASH_GRID = SpatialGrid()
 POWER_UP_GRID = SpatialGrid()
 
 def clean_grids():
     """Cleans up all the grids."""
     PROJECTILE_GRID.clear()
     ENNEMY_GRID.clear()
-    SLASH_GRID.clear()
     POWER_UP_GRID.clear()
 
 def generate_grids():
@@ -40,8 +37,6 @@ def generate_grids():
         PROJECTILE_GRID.add(p, p.hitbox)
     for e in ENNEMY_TRACKER:
         ENNEMY_GRID.add(e, e.hitbox)
-    for s in SLASH_TRACKER:
-        SLASH_GRID.add(s, s.hitbox)
     for p in POWER_UP_TRACKER:
         POWER_UP_GRID.add(p, p.hitbox)
 
@@ -149,6 +144,7 @@ SYSTEM = {
         "tab_r": None,
     },
     "ui": {},
+    "ui_surface": None,
     "player": None,
     "level": None,
     "selected": None,
