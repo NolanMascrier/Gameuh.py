@@ -89,6 +89,7 @@ def start_level():
     generate_background()
     generate_foreground()
     SYSTEM["level"] = SYSTEM["selected"]
+    SYSTEM["level"].init()
     SYSTEM["game_state"] = GAME_LEVEL
     init_timers()
 
@@ -314,6 +315,9 @@ def load_others():
         contains=SYSTEM["images"]["tree_surface"])
     generate_tree()
     SYSTEM["text_generator"] = TextGenerator()
+    SYSTEM["ui_surface"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["ui_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["ui_foreground"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
 def load_start():
     """Loads the starting events."""
@@ -370,9 +374,8 @@ def init_game():
     load_options()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    SYSTEM["ui_surface"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    SYSTEM["ui_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    SYSTEM["ui_foreground"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["gm_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["gm_parallaxe"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)

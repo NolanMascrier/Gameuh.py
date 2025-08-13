@@ -37,7 +37,7 @@ def draw_bottom_bar(events):
     SYSTEM["ui"]["bottom_bar"].tick()
 
 def draw_game(show_player = True, show_enemies = True,\
-    show_loot = True, show_projectiles = True, show_slashes = True,\
+    show_loot = True, show_projectiles = True,\
     show_text = True):
     """Draws the main game component."""
     if show_player:
@@ -48,8 +48,6 @@ def draw_game(show_player = True, show_enemies = True,\
         renders([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
     if show_projectiles:
         renders([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
-    if show_slashes:
-        renders([s.get_image(), s.get_pos()] for s in PROJECTILE_TRACKER)
     if show_text:
         renders([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
 

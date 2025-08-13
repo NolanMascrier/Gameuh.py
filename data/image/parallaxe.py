@@ -2,6 +2,7 @@
 are scrolling background images."""
 
 import pygame
+import pygame.scrap
 from data.constants import SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.image.animation import Animation
 from data.interface.render import renders
@@ -32,6 +33,13 @@ class Parallaxe(Animation):
             self._speeds = speeds
         self._diff_x = [0 for _ in range(len(self._sequence))]
         self._speed_factor = speed_factor
+        self._background = self._sequence[0].image
+        self._layers = [pygame.Surface((SCREEN_WIDTH * 2, SCREEN_HEIGHT), pygame.SRCALPHA)\
+            for _ in range(len(self._sequence))]
+        for i in range(len(self._sequence) - 1):
+            self._layers[i].blit(self._sequence[i + 1].image, (0,0))
+            self._layers[i].blit(self._sequence[i + 1].image, (SCREEN_WIDTH,0))
+        self._surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
     def invert(self):
         """Flips the scrolling animation."""
@@ -39,21 +47,40 @@ class Parallaxe(Animation):
 
     def draw(self):
         """Draws the parallaxe."""
-        values = [(self._sequence[0].image, (0, 0))]
+        return
+        x = []
         if self._scroll_left:
             for i in range(len(self._sequence)):
                 self._diff_x[i] = (self._diff_x[i] + self._speeds[i] *\
                     self._speed_factor) % SCREEN_WIDTH
-            for layer, image in enumerate(self._sequence):
+            for layer, _ in enumerate(self._sequence):
                 for y in range(0, 2):
-                    x = int((y * SCREEN_WIDTH) - self._diff_x[layer])
-                    values.append((image.image, (x, 0)))
+                    x.append(int((y * SCREEN_WIDTH) - self._diff_x[layer]))
         else:
             for i in range(len(self._sequence)):
                 self._diff_x[i] = (self._diff_x[i] - self._speeds[i] *\
                     self._speed_factor) % SCREEN_WIDTH
-            for layer, image in enumerate(self._sequence):
+            for layer, _ in enumerate(self._sequence):
                 for y in range(0, 2):
-                    x = int((y * SCREEN_WIDTH) - self._diff_x[layer])
-                    values.append((image.image, (x, 0)))
-        renders(values)
+                    x.append(int((y * SCREEN_WIDTH) - self._diff_x[layer]))
+        self._surface.fill((0,0,0,0))
+        self._surface.blits([self._layers[i], (x[i], 0)] for i in range(len(self._sequence)))
+        SYSTEM["gm_parallaxe"].blit(self._surface, (0,0))
+
+    @property
+    def background(self):
+        """Returns the Parallaxe's first layer."""
+        return self._background
+
+    @background.setter
+    def background(self, value):
+        self._background = value
+
+    @property
+    def surface(self) -> pygame.Surface:
+        """returns the composite surface of the parallaxe."""
+        return self._surface
+
+    @surface.setter
+    def surface(self, value):
+        self._surface = value

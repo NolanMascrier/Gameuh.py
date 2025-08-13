@@ -67,6 +67,11 @@ class Level():
             mob = self.generate_enemy(monster, level)
             ENNEMY_TRACKER.append(mob)
 
+    def init(self):
+        """Sets up the background of the level."""
+        SYSTEM["gm_background"].fill((0,0,0,0))
+        SYSTEM["gm_background"].blit(self._background.background, (0,0))
+
     def start(self):
         """Starts the level."""
         pygame.time.set_timer(WAVE_TIMER, self._wave_timer)

@@ -11,3 +11,4 @@ __pycache__/
 ressources/*.png~
 user_config.json
 *.char
+*.log

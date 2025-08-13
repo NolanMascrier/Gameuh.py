@@ -17,7 +17,7 @@ from data.interface.options import draw_options
 from data.interface.general import tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
-from data.interface.render import render_all, render
+from data.interface.render import render_all, render, resolution
 
 PLAYING = True
 
@@ -217,6 +217,7 @@ def main_loop():
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
         render_all()
+        resolution()
         sleep(float(SYSTEM["options"]["fps"]))
 
 if __name__ == "__main__":
@@ -232,6 +233,7 @@ if __name__ == "__main__":
             render(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
                 , (200, SCREEN_HEIGHT - 111))
             render_all()
+            resolution()
             sleep(float(SYSTEM["options"]["fps"]))
         else:
             break

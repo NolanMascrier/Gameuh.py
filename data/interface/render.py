@@ -20,10 +20,16 @@ def renders(lst):
 
 def render_all():
     """Renders the screen."""
+    SYSTEM["windows"].fill((0,0,0, 255))
+    SYSTEM["windows"].blit(SYSTEM["gm_background"], (0,0))
+    SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], (0,0))
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
+
+def resolution():
+    """Applies the resolution morph of the screen."""
     window = pygame.transform.scale(SYSTEM["windows"],\
             (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
     SYSTEM["real_windows"].blit(window, (0, 0))

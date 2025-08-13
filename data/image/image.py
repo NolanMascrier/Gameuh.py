@@ -1,8 +1,39 @@
 """Simple wrapper for image surfaces in Pygame."""
 
-import pygame
+from collections import Counter
 from functools import lru_cache
+import pygame
 from data.constants import RESSOURCES
+
+def load(path):
+    """Loads an image through pygame, then attempts to detect its alpha key.
+    Then converts the image with its needed method (convert, convert with colorkey,
+    convert alpha) depending on the picture."""
+    img = pygame.image.load(path)
+    if img.get_alpha() is None and not img.get_masks()[3]:
+        return img.convert()
+    img = img.convert_alpha()
+    w, h = img.get_size()
+    transparent_colors = Counter()
+    opaque_colors = set()
+    has_partial_alpha = False
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = img.get_at((x, y))
+            if a == 0:
+                transparent_colors[(r, g, b)] += 1
+            elif a == 255:
+                opaque_colors.add((r, g, b))
+            else:
+                has_partial_alpha = True
+    if has_partial_alpha or not transparent_colors:
+        return img.convert_alpha()
+    colorkey = transparent_colors.most_common(1)[0][0]
+    if colorkey not in opaque_colors:
+        img_no_alpha = img.convert()
+        img_no_alpha.set_colorkey(colorkey)
+        return img_no_alpha
+    return img.convert_alpha()
 
 class Image():
     """Defines an image. If the URI does not points
@@ -25,11 +56,11 @@ class Image():
             self._height = self._image.get_height()
         else:
             try:
-                self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
+                self._image = load(f"{RESSOURCES}/{uri}")
             except FileNotFoundError:
                 print(f"Couldn't find file {uri}. Using default image.")
                 self._uri = "default.png"
-                self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
+                self._image = load(f"{RESSOURCES}/default.png")
             self._width = self._image.get_width()
             self._height = self._image.get_height()
         self._visible = True

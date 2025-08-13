@@ -100,7 +100,7 @@ class Enemy():
                 if self._entity.flipped and player.x < self.x:
                     self.entity.flip()
                     self._aim_right = False
-                if self.distance_to_player(player) < 100000:
+                if self.distance_to_player(player) < 1000:
                     self._stopped = True
                     self._counter = 0
                 else:
