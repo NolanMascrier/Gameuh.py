@@ -182,7 +182,7 @@ def export_options():
 
 def reload_options():
     """Reloads the options from the SYSTEM."""
-    flags = pygame.SCALED
+    flags = pygame.SCALED | DOUBLEBUF
     if SYSTEM["options"]["fullscreen"]:
         flags |= pygame.FULLSCREEN
     SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\

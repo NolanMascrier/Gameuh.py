@@ -4,6 +4,7 @@ given SYSTEM variable to True or False."""
 from data.constants import SYSTEM, trad
 from data.image.image import Image
 from data.image.hoverable import Hoverable
+from data.interface.render import render
 
 class Checkbox():
     """Defines a checkbox.
@@ -50,8 +51,15 @@ class Checkbox():
 
     def draw(self, surface = None):
         """Draws the checkbox."""
-        if surface is None:
-            surface = SYSTEM["windows"]
+        if surface is None or surface == SYSTEM["windows"]:
+            self._hover.set(self._x + self.width,\
+                            self._y + self.height / 2 - self._hover.height / 2)\
+                .tick().draw()
+            if self._checked:
+                render(self._checked_image.image, (self._x, self._y))
+            else:
+                render(self._unchecked.image, (self._x, self._y))
+            return
         self._hover.set(self._x + self.width, self._y + self.height / 2 - self._hover.height / 2)\
             .tick().draw(surface)
         if self._checked:
@@ -68,4 +76,3 @@ class Checkbox():
     def height(self):
         """Returns the button's height."""
         return min(self._unchecked.height, self._checked_image.height)
-

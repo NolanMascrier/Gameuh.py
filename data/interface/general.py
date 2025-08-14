@@ -2,10 +2,9 @@
 
 from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
-    PROJECTILE_TRACKER, PROJECTILE_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
+    PROJECTILE_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS
 from data.image.tabs import Tabs
-from data.interface.render import render, renders
 from data.projectile import Projectile
 from data.slash import Slash
 
@@ -40,16 +39,19 @@ def draw_game(show_player = True, show_enemies = True,\
     show_loot = True, show_projectiles = True,\
     show_text = True):
     """Draws the main game component."""
+    for _, layer in SYSTEM["layers"].items():
+        layer.fill((0,0,0,0))
     if show_player:
-        render(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
+        SYSTEM["layers"]["characters"].blit(SYSTEM["player"].get_image(),\
+            SYSTEM["player"].get_pos())
     if show_loot:
-        renders([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
+        SYSTEM["layers"]["pickup"].blits([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
     if show_enemies:
-        renders([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
+        SYSTEM["layers"]["characters"].blits([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
     if show_projectiles:
-        renders([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
+        SYSTEM["layers"]["bullets"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_text:
-        renders([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
+        SYSTEM["layers"]["pickup"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
 
 def tick():
     """Ticks all there is to tick."""

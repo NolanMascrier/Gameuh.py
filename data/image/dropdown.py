@@ -1,9 +1,9 @@
 """A dropdown menu is a menu that allows the user to select
 a value from the list."""
 
-import pygame
 from data.constants import SYSTEM, trad
 from data.image.text import Text
+from data.interface.render import render
 
 class DropDownTitle():
     """Subclass for DropDown title, aka the clickable button to open
@@ -39,8 +39,14 @@ class DropDownTitle():
     def tick(self):
         """Ticks down the element."""
         if self.__is_mouse_over() and SYSTEM["mouse_click"][0]:
+            if SYSTEM["cooldown"] > 0:
+                return self
+            print(f"clicked on title of dropdown {self._parent._name}")
             self._parent.closed = not self._parent.closed
+            SYSTEM["cooldown"] = 0.1
         elif SYSTEM["mouse_click"][0]:
+            if SYSTEM["cooldown"] > 0:
+                return self
             self._parent.closed = True
         return self
 
@@ -52,8 +58,11 @@ class DropDownTitle():
 
     def draw(self, surface = None):
         """Draws the element on the surface."""
-        if surface is None:
-            surface = SYSTEM["windows"]
+        if surface is None or surface == SYSTEM["windows"]:
+            render(self._hover, (self._x, self._y))
+            render(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
+                self._y + self._height / 2 - self._value.height / 2))
+            return
         surface.blit(self._hover, (self._x, self._y))
         surface.blit(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
             self._y + self._height / 2 - self._value.height / 2))
@@ -106,6 +115,7 @@ class DropDownElement():
         if self.__is_mouse_over() and SYSTEM["mouse_click"][0]:
             self._parent.index = self._index
             self._parent.closed = True
+            SYSTEM["cooldown"] = 0.1
         return self
 
     def set(self, x, y):
@@ -116,8 +126,14 @@ class DropDownElement():
 
     def draw(self, surface = None):
         """Draws the element on the surface."""
-        if surface is None:
-            surface = SYSTEM["windows"]
+        if surface is None or surface == SYSTEM["windows"]:
+            if self.__is_mouse_over():
+                render(self._hover, (self._x, self._y))
+            else:
+                render(self._default, (self._x, self._y))
+            render(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
+                self._y + self._height / 2 - self._value.height / 2))
+            return
         if self.__is_mouse_over():
             surface.blit(self._hover, (self._x, self._y))
         else:
@@ -169,6 +185,7 @@ class DropDown():
         self._y = 0
         self._closed = True
         self._surface = []
+        print(f"Created dropdown {name} with values {self._states}")
         for i, text in enumerate(self._values):
             self._surface.append((DropDownElement(i, text, width, max_height, self),\
                 DropDownTitle(text, self._width, max_height, self)))
@@ -195,7 +212,12 @@ class DropDown():
     def draw(self, surface = None):
         """Draws the menu on the surface."""
         if surface is None:
-            surface = SYSTEM["windows"]
+            self._surface[self._index][1].draw()
+            for elmt, _ in self._surface:
+                if not self._closed:
+                    elmt.draw(surface)
+            render(self._title.image, (self._x, self._y))
+            return
         self._surface[self._index][1].draw(surface)
         for elmt, _ in self._surface:
             if not self._closed:

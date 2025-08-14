@@ -2,13 +2,14 @@
 
 import pygame
 from data.interface.general import draw_bottom_bar, draw_game, tick, setup_bottom_bar
-from data.constants import SYSTEM, MENU_INVENTORY, Flags, trad, TEXT_TRACKER
+from data.constants import SYSTEM, MENU_INVENTORY, trad, TEXT_TRACKER
 from data.image.button import Button
 from data.image.slotpanel import SlotPanel
 from data.item import Item
 from data.image.text import Text
 from data.image.hoverable import Hoverable
 from data.image.slot import Slot
+from data.interface.render import render
 
 def sell(item: Item, slot: Slot):
     """Sells the item."""
@@ -159,9 +160,9 @@ def draw_inventory(events):
     SYSTEM["items_panel"].tick().draw()
     gold = SYSTEM["player"].gold
     text = Text(str(gold), font="font_detail")
-    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (1500, 20))
-    SYSTEM["windows"].blit(SYSTEM["images"]["gold_icon"].image, (1520, 40))
-    SYSTEM["windows"].blit(text.surface, (1584, 72))
+    render(SYSTEM["images"]["char_details"].image, (1500, 20))
+    render(SYSTEM["images"]["gold_icon"].image, (1520, 40))
+    render(text.surface, (1584, 72))
     c = 0
     for i in [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]:
         SYSTEM["buttons"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
@@ -176,7 +177,7 @@ def draw_inventory(events):
     SYSTEM["ui"]["sell_slot"].tick().draw()
     draw_bottom_bar(events)
     if SYSTEM["rune"] != -1:
-        SYSTEM["windows"].blit(SYSTEM["rune_display"].image, SYSTEM["mouse"])
+        render(SYSTEM["rune_display"].image, SYSTEM["mouse"])
     tick()
     draw_game(False, False, False, False, False)
     for event in events:

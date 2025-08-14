@@ -2,7 +2,8 @@
 
 import pygame
 import re
-from data.constants import SYSTEM, RESSOURCES
+from data.constants import RESSOURCES
+from data.interface.render import render
 
 MARKER_REGEX = re.compile(r"#([a-z])#\((.*?)\)")
 
@@ -126,7 +127,7 @@ class Text():
 
     def draw(self, x, y):
         """Renders the text at the x;y position."""
-        SYSTEM["windows"].blit(self._surface, (x, y))
+        render(self._surface, (x, y))
 
     @property
     def width(self):

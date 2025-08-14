@@ -5,6 +5,7 @@ from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.image.checkbox import Checkbox
 from data.image.button import Button
 from data.image.dropdown import DropDown
+from data.interface.render import render
 
 def reload():
     """Resets the button to their default values."""

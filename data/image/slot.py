@@ -4,6 +4,7 @@ from data.constants import SYSTEM
 from data.image.draggable import Draggable
 from data.item import Item
 from data.game.spell import Spell
+from data.interface.render import render
 
 class Slot():
     """Defines a draggable image, an image that can be
@@ -109,12 +110,33 @@ class Slot():
 
     def draw(self):
         """Draws the component on screen."""
-        SYSTEM["windows"].blit(self._empty_image.image, (self._x, self._y))
+        render(self._empty_image.image, (self._x, self._y))
         if self._contains is not None:
-            SYSTEM["windows"].blit(self._contains.get_image().image, (self._x, self._y))
+            render(self._contains.get_image().image, (self._x, self._y))
 
     def draw_alt(self, surface, x, y):
         """Draws the component on the surface at specified position."""
+        if surface is None or surface == SYSTEM["windows"]:
+            if self._contains is not None:
+                if isinstance(self._contains.contains, Item):
+                    match self._contains.contains.rarity:
+                        case 0:
+                            render(self._empty_image.image, (x, y))
+                        case 1:
+                            render(SYSTEM["images"]["slot_magic"].image, (x, y))
+                        case 2:
+                            render(SYSTEM["images"]["slot_rare"].image, (x, y))
+                        case 3:
+                            render(SYSTEM["images"]["slot_exalted"].image, (x, y))
+                    if self._contains.contains.gray_out():
+                        render(self._contains.contains.get_image().opacity(100).image, (x, y))
+                    else:
+                        render(self._contains.contains.get_image().opacity(255).image, (x, y))
+                else:
+                    render(self._contains.contains.icon.get_image(), (x, y))
+                    render(SYSTEM["images"]["skill_top"].image, (x, y))
+            else:
+                render(self._empty_image.image, (x, y))
         if self._contains is not None:
             if isinstance(self._contains.contains, Item):
                 match self._contains.contains.rarity:

@@ -26,6 +26,8 @@ def render_all():
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:
+        for _, layer in SYSTEM["layers"].items():
+            SYSTEM["windows"].blit(layer, (0, 0))
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
 
 def resolution():

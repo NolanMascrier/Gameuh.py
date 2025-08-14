@@ -8,6 +8,14 @@ from data.physics.hitbox import HitBox
 from data.image.text import Text
 from data.constants import Flags, TEXT_TRACKER, SYSTEM
 
+COLORS = [
+    (128, 128, 128),   # Common - Gray shimmer
+    (0, 128, 255),     # Uncommon - Blue shimmer
+    (255, 215, 0),     # Legendary - Gold shimmer
+    (128, 0, 255),     # Rare - Purple shimmer
+    (255, 140, 0),     # Epic - Orange shimmer
+]
+
 class PickUp():
     """Creates a pickup."""
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
@@ -94,14 +102,7 @@ class PickUp():
     def generate_item_text(self):
         """Generates the text when picking up an item"""
         rare = self._contains.rarity
-        color = [
-            (128, 128, 128),   # Common - Gray shimmer
-            (0, 128, 255),     # Uncommon - Blue shimmer
-            (255, 215, 0),    # Legendary - Gold shimmer
-            (128, 0, 255),     # Rare - Purple shimmer
-            (255, 140, 0),     # Epic - Orange shimmer
-        ]
-        text = Text(f"#c#{color[rare]}{self._contains.base})")
+        text = Text(f"#c#{COLORS[rare]}{self._contains.base})")
         TEXT_TRACKER.append([text, self.x, self.y, 255])
 
     def pickup(self, player):

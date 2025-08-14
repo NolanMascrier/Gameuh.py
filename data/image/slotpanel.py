@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from data.constants import SYSTEM
 from data.image.slot import Slot
 from data.image.draggable import Draggable
+from data.interface.render import render
 
 class SlotPanel:
     """Defines a slot pannel, a group of slots.
@@ -150,7 +151,7 @@ class SlotPanel:
 
     def draw(self):
         """Draws the component."""
-        SYSTEM["windows"].blit(self._background.get_image(), (self._x, self._y))
+        render(self._background.get_image(), (self._x, self._y))
         diff_x, x = 0, 0
         diff_y, y = 0, 0
         real_x = self._x + self._padding + x * self._slot_size
@@ -188,7 +189,7 @@ class SlotPanel:
             if x > self._columns:
                 x = 0
                 y += 1
-            SYSTEM["windows"].blit(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
+            render(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
 
     @property
     def slots(self):

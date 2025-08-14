@@ -2,10 +2,11 @@
 around by the mouse."""
 
 from data.item import Item
-from data.constants import SYSTEM, trad
+from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.hoverable import Hoverable
 from data.game.spell import Spell
+from data.interface.render import render
 
 class Draggable(Image):
     """Defines a draggable.
@@ -111,7 +112,7 @@ class Draggable(Image):
 
     def draw(self):
         """Displays the draggable."""
-        SYSTEM["windows"].blit(self._image, (self._x, self._y))
+        render(self._image, (self._x, self._y))
 
     def get_image(self):
         """Returns the image of the contained item, or the\

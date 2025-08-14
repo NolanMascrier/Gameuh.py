@@ -6,6 +6,7 @@ from data.image.slotpanel import SlotPanel
 from data.item import Item
 from data.image.slot import Slot
 from data.image.tabs import Tabs
+from data.interface.render import render
 
 STAT_LIST = {}
 DEFAULT_STATS = ["life", "mana", "int", "str", "dex"]
@@ -95,7 +96,7 @@ def draw_gear(events):
     SYSTEM["city_back"].draw()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    SYSTEM["windows"].blit(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     SYSTEM["ui"]["gear_weapon"].tick().draw()
     SYSTEM["ui"]["gear_offhand"].tick().draw()
     SYSTEM["ui"]["gear_helm"].tick().draw()
@@ -110,7 +111,7 @@ def draw_gear(events):
     SYSTEM["gear_panel"].tick().draw()
     x = 10
     y = 10
-    SYSTEM["windows"].blit(SYSTEM["images"]["char_details"].image, (x, y))
+    render(SYSTEM["images"]["char_details"].image, (x, y))
     SYSTEM["gear_tabs"].tick()
     y_offset = 0
     y_offset_tab = 220
@@ -126,7 +127,7 @@ def draw_gear(events):
                 if data is None:
                     count += 1
                     continue
-                data.set(x_offset, 20 + y_offset).tick().draw(SYSTEM["windows"])
+                data.set(x_offset, 20 + y_offset).tick().draw()
                 count += 1
                 x_offset += data.width
             y_offset += 20
@@ -143,7 +144,7 @@ def draw_gear(events):
                 if data is None:
                     count += 1
                     continue
-                data.set(x_offset, 20 + y_offset_tab).tick().draw(SYSTEM["windows"])
+                data.set(x_offset, 20 + y_offset_tab).tick().draw()
                 x_offset += data.width
                 count += 1
             y_offset_tab += 20

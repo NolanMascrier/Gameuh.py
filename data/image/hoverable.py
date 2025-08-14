@@ -4,6 +4,7 @@ the mouse is above it."""
 import pygame
 from data.constants import SYSTEM, K_LALT
 from data.image.text import Text
+from data.interface.render import render
 
 class Hoverable():
     """Defines an hoverable."""
@@ -91,7 +92,8 @@ class Hoverable():
     def draw(self, surface = None):
         """Draws the text to the window."""
         if surface is None:
-            surface = SYSTEM["windows"]
+            render(self._text.surface, (self._x, self._y))
+            return
         surface.blit(self._text.surface, (self._x, self._y))
 
     @property

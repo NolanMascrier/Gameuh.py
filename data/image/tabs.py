@@ -55,7 +55,7 @@ class Tabs:
         for b in self._buttons:
             if SYSTEM[self._variable] == self._states[i]:
                 self._fake_buttons[i].set(self._x + i * b.image.width, self._y)\
-                    .tick().draw(SYSTEM["windows"])
+                    .tick().draw()
             else:
-                b.set(self._x + i * b.image.width, self._y).tick().draw(SYSTEM["windows"])
+                b.set(self._x + i * b.image.width, self._y).tick().draw()
             i += 1
