@@ -86,6 +86,8 @@ def init_timers():
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
+    if SYSTEM["selected"] is None:
+        return
     SYSTEM["player"].reset()
     generate_background()
     generate_foreground()
@@ -97,6 +99,7 @@ def start_level():
 def quit_level():
     """Quits the current level and resets the player."""
     SYSTEM["game_state"] = MENU_MAIN
+    SYSTEM["level"] = None
     reset()
 
 def load_fonts():
@@ -373,6 +376,7 @@ def load():
 
 def init_game():
     """Loads the basic data for the game."""
+    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
     pygame.init()
     pygame.font.init()
     SYSTEM["keys"] = pygame.key.get_pressed()
