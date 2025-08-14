@@ -154,6 +154,19 @@
       "start": "Way of the warrior",
       "buffa": "Firebolt teaching"
     },
+    "loading": {
+      "fonts": "Loading fonts ...",
+      "images": "Loading images ...",
+      "icons": "Loading item icons ...",
+      "animations": "Loading animations ...",
+      "tiles": "Loading tiles ...",
+      "parallaxes": "Loading parallaxes ...",
+      "spells": "Generating spell list ...",
+      "others": "Generating handlers ...",
+      "buttons": "Generating buttons ...",
+      "player": "Generating player data ...",
+      "start": "Finishing ..."
+    },
     "options": {
       "fullscreen": "Fullscreen",
       "vsync": "Vertical Synchronisation",

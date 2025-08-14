@@ -16,6 +16,9 @@ COLORS = [
     (255, 140, 0),     # Epic - Orange shimmer
 ]
 
+BLUE = (3, 188, 255)
+GREEN = (0, 143, 0)
+
 class PickUp():
     """Creates a pickup."""
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
@@ -93,11 +96,11 @@ class PickUp():
         self._position += self._velocity
         self._acceleration *= 0
 
-    def generate_text(self, color):
+    def generate_text(self, color, value):
         """generates a floating text above the pickup."""
         if self._value > 1:
-            text = SYSTEM["font"].render(f'{self._value}', False, color)
-            TEXT_TRACKER.append([text, self.x, self.y, 255])
+            SYSTEM["text_generator"].generate_damage_text(self._position[0],\
+                self._position[1], color, False, value)
 
     def generate_item_text(self):
         """Generates the text when picking up an item"""
@@ -108,11 +111,13 @@ class PickUp():
     def pickup(self, player):
         """Picks up the pickup."""
         if Flags.LIFE in self._flags:
-            player.creature.stats["life"].current_value += self._value
-            self.generate_text(0xFF0000)
+            value = round(self._value / 100 * player.creature.stats["life"].get_value())
+            player.creature.stats["life"].current_value += value
+            self.generate_text(GREEN, value)
         if Flags.MANA in self._flags:
-            player.creature.stats["mana"].current_value += self._value
-            self.generate_text(0x00FF00)
+            value = round(self._value / 100 * player.creature.stats["mana"].get_value())
+            player.creature.stats["mana"].current_value += value
+            self.generate_text(BLUE, value)
         if Flags.EXPERIENCE in self._flags:
             player.creature.grant_experience(self._value)
         if Flags.GOLD in self._flags:

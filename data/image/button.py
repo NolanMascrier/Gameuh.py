@@ -31,7 +31,7 @@ class Button():
             self._superimage = text.image
             self._text = None
         else:
-            self._text = Text(text, True, "font_detail", force_x=self._width)
+            self._text = Text(text, True, "item_desc", force_x=self._width)
 
     def __mouse_default(self):
         """For mouse_inside() with no scrollable."""

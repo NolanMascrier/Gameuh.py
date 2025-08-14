@@ -45,10 +45,10 @@ def generate_foreground():
     data = []
     #POTIONS
     data.append((SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"][K_1], (508, SCREEN_HEIGHT - 82)))
+    data.append((SYSTEM["images"][K_1].image, (508, SCREEN_HEIGHT - 82)))
     data.append((SYSTEM["images"]["item_top"].image,\
                            (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"][K_2], (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82)))
+    data.append((SYSTEM["images"][K_2].image, (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82)))
     #EXP
     data.append((SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60)))
     #SKILLS

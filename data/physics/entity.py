@@ -1,9 +1,9 @@
 """An entity is something that physically exists in the game
 world. It has a position, an image and an hitbox."""
 
+import json
 from math import cos, sin
-from data.constants import *
-from data.image.animation import Animation
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.physics.hitbox import HitBox
 
 class Entity():
@@ -51,6 +51,9 @@ class Entity():
             self._dash_time -= float(0.016)
             self._x += self._dash_dx
             self._y += self._dash_dy
+        if self._x < 0 or self._x > SCREEN_WIDTH - SYSTEM["images"][self._image].width or\
+            self._y < 0 or self._y > SCREEN_HEIGHT - SYSTEM["images"][self._image].height:
+            self._dashing = False
         self._x = max(0, min(self._x, SCREEN_WIDTH - SYSTEM["images"][self._image].width))
         self._y = max(0, min(self._y, SCREEN_HEIGHT - SYSTEM["images"][self._image].height))
         self._hitbox.move_center(self.center)
@@ -89,7 +92,7 @@ class Entity():
         self.y = pos[1]
         self._hitbox.move_center(self.center)
 
-    def dash(self, distance, dash_time = 0.5):
+    def dash(self, distance, dash_time = 0.4):
         """dash a certain distance depending on the last input angle."""
         self._dash_dx = cos(self._angle)
         self._dash_dy = sin(self._angle)

@@ -7,11 +7,12 @@ import random
 import numpy
 from data.physics.entity import Entity
 from data.creature import Creature
-from data.constants import Flags, PROJECTILE_GRID, POWER_UP_TRACKER, SYSTEM
+from data.constants import Flags, POWER_UP_TRACKER, SYSTEM
 from data.game.pickup import PickUp
 from data.game.spell import Spell
 
 DAMAGE_COLOR = (255, 30, 30)
+VALUE_GROUPS = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
 
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
@@ -38,20 +39,21 @@ class Enemy():
     def explode(self):
         """Explodes the creature in loot, life and mana orbs,
         and exp."""
-        amount = numpy.random.randint(0,5)
-        for _ in range(amount + 1):
-            power_type = True if numpy.random.randint(0, 1) == 0 else False
+        amount = numpy.random.randint(-3, 5)
+        while amount > 0:
+            power_type = True if numpy.random.randint(0, 2) == 0 else False
             x = self.x + 30
             y = self.y + 60
-            pu = PickUp(x, y, value = 1)
+            power = numpy.random.randint(0.5, 6)
+            pu = PickUp(x, y, value = power)
             if power_type:
                 pu.flags.append(Flags.MANA)
             else:
                 pu.flags.append(Flags.LIFE)
             POWER_UP_TRACKER.append(pu)
-        denominations = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
+            amount -= 1
         exp = self._exp_value
-        for value in denominations:
+        for value in VALUE_GROUPS:
             while exp >+ value:
                 x = self.x + 30
                 y = self.y + 60
@@ -59,7 +61,7 @@ class Enemy():
                 POWER_UP_TRACKER.append(pu)
                 exp -= value
         gold_left = self._gold_value
-        for value in denominations:
+        for value in VALUE_GROUPS:
             while gold_left >= value:
                 x = self.x + numpy.random.randint(-20, 20)
                 y = self.y + numpy.random.randint(-20, 20)

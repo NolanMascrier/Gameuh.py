@@ -7,7 +7,7 @@ import random
 import pygame
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER,\
+    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language, UPDATE_TIMER
 from data.image.animation import Animation, Image
@@ -15,7 +15,7 @@ from data.image.button import Button
 from data.image.tile import Tile
 from data.image.parallaxe import Parallaxe
 from data.image.scrollable import Scrollable
-from data.image.text_generator import TextGenerator
+from data.image.text_generator import TextGenerator, Text
 from data.image.slotpanel import SlotPanel
 
 from data.game.lootgenerator import LootGenerator
@@ -126,6 +126,11 @@ def load_animations():
         frame_rate=0.2, lines=3).scale(64, 64)
     SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
+    SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
+    SYSTEM["images"]["badguy_flipped"] = Animation("badguy.png", 60, 130, frame_rate=0.25)
+    SYSTEM["images"]["witch_flipped"] = Animation("witch.png", 64, 64, frame_rate = 0.25)\
+        .flip(False, True)
+    SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
 
 def load_tiles():
     """Load the tiles."""
@@ -184,9 +189,6 @@ def load_images():
     SYSTEM["images"]["exp_bar"] = Image("exp.png")
     SYSTEM["images"]["exp_bar2"] = Image("exp_back.png")
     SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png")
-    SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
-    SYSTEM["images"]["badguy_flipped"] = Animation("badguy.png", 60, 130, frame_rate=0.25)\
-        .flip(False, False)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
@@ -202,8 +204,8 @@ def load_images():
     SYSTEM["images"][K_r] = Image("ui/kb_r.png")
     SYSTEM["images"][K_t] = Image("ui/kb_t.png")
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png")
-    SYSTEM["images"][K_1] = Image("ui/kb_1.png").image
-    SYSTEM["images"][K_2] = Image("ui/kb_2.png").image
+    SYSTEM["images"][K_1] = Image("ui/kb_1.png")
+    SYSTEM["images"][K_2] = Image("ui/kb_2.png")
     SYSTEM["images"]["btn"] = Image("ui/button.png").scale(55, 280)
     SYSTEM["images"]["btn_fat"] = Image("ui/button.png").scale(55, 100)
     SYSTEM["images"]["btn_fat_pressed"] = Image("ui/button_press.png").scale(55, 100)
@@ -268,9 +270,7 @@ def load_images():
     SYSTEM["images"]["checkbox"] = Image("ui/checkbox.png").scale(64, 64)
     SYSTEM["images"]["checkbox_ok"] = Image("ui/checkbox_ok.png").scale(64, 64)
     SYSTEM["images"]["arrow_h"] = Image("arrow.png").scale(128, 128)
-    SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
-    SYSTEM["images"]["witch_flipped"] = Animation("witch.png", 64, 64, frame_rate = 0.25)\
-        .flip(False, True)
+
 
 def load_icons():
     """Loads the icons."""
@@ -354,21 +354,22 @@ def load():
     """Loads everything inside the system.
     Made to be threaded."""
     tasks = [
-        (load_fonts, 1),
-        (load_images, 3),
-        (load_icons, 3),
-        (load_animations, 2),
-        (load_tiles, 2),
-        (load_parallaxes, 2),
-        (generate_spell_list, 4),
-        (load_others, 1),
-        (load_buttons, 2),
-        (create_character, 1),
-        (load_start, 3)
+        (load_fonts, 1, "fonts"),
+        (load_images, 5, "images"),
+        (load_icons, 3, "icons"),
+        (load_animations, 2, "animations"),
+        (load_tiles, 2, "tiles"),
+        (load_parallaxes, 2, "parallaxes"),
+        (generate_spell_list, 4, "spells"),
+        (load_others, 1, "others"),
+        (load_buttons, 2, "buttons"),
+        (create_character, 1, "player"),
+        (load_start, 3, "start")
     ]
-    total = sum(weight for _, weight in tasks)
+    total = sum(weight for _, weight, _ in tasks)
     progress = 0
-    for t, w in tasks:
+    for t, w, x in tasks:
+        SYSTEM["loading_text"] = Text(trad('loading', x), font="item_titles", size=30)
         t()
         progress += w
         SYSTEM["progress"] = progress / total * 100
@@ -390,6 +391,7 @@ def init_game():
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
+    SYSTEM["loading_text"] = None
     SYSTEM["clock"] = pygame.time.Clock()
     SYSTEM["fps_counter"] = None
     loading_thread = threading.Thread(target=load)

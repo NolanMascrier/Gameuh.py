@@ -119,7 +119,7 @@ def draw_game_over(events):
         if event.type == TICKER_TIMER:
             tick()
     SYSTEM["level"].background.draw()
-    draw_game(False)
+    draw_game()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
@@ -137,6 +137,8 @@ def draw_pause(events):
     """Draws the pause menu."""
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    SYSTEM["level"].background.draw()
+    draw_game()
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     SYSTEM["buttons"]["button_resume"].set(x_offset + 200, y_offset + 100)
     SYSTEM["buttons"]["button_abandon"].set(x_offset + 200, y_offset + 200)
@@ -270,6 +272,8 @@ if __name__ == "__main__":
     init_timers()
     while True:
         if not SYSTEM["loaded"]:
+            if SYSTEM["loading_text"] is not None:
+                render(SYSTEM["loading_text"].surface, (200, SCREEN_HEIGHT - 128))
             SYSTEM["windows"].fill((0, 0, 0))
             SYSTEM["images"]["load_orb"].tick()
             render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
