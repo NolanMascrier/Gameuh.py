@@ -2,7 +2,6 @@
 are scrolling background images."""
 
 import pygame
-import pygame.scrap
 from data.constants import SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.image.animation import Animation
 from data.interface.render import renders

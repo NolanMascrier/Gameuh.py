@@ -1,12 +1,17 @@
 """To render text with more options than basic pygame"""
 
-import pygame
 import re
+from functools import lru_cache
+import pygame
 from data.constants import RESSOURCES
 from data.interface.render import render
 
 MARKER_REGEX = re.compile(r"#([a-z])#\((.*?)\)")
 
+@lru_cache(maxsize=16)
+def open_font(font, size):
+    """Opens up the font file."""
+    return pygame.freetype.Font(font, size)
 
 class Text():
     """Reads a text in str form to create a pygame surface
@@ -37,7 +42,7 @@ class Text():
         self._surface = None
         self._width = 0
         self._height = 0
-        self._font = pygame.freetype.Font(f'{RESSOURCES}/fonts/{font}.ttf', size)
+        self._font = open_font(f'{RESSOURCES}/fonts/{font}.ttf', size)
         if isinstance(text, str):
             data = text.split('\n')
         else:
@@ -80,7 +85,7 @@ class Text():
                     flags |= pygame.freetype.STYLE_STRONG
                 if style["italic"]:
                     flags |= pygame.freetype.STYLE_OBLIQUE
-                font_buff = pygame.freetype.Font(f'{RESSOURCES}/fonts/{font}.ttf',\
+                font_buff = open_font(f'{RESSOURCES}/fonts/{font}.ttf',\
                     style_buff["size"])
                 sfc, _ = font_buff.render(\
                     f'{text_buff}', fgcolor=style_buff["color"], style=flags)

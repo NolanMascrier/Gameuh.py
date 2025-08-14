@@ -3,7 +3,6 @@
 from data.constants import SYSTEM
 from data.image.draggable import Draggable
 from data.item import Item
-from data.game.spell import Spell
 from data.interface.render import render
 
 class Slot():

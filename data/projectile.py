@@ -1,6 +1,7 @@
 """Projectile are the most common type of attacks."""
 
 import random
+import numpy
 from math import atan2, pi
 from math import cos, sin, radians
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
@@ -76,14 +77,14 @@ class Projectile():
                 if self._caster is not None:
                     self.x = self._caster.x + self._offset[0]
                     self.y = self._caster.y + self._offset[1]
-                self._delay -= float(SYSTEM["options"]["fps"])
+                self._delay -= float(0.016)
                 return
-        angle = radians(self._angle)
+        angle = numpy.radians(self._angle)
         self._box.move((self._x, self._y))
         if Flags.ACCELERATE in self._behaviours:
             self._speed *= 1.1
-        self._x = round(self._x + self._speed * cos(angle))
-        self._y = round(self._y + self._speed * sin(angle))
+        self._x = self._x + self._speed * numpy.cos(angle)
+        self._y = self._y + self._speed * numpy.sin(angle)
         if self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
             self._flagged = True
         elif self.can_be_destroyed():

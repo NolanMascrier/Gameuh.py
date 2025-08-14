@@ -91,7 +91,7 @@ class Character():
         self._creature.tick()
         self._entity.tick(self, self._base_speed)
         if self._cooldown > 0:
-            self._cooldown -= float(SYSTEM["options"]["fps"])
+            self._cooldown -= float(0.016)
         already_ticked = []
         for spell, skill in self._equipped_spells.items():
             if skill is not None and skill not in already_ticked:
@@ -99,25 +99,6 @@ class Character():
                 already_ticked.append(skill)
         SYSTEM["player.x"] = self.hitbox.center[0]
         SYSTEM["player.y"] = self.hitbox.center[1]
-        for proj in PROJECTILE_GRID.query(self.hitbox):
-            if isinstance(proj, Generator):
-                continue
-            if proj.evil and proj.hitbox.is_colliding(self._entity.hitbox):
-                if proj in self._immune:
-                    return
-                if isinstance(proj, Projectile):
-                    dmg, crit = self.creature.damage(proj.damage)
-                    SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
-                                                                (255, 30, 30), crit, dmg)
-                    if Flags.PIERCING not in proj.behaviours:
-                        proj.flag()
-                    else:
-                        self._immune.append(proj)
-                elif isinstance(proj, Slash):
-                    dmg, crit = proj.on_hit(self._creature)
-                    SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
-                                                                (255, 30, 30), crit, dmg)
-                    self._immune.append(proj)
         for pickup in POWER_UP_GRID.query(self.hitbox):
             if self.hitbox.is_colliding(pickup.hitbox):
                 pickup.pickup(self)
@@ -311,6 +292,15 @@ class Character():
     @inventory.setter
     def inventory(self, value):
         self._inventory = value
+
+    @property
+    def immune(self):
+        """Returns the character's immunity."""
+        return self._immune
+
+    @immune.setter
+    def immune(self, value):
+        self._immune = value
 
     @property
     def gold(self):

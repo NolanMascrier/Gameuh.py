@@ -82,7 +82,7 @@ def init_timers():
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
     pygame.time.set_timer(TICKER_TIMER, int(0.016 * 1000))
-    pygame.time.set_timer(UPDATE_TIMER, int(SYSTEM["options"]["fps"] * 1000))
+    pygame.time.set_timer(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
@@ -315,7 +315,6 @@ def load_others():
     SYSTEM["images"]["tree_scroller"] = Scrollable(10, 10, SCREEN_WIDTH - 110, SCREEN_HEIGHT - 200,\
         contains=SYSTEM["images"]["tree_surface"])
     generate_tree()
-    SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["ui_surface"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["ui_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["ui_foreground"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -383,9 +382,12 @@ def init_game():
     SYSTEM["gm_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
     SYSTEM["gm_parallaxe"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
+    SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
+    SYSTEM["clock"] = pygame.time.Clock()
+    SYSTEM["fps_counter"] = None
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None

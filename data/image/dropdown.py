@@ -41,7 +41,6 @@ class DropDownTitle():
         if self.__is_mouse_over() and SYSTEM["mouse_click"][0]:
             if SYSTEM["cooldown"] > 0:
                 return self
-            print(f"clicked on title of dropdown {self._parent._name}")
             self._parent.closed = not self._parent.closed
             SYSTEM["cooldown"] = 0.1
         elif SYSTEM["mouse_click"][0]:
@@ -185,7 +184,6 @@ class DropDown():
         self._y = 0
         self._closed = True
         self._surface = []
-        print(f"Created dropdown {name} with values {self._states}")
         for i, text in enumerate(self._values):
             self._surface.append((DropDownElement(i, text, width, max_height, self),\
                 DropDownTitle(text, self._width, max_height, self)))

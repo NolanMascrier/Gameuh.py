@@ -48,7 +48,7 @@ class Entity():
         if self._dashing:
             if self._dash_time <= 0:
                 self._dashing = False
-            self._dash_time -= float(SYSTEM["options"]["fps"])
+            self._dash_time -= float(0.016)
             self._x += self._dash_dx
             self._y += self._dash_dy
         self._x = max(0, min(self._x, SCREEN_WIDTH - SYSTEM["images"][self._image].width))

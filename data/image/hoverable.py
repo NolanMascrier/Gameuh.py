@@ -66,9 +66,11 @@ class Hoverable():
             txt = self._text.width, self._text.height
         elif self._attach is not None:
             txt = self._attach.get_size()
+        else:
+            return
         if SYSTEM["mouse"][0] >= self._x and SYSTEM["mouse"][0] <= self._x + txt[0] and\
             SYSTEM["mouse"][1] >= self._y and SYSTEM["mouse"][1] <= self._y + txt[1]:
-                return True
+            return True
         return False
 
     def tick(self):

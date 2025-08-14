@@ -18,14 +18,61 @@ from data.interface.general import tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
 from data.interface.render import render_all, render, resolution
+from data.projectile import Projectile
+from data.slash import Slash
 
 PLAYING = True
+
+DAMAGE_COLOR = (255, 30, 30)
 
 def debug_create_items():
     """Creates a bunch of items."""
     lg = LootGenerator()
     base_loot = lg.roll(40, 5)
     SYSTEM["player"].inventory.extend(base_loot)
+
+def check_collisions():
+    """Checks all collisions."""
+    for proj in PROJECTILE_TRACKER.copy():
+        if proj.evil: #check for player
+            if proj.hitbox.is_colliding(SYSTEM["player"].entity.hitbox):
+                if proj in SYSTEM["player"].immune:
+                    return
+                if isinstance(proj, Projectile):
+                    dmg, crit = SYSTEM["player"].creature.damage(proj.damage)
+                    SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
+                                                                  SYSTEM["player"].y,\
+                                                                DAMAGE_COLOR, crit, dmg)
+                    if Flags.PIERCING not in proj.behaviours:
+                        proj.flag()
+                    else:
+                        SYSTEM["player"].immune.append(proj)
+                elif isinstance(proj, Slash):
+                    dmg, crit = proj.on_hit(SYSTEM["player"].creature)
+                    SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
+                                                                  SYSTEM["player"].y,\
+                                                                DAMAGE_COLOR, crit, dmg)
+                    SYSTEM["player"].immune.append(proj)
+        else: #Check for each enemy
+            for enemy in ENNEMY_TRACKER.copy():
+                if proj.hitbox.is_colliding(enemy.entity.hitbox):
+                    if proj in enemy.immune:
+                        return
+                    if isinstance(proj, Projectile):
+                        dmg, crit = enemy.creature.damage(proj.damage)
+                        SYSTEM["text_generator"].generate_damage_text(enemy.x,\
+                                                                    enemy.y,\
+                                                                    DAMAGE_COLOR, crit, dmg)
+                        if Flags.PIERCING not in proj.behaviours:
+                            proj.flag()
+                        else:
+                            enemy.immune.append(proj)
+                    elif isinstance(proj, Slash):
+                        dmg, crit = proj.on_hit(enemy.creature)
+                        SYSTEM["text_generator"].generate_damage_text(enemy.x,\
+                                                                    enemy.y,\
+                                                                    DAMAGE_COLOR, crit, dmg)
+                        enemy.immune.append(proj)
 
 def game_loop(keys, events):
     """Main game loop."""
@@ -42,6 +89,7 @@ def game_loop(keys, events):
     draw_ui()
     #Handle logic
     SYSTEM["player"].action(keys)
+    check_collisions()
     if SYSTEM["player"].creature.stats["life"].current_value <= 0:
         SYSTEM["game_state"] = GAME_DEATH
 
@@ -216,7 +264,6 @@ def main_loop():
                 SYSTEM["cooldown"] = 0.8
         render_all()
         resolution()
-        sleep(float(SYSTEM["options"]["fps"]))
 
 if __name__ == "__main__":
     init_game()
@@ -232,17 +279,16 @@ if __name__ == "__main__":
                 , (200, SCREEN_HEIGHT - 111))
             render_all()
             resolution()
-            sleep(float(SYSTEM["options"]["fps"]))
         else:
             break
     profiler = cProfile.Profile()
-    profiler.enable()
     debug_create_items()
     setup_bottom_bar()
+    profiler.enable()
     try:
         main_loop()
     except KeyboardInterrupt:
         pass
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats("cumtime")
-    stats.print_stats(40)  # show top 20 slowest
+    stats.print_stats(10)

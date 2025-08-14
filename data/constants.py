@@ -101,9 +101,9 @@ SYSTEM = {
     "options": {
         "screen_resolution": (1920, 1080),
         "screen_resolution_temp": (1920, 1080),
-        "fps": 0.016,
-        "fps_temp": 0.016,
-        "fps_selector": [0.008, 0.016, 0.032],
+        "fps": 60,
+        "fps_temp": 60,
+        "fps_selector": [120, 60, 30],
         "fps_display": [120, 60, 30],
         "resolutions": [(1138, 640), (1280, 720), (1366, 768), (1600, 900), (1920, 1080)],
         "fullscreen": True,
@@ -111,7 +111,8 @@ SYSTEM = {
         "lang_selec": "EN_us",
         "lang_temp": "EN_us",
         "langs": ["EN_us", "FR_fr"],
-        "show_hitboxes": False
+        "show_hitboxes": False,
+        "show_fps": False
     },
     "key_chart": {
       "spell_1": (K_q, None),

@@ -102,7 +102,7 @@ class Spell():
 
     def tick(self):
         """Ticks down the spell's cooldown."""
-        self._cooldown -= float(SYSTEM["options"]["fps"])
+        self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
 
     def reset(self):

@@ -4,13 +4,12 @@ and also an entity.
 They can move toward the player, or fire projectiles."""
 
 import random
+import numpy
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.constants import Flags, PROJECTILE_GRID, POWER_UP_TRACKER, SYSTEM
 from data.game.pickup import PickUp
 from data.game.spell import Spell
-from data.projectile import Projectile
-from data.slash import Slash
 
 DAMAGE_COLOR = (255, 30, 30)
 
@@ -32,16 +31,16 @@ class Enemy():
         self._gold_value = gold_value
         self._exp_value = exp_value
         self._exploded = False
-        self._immune = {}
+        self._immune = []
         self._stopped = False
         self._aim_right = False
 
     def explode(self):
         """Explodes the creature in loot, life and mana orbs,
         and exp."""
-        amount = random.randint(0,5)
+        amount = numpy.random.randint(0,5)
         for _ in range(amount + 1):
-            power_type = True if random.randint(0, 1) == 0 else False
+            power_type = True if numpy.random.randint(0, 1) == 0 else False
             x = self.x + 30
             y = self.y + 60
             pu = PickUp(x, y, value = 1)
@@ -62,15 +61,15 @@ class Enemy():
         gold_left = self._gold_value
         for value in denominations:
             while gold_left >= value:
-                x = self.x + random.randint(-20, 20)
-                y = self.y + random.randint(-20, 20)
+                x = self.x + numpy.random.randint(-20, 20)
+                y = self.y + numpy.random.randint(-20, 20)
                 pu = PickUp(x, y, value, flags=[Flags.GOLD], speed_mod=2.5)
                 POWER_UP_TRACKER.append(pu)
                 gold_left -= value
         loot = SYSTEM["looter"].roll(1, self._creature.level)
         for l in loot:
-            x = self.x + random.randint(-20, 20)
-            y = self.y + random.randint(-20, 20)
+            x = self.x + numpy.random.randint(-20, 20)
+            y = self.y + numpy.random.randint(-20, 20)
             pu = PickUp(x, y, 1, flags=[Flags.ITEM], contained=l)
             POWER_UP_TRACKER.append(pu)
         self._exploded = True
@@ -88,7 +87,7 @@ class Enemy():
         if self._creature.stats["life"].current_value <= 0:
             self.explode()
             return
-        self._counter += float(SYSTEM["options"]["fps"])
+        self._counter += 0.016
         self._entity.tick(self)
         self._creature.tick()
         if Flags.CHASER in self._behaviours:
@@ -113,23 +112,6 @@ class Enemy():
                 self.attack()
         if self._counter >= self._timer:
             self._counter -= self._timer
-        for proj in PROJECTILE_GRID.query(self.hitbox):
-            if not proj.evil and proj.hitbox.is_colliding(self._entity.hitbox):
-                if proj in self._immune:
-                    return
-                if isinstance(proj, Projectile):
-                    dmg, crit = self.creature.damage(proj.damage)
-                    SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
-                                                                DAMAGE_COLOR, crit, dmg)
-                    if Flags.PIERCING not in proj.behaviours:
-                        proj.flag()
-                    else:
-                        self._immune[proj] = True
-                elif isinstance(proj, Slash):
-                    dmg, crit = proj.on_hit(self._creature)
-                    SYSTEM["text_generator"].generate_damage_text(self.x, self.y,\
-                                                                DAMAGE_COLOR, crit, dmg)
-                    self._immune[proj] = True
 
     def attack(self):
         """Launches a random attack from the enemy's arsenal."""
@@ -189,3 +171,12 @@ class Enemy():
         """Returns whether or not the enemy can be\
         removed."""
         return self._exploded
+
+    @property
+    def immune(self):
+        """Returns the enemy's immunity."""
+        return self._immune
+
+    @immune.setter
+    def immune(self, value):
+        self._immune = value

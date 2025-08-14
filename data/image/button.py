@@ -6,7 +6,7 @@ from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
 from data.image.scrollable import Scrollable
-from data.interface.render import render, renders
+from data.interface.render import render
 
 class Button():
     """Defines a button. A button is a clickable image with two states (clicked

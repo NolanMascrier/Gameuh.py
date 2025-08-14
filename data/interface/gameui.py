@@ -4,13 +4,12 @@ exp bar, enemy life, boss life ..."""
 import pygame
 from data.image.text import Text
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2
-from data.interface.render import renders
 
 UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2
 UI_SKILLS_INPUT_OFFSET = 48
 
-UPDATE_COUNTER = [0]
+UPDATE_COUNTER = [5]
 
 def generate_background():
     """Generates the background surface of the UI. To be called only once when the
@@ -31,7 +30,7 @@ def generate_background():
     data.append((SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60)))
     #SKILLS
     i = 0
-    for name, _ in char.equipped_spells.items():
+    for _ in char.equipped_spells:
         data.append((SYSTEM["images"]["skill_bottom"].image,\
             (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130)))
         i += 1
@@ -133,7 +132,7 @@ def draw_skills():
     data = []
     i = 0
     char = SYSTEM["player"]
-    for name, skill in char.equipped_spells.items():
+    for _, skill in char.equipped_spells.items():
         spell = SYSTEM["spells"][skill]
         if spell is not None:
             cdc = spell.cooldown
@@ -156,10 +155,10 @@ def draw_skills():
         i += 1
     return data
 
-def draw_ui(boss_here = False, boss = None):
+def draw_ui():
     """Draws the user interface."""
     UPDATE_COUNTER[0] += 1
-    if UPDATE_COUNTER[0] != 5:
+    if UPDATE_COUNTER[0] < 5:
         return
     UPDATE_COUNTER[0] = 0
     SYSTEM["ui_surface"].fill((0,0,0,0))

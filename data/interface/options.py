@@ -54,6 +54,8 @@ def open_option_screen():
         SYSTEM["images"]["checkbox_ok"], "vsync")
     SYSTEM["ui"]["box_hitboxes"] = Checkbox("hitboxes", SYSTEM["images"]["checkbox"],\
         SYSTEM["images"]["checkbox_ok"], "show_hitboxes")
+    SYSTEM["ui"]["box_fps"] = Checkbox("show_fps", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "show_fps")
 
 def unloader():
     """Unloads all option-specific data."""
@@ -61,14 +63,15 @@ def unloader():
 def draw_options(events):
     """Draws the optino tree menu."""
     SYSTEM["city_back"].draw()
-    SYSTEM["ui"]["button_validate"].set(10, 250).tick().draw()
-    SYSTEM["ui"]["button_cancel"].set(10, 350).tick().draw()
+    SYSTEM["ui"]["button_validate"].set(10, 350).tick().draw()
+    SYSTEM["ui"]["button_cancel"].set(10, 400).tick().draw()
     SYSTEM["ui"]["box_fullscreen"].set(10, 10).tick().draw()
     SYSTEM["ui"]["box_vsync"].set(10, 100).tick().draw()
     SYSTEM["ui"]["box_hitboxes"].set(10, 190).tick().draw()
+    SYSTEM["ui"]["box_fps"].set(10, 280).tick().draw()
     SYSTEM["ui"]["drop_resolution"].set(450, 10).tick().draw()
     SYSTEM["ui"]["drop_fps"].set(750, 10).tick().draw()
     SYSTEM["ui"]["drop_lang"].set(1050, 10).tick().draw()
     SYSTEM["ui"]["button_save"].set(10, 650).tick().draw()
-    SYSTEM["ui"]["button_load"].set(10, 750).tick().draw()
+    SYSTEM["ui"]["button_load"].set(10, 700).tick().draw()
     draw_bottom_bar(events)

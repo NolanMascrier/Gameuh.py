@@ -157,7 +157,8 @@
     "options": {
       "fullscreen": "Fullscreen",
       "vsync": "Vertical Synchronisation",
-      "hitboxes": "Show Hitboxes"
+      "hitboxes": "Show Hitboxes",
+      "show_fps": "Show FPS counter"
     },
     "options_desc": {
       "fullscreen": "Set the game in fullscreen or not.",
