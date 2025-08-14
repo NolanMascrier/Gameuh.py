@@ -38,12 +38,10 @@ def game_loop(keys, events):
         if event.type == TICKER_TIMER:
             tick()
     SYSTEM["level"].background.draw()
+    draw_game()
+    draw_ui()
     #Handle logic
     SYSTEM["player"].action(keys)
-    #Handle printing on screen
-    draw_game()
-    #Draw the UI
-    draw_ui()
     if SYSTEM["player"].creature.stats["life"].current_value <= 0:
         SYSTEM["game_state"] = GAME_DEATH
 

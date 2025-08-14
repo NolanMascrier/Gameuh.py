@@ -50,13 +50,16 @@ class Enemy():
             else:
                 pu.flags.append(Flags.LIFE)
             POWER_UP_TRACKER.append(pu)
-        for _ in range(self._exp_value + 1):
-            x = self.x + 30
-            y = self.y + 60
-            pu = PickUp(x, y, 1, flags=[Flags.EXPERIENCE], speed_mod=2.5)
-            POWER_UP_TRACKER.append(pu)
-        gold_left = self._gold_value
         denominations = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
+        exp = self._exp_value
+        for value in denominations:
+            while exp >+ value:
+                x = self.x + 30
+                y = self.y + 60
+                pu = PickUp(x, y, value, flags=[Flags.EXPERIENCE], speed_mod=2.5)
+                POWER_UP_TRACKER.append(pu)
+                exp -= value
+        gold_left = self._gold_value
         for value in denominations:
             while gold_left >= value:
                 x = self.x + random.randint(-20, 20)

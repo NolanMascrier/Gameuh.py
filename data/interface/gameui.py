@@ -10,7 +10,7 @@ UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2
 UI_SKILLS_INPUT_OFFSET = 48
 
-DYNAMIC    = []
+UPDATE_COUNTER = [0]
 
 def generate_background():
     """Generates the background surface of the UI. To be called only once when the
@@ -37,7 +37,6 @@ def generate_background():
         i += 1
     #
     SYSTEM["ui_background"].blits(data)
-    
 
 def generate_foreground():
     """Generates the foreground of the UI. To be called only once when 
@@ -159,6 +158,10 @@ def draw_skills():
 
 def draw_ui(boss_here = False, boss = None):
     """Draws the user interface."""
+    UPDATE_COUNTER[0] += 1
+    if UPDATE_COUNTER[0] != 5:
+        return
+    UPDATE_COUNTER[0] = 0
     SYSTEM["ui_surface"].fill((0,0,0,0))
     to_draw = []
     to_draw.extend(draw_life_mana())

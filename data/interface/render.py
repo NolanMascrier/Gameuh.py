@@ -35,4 +35,4 @@ def resolution():
     window = pygame.transform.scale(SYSTEM["windows"],\
             (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
     SYSTEM["real_windows"].blit(window, (0, 0))
-    pygame.display.update()
+    pygame.display.flip()

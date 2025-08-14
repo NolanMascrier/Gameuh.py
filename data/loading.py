@@ -7,9 +7,9 @@ import random
 import pygame
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    RESSOURCES, MENU_OPTIONS_GAME, ENNEMY_TRACKER, POWER_UP_TRACKER, PROJECTILE_TRACKER,\
+    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
-    change_language
+    change_language, UPDATE_TIMER
 from data.image.animation import Animation, Image
 from data.image.button import Button
 from data.image.tile import Tile
@@ -81,7 +81,8 @@ def init_timers():
     pygame.time.set_timer(WAVE_TIMER, 1000)
     pygame.time.set_timer(USEREVENT+1, 2000)
     pygame.time.set_timer(USEREVENT+2, 100)
-    pygame.time.set_timer(TICKER_TIMER, int(SYSTEM["options"]["fps"] * 1000))
+    pygame.time.set_timer(TICKER_TIMER, int(0.016 * 1000))
+    pygame.time.set_timer(UPDATE_TIMER, int(SYSTEM["options"]["fps"] * 1000))
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
