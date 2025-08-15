@@ -57,6 +57,7 @@ class Slot():
 
     def insert(self, draggable: Draggable):
         """Insert a draggable inside the slot."""
+        SYSTEM["dragged"] = None
         if self._contains is not None:
             self.remove()
         old = self._contains
@@ -64,7 +65,6 @@ class Slot():
         draggable.dragging = False
         draggable.set(self._x, self._y)
         draggable.set_parent(self)
-        SYSTEM["dragged"] = None
         if self._on_slot is not None:
             self._on_slot(draggable.contains, self)
         return old

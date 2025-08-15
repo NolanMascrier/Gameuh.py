@@ -9,7 +9,7 @@ from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.image.tabs import Tabs
 from data.image.text import Text
-from data.interface.render import render
+from data.interface.render import render, renders
 
 PAGES = {
     MENU_SPELLBOOK_Q: 0,
@@ -136,7 +136,7 @@ def unloader():
 
 def draw_spells(events):
     """Draws the gear menu."""
-    SYSTEM["city_back"].draw()
+    renders(SYSTEM["city_back"].as_background)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))

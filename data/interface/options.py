@@ -5,7 +5,7 @@ from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.image.checkbox import Checkbox
 from data.image.button import Button
 from data.image.dropdown import DropDown
-from data.interface.render import render
+from data.interface.render import renders
 
 def reload():
     """Resets the button to their default values."""
@@ -62,7 +62,7 @@ def unloader():
 
 def draw_options(events):
     """Draws the optino tree menu."""
-    SYSTEM["city_back"].draw()
+    renders(SYSTEM["city_back"].as_background)
     SYSTEM["ui"]["button_validate"].set(10, 350).tick().draw()
     SYSTEM["ui"]["button_cancel"].set(10, 400).tick().draw()
     SYSTEM["ui"]["box_fullscreen"].set(10, 10).tick().draw()

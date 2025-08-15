@@ -56,11 +56,11 @@ class Image():
             self._height = self._image.get_height()
         else:
             try:
-                self._image = load(f"{RESSOURCES}/{uri}")
+                self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
             except FileNotFoundError:
                 print(f"Couldn't find file {uri}. Using default image.")
                 self._uri = "default.png"
-                self._image = load(f"{RESSOURCES}/default.png")
+                self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
             self._width = self._image.get_width()
             self._height = self._image.get_height()
         self._visible = True

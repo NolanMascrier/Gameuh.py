@@ -3,7 +3,7 @@
 from data.constants import SYSTEM, MENU_TREE
 from data.image.text import Text
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
-from data.interface.render import render
+from data.interface.render import render, renders
 
 def open_skill_screen():
     """Sets up the skill tree screen menu."""
@@ -15,7 +15,7 @@ def unloader():
 
 def draw_skills(events):
     """Draws the skill tree menu."""
-    SYSTEM["city_back"].draw()
+    renders(SYSTEM["city_back"].as_background)
     draw_bottom_bar(events)
     SYSTEM["images"]["tree_surface"].fill((0,0,0,0))
     SYSTEM["tree"].tick()

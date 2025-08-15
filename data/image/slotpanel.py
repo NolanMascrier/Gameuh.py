@@ -74,11 +74,13 @@ class SlotPanel:
                 drag = Draggable(None, x, y, item)
                 self.insert(drag)
 
-    def insert(self, drag: Draggable, pos = None):
+    def insert(self, drag: Draggable, pos = None, as_item = None):
         """Inserts the draggable into the panel."""
+        y, x = self.get_index()
+        if drag is None and as_item is not None:
+            drag = Draggable(None, x, y, as_item, self._immutable)
         if drag is None:
             return
-        y, x = self.get_index()
         sl = Slot(x, y, immutable=self._immutable)
         sl.insert(drag)
         drag.set_panel(self)

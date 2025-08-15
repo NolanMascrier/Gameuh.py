@@ -1,7 +1,7 @@
 """"Renders the screen."""
 
 import pygame
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY
 
 RENDER_LIST = []
 
@@ -29,6 +29,8 @@ def render_all():
         for _, layer in SYSTEM["layers"].items():
             SYSTEM["windows"].blit(layer, (0, 0))
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
+    elif SYSTEM["game_state"] in [MENU_INVENTORY]:
+        SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], (0, 0))
 
 def resolution():
     """Applies the resolution morph of the screen."""

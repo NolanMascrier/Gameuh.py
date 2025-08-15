@@ -9,7 +9,7 @@ from data.item import Item
 from data.image.text import Text
 from data.image.hoverable import Hoverable
 from data.image.slot import Slot
-from data.interface.render import render
+from data.interface.render import render, renders
 
 def sell(item: Item, slot: Slot):
     """Sells the item."""
@@ -156,7 +156,7 @@ def unloader():
 
 def draw_inventory(events):
     """Draws the inventory windows."""
-    SYSTEM["city_back"].draw()
+    renders(SYSTEM["city_back"].as_background)
     SYSTEM["items_panel"].tick().draw()
     gold = SYSTEM["player"].gold
     text = Text(str(gold), font="font_detail")
@@ -178,8 +178,8 @@ def draw_inventory(events):
     draw_bottom_bar(events)
     if SYSTEM["rune"] != -1:
         render(SYSTEM["rune_display"].image, SYSTEM["mouse"])
+    draw_game(False, False, False, False, True)
     tick()
-    draw_game(False, False, False, False, False)
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["buttons"]["button_rune_0"].press()

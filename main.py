@@ -17,7 +17,7 @@ from data.interface.options import draw_options
 from data.interface.general import tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
-from data.interface.render import render_all, render, resolution
+from data.interface.render import render_all, render, resolution, renders
 from data.projectile import Projectile
 from data.slash import Slash
 
@@ -157,14 +157,14 @@ def draw_small_card():
     x = SCREEN_WIDTH - SYSTEM["images"]["char_details"].width
     y = 0
     render(SYSTEM["images"]["char_details"].image, (x, y))
-    li = SYSTEM["player"].creature.generate_stat_simple(x + 10, y + 10)
-    for l in li:
-        l.draw(SYSTEM["windows"])
-        l.tick()
+    #li = SYSTEM["player"].creature.generate_stat_simple(x + 10, y + 10)
+    #for l in li:
+    #    l.draw(SYSTEM["windows"])
+    #    l.tick()
 
 def draw_menu(events):
     """Draws the main game menu."""
-    SYSTEM["city_back"].draw()
+    renders(SYSTEM["city_back"].as_background)
     sfc = pygame.Surface((2000, 2000), pygame.SRCALPHA)
     sfc.blit(SYSTEM["images"]["mission_map"].image, (0, 0))
     SYSTEM["buttons_e"][0].set(350, 680, SYSTEM["images"]["mission_scroller"]).draw(sfc)

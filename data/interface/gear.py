@@ -6,7 +6,7 @@ from data.image.slotpanel import SlotPanel
 from data.item import Item
 from data.image.slot import Slot
 from data.image.tabs import Tabs
-from data.interface.render import render
+from data.interface.render import render, renders
 
 STAT_LIST = {}
 DEFAULT_STATS = ["life", "mana", "int", "str", "dex"]
@@ -28,7 +28,7 @@ def equip(item: Item, slot: Slot):
     else:
         SYSTEM["player"].creature.equip(slot.flag, item, slot.left)
         SYSTEM["player"].inventory.remove(item)
-    lst = SYSTEM["player"].creature.generate_stat_details(20, 20)
+    lst = SYSTEM["player"].creature.generate_stat_details(True)
     for f in lst:
         STAT_LIST[f] = lst[f]
 
@@ -38,6 +38,11 @@ def unequip(item: Item, slot: Slot):
         return
     it = SYSTEM["player"].creature.unequip(slot.flag, slot.left)
     SYSTEM["player"].inventory.append(it)
+    if SYSTEM["dragged"] is None:
+        SYSTEM["gear_panel"].insert(None, None, it)
+    lst = SYSTEM["player"].creature.generate_stat_details(True)
+    for f in lst:
+        STAT_LIST[f] = lst[f]
 
 def open_gear_screen():
     """Sets up the gear screen."""
@@ -70,7 +75,7 @@ def open_gear_screen():
     SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip,\
          Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=SYSTEM["player"].inventory)
-    lst = SYSTEM["player"].creature.generate_stat_details(20, 20)
+    lst = SYSTEM["player"].creature.generate_stat_details()
     for f in lst:
         STAT_LIST[f] = lst[f]
 
@@ -93,7 +98,7 @@ def unloader():
 
 def draw_gear(events):
     """Draws the gear menu."""
-    SYSTEM["city_back"].draw()
+    renders(SYSTEM["city_back"].as_background)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))

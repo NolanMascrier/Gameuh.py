@@ -81,3 +81,8 @@ class Parallaxe(Animation):
     @surface.setter
     def surface(self, value):
         self._surface = value
+
+    @property
+    def as_background(self):
+        """Prepares a list to be rendered."""
+        return [(l.image, (0,0)) for l in self._sequence]

@@ -24,7 +24,7 @@ class DropDownTitle():
         self._height = self._hover.get_height()
         self._parent = parent
 
-    def __is_mouse_over(self):
+    def is_mouse_over(self):
         """Checks whether or not the mouse is over the element."""
         if SYSTEM["mouse"][0] < self._x:
             return False
@@ -38,15 +38,11 @@ class DropDownTitle():
 
     def tick(self):
         """Ticks down the element."""
-        if self.__is_mouse_over() and SYSTEM["mouse_click"][0]:
+        if self.is_mouse_over() and SYSTEM["mouse_click"][0]:
             if SYSTEM["cooldown"] > 0:
                 return self
             self._parent.closed = not self._parent.closed
-            SYSTEM["cooldown"] = 0.1
-        elif SYSTEM["mouse_click"][0]:
-            if SYSTEM["cooldown"] > 0:
-                return self
-            self._parent.closed = True
+            SYSTEM["cooldown"] = 0.35
         return self
 
     def set(self, x, y):
@@ -97,7 +93,7 @@ class DropDownElement():
         self._height = self._hover.get_height()
         self._parent = parent
 
-    def __is_mouse_over(self):
+    def is_mouse_over(self):
         """Checks whether or not the mouse is over the element."""
         if SYSTEM["mouse"][0] < self._x:
             return False
@@ -111,10 +107,14 @@ class DropDownElement():
 
     def tick(self):
         """Ticks down the element."""
-        if self.__is_mouse_over() and SYSTEM["mouse_click"][0]:
+        if self.is_mouse_over() and SYSTEM["mouse_click"][0]:
+            if SYSTEM["cooldown"] > 0:
+                return self
+            if self._parent.closed:
+                return self
             self._parent.index = self._index
             self._parent.closed = True
-            SYSTEM["cooldown"] = 0.1
+            SYSTEM["cooldown"] = 0.35
         return self
 
     def set(self, x, y):
@@ -126,14 +126,14 @@ class DropDownElement():
     def draw(self, surface = None):
         """Draws the element on the surface."""
         if surface is None or surface == SYSTEM["windows"]:
-            if self.__is_mouse_over():
+            if self.is_mouse_over():
                 render(self._hover, (self._x, self._y))
             else:
                 render(self._default, (self._x, self._y))
             render(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
                 self._y + self._height / 2 - self._value.height / 2))
             return
-        if self.__is_mouse_over():
+        if self.is_mouse_over():
             surface.blit(self._hover, (self._x, self._y))
         else:
             surface.blit(self._default, (self._x, self._y))
@@ -188,6 +188,16 @@ class DropDown():
             self._surface.append((DropDownElement(i, text, width, max_height, self),\
                 DropDownTitle(text, self._width, max_height, self)))
 
+    def is_mouse_over(self):
+        """Checks whether the mouse is within the dropdown."""
+        if not self._closed:
+            return self._surface[self._index][1].is_mouse_over()
+        else:
+            for elmt, _ in self._surface:
+                if elmt.is_mouse_over():
+                    return True
+        return False
+
     def set(self, x, y):
         """Sets the menu position."""
         self._x = x
@@ -204,6 +214,8 @@ class DropDown():
         for elmt, title in self._surface:
             elmt.tick()
             title.tick()
+        if SYSTEM["mouse_click"][0] and not self.is_mouse_over():
+            self._closed = True
         SYSTEM["options"][self._variable] = self._states[self._index]
         return self
 

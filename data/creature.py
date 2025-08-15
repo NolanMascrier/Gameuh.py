@@ -120,7 +120,7 @@ class Creature:
             }
         }
         self._buffs = []
-        self._changed = []
+        self._changed = set()
         self._ap = 5
         self.__get_bonuses_from_stat()
         self._stats["life"].refill()
@@ -313,6 +313,7 @@ class Creature:
             stat_key = flag.value
             if stat_key in self._stats:
                 self._stats[stat_key].afflict(affliction)
+                self._changed.add(stat_key)
             elif stat_key == "all_resistances":
                 self._stats["phys"].afflict(affliction)
                 self._stats["fire"].afflict(affliction)
@@ -321,6 +322,7 @@ class Creature:
                 self._stats["energy"].afflict(affliction)
                 self._stats["light"].afflict(affliction)
                 self._stats["dark"].afflict(affliction)
+                self._changed.update({"phys", "fire", "ice", "elec", "energy", "light", "dark"})
             elif stat_key == "all_damage":
                 self._stats["phys_dmg"].afflict(affliction)
                 self._stats["fire_dmg"].afflict(affliction)
@@ -329,14 +331,18 @@ class Creature:
                 self._stats["energy_dmg"].afflict(affliction)
                 self._stats["light_dmg"].afflict(affliction)
                 self._stats["dark_dmg"].afflict(affliction)
+                self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "elec_dmg",\
+                    "energy_dmg", "light_dmg", "dark_dmg"})
             elif stat_key == "elemental_resistances":
                 self._stats["fire"].afflict(affliction)
                 self._stats["ice"].afflict(affliction)
                 self._stats["elec"].afflict(affliction)
+                self._changed.update({"fire", "ice", "elec"})
             elif stat_key == "elemental_damage":
                 self._stats["fire_dmg"].afflict(affliction)
                 self._stats["ice_dmg"].afflict(affliction)
                 self._stats["elec_dmg"].afflict(affliction)
+                self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
         if affliction.stackable:
             self._buffs.append(affliction)
         else:
@@ -364,6 +370,19 @@ class Creature:
         Args:
             affliction (Affliction): Affliction to remove.
         """
+        for f in affliction.flags:
+            stat_key = f.value
+            if stat_key in self._stats:
+                self._changed.add(stat_key)
+            elif stat_key == "all_resistances":
+                self._changed.update({"phys", "fire", "ice", "elec", "energy", "light", "dark"})
+            elif stat_key == "all_damage":
+                self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "elec_dmg",\
+                    "energy_dmg", "light_dmg", "dark_dmg"})
+            elif stat_key == "elemental_resistances":
+                self._changed.update({"fire", "ice", "elec"})
+            elif stat_key == "elemental_damage":
+                self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
         for d in self._buffs.copy():
             if d == affliction:
                 self._buffs.remove(d)
@@ -496,18 +515,22 @@ class Creature:
         self._stats["life"].refill()
         self._stats["mana"].refill()
 
-    def generate_stat_simple(self, x, y):
-        """Generates a simple report of the creature's data."""
-        lines = []
-        return lines
-
-    def generate_stat_details(self, x, y):
+    def generate_stat_details(self, only_changed = False):
         """Generates a detailed report of the creature's data."""
         lines = {}
+        sub_s = ""
         for s in self._stats:
             if s in IGNORE_STAT:
+                if only_changed and s in self._changed:
+                    sub_s = f"{s[:s.find('_')]}_dmg"
+                else:
+                    continue
+            if only_changed and s not in self._changed:
                 continue
-            if s in DAMAGE_STAT:
+            if s in DAMAGE_STAT or sub_s in DAMAGE_STAT:
+                if only_changed and s in IGNORE_STAT:
+                    print(f"s {s}, sub s {sub_s}")
+                    s = sub_s
                 elmt = s[:len(s) - 4]
                 name = Hoverable(0, 0, trad('descripts', f"{elmt}_tab"), trad(elmt))
                 flat, flat_value = self._stats[f"{elmt}_flat"].describe(False, True)
@@ -527,6 +550,8 @@ class Creature:
                     f"{round(self.__get_dodge_chance(0) * 100)}%"
                 addition = Hoverable(0, 0, text, trad('estimate_dodge'))
                 lines[s] = (name, value, addition)
+        if only_changed:
+            self._changed.clear()
         return lines
 
     def reset(self):
