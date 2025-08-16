@@ -32,6 +32,8 @@ from data.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
 
+from data.image.posteffects import PostEffects
+
 def generate_random_level():
     """Creates a random level."""
     area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 0)
@@ -383,6 +385,7 @@ def init_game():
     SYSTEM["keys"] = pygame.key.get_pressed()
     load_options()
     change_language(SYSTEM["options"]["lang_selec"])
+    SYSTEM["post_effects"] = PostEffects()
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["gm_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
     SYSTEM["gm_parallaxe"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)

@@ -21,6 +21,8 @@ IGNORE_STAT = ["fire_flat", "fire_pen", "phys_flat", "phys_pen",
 DAMAGE_STAT = ["fire_dmg", "phys_dmg", "ice_dmg", "elec_dmg", "energy_dmg",
     "light_dmg", "dark_dmg"]
 
+WHITE = (255,255,255)
+
 class Creature:
     """Defines a creature. A creature can be interacted with\
     and attacked.
@@ -250,6 +252,7 @@ class Creature:
             res = self._stats[dmg_type].get_value() - pen[dmg_type]
             damage += dmga * (1 - res)
         if damage_source.is_crit:
+            SYSTEM["post_effects"].flash(WHITE, 5)
             crit = damage_source.crit_mult * (1 - self._stats["crit_res"].get_value())
             if crit > 0:
                 damage *= crit

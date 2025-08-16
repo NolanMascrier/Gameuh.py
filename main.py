@@ -157,10 +157,6 @@ def draw_small_card():
     x = SCREEN_WIDTH - SYSTEM["images"]["char_details"].width
     y = 0
     render(SYSTEM["images"]["char_details"].image, (x, y))
-    #li = SYSTEM["player"].creature.generate_stat_simple(x + 10, y + 10)
-    #for l in li:
-    #    l.draw(SYSTEM["windows"])
-    #    l.tick()
 
 def draw_menu(events):
     """Draws the main game menu."""
@@ -194,6 +190,9 @@ def draw_menu(events):
 def main_loop():
     """Main loop. Temporary"""
     while SYSTEM["playing"]:
+        if SYSTEM["post_effects"].pause:
+            SYSTEM["post_effects"].tick()
+            continue
         SYSTEM["pop_up"] = None
         get_mouse_pos()
         SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
@@ -265,7 +264,7 @@ def main_loop():
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
         render_all()
-        resolution()
+        SYSTEM["post_effects"].tick()
 
 if __name__ == "__main__":
     init_game()
