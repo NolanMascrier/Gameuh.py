@@ -45,7 +45,7 @@ class Character():
         self._potions = [3, 3]
         self._equipped_spells = {
             "spell_1": "firebolt",
-            "spell_2": "voidbolt",
+            "spell_2": "voidbolt2",
             "spell_3": "icebolt",
             "spell_4": "elefury",
             "spell_5": "furyslash",
@@ -55,6 +55,7 @@ class Character():
         self._spellbook = [
             "firebolt",
             "voidbolt",
+            "voidbolt2",
             "icebolt",
             "elefury",
             "furyslash",

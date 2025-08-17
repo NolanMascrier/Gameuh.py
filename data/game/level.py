@@ -93,6 +93,25 @@ class Level():
         self.summon_wave(self._area_level, self._current_wave)
         self._current_wave += 1
 
+    def distance_to_player(self, player, hitbox):
+        """Returns the distance from the hitbox to the player."""
+        dx = player.x - hitbox.x
+        dy = player.y - hitbox.y
+        return dx*dx + dy*dy
+
+    def closest_enemy(self, exclude: Enemy = None):
+        """Returns the closests enemy to the player."""
+        dist = 99999999999999
+        enemy = None
+        for e in ENNEMY_TRACKER:
+            if exclude is not None and e == exclude:
+                continue
+            dist_tmp = self.distance_to_player(SYSTEM["player"].entity.hitbox, e.entity.hitbox)
+            if dist_tmp < dist:
+                dist = dist_tmp
+                enemy = e
+        return enemy
+
     @property
     def name(self) -> str:
         """Returns the level's name."""

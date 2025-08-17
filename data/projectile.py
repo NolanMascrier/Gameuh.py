@@ -15,20 +15,30 @@ class Projectile():
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, width = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
-                bounces = 0, delay = 0,\
+                bounces = 0, delay = 0, chains = 0,\
                 behaviours = None):
         self._x = x
         self._y = y
         self._speed = speed
         self._angle = angle
+        self._target = None
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - atan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
         if Flags.AIMED_AT_MOUSE in behaviours:
             self._angle = 90 - atan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
+        if Flags.AIMED_AT_CLOSEST in behaviours:
+            closest = SYSTEM["level"].closest_enemy()
+            if closest is None:
+                self._angle = 0
+            else:
+                self._angle = 90 - atan2(closest.entity.hitbox.x - x,\
+                    closest.entity.hitbox.y - y) * 180 / pi
+                self._target = closest
         self._length = width
         self._height = height
+        self._origin = origin
         self._damage = origin.recalculate_damage(damage)
         self._evil = evil
         self._bounces = bounces
@@ -49,6 +59,9 @@ class Projectile():
             self._offset = (self.x - caster.x, self.y - caster.y)
         self._flagged = False
         self._animation_state = [0, False]
+        self._immune = []
+        self._bounced = False
+        self._chains = chains
 
     def get_image(self):
         """Returns the projectile image."""
@@ -69,9 +82,24 @@ class Projectile():
             return True
         return False
 
+    def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
+        """Called when the projectile hits a target."""
+        if target not in self._immune:
+            dmg = self._origin.recalculate_damage(self._damage)
+            num, crit = target.damage(dmg)
+            self._immune.append(target)
+            self._bounced = True
+            if self._bounces <= 0 and self._chains <= 0:
+                self._flagged = True
+            return num, crit
+        return (None, None)
+
     def tick(self):
         """Ticks down the projectile."""
         SYSTEM["images"][self._image].tick(self._animation_state)
+        if Flags.HARD_TRACKING in self._behaviours:
+            self._angle = 90 - atan2(SYSTEM["player.x"] - self._target.entity.hitbox.x,\
+                    SYSTEM["player.y"] - self._target.entity.hitbox.y) * 180 / pi
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None:
@@ -80,11 +108,21 @@ class Projectile():
                 self._delay -= float(0.016)
                 return
         angle = numpy.radians(self._angle)
-        self._box.move((self._x, self._y))
         if Flags.ACCELERATE in self._behaviours:
             self._speed *= 1.1
         self._x = self._x + self._speed * numpy.cos(angle)
         self._y = self._y + self._speed * numpy.sin(angle)
+        self._box.move((self._x, self._y))
+        if Flags.CHAINS in self._behaviours and self._bounced and self._chains > 0:
+            self._bounced = False
+            self._chains -= 1
+            closest = SYSTEM["level"].closest_enemy(self._target)
+            if closest is None:
+                self._angle = numpy.random.randint(0, 361)
+            else:
+                self._angle = atan2(SYSTEM["player.x"] - closest.entity.hitbox.x,\
+                    SYSTEM["player.y"] - closest.entity.hitbox.y) * 180 / pi
+                self._target = closest
         if self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
             self._flagged = True
         elif self.can_be_destroyed():

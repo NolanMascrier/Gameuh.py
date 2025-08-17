@@ -36,7 +36,8 @@ def generate_spell_list():
     firebolt = Spell("firebolt", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     firebolt2 = Spell("firebolt2", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
-    voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE])
+    voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
+    voidolt2 = Spell("voidbolt2", voidbolt_icon, "darkbolt_img", VOIDBOLT, 3, cooldown=0.35, projectiles=1, chains=3, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS])
     elementalfury = Spell("elefury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
     dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=6, cooldown=3, flags=[Flags.BUFF, Flags.DASH], afflictions=[CELERITY])
     furyslash = Spell("fslash", fury_icon, "furyslash_img", FURYSLASH, 5, 0, cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF], afflictions=[FURY])
@@ -46,6 +47,7 @@ def generate_spell_list():
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["voidbolt"] = voidolt
+    SYSTEM["spells"]["voidbolt2"] = voidolt2
     SYSTEM["spells"]["elefury"] = elementalfury
     SYSTEM["spells"]["winddash"] = dash_basic
     SYSTEM["spells"]["furyslash"] = furyslash

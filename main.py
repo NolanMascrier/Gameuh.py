@@ -37,16 +37,13 @@ def check_collisions():
         if proj.evil: #check for player
             if proj.hitbox.is_colliding(SYSTEM["player"].entity.hitbox):
                 if proj in SYSTEM["player"].immune:
-                    return
+                    continue
                 if isinstance(proj, Projectile):
                     dmg, crit = SYSTEM["player"].creature.damage(proj.damage)
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
-                    if Flags.PIERCING not in proj.behaviours:
-                        proj.flag()
-                    else:
-                        SYSTEM["player"].immune.append(proj)
+                    SYSTEM["player"].immune.append(proj)
                 elif isinstance(proj, Slash):
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature)
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
@@ -57,16 +54,13 @@ def check_collisions():
             for enemy in ENNEMY_TRACKER.copy():
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):
                     if proj in enemy.immune:
-                        return
+                        continue
                     if isinstance(proj, Projectile):
-                        dmg, crit = enemy.creature.damage(proj.damage)
+                        dmg, crit = proj.on_hit(enemy.creature)
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
-                        if Flags.PIERCING not in proj.behaviours:
-                            proj.flag()
-                        else:
-                            enemy.immune.append(proj)
+                        enemy.immune.append(proj)
                     elif isinstance(proj, Slash):
                         dmg, crit = proj.on_hit(enemy.creature)
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\

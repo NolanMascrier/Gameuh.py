@@ -43,7 +43,7 @@ class Spell():
         will inflict. Defaults to `[]`.
     """
     def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,\
-                 bounces = 0, delay = 0, distance = 0,\
+                 bounces = 0, delay = 0, distance = 0, chains = 0,\
                  cooldown = 0.1, projectiles = 1, flags = None, afflictions = None):
         self._name = name
         self._icon = icon
@@ -57,7 +57,8 @@ class Spell():
             "delay": Stat(delay, "delay"),
             "cooldown": Stat(cooldown, "cooldown"),
             "projectiles": Stat(projectiles, "projectiles"),
-            "distance": Stat(distance, "distance")
+            "distance": Stat(distance, "distance"),
+            "chains": Stat(chains, "chains")
         }
         self._cooldown = 0
         if flags is None or not isinstance(flags, list):
@@ -167,6 +168,7 @@ class Spell():
                                       self._base_damage, caster, evil,\
                                       delay=self._stats["delay"].c_value * (i + 1),\
                                       bounces=self._stats["bounces"].c_value, \
+                                      chains=self._stats["chains"].c_value, \
                                       behaviours=self._flags, caster=entity)
                     PROJECTILE_TRACKER.append(proj)
             elif Flags.SPREAD in self._flags:
@@ -175,6 +177,7 @@ class Spell():
                                       self._attack_anim, self._base_damage, caster, evil,\
                                       delay=self._stats["delay"].c_value,\
                                       bounces=self._stats["bounces"].c_value, \
+                                      chains=self._stats["chains"].c_value, \
                                       behaviours=self._flags, caster=entity)
                     PROJECTILE_TRACKER.append(proj)
                 else:
@@ -184,6 +187,7 @@ class Spell():
                                         self._attack_anim, self._base_damage, caster, evil,\
                                         delay=self._stats["delay"].c_value * (i + 1),\
                                         bounces=self._stats["bounces"].c_value, \
+                                          chains=self._stats["chains"].c_value, \
                                         behaviours=self._flags, caster=entity)
                         PROJECTILE_TRACKER.append(proj)
         if Flags.BUFF in self._flags:

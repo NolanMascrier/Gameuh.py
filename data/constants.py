@@ -348,6 +348,7 @@ class Flags(str, Enum):
     PROJECTILE = "projectile"
     BOUNCE = "bounce"
     CURVE = "curve"
+    CHAINS = "chains"
     ACCELERATE = "accelerate"
     DELAYED = "delayed"
     PIERCING = "piercing"
@@ -355,6 +356,8 @@ class Flags(str, Enum):
     TRACK_LOOSE = "tracking_loose"
     AIMED_AT_PLAYER = "aimed_at_player"
     AIMED_AT_MOUSE = "aimed_at_mouse"
+    AIMED_AT_CLOSEST = "aimed_at_closest"
+    HARD_TRACKING = "hard_tracking"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"
