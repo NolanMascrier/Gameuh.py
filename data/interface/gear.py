@@ -32,14 +32,25 @@ def equip(item: Item, slot: Slot):
     for f in lst:
         STAT_LIST[f] = lst[f]
 
+def overwrite_gear(item: Item, slot: Slot):
+    """Overwrites the item in the slot."""
+    if item is None:
+        return
+    it = SYSTEM["player"].creature.unequip(slot.flag, slot.left)
+    if it is not None:
+        SYSTEM["player"].inventory.append(it)
+        SYSTEM["gear_panel"].insert(None, None, it)
+    lst = SYSTEM["player"].creature.generate_stat_details(True)
+    for f in lst:
+        STAT_LIST[f] = lst[f]
+
 def unequip(item: Item, slot: Slot):
     """Removes the equiped item from the slot."""
     if item is None:
         return
     it = SYSTEM["player"].creature.unequip(slot.flag, slot.left)
-    SYSTEM["player"].inventory.append(it)
-    if SYSTEM["dragged"] is None:
-        SYSTEM["gear_panel"].insert(None, None, it)
+    if it is not None:
+        SYSTEM["player"].inventory.append(it)
     lst = SYSTEM["player"].creature.generate_stat_details(True)
     for f in lst:
         STAT_LIST[f] = lst[f]
@@ -52,27 +63,27 @@ def open_gear_screen():
     SYSTEM["gear_tabs"] = Tabs(15, 200, STATES, STATES, "gear_tab")
     x = SCREEN_WIDTH / 2- 32
     y = SCREEN_HEIGHT / 2 - 128
-    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip,\
+    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip, overwrite_gear,\
          Flags.HELM, SYSTEM["player"].creature.gear["helms"])
-    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip, unequip,\
+    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip, unequip, overwrite_gear,\
          Flags.AMULET, SYSTEM["player"].creature.gear["amulets"])
-    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip, unequip,\
+    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip, unequip, overwrite_gear,\
          Flags.ARMOR, SYSTEM["player"].creature.gear["armors"])
-    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip,\
+    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip, overwrite_gear,\
          Flags.WEAPON, SYSTEM["player"].creature.gear["weapons"])
-    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip,\
+    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip, overwrite_gear,\
          Flags.RING, SYSTEM["player"].creature.gear["rings"]["left"], True)
-    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip,\
+    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip, overwrite_gear,\
          Flags.RING, SYSTEM["player"].creature.gear["rings"]["right"])
-    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip,\
+    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip, overwrite_gear,\
          Flags.OFFHAND, SYSTEM["player"].creature.gear["offhand"])
-    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip, unequip,\
+    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip, unequip, overwrite_gear,\
          Flags.HANDS, SYSTEM["player"].creature.gear["gloves"])
-    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip, unequip,\
+    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip, unequip, overwrite_gear,\
          Flags.RELIC, SYSTEM["player"].creature.gear["relics"])
-    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip, unequip,\
+    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip, unequip, overwrite_gear,\
          Flags.BELT, SYSTEM["player"].creature.gear["belts"])
-    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip,\
+    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip, overwrite_gear,\
          Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=SYSTEM["player"].inventory)
     lst = SYSTEM["player"].creature.generate_stat_details()

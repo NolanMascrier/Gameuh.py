@@ -23,6 +23,9 @@ class Slot():
         is emptied. The function will need to take two\
         arguments, which is the `contains` field of the\
         draggable and the slot. Defaults to None.
+        on_remove(function, optionnal): Function to call when inserting\
+        a draggable into the slot while there's already something in here.\
+        Defaults to None.
         flags (list, optionnal): List of flags. Used for internal\
         logic. Defaults to [].
         default (Any, optionnal): Default containable of the slot.\
@@ -35,7 +38,8 @@ class Slot():
         taking the content will NOT remove it from the slot. Defualts to `False`.
     """
     def __init__(self, x, y, back_image = None, on_slot = None,\
-        on_remove = None, flag = None, default = None, left = False, immutable = False):
+        on_remove = None, on_overwrite = None,\
+        flag = None, default = None, left = False, immutable = False):
         if back_image is None:
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
@@ -46,6 +50,7 @@ class Slot():
         self._contains = None
         self._on_slot = on_slot
         self._on_remove = on_remove
+        self._on_overwrite = on_overwrite
         self._flag = flag
         self._left = left
         self._immutable = immutable
@@ -59,7 +64,7 @@ class Slot():
         """Insert a draggable inside the slot."""
         SYSTEM["dragged"] = None
         if self._contains is not None:
-            self.remove()
+            self.overwrite()
         old = self._contains
         self._contains = draggable
         draggable.dragging = False
@@ -67,6 +72,16 @@ class Slot():
         draggable.set_parent(self)
         if self._on_slot is not None:
             self._on_slot(draggable.contains, self)
+        return old
+
+    def overwrite(self):
+        """Calls the overwriting function."""
+        old = self._contains
+        if self._contains is not None:
+            self._contains.clear_parent()
+        if self._on_overwrite is not None:
+            self._on_overwrite(old, self)
+        self._contains = None
         return old
 
     def remove(self):

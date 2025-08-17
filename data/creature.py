@@ -532,9 +532,8 @@ class Creature:
                 continue
             if s in DAMAGE_STAT or sub_s in DAMAGE_STAT:
                 if only_changed and s in IGNORE_STAT:
-                    print(f"s {s}, sub s {sub_s}")
                     s = sub_s
-                elmt = s[:len(s) - 4]
+                elmt = s[:s.find('_')]
                 name = Hoverable(0, 0, trad('descripts', f"{elmt}_tab"), trad(elmt))
                 flat, flat_value = self._stats[f"{elmt}_flat"].describe(False, True)
                 dmg, dmg_value = self._stats[f"{elmt}_dmg"].describe(True, True)
