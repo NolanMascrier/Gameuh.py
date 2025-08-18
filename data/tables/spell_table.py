@@ -29,6 +29,7 @@ def generate_spell_list():
     fury_icon = Image("icons/furyslash.png").scale(64, 64)
     SYSTEM["images"]["firebolt_proj_img"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["icebolt_proj_img"] = Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
+    SYSTEM["images"]["icebolt_proj_img2"] = Animation("icespear.png", 24, 9, frame_rate=0.1, loops=False).scale(36, 96)
     SYSTEM["images"]["voidbolt_proj_img"] = Animation("pew.png", 13, 13, frame_rate=0.25)
     SYSTEM["images"]["darkbolt_img"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["furyslash_img"] = Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(58, 40)
@@ -36,6 +37,7 @@ def generate_spell_list():
     firebolt = Spell("firebolt", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     firebolt2 = Spell("firebolt2", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.ICE, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
+    icebolt2 = Spell("icebolt2", icebolt_icon, "icebolt_proj_img2", ICEBOLT, 5, cooldown=0.25, projectiles=3, flags=[Flags.ICE, Flags.SPREAD, Flags.PROJECTILE, Flags.TRIGGER, Flags.TRIGGER_ON_CRIT], spread=30)
     voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     voidolt2 = Spell("voidbolt2", voidbolt_icon, "darkbolt_img", VOIDBOLT, 3, cooldown=0.35, projectiles=1, chains=3, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS])
     elementalfury = Spell("elefury", elefury_icon, None, None, 20, cooldown=60, flags=[Flags.BUFF], afflictions=[ELEFURY])
@@ -46,6 +48,7 @@ def generate_spell_list():
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
+    SYSTEM["spells"]["icebolt2"] = icebolt2
     SYSTEM["spells"]["voidbolt"] = voidolt
     SYSTEM["spells"]["voidbolt2"] = voidolt2
     SYSTEM["spells"]["elefury"] = elementalfury

@@ -43,7 +43,7 @@ class Spell():
         will inflict. Defaults to `[]`.
     """
     def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,\
-                 bounces = 0, delay = 0, distance = 0, chains = 0,\
+                 bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,\
                  cooldown = 0.1, projectiles = 1, flags = None, afflictions = None):
         self._name = name
         self._icon = icon
@@ -58,7 +58,8 @@ class Spell():
             "cooldown": Stat(cooldown, "cooldown"),
             "projectiles": Stat(projectiles, "projectiles"),
             "distance": Stat(distance, "distance"),
-            "chains": Stat(chains, "chains")
+            "chains": Stat(chains, "chains"),
+            "spread": Stat(spread, "spread")
         }
         self._cooldown = 0
         if flags is None or not isinstance(flags, list):
@@ -145,7 +146,32 @@ class Spell():
         }
         return data
 
+    def on_hit(self, value):
+        """Called when the creature is hit."""
+
+    def on_crit(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
+        """Called when the creature crits."""
+        if Flags.TRIGGER_ON_CRIT in self._flags:
+            self.on_cast(caster, entity, evil, aim_right, force)
+
+    def on_dodge(self):
+        """Called when the creature dodges."""
+
+    def on_block(self):
+        """Called when the creature blocks."""
+
+    def on_damage(self, value):
+        """Called when the creature inflicts damage."""
+
     def cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
+        """Launches the spell."""
+        if Flags.AURA in self._flags:
+            return
+        if Flags.TRIGGER in self._flags:
+            return
+        self.on_cast(caster, entity, evil, aim_right, force)
+
+    def on_cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
         """Shoots the spell."""
         mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
         life_cost = caster.get_efficient_value(self._stats["life_cost"].c_value)
@@ -181,7 +207,7 @@ class Spell():
                                       behaviours=self._flags, caster=entity)
                     PROJECTILE_TRACKER.append(proj)
                 else:
-                    spread = 90 / self._stats["projectiles"].c_value
+                    spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
                         proj = Projectile(entity.center[0], entity.center[1], -45 + spread * i,\
                                         self._attack_anim, self._base_damage, caster, evil,\

@@ -113,6 +113,16 @@ class HitBox():
         self._height = value
 
     @property
+    def center_x(self):
+        """Returns the x position of the box's center."""
+        return self.left + (self._width / 2)
+
+    @property
+    def center_y(self):
+        """Returns the x position of the box's center."""
+        return self.top + (self._height / 2)
+
+    @property
     def center(self):
         """Returns the x;y position of the box's
         center."""

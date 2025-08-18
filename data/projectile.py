@@ -33,8 +33,8 @@ class Projectile():
             if closest is None:
                 self._angle = 0
             else:
-                self._angle = 90 - atan2(closest.entity.hitbox.x - x,\
-                    closest.entity.hitbox.y - y) * 180 / pi
+                self._angle = 90 - atan2(closest.entity.hitbox.center_x - x,\
+                    closest.entity.hitbox.center_y - y) * 180 / pi
                 self._target = closest
         self._length = width
         self._height = height
@@ -85,6 +85,8 @@ class Projectile():
     def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
         """Called when the projectile hits a target."""
         if target not in self._immune:
+            if Flags.CHAINS in self.behaviours:
+                self._immune.clear()
             dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
             self._immune.append(target)
@@ -116,14 +118,14 @@ class Projectile():
         if Flags.CHAINS in self._behaviours and self._bounced and self._chains > 0:
             self._bounced = False
             self._chains -= 1
-            closest = SYSTEM["level"].closest_enemy(self._target)
+            closest = SYSTEM["level"].closest_from(self._box, self._target)
             if closest is None:
                 self._angle = numpy.random.randint(0, 361)
             else:
-                self._angle = atan2(SYSTEM["player.x"] - closest.entity.hitbox.x,\
-                    SYSTEM["player.y"] - closest.entity.hitbox.y) * 180 / pi
+                self._angle = 90 - atan2(closest.entity.hitbox.center_x - self._box.center_x,\
+                    closest.entity.hitbox.center_y - self._box.center_y) * 180 / pi
                 self._target = closest
-        if self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
+        elif self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
             self._flagged = True
         elif self.can_be_destroyed():
             self._bounces -= 1

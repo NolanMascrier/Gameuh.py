@@ -28,12 +28,16 @@ class Creature:
     and attacked.
     
     Args:
-        name (str): Name of the creature."""
-    def __init__(self, name):
+        name (str): Name of the creature.
+        origin (Character|Enemy): Links to the creature's user.\
+        Used for triggers. Default to None.
+    """
+    def __init__(self, name, origin = None):
         self._name = name
         self._level = 1
         self._exp = 0
         self._exp_to_next = 1000
+        self._origin = origin
         self._life_regen = Stat(0, "life_regen")
         self._mana_regen = Stat(0.001, "life_regen", precision=4)
         self._stats = {
@@ -242,10 +246,12 @@ class Creature:
         if not damage_source.ignore_dodge:
             roll = random.uniform(0, 1)
             if roll <= self.__get_dodge_chance(damage_source.origin.stats["precision"].get_value()):
+                self.on_dodge()
                 return "Dodged !", False
         if not damage_source.ignore_block:
             roll = random.uniform(0, 1)
             if roll <= self._stats["block"].get_value():
+                self.on_block()
                 return "Blocked !", False
         for dmg_type in dmg:
             dmga = float(dmg[dmg_type]) * mitig
@@ -253,6 +259,7 @@ class Creature:
             damage += dmga * (1 - res)
         if damage_source.is_crit:
             SYSTEM["post_effects"].flash(WHITE, 5)
+            damage_source.origin.on_crit()
             crit = damage_source.crit_mult * (1 - self._stats["crit_res"].get_value())
             if crit > 0:
                 damage *= crit
@@ -268,6 +275,8 @@ class Creature:
             self._stats["mana"].modify(-mana_dmg)
         else:
             self._stats["life"].modify(-damage)
+        damage_source.origin.on_damage(damage)
+        self.on_hit(damage)
         return round(damage, 2), damage_source.is_crit
 
     def heal(self, amount: float):
@@ -280,6 +289,7 @@ class Creature:
         """
         value = amount * self._stats["heal_factor"].get_value()
         self._stats["life"].modify(value)
+        self.on_heal(value)
 
     def consume_mana(self, cost: float):
         """Comsumes mana from a creature. Consumed mana is\
@@ -501,6 +511,40 @@ class Creature:
                 self.remove_affliction(affix.as_affliction())
         self.__get_bonuses_from_stat()
         return item
+
+    #Triggers
+
+    def on_hit(self, value):
+        """Called when the creature is hit."""
+        if self._origin is not None:
+            self._origin.on_hit(value)
+
+    def on_crit(self):
+        """Called when the creature crits."""
+        if self._origin is not None:
+            self._origin.on_crit()
+
+    def on_dodge(self):
+        """Called when the creature dodges."""
+        if self._origin is not None:
+            self._origin.on_dodge()
+
+    def on_block(self):
+        """Called when the creature blocks."""
+        if self._origin is not None:
+            self._origin.on_block()
+
+    def on_damage(self, value):
+        """Called when the creature inflicts damage."""
+        if self._origin is not None:
+            self._origin.on_damage(value)
+
+    def on_heal(self, value):
+        """Called when the creature heals."""
+        if self._origin is not None:
+            self._origin.on_heal(value)
+
+    #Metadata for importing and exporting
 
     def import_stackblock(self, statblock: dict):
         """Import a statblock and replace current

@@ -251,6 +251,7 @@
         "firebolt": "Firebolt",
         "firebolt2": "Also Firebolt",
         "icebolt": "Ice Spears",
+        "icebolt2": "Spear Storm",
         "elefury": "Elemental Fury",
         "wdash": "Wind Dash",
         "fslash": "Fury Slash"
@@ -262,6 +263,7 @@
         "firebolt": "Shoot a firebolt toward the mouse, dealing \nfire damage.",
         "firebolt2": "Kinda like firebolt but not quite so ...",
         "icebolt": "Creates a barrage of ice spears that deals\nmajor ice damage in a straight line,\npiercing enemies.",
+        "icebolt2": "This spell cannot be cast.\nUpon inflicting a critical hit, release a flurry of ice spears.",
         "elefury": "Unleash the fury of the elements, increasing\nelemental damage dealt.",
         "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",
         "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage."

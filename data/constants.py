@@ -365,6 +365,9 @@ class Flags(str, Enum):
     BUFF = "buff"
     DEBUFF = "debuff"
     DASH = "dash"
+    AURA = "aura"
+    TRIGGER = "triggered"
+    TRIGGER_ON_CRIT = "trigger_on_crit"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
     #Flags for ennemies

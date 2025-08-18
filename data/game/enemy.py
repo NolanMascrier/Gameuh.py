@@ -82,6 +82,24 @@ class Enemy():
         dy = player.y - self.y
         return dx*dx + dy*dy
 
+    def on_hit(self, value):
+        """Called when the creature is hit."""
+
+    def on_crit(self):
+        """Called when the creature crits."""
+
+    def on_dodge(self):
+        """Called when the creature dodges."""
+
+    def on_block(self):
+        """Called when the creature blocks."""
+
+    def on_damage(self, value):
+        """Called when the creature inflicts damage."""
+
+    def on_heal(self, value):
+        """Called when the creature heals."""
+
     def tick(self, player):
         """Ticks down the entity."""
         if self._exploded:

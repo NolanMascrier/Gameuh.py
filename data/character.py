@@ -4,14 +4,10 @@ import json
 from math import atan2
 from data.constants import *
 from data.tables.spell_table import *
-from data.generator import Generator
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
-from data.image.animation import Animation
 from data.item import Item
-from data.projectile import Projectile
-from data.slash import Slash
 
 KEY_TYPE = {
     0: "spell_1",
@@ -38,7 +34,7 @@ class Character():
         else:
             box = HitBox(x, y, SYSTEM["images"][imagefile].width / 3, SYSTEM["images"][imagefile].height / 1.3)
         self._entity = Entity(x, y, imagefile, box, speed)
-        self._creature = Creature("hero")
+        self._creature = Creature("hero", self)
         self._cooldown = 0
         self._max_cooldown = 2
         self._base_speed = speed
@@ -57,6 +53,7 @@ class Character():
             "voidbolt",
             "voidbolt2",
             "icebolt",
+            "icebolt2",
             "elefury",
             "furyslash",
             "winddash",
@@ -113,6 +110,25 @@ class Character():
         if self._equipped_spells[key] is not None:
             SYSTEM["spells"][self._equipped_spells[key]]\
                 .cast(self._creature, self._entity, False)
+
+    def on_hit(self, value):
+        """Called when the creature is hit."""
+
+    def on_crit(self):
+        """Called when the creature crits."""
+        for key in self._equipped_spells:
+            if self._equipped_spells[key] is not None:
+                SYSTEM["spells"][self._equipped_spells[key]]\
+                    .on_crit(self._creature, self._entity, False)
+
+    def on_dodge(self):
+        """Called when the creature dodges."""
+
+    def on_block(self):
+        """Called when the creature blocks."""
+
+    def on_damage(self, value):
+        """Called when the creature inflicts damage."""
 
     def __move(self, dx, dy):
         """Moves the character by dx, dy."""

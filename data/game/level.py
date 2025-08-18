@@ -95,8 +95,8 @@ class Level():
 
     def distance_to_player(self, player, hitbox):
         """Returns the distance from the hitbox to the player."""
-        dx = player.x - hitbox.x
-        dy = player.y - hitbox.y
+        dx = player.center_x - hitbox.center_x
+        dy = player.center_y - hitbox.center_y
         return dx*dx + dy*dy
 
     def closest_enemy(self, exclude: Enemy = None):
@@ -112,6 +112,19 @@ class Level():
                 enemy = e
         return enemy
 
+    def closest_from(self, origin: HitBox, exclude: Enemy = None):
+        """Returns the closest enemy from the origin."""
+        dist = 99999999999999
+        enemy = None
+        for e in ENNEMY_TRACKER:
+            if exclude is not None and e == exclude:
+                continue
+            dist_tmp = self.distance_to_player(origin, e.entity.hitbox)
+            if dist_tmp < dist:
+                dist = dist_tmp
+                enemy = e
+        return enemy
+        
     @property
     def name(self) -> str:
         """Returns the level's name."""
