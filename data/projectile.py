@@ -16,7 +16,7 @@ class Projectile():
                 evil = False, width = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
-                behaviours = None):
+                behaviours = None, debuffs = None):
         self._x = x
         self._y = y
         self._speed = speed
@@ -53,6 +53,10 @@ class Projectile():
             self._behaviours = []
         else:
             self._behaviours = behaviours
+        if debuffs is None or not isinstance(debuffs, list):
+            self._debuffs = []
+        else:
+            self._debuffs = debuffs
         #for delayed casts
         self._caster = caster
         if caster is not None:
@@ -93,6 +97,11 @@ class Projectile():
             self._bounced = True
             if self._bounces <= 0 and self._chains <= 0:
                 self._flagged = True
+            if num != "Dodged !":
+                for debuff in self._debuffs:
+                    if debuff.damage is not None:
+                        debuff.damage.origin = self._origin
+                    target.afflict(debuff)
             return num, crit
         return (None, None)
 
@@ -120,7 +129,7 @@ class Projectile():
             self._chains -= 1
             closest = SYSTEM["level"].closest_from(self._box, self._target)
             if closest is None:
-                self._angle = numpy.random.randint(0, 361)
+                self._flagged = True
             else:
                 self._angle = 90 - atan2(closest.entity.hitbox.center_x - self._box.center_x,\
                     closest.entity.hitbox.center_y - self._box.center_y) * 180 / pi

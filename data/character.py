@@ -41,7 +41,7 @@ class Character():
         self._potions = [3, 3]
         self._equipped_spells = {
             "spell_1": "firebolt",
-            "spell_2": "voidbolt2",
+            "spell_2": "arc",
             "spell_3": "icebolt",
             "spell_4": "elefury",
             "spell_5": "furyslash",
@@ -51,9 +51,9 @@ class Character():
         self._spellbook = [
             "firebolt",
             "voidbolt",
-            "voidbolt2",
+            "arc",
             "icebolt",
-            "icebolt2",
+            "exult",
             "elefury",
             "furyslash",
             "winddash",
@@ -105,21 +105,21 @@ class Character():
         elif SYSTEM["mouse"][0] > self.entity.center[0] and self.entity.flipped:
             self.entity.flipped = False
 
-    def __cast(self, key):
-        """Cast a spell from the corresponding key."""
-        if self._equipped_spells[key] is not None:
-            SYSTEM["spells"][self._equipped_spells[key]]\
-                .cast(self._creature, self._entity, False)
+    def __cast(self, keys):
+        """Cast a spell from the corresponding keys."""
+        if self._equipped_spells[keys] is not None:
+            SYSTEM["spells"][self._equipped_spells[keys]]\
+                .cast(self._creature, self._entity, False, self._entity.flipped)
 
     def on_hit(self, value):
         """Called when the creature is hit."""
 
     def on_crit(self):
         """Called when the creature crits."""
-        for key in self._equipped_spells:
-            if self._equipped_spells[key] is not None:
-                SYSTEM["spells"][self._equipped_spells[key]]\
-                    .on_crit(self._creature, self._entity, False)
+        for keys in self._equipped_spells:
+            if self._equipped_spells[keys] is not None:
+                SYSTEM["spells"][self._equipped_spells[keys]]\
+                    .on_crit(self._creature, self._entity, False, self._entity.flipped)
 
     def on_dodge(self):
         """Called when the creature dodges."""

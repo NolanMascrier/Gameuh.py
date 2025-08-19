@@ -4,6 +4,7 @@ a name, a value, a duration, flags."""
 import json
 from data.constants import SYSTEM, trad, META_FLAGS, Flags
 from data.image.hoverable import Hoverable
+from data.numerics.damage import Damage
 
 class Affliction():
     """Defines an affliction. An affliction is a temporary \
@@ -20,9 +21,10 @@ class Affliction():
         is stackable. Defaults to `False`.
         refreshable (bool, optionnal): Wether or not the affliction\
         refreshes on getting a stack. Defaults to `False`.
+        damage (Damage, optionnal): Damage applied each tick.
     """
     def __init__(self, name, value, duration = 1, flags: list = None, stackable = False,\
-                 refreshable = False):
+                 refreshable = False, damage: Damage = None):
         self._name = name
         self._value = value
         self._duration = duration
@@ -33,16 +35,7 @@ class Affliction():
         self._expire = duration != -1
         self._stackable = stackable
         self._refreshable = refreshable
-
-    @DeprecationWarning
-    def get(self):
-        """Returns the affliction as a list to use \
-        in Stats and ressources.
-
-        Returns:
-            list : Formatted affliction.
-        """
-        return [self._name, self._value, self._duration]
+        self._damage = damage
 
     def tick(self):
         """Ticks down the timer.
@@ -58,7 +51,8 @@ class Affliction():
             self._duration,
             self._flags,
             self._stackable,
-            self._refreshable
+            self._refreshable,
+            self._damage
         )
 
     def __str__(self):
@@ -97,7 +91,8 @@ class Affliction():
             "duration": self._duration,
             "flags": self._flags,
             "stackable": self._stackable,
-            "refreshable": self._refreshable
+            "refreshable": self._refreshable,
+            "dot": self._damage.export() if self._damage is not None else None
         }
         return json.dumps(data)
 
@@ -110,7 +105,8 @@ class Affliction():
             float(data["duration"]),
             [Flags(f) for f in data["flags"]],
             bool(data["stackable"]),
-            bool(data["refreshable"])
+            bool(data["refreshable"]),
+            Damage.imports(json.loads(data["dot"])) if data["dot"] is not None else None
         )
 
     @property
@@ -166,6 +162,15 @@ class Affliction():
     @refreshable.setter
     def refreshable(self, value):
         self._refreshable = value
+
+    @property
+    def damage(self):
+        """Returns the affliction's damage."""
+        return self._damage
+
+    @damage.setter
+    def damage(self, value):
+        self._damage = value
 
     @property
     def expired(self):

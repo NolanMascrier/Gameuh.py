@@ -237,21 +237,23 @@
     "affliction_name":{
         "elemetal_fury": "Elemental Fury",
         "fury": "Fury slash",
-        "celerity": "Celerity"
+        "celerity": "Celerity",
+        "bleed": "Bleed"
     },
     "affliction_desc":{
         "elemetal_fury": "Grants 35% more elemental damage.",
         "fury": "Grants 15% more physical damage. This effect can stack.",
-        "celerity": "Grants 300% increased move speed."
+        "celerity": "Grants 300% increased move speed.",
+        "bleed": "Inflicts physical damage every seconds that ignores defenses."
     },
     "spells_name": {
         "none": "Nothing",
         "voidbolt": "Voidbolt",
-        "voidbolt2": "Tracking Voidbolt",
+        "arc": "Arc",
         "firebolt": "Firebolt",
         "firebolt2": "Also Firebolt",
         "icebolt": "Ice Spears",
-        "icebolt2": "Spear Storm",
+        "exult": "Exultation",
         "elefury": "Elemental Fury",
         "wdash": "Wind Dash",
         "fslash": "Fury Slash"
@@ -259,11 +261,11 @@
     "spells_desc": {
         "none": "No spell equipped.",
         "voidbolt": "Shoot a flurry of void spheres, dealing\nminor void damage.",
-        "voidbolt2": "Shoot a tracking void spheres, dealing\nminor void damage and chains 3 times.",
+        "arc": "Release a seeking lightning bolt,\ndealing minor thunder damage and chaining 3 times.",
         "firebolt": "Shoot a firebolt toward the mouse, dealing \nfire damage.",
         "firebolt2": "Kinda like firebolt but not quite so ...",
         "icebolt": "Creates a barrage of ice spears that deals\nmajor ice damage in a straight line,\npiercing enemies.",
-        "icebolt2": "This spell cannot be cast.\nUpon inflicting a critical hit, release a flurry of ice spears.",
+        "exult": "This spell cannot be cast.\nUpon inflicting a critical hit, release a bloody shockwave.",
         "elefury": "Unleash the fury of the elements, increasing\nelemental damage dealt.",
         "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",
         "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage."

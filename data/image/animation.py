@@ -114,6 +114,8 @@ class Animation():
         self._scaled = (height, width)
         for frame in self._sequence:
             frame.scale(height, width)
+        self._frame_x = width
+        self._frame_y = height
         return self
 
     def flip(self, vertical: bool, horizontal: bool):

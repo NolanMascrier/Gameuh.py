@@ -44,7 +44,8 @@ class Spell():
     """
     def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,\
                  bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,\
-                 cooldown = 0.1, projectiles = 1, flags = None, afflictions = None):
+                 cooldown = 0.1, projectiles = 1, flags = None, afflictions = None,\
+                 debuffs = None, offset_x = 0, offset_y = 0):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -66,12 +67,16 @@ class Spell():
             self._flags = []
         else:
             self._flags = flags
-
         if afflictions is None or not isinstance(afflictions, list):
             self._afflictions = []
         else:
             self._afflictions = afflictions
+        if debuffs is None or not isinstance(debuffs, list):
+            self._debuffs = []
+        else:
+            self._debuffs = debuffs
         self._surface = None
+        self._offset = (offset_x, offset_y)
         self.generate_surface()
 
     def generate_surface(self):
@@ -129,8 +134,8 @@ class Spell():
             for afflic in self._afflictions:
                 buffs.append(afflic.describe(True))
         if Flags.DEBUFF in self._flags:
-            for afflic in self._afflictions:
-                buffs.append(afflic.describe(True))
+            for afflic in self._debuffs:
+                buffs.append(afflic.describe(False))
         if Flags.CUTS_PROJECTILE in self._flags:
             buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, (0,0,0)))
         return buffs
@@ -195,7 +200,7 @@ class Spell():
                                       delay=self._stats["delay"].c_value * (i + 1),\
                                       bounces=self._stats["bounces"].c_value, \
                                       chains=self._stats["chains"].c_value, \
-                                      behaviours=self._flags, caster=entity)
+                                      behaviours=self._flags, caster=entity, debuffs=self._debuffs)
                     PROJECTILE_TRACKER.append(proj)
             elif Flags.SPREAD in self._flags:
                 if self._stats["projectiles"].c_value == 1:
@@ -204,7 +209,7 @@ class Spell():
                                       delay=self._stats["delay"].c_value,\
                                       bounces=self._stats["bounces"].c_value, \
                                       chains=self._stats["chains"].c_value, \
-                                      behaviours=self._flags, caster=entity)
+                                      behaviours=self._flags, caster=entity, debuffs=self._debuffs)
                     PROJECTILE_TRACKER.append(proj)
                 else:
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
@@ -213,8 +218,8 @@ class Spell():
                                         self._attack_anim, self._base_damage, caster, evil,\
                                         delay=self._stats["delay"].c_value * (i + 1),\
                                         bounces=self._stats["bounces"].c_value, \
-                                          chains=self._stats["chains"].c_value, \
-                                        behaviours=self._flags, caster=entity)
+                                        chains=self._stats["chains"].c_value, \
+                                        behaviours=self._flags, caster=entity, debuffs=self._debuffs)
                         PROJECTILE_TRACKER.append(proj)
         if Flags.BUFF in self._flags:
             for afflic in self._afflictions:
@@ -225,7 +230,7 @@ class Spell():
             entity.dash(self._stats["distance"].c_value)
         if Flags.MELEE in self._flags:
             sl = Slash(entity, caster, self._attack_anim, self._base_damage,\
-                       aim_right, evil, self._flags)
+                       aim_right, evil, self._flags, self._offset[0], self._offset[1], debuffs=self._debuffs)
             PROJECTILE_TRACKER.append(sl)
 
     def export(self) -> str:

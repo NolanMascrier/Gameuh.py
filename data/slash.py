@@ -10,22 +10,30 @@ from data.constants import PROJECTILE_GRID, Flags, SYSTEM
 
 class Slash():
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
-                damage:Damage, aim_right = True, evil = False, flags = None):
+                damage:Damage, aim_right = True, evil = False, flags = None,\
+                offset_x = 0, offset_y = 0, debuffs = None):
         self._caster = caster
         self._origin = origin
         self._image = animation
         self._damage = damage
         self._evil = evil
-        self._hitbox = HitBox(caster.x, caster.y, SYSTEM["images"][self._image].height *2,\
-            SYSTEM["images"][self._image].width * 2)
+        self._hitbox = HitBox(caster.x, caster.y, SYSTEM["images"][self._image].width,\
+            SYSTEM["images"][self._image].height)
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
             self._flags = flags
         self._finished = False
         self._aim_right = aim_right
+        if not aim_right:
+            offset_y *= -1
         self._immune = []
         self._animation_state = [0, False]
+        self._offset = (offset_x, offset_y)
+        if debuffs is None or not isinstance(debuffs, list):
+            self._debuffs = []
+        else:
+            self._debuffs = debuffs
 
     def get_image(self):
         """Returns the slash image."""
@@ -33,17 +41,15 @@ class Slash():
 
     def get_pos(self):
         """Returns the slash's position."""
-        if self._aim_right:
-            return (self._caster.right + 30, self._caster.y)
-        return (self._caster.x - 30 - SYSTEM["images"][self._image].width, self._caster.y)
+        x, y = self._caster.hitbox.center
+        cx, cy = self._hitbox.width / 2, self._hitbox.height / 2
+        return (x - cx + self._offset[0], y - cy + self._offset[1])
 
     def tick(self):
         """Ticks down the slash."""
         SYSTEM["images"][self._image].tick(self._animation_state)
-        if self._aim_right:
-            self._hitbox.move((self._caster.right + 30, self._caster.y))
-        else:
-            self._hitbox.move((self._caster.x - 30 - SYSTEM["images"][self._image].width, self._caster.y))
+        x, y = self.get_pos()
+        self._hitbox.move((x, y))
         if self._animation_state[1]:
             self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
@@ -59,6 +65,11 @@ class Slash():
         if target not in self._immune:
             dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
+            if num != "Dodged !":
+                for debuff in self._debuffs:
+                    if debuff.damage is not None:
+                        debuff.damage.origin = self._origin
+                    target.afflict(debuff)
             self._immune.append(target)
             return num, crit
         return (None, None)

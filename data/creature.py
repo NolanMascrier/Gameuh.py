@@ -126,6 +126,7 @@ class Creature:
             }
         }
         self._buffs = []
+        self._dots = 0
         self._changed = set()
         self._ap = 5
         self.__get_bonuses_from_stat()
@@ -420,8 +421,14 @@ class Creature:
             buff.tick()
             if buff.expired:
                 self._buffs.remove(buff)
+            elif self._dots <= 0 and buff.damage is not None:
+                self.damage(buff.damage)
         for stat in self._stats:
             self._stats[stat].tick()
+        if self._dots > 0:
+            self._dots -= 0.016
+        else:
+            self._dots = 1
 
     def on_level_up(self):
         """Grants the creature a level, one ap (up to
