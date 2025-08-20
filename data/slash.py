@@ -69,7 +69,7 @@ class Slash():
                 for debuff in self._debuffs:
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
-                    target.afflict(debuff)
+                    target.afflict(debuff.clone(), True)
             self._immune.append(target)
             return num, crit
         return (None, None)

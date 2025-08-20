@@ -3,7 +3,6 @@
 import random
 import numpy
 from math import atan2, pi
-from math import cos, sin, radians
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.numerics.damage import Damage
 from data.creature import Creature
@@ -23,17 +22,17 @@ class Projectile():
         self._angle = angle
         self._target = None
         if Flags.AIMED_AT_PLAYER in behaviours:
-            self._angle = 90 - atan2(SYSTEM["player.x"] - x,\
+            self._angle = 90 - numpy.atan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
         if Flags.AIMED_AT_MOUSE in behaviours:
-            self._angle = 90 - atan2(SYSTEM["mouse"][0] - x,\
+            self._angle = 90 - numpy.atan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
         if Flags.AIMED_AT_CLOSEST in behaviours:
             closest = SYSTEM["level"].closest_enemy()
             if closest is None:
                 self._angle = 0
             else:
-                self._angle = 90 - atan2(closest.entity.hitbox.center_x - x,\
+                self._angle = 90 - numpy.atan2(closest.entity.hitbox.center_x - x,\
                     closest.entity.hitbox.center_y - y) * 180 / pi
                 self._target = closest
         self._length = width
@@ -101,7 +100,7 @@ class Projectile():
                 for debuff in self._debuffs:
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
-                    target.afflict(debuff)
+                    target.afflict(debuff.clone(), True)
             return num, crit
         return (None, None)
 

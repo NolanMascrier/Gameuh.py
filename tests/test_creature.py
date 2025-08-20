@@ -18,13 +18,13 @@ def print_gear(c: Creature):
 class TestingCreatureDamage(unittest.TestCase):
     def test_damage(self):
         bob = Creature("Bob")
-        fireball = Damage(10, fire=1, origin=bob, upper_bound=1, lower_bound=1)
+        fireball = Damage(1, fire=10, origin=bob, upper_bound=1, lower_bound=1)
         bob.damage(fireball)
         self.assertEqual(bob.stats["life"].current_value, 90.0)
     
     def test_damage_penetrative(self):
         bob = Creature("Bob")
-        fireball = Damage(10, fire=1, fp=0.5, origin=bob, upper_bound=1, lower_bound=1)
+        fireball = Damage(1, fire=10, fp=0.5, origin=bob, upper_bound=1, lower_bound=1)
         bob.damage(fireball)
         self.assertEqual(bob.stats["life"].current_value, 85.0)
     

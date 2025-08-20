@@ -272,7 +272,10 @@ def load_images():
     SYSTEM["images"]["checkbox"] = Image("ui/checkbox.png").scale(64, 64)
     SYSTEM["images"]["checkbox_ok"] = Image("ui/checkbox_ok.png").scale(64, 64)
     SYSTEM["images"]["arrow_h"] = Image("arrow.png").scale(128, 128)
-
+    SYSTEM["images"]["buff_elemental_fury"] = Image("icons/elemental_fury.png")
+    SYSTEM["images"]["buff_fury"] = Image("icons/fury.png")
+    SYSTEM["images"]["buff_celerity"] = Image("icons/celerity.png")
+    SYSTEM["images"]["buff_bleed"] = Image("icons/bleed.png")
 
 def load_icons():
     """Loads the icons."""

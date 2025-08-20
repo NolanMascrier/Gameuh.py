@@ -9,7 +9,7 @@ from data.game.spell import Spell
 FIREBOLT = Damage(1.5, fire=2, flags=[Flags.SPELL])
 DARKBOLT = Damage(1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
-ARC = Damage(0.8, elec=2, flags=[Flags.SPELL])
+ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=10, flags=[Flags.MELEE])
 EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
@@ -18,7 +18,7 @@ FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
 BLEED_DMG = Damage(1, pp=0.5, phys=5, ignore_block=True, ignore_dodge=True)
 BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED_DMG)
 
-ELEFURY = Affliction("elemetal_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
+ELEFURY = Affliction("elemental_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
 FURY = Affliction("fury", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\

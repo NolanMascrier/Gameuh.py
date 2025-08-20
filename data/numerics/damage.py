@@ -104,7 +104,7 @@ class Damage():
         self._bounds = (lower_bound, upper_bound)
 
     def get_damage(self):
-        """Returns the computed damage.
+        """Returns the rolled flat damage.
         
         Returns:
             tuple(dict(str, float), dict(str, float)): 
@@ -112,20 +112,13 @@ class Damage():
             penetration values.
         """
         damages = {
-            "phys": self._types["phys"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff,
-            "fire": self._types["fire"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff,
-            "ice": self._types["ice"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff,
-            "elec": self._types["elec"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff,
-            "energy": self._types["energy"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff,
-            "light": self._types["light"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff,
-            "dark": self._types["dark"] * random.uniform(self._bounds[0], self._bounds[1])\
-                                        * self._coeff
+            "phys": self._types["phys"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "fire": self._types["fire"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "ice": self._types["ice"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "elec": self._types["elec"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "energy": self._types["energy"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "light": self._types["light"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "dark": self._types["dark"] * random.uniform(self._bounds[0], self._bounds[1])
         }
         return damages, self._penetration
 
@@ -142,10 +135,12 @@ class Damage():
         if is_spell:
             mult *= caster.stats["spell_dmg"].c_value
         for typ in types:
-            low = (self._types[typ] + caster.stats[f"{typ}_flat"].lower.c_value) *self._bounds[0]*\
-                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult
-            up = (self._types[typ] + caster.stats[f"{typ}_flat"].upper.c_value) * self._bounds[1]*\
-                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult
+            low_roll = self._types[typ] * self._bounds[0]
+            hig_roll = self._types[typ] * self._bounds[1]
+            low = caster.stats[f"{typ}_flat"].lower.c_value*\
+                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult + low_roll
+            up = caster.stats[f"{typ}_flat"].upper.c_value*\
+                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult + hig_roll
             if low == 0 and up == 0:
                 continue
             txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} " +\

@@ -8,7 +8,7 @@ LEVEL_COLOR = (252, 161, 3)
 WHITE = (255,255,255)
 
 @lru_cache(maxsize=64)
-def make_text(text, color, bold, size):
+def make_text(text, color = WHITE, bold = False, size = 35):
     """Generates the text."""
     return Text(text, default_color=color, bold=bold, size=size, font="item_desc")
 

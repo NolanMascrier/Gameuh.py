@@ -102,12 +102,12 @@
     ],
     "res": [
         "Resistance reduce the damage taken from an elemental",
-        "attack. Elemetal types are Physical, Fire, Ice, Thunder,",
+        "attack. Elemental types are Physical, Fire, Ice, Thunder,",
         "Dark and Light. Caps to 90%. Resistances can be negatives."
     ],
     "dmg": [
         "Elemental damage affects damage from said element.",
-        "Elemetal types are Physical, Fire, Ice, Thunder,",
+        "Elemental types are Physical, Fire, Ice, Thunder,",
         "Dark and Light."
     ],
     "pen": [
@@ -235,13 +235,13 @@
         "cut_proj": "Can destroy enemy projectiles"
     },
     "affliction_name":{
-        "elemetal_fury": "Elemental Fury",
+        "elemental_fury": "Elemental Fury",
         "fury": "Fury slash",
         "celerity": "Celerity",
         "bleed": "Bleed"
     },
     "affliction_desc":{
-        "elemetal_fury": "Grants 35% more elemental damage.",
+        "elemental_fury": "Grants 35% more elemental damage.",
         "fury": "Grants 15% more physical damage. This effect can stack.",
         "celerity": "Grants 300% increased move speed.",
         "bleed": "Inflicts physical damage every seconds that ignores defenses."

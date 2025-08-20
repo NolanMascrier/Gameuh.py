@@ -4,6 +4,7 @@ exp bar, enemy life, boss life ..."""
 import pygame
 from data.image.text import Text
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2
+from data.image.text_generator import make_text
 
 UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2
@@ -127,6 +128,24 @@ def draw_potions():
     data.append((mana_amount.surface, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82)))
     return data
 
+def draw_buffs():
+    """Draws the buff list.
+    TODO: Multiple line supports, maybe backgrounds ?"""
+    data = []
+    buffs = SYSTEM["player"].creature.build_debuff_list()
+    i = 0
+    x = 64
+    y = SCREEN_HEIGHT - 96
+    for buff, duration in buffs.items():
+        if f"buff_{buff}" in SYSTEM["images"]:
+            SYSTEM["images"][f"buff_{buff}"].opacity(duration[0])
+            data.append((SYSTEM["images"][f"buff_{buff}"].image, (x + i * 64, y)))
+            if duration[1] > 1:
+                txt = make_text(f"{duration[1]}", size=30)
+                data.append((txt.surface, (x + i * 64 - txt.width / 2 + 32, y - txt.height / 2 + 32)))
+            i += 1
+    return data
+
 def draw_skills():
     """Draws the skill bar."""
     data = []
@@ -168,6 +187,7 @@ def draw_ui():
     to_draw.extend(draw_exp_bar())
     to_draw.extend(draw_skills())
     to_draw.extend(draw_gold())
+    to_draw.extend(draw_buffs())
     SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
     SYSTEM["ui_surface"].blits(to_draw)
     SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0))

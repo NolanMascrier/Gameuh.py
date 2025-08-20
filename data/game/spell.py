@@ -176,6 +176,23 @@ class Spell():
             return
         self.on_cast(caster, entity, evil, aim_right, force)
 
+    def spawn_projectile(self, entity, caster, evil = False, x_diff = 0, y_diff = 0, delay = 1, angle = 0):
+        """Spanws a projectile."""
+        proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
+                        self._attack_anim,\
+                        self._base_damage, caster, evil,\
+                        delay=self._stats["delay"].c_value * delay,\
+                        bounces=self._stats["bounces"].c_value, \
+                        chains=self._stats["chains"].c_value, \
+                        behaviours=self._flags, caster=entity, debuffs=self._debuffs)
+        PROJECTILE_TRACKER.append(proj)
+
+    def spawn_slash(self, entity, caster, evil = False, aim_right = False):
+        """Spawns a slash."""
+        sl = Slash(entity, caster, self._attack_anim, self._base_damage,\
+                       aim_right, evil, self._flags, self._offset[0], self._offset[1], debuffs=self._debuffs)
+        PROJECTILE_TRACKER.append(sl)
+
     def on_cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
         """Shoots the spell."""
         mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
@@ -194,33 +211,14 @@ class Spell():
         if Flags.PROJECTILE in self._flags:
             if Flags.BARRAGE in self._flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
-                    proj = Projectile(entity.center[0], entity.center[1] + i * 20, 0 ,\
-                                      self._attack_anim,\
-                                      self._base_damage, caster, evil,\
-                                      delay=self._stats["delay"].c_value * (i + 1),\
-                                      bounces=self._stats["bounces"].c_value, \
-                                      chains=self._stats["chains"].c_value, \
-                                      behaviours=self._flags, caster=entity, debuffs=self._debuffs)
-                    PROJECTILE_TRACKER.append(proj)
+                    self.spawn_projectile(entity, caster, evil, 0, i * 20, i + 1, 0)
             elif Flags.SPREAD in self._flags:
                 if self._stats["projectiles"].c_value == 1:
-                    proj = Projectile(entity.center[0], entity.center[1], 0,\
-                                      self._attack_anim, self._base_damage, caster, evil,\
-                                      delay=self._stats["delay"].c_value,\
-                                      bounces=self._stats["bounces"].c_value, \
-                                      chains=self._stats["chains"].c_value, \
-                                      behaviours=self._flags, caster=entity, debuffs=self._debuffs)
-                    PROJECTILE_TRACKER.append(proj)
+                    self.spawn_projectile(entity, caster, evil)
                 else:
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
-                        proj = Projectile(entity.center[0], entity.center[1], -45 + spread * i,\
-                                        self._attack_anim, self._base_damage, caster, evil,\
-                                        delay=self._stats["delay"].c_value * (i + 1),\
-                                        bounces=self._stats["bounces"].c_value, \
-                                        chains=self._stats["chains"].c_value, \
-                                        behaviours=self._flags, caster=entity, debuffs=self._debuffs)
-                        PROJECTILE_TRACKER.append(proj)
+                        self.spawn_projectile(entity, caster, evil, 0, 0, i + 1, -45 + spread * i)
         if Flags.BUFF in self._flags:
             for afflic in self._afflictions:
                 if not isinstance(afflic, Affliction):
@@ -229,9 +227,7 @@ class Spell():
         if Flags.DASH in self._flags:
             entity.dash(self._stats["distance"].c_value)
         if Flags.MELEE in self._flags:
-            sl = Slash(entity, caster, self._attack_anim, self._base_damage,\
-                       aim_right, evil, self._flags, self._offset[0], self._offset[1], debuffs=self._debuffs)
-            PROJECTILE_TRACKER.append(sl)
+            self.spawn_slash(entity, caster, evil, aim_right)
 
     def export(self) -> str:
         """Serialize the spell as JSON."""

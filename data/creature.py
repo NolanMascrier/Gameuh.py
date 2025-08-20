@@ -20,6 +20,7 @@ IGNORE_STAT = ["fire_flat", "fire_pen", "phys_flat", "phys_pen",
     "light_flat", "light_pen", "dark_flat", "dark_pen"]
 DAMAGE_STAT = ["fire_dmg", "phys_dmg", "ice_dmg", "elec_dmg", "energy_dmg",
     "light_dmg", "dark_dmg"]
+DAMAGE_TYPE = ["phys", "fire", "ice", "elec", "energy", "light", "dark"]
 
 WHITE = (255,255,255)
 
@@ -146,23 +147,14 @@ class Creature:
             multi *= self._stats["ranged_dmg"].get_value()
         if Flags.SPELL in flags:
             multi *= self._stats["spell_dmg"].get_value()
-        dmg = damage_source.types
-        pen = damage_source.penetration
+        dmg, pen = damage_source.get_damage()
 
-        phys = (dmg["phys"] + self._stats["phys_flat"].roll())\
-                    * self._stats["phys_dmg"].get_value()
-        fire = (dmg["fire"] + self._stats["fire_flat"].roll())\
-                    * self._stats['fire_dmg'].get_value()
-        ice = (dmg["ice"] + self._stats["ice_flat"].roll())\
-                    * self._stats["ice_dmg"].get_value()
-        elec = (dmg["elec"] + self._stats["elec_flat"].roll())\
-                    * self._stats["elec_dmg"].get_value()
-        energ = (dmg["energy"] + self._stats["energy_flat"].roll())\
-                    * self._stats["energy_dmg"].get_value()
-        light = (dmg["light"] + self._stats["light_flat"].roll())\
-                    * self._stats["light_dmg"].get_value()
-        dark = (dmg["dark"] + self._stats["dark_flat"].roll())\
-                    * self._stats["dark_dmg"].get_value()
+        values = {}
+        for types in DAMAGE_TYPE:
+            base = dmg[types]
+            roll = self._stats[f"{types}_flat"].roll()
+            mult = roll * multi * self._stats[f"{types}_dmg"].get_value()
+            values[types] = base + mult
 
         pp = pen["phys"] + self._stats["phys_pen"].get_value()
         fp = pen["fire"] + self._stats["fire_pen"].get_value()
@@ -172,7 +164,8 @@ class Creature:
         lp = pen["light"] + self._stats["light_pen"].get_value()
         dp = pen["dark"] + self._stats["dark_pen"].get_value()
 
-        return Damage(multi, phys, fire, ice, elec, energ, light, dark, \
+        return Damage(multi, values["phys"], values["fire"], values["ice"], values["elec"],\
+                      values["energy"], values["light"], values["dark"], \
                       pp, fp, ip, ep, enp, lp, dp, crit,\
                       self._stats["crit_dmg"].get_value(), flags,\
                       damage_source.ignore_dodge, damage_source.ignore_block, self)
@@ -366,11 +359,13 @@ class Creature:
                     return
             self._buffs.append(affliction)
 
-    def afflict(self, affliction):
+    def afflict(self, affliction, is_debuff: bool = False):
         """Afflicts the creature with an affliction.
         
         Args:
             affliction (Affliction): Affliction to afflict.
+            is_debuff (bool, optional): Whether or not the affliction\
+            is a debuff, which can be resisted. Defaults to False.
         """
         if isinstance(affliction, tuple):
             for a in affliction:
@@ -518,6 +513,17 @@ class Creature:
                 self.remove_affliction(affix.as_affliction())
         self.__get_bonuses_from_stat()
         return item
+
+    def build_debuff_list(self):
+        """Returns a list of all displayable debuffs for the UI."""
+        lst = {}
+        for s in self._buffs:
+            if Flags.GEAR not in s.flags and s.duration != -1:
+                if s.name in lst:
+                    lst[s.name][1] += 1
+                else:
+                    lst[s.name] = [s.elapsed, 1]
+        return lst
 
     #Triggers
 

@@ -32,6 +32,7 @@ class Affliction():
             self._flags = []
         else:
             self._flags = flags
+        self._max_duration = duration
         self._expire = duration != -1
         self._stackable = stackable
         self._refreshable = refreshable
@@ -171,6 +172,11 @@ class Affliction():
     @damage.setter
     def damage(self, value):
         self._damage = value
+
+    @property
+    def elapsed(self):
+        """Returns the relative elapsed time of the debuff."""
+        return round(self._duration / self._max_duration * 255)
 
     @property
     def expired(self):
