@@ -2,6 +2,7 @@
 
 import numpy
 import random
+from functools import lru_cache
 from data.item import Item
 from data.constants import SYSTEM, Flags
 from data.tables.affix_table import AFFIXES
@@ -9,19 +10,33 @@ from data.tables.implicits_table import IMPLICITS
 
 RUNE_WEIGHT = [100, 80, 70, 50, 40, 30, 25, 5, 2, 1]
 RUNES = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
-RUNE_LUCK = [-2, -1.8, -1.5, -1.3, 0, 0, 1.3, 1.15, 1.1, 1.05]
+RUNE_LUCK = [0.9, 0.7, 0.8, 0.85, 1, 1, 1.2, 2, 2.5, 3]
 
 RARITY_WEIGHTS = [100,80,20,3,1]
 RARITIES = [0,1,2,3,4]
-RARITY_LUCK = [-2, -1.5, 1.3, 1.05, 1.01]
+RARITY_LUCK = [0.7, 0.9, 1.85, 3, 3]
 
 LOOT_WEIGHT = [30,50,80,70,8]
 LOOT_VALUES = ["item", "gold", "mana", "life", "rune"]
-LOOT_LUCK = [1.3, 0, -1.3, -1.3, 1.2]
+LOOT_LUCK = [1.8, 1.1, 0.8, 0.7, 1.5]
 
 WEIGHTS_RUNE = sum(RUNE_WEIGHT)
 WEIGHTS_LOOT = sum(LOOT_WEIGHT)
 WEIGHTS_RARE = sum(RARITY_WEIGHTS)
+
+def diminishing_multiplier(factor: float, luck: float) -> float:
+    """Compute the luck multiplier for a single weight."""
+    if luck <= 2:
+        return 1 + (luck - 1) * (factor - 1)
+    return 1 + (factor - 1) * (2 - 2 ** (-(luck - 2)))
+
+def apply_luck(weights, luck_factors, luck_value):
+    """Applies the luck factor and returns the computed weights."""
+    adjusted = []
+    for base, factor in zip(weights, luck_factors):
+        multiplier = diminishing_multiplier(factor, luck_value)
+        adjusted.append(numpy.ceil(base * multiplier))
+    return numpy.array(adjusted)
 
 class LootGenerator():
     """Creates the loot generator, and with it the base items."""
@@ -349,45 +364,6 @@ class LootGenerator():
         it.update()
         return it.stamp
 
-    def compute_adjusted_weights(self, base_weights, rarity):
-        adjusted = []
-        for i, weight in enumerate(base_weights):
-                exponent = 1.0 - SYSTEM["player"].creature.stats["item_qual"].get_value() * 0.15
-                exponent = max(0.1, exponent)
-                adjusted_weight = (weight ** exponent) * rarity 
-                adjusted.append(adjusted_weight)
-        return adjusted
-
-    def roll(self, quantity: int, level: int, rarity: int = 1):
-        """Rolls a certain amount of items."""
-        quant = quantity * (1 + SYSTEM["player"].creature.stats["item_quant"].get_value())
-        level_roll = min(max(level + numpy.random.randint(-3, 5), 1), 100)
-        loot = []
-        base_weights = [100, 80, 20, 3]
-        for _ in range(int(quant)):
-            weight = self.compute_adjusted_weights(base_weights, rarity)
-            rarities = [0, 1, 2, 3]
-            roll = random.choices(rarities, weights=weight, k=1)[0]
-            loot.append(self.generate_item(level_roll, roll))
-        return loot
-
-    def factor_luck(self, luck):
-            """Rebuilds the weight tables using the luck factors."""
-            factor = {
-                "runes": RUNE_WEIGHT.copy(),
-                "rune_weight": 0,
-                "loot": LOOT_WEIGHT.copy(),
-                "loot_weight": 0,
-                "rarity": RARITY_WEIGHTS.copy(),
-                "rarity_weight": 0
-            }
-            for f in factor["runes"]:
-                if f == 0:
-                    continue
-                elif f < 0:
-                    factor["runes"]  
-            return factor
-
     def enemy_drop(self, enemy):
         """Handles enemy loot process."""
         loot = {
@@ -398,14 +374,20 @@ class LootGenerator():
             "runes": []
         }
         luck = SYSTEM["player"].creature.stats["item_qual"].c_value + 1
+        adjusted_loot = apply_luck(LOOT_WEIGHT, LOOT_LUCK, luck)
+        adjusted_rare = apply_luck(RARITY_WEIGHTS, RARITY_LUCK, luck)
+        adjusted_rune = apply_luck(RUNE_WEIGHT, RUNE_LUCK, luck)
+        loot_sum = sum(adjusted_loot)
+        rare_sum = sum(adjusted_rare)
+        rune_sum = sum(adjusted_rune)
         rarity = enemy.tier
         amount = max(rarity * numpy.random.randint(-2, 6) *\
                 (SYSTEM["player"].creature.stats["item_quant"].c_value + 1), 0)
         while amount > 0:
-            choice = numpy.random.choice(LOOT_VALUES, p=[d / WEIGHTS_LOOT for d in LOOT_WEIGHT])
+            choice = numpy.random.choice(LOOT_VALUES, p=[d / loot_sum for d in adjusted_loot])
             match choice:
                 case "item":
-                    roll = numpy.random.choice(RARITIES, p=[d / WEIGHTS_RARE for d in RARITY_WEIGHTS])
+                    roll = numpy.random.choice(RARITIES, p=[d / rare_sum for d in adjusted_rare])
                     level = round(enemy.creature.level * (0.7 + numpy.random.rand()))
                     loot["items"].append(self.generate_item(level, roll))
                 case "mana":
@@ -415,7 +397,7 @@ class LootGenerator():
                     roll = numpy.random.randint(1, 6)
                     loot["life"].append(roll)
                 case "rune":
-                    roll = numpy.random.choice(RUNES, p=[d / WEIGHTS_RUNE for d in RUNE_WEIGHT])
+                    roll = numpy.random.choice(RUNES, p=[d / rune_sum for d in adjusted_rune])
                     loot["runes"].append(roll)
                 case _: #gold
                     gold = enemy.gold_value * (0.7 + numpy.random.rand()) *\

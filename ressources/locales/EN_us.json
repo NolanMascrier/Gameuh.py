@@ -369,7 +369,7 @@
     },
     "runes": {
         "blank": [
-            "#s(35)Blank Rune",
+            "#s#(35)Blank Rune",
             "Removes all modifiers from an item."
         ],
         "thurisaz": [
@@ -414,7 +414,7 @@
         "Enchanted ",
         "Blessed ",
         "Exalted ",
-        "Primaltouched"
+        "Avowed"
     ],
   "item_names": {
     "0": [

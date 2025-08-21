@@ -2,7 +2,7 @@ from time import sleep
 
 import cProfile
 import pstats
-import tracemalloc
+import random
 
 from data.image.text import Text
 from data.constants import *
@@ -27,8 +27,10 @@ DAMAGE_COLOR = (255, 30, 30)
 
 def debug_create_items():
     """Creates a bunch of items."""
-    lg = LootGenerator()
-    base_loot = lg.roll(40, 5)
+    SYSTEM["looter"]
+    base_loot = []
+    for _ in range(40):
+        base_loot.append(SYSTEM["looter"].generate_item(5, random.randint(0, 3)))
     SYSTEM["player"].inventory.extend(base_loot)
 
 def check_collisions():
