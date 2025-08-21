@@ -18,7 +18,8 @@ class Enemy():
     """Defines an enemy, which associates an entity to a creature
     with set behaviours."""
     def __init__(self, entity: Entity, creature: Creature, abilities, power = 1,\
-                timer = 2, exp_value = 10, gold_value = 10, behaviours = None):
+                timer = 2, exp_value = 10, gold_value = 10, behaviours = None,\
+                tier = 1):
         self._entity = entity
         self._creature = creature
         if behaviours is None:
@@ -35,23 +36,27 @@ class Enemy():
         self._immune = []
         self._stopped = False
         self._aim_right = False
+        self._tier = tier
 
     def explode(self):
         """Explodes the creature in loot, life and mana orbs,
         and exp."""
-        amount = numpy.random.randint(-3, 5)
-        while amount > 0:
-            power_type = True if numpy.random.randint(0, 2) == 0 else False
-            x = self.x + 30
-            y = self.y + 60
-            power = numpy.random.randint(0.5, 6)
-            pu = PickUp(x, y, value = power)
-            if power_type:
-                pu.flags.append(Flags.MANA)
-            else:
-                pu.flags.append(Flags.LIFE)
+        loot = SYSTEM["looter"].enemy_drop(self)
+        pickups = []
+        pickups.extend([(d, "rune") for d in loot["runes"]])
+        pickups.extend([(d, "life") for d in loot["life"]])
+        pickups.extend([(d, "mana") for d in loot["mana"]])
+        for pickup, types in pickups:
+            x = self.x + numpy.random.randint(-20, 20)
+            y = self.y + numpy.random.randint(-20, 20)
+            match types:
+                case "rune":
+                    pu = PickUp(x, y, pickup, flags=[Flags.RUNE])
+                case "life":
+                    pu = PickUp(x, y, pickup, flags=[Flags.LIFE])
+                case "mana":
+                    pu = PickUp(x, y, pickup, flags=[Flags.MANA])
             POWER_UP_TRACKER.append(pu)
-            amount -= 1
         exp = self._exp_value
         for value in VALUE_GROUPS:
             while exp >+ value:
@@ -60,7 +65,7 @@ class Enemy():
                 pu = PickUp(x, y, value, flags=[Flags.EXPERIENCE], speed_mod=2.5)
                 POWER_UP_TRACKER.append(pu)
                 exp -= value
-        gold_left = self._gold_value
+        gold_left = int(loot["gold"])
         for value in VALUE_GROUPS:
             while gold_left >= value:
                 x = self.x + numpy.random.randint(-20, 20)
@@ -68,8 +73,7 @@ class Enemy():
                 pu = PickUp(x, y, value, flags=[Flags.GOLD], speed_mod=2.5)
                 POWER_UP_TRACKER.append(pu)
                 gold_left -= value
-        loot = SYSTEM["looter"].roll(1, self._creature.level)
-        for l in loot:
+        for l in loot["items"]:
             x = self.x + numpy.random.randint(-20, 20)
             y = self.y + numpy.random.randint(-20, 20)
             pu = PickUp(x, y, 1, flags=[Flags.ITEM], contained=l)
@@ -200,3 +204,13 @@ class Enemy():
     @immune.setter
     def immune(self, value):
         self._immune = value
+
+    @property
+    def tier(self):
+        """Returns the enemy's tier."""
+        return self._tier
+
+    @property
+    def gold_value(self):
+        """Returns the enemy's gold value."""
+        return self._gold_value

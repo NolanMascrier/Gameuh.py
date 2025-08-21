@@ -72,6 +72,8 @@ class PickUp():
             return SYSTEM["images"]["maxi_moolah"].image
         if Flags.ITEM in self._flags:
             return SYSTEM["images"]["loot_icon"].image
+        if Flags.RUNE in self._flags:
+            return SYSTEM["images"][f"rune_{self._value}_mini"].image
         return None
 
     def move(self, player):
@@ -126,6 +128,8 @@ class PickUp():
             SYSTEM["player"].inventory.append(self._contains)
             SYSTEM["level"].loot.append(self._contains)
             self.generate_item_text()
+        if Flags.RUNE in self._flags:
+            SYSTEM["player"].runes[self._value] += 1
         self._to_delete = True
 
     def tick(self, player):

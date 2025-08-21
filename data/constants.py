@@ -269,6 +269,7 @@ class Flags(str, Enum):
     LIFE = "life"
     STUN = "stun"
     GEAR = "gear"
+    RUNE = "rune"
     CONSUMABLE = "consumable"
     FLAT = "flat" #flat stat bonus
     HEX = "hex" #additive malus
