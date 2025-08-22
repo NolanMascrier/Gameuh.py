@@ -60,7 +60,7 @@ class Character():
         ]
         self._inventory = []
         self._runes = [
-            100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]
         self._gold = 0
         self._input = [0, 0]

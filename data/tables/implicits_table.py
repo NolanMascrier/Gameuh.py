@@ -3,6 +3,7 @@ them that that"""
 
 from data.constants import Flags
 from data.numerics.affix import Affix
+from data.numerics.double_affix import DoubleAffix
 
 #Affix format : ARMOR TYPE > AFFIX > TIER, WEIGHT, MIN LEVEL TO SHOW, MAX LEVEL TO SHOW
 IMPLICITS = {
@@ -34,4 +35,10 @@ IMPLICITS = {
     "royal_coat2": Affix("IMPLICIT_ARMOR2", 0.05, [Flags.BOON, Flags.MANAL_EFFICIENCY]),
     "priest": Affix("IMPLICIT_ARMOR", 300, [Flags.FLAT, Flags.MANA, Flags.DESC_FLAT]),
     "priest2": Affix("IMPLICIT_ARMOR2", 0.5, [Flags.BOON, Flags.HEAL_EFFICIENCY]),
+    
+    "weapon1": DoubleAffix("IMPLICIT_WEAPON_DAMAGE1", 5, 10, [Flags.FLAT, Flags.PHYS_FLAT]),
+    "weapon2": DoubleAffix("IMPLICIT_WEAPON_DAMAGE2", 15, 25, [Flags.FLAT, Flags.PHYS_FLAT]),
+    "weapon3": DoubleAffix("IMPLICIT_WEAPON_DAMAGE3", 35, 50, [Flags.FLAT, Flags.PHYS_FLAT]),
+    "weapon4": DoubleAffix("IMPLICIT_WEAPON_DAMAGE4", 75, 100, [Flags.FLAT, Flags.PHYS_FLAT]),
+    "weapon5": DoubleAffix("IMPLICIT_WEAPON_DAMAGE5", 125, 150, [Flags.FLAT, Flags.PHYS_FLAT]),
 }

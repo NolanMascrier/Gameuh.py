@@ -109,6 +109,13 @@ AFFIXES = {
             (Affix("ARMOR_DODGE_3", 0.05, [Flags.FLAT, Flags.DESC_PERCENT,\
                                                         Flags.DODGE]), 0.1, 75, 999),
         ], 0.2),
+        "life_regen": ([
+            (Affix("ARMOR_LIFE_REGEN_1", 5, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 0, 60),
+            (Affix("ARMOR_LIFE_REGEN_2", 10, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 20, 60),
+            (Affix("ARMOR_LIFE_REGEN_3", 20, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 40, 999),
+            (Affix("ARMOR_LIFE_REGEN_4", 30, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 50, 999),
+            (Affix("ARMOR_LIFE_REGEN_5", 50, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 70, 999),
+        ], 0.8),
         "phys_res": ([
             (Affix("ARMOR_PHYS_RES_1", 0.10, [Flags.PHYS, Flags.FLAT]), 1, 0, 60),
             (Affix("ARMOR_PHYS_RES_2", 0.25, [Flags.PHYS, Flags.FLAT]), 0.6, 10, 90),
@@ -1350,6 +1357,20 @@ AFFIXES = {
             (Affix("RELIC_ABS_DEF_3", 10, [Flags.ABS_DEF,\
                                                         Flags.FLAT]), 0.6, 40, 999)
         ], 0.5),
+        "iiq": ([
+            (Affix("RELIC_IIQ_1", 0.3, [Flags.BOON, Flags.IIQ]), 1, 0, 60),
+            (Affix("RELIC_IIQ_2", 0.5, [Flags.BOON, Flags.IIQ]), 0.5, 25, 80),
+            (Affix("RELIC_IIQ_3", 0.8, [Flags.BOON, Flags.IIQ]), 0.1, 50, 999),
+            (Affix("RELIC_IIQ_4", 1.1, [Flags.BOON, Flags.IIQ]), 0.05, 50, 999),
+            (Affix("RELIC_IIQ_5", 1.5, [Flags.BOON, Flags.IIQ]), 0.01, 50, 999),
+        ], 0.8),
+        "iir": ([
+            (Affix("RELIC_IIR_1", 0.2, [Flags.BOON, Flags.IIR]), 1, 0, 60),
+            (Affix("RELIC_IIR_2", 0.3, [Flags.BOON, Flags.IIR]), 0.5, 25, 80),
+            (Affix("RELIC_IIR_3", 0.4, [Flags.BOON, Flags.IIR]), 0.1, 50, 999),
+            (Affix("RELIC_IIR_4", 0.5, [Flags.BOON, Flags.IIR]), 0.05, 50, 999),
+            (Affix("RELIC_IIR_5", 1, [Flags.BOON, Flags.IIR]), 0.01, 50, 999),
+        ], 0.6),
         "phys_dmg": ([
             (Affix("RELIC_PHYS_DMG_1", 0.1, [Flags.PHYS_DMG,\
                                                         Flags.BOON], 0.5, 1.5), 1, 0, 75),

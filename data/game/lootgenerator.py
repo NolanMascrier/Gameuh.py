@@ -187,37 +187,37 @@ class LootGenerator():
         ]
         self._weapons = [
             (Item("", "Longbow", 250, 0, 1, SYSTEM["images"]["weapons"][18],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon1"]]), 1),
             (Item("", "Rogue's bow", 250, 0, 1, SYSTEM["images"]["weapons"][20],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon2"]]), 0.5),
             (Item("", "Steel bow", 250, 0, 1, SYSTEM["images"]["weapons"][7],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon3"]]), 0.1),
 
             (Item("", "Staff", 250, 0, 1, SYSTEM["images"]["weapons"][9],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon1"]]), 1),
             (Item("", "Scepter", 250, 0, 1, SYSTEM["images"]["weapons"][16],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon2"]]), 0.5),
             (Item("", "Grand cane", 250, 0, 1, SYSTEM["images"]["weapons"][19],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon3"]]), 0.1),
 
             (Item("", "Sword", 250, 0, 1, SYSTEM["images"]["weapons"][1],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon2"]]), 1),
             (Item("", "Saber", 250, 0, 1, SYSTEM["images"]["weapons"][8],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon3"]]), 0.5),
             (Item("", "Enchanted blade", 250, 0, 1, SYSTEM["images"]["weapons"][10],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon4"]]), 0.1),
 
             (Item("", "Axe", 250, 0, 1, SYSTEM["images"]["weapons"][12],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon2"]]), 1),
             (Item("", "Mace", 250, 0, 1, SYSTEM["images"]["weapons"][13],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.5),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon3"]]), 0.5),
             (Item("", "Scourge", 250, 0, 1, SYSTEM["images"]["weapons"][14],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.1),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon4"]]), 0.1),
 
             (Item("", "Crossbow", 250, 0, 1, SYSTEM["images"]["weapons"][3],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.05),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon1"]]), 0.05),
             (Item("", "Shuriken", 250, 0, 1, SYSTEM["images"]["weapons"][5],\
-                    0, [Flags.WEAPON, Flags.GEAR], implicits=[]), 0.01),
+                    0, [Flags.WEAPON, Flags.GEAR], implicits=[IMPLICITS["weapon1"]]), 0.01),
         ]
         self._offhands = [
             (Item("", "Grimoire", 250, 0, 1, SYSTEM["images"]["offhands"][0],\

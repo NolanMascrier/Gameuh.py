@@ -330,6 +330,8 @@ class Flags(str, Enum):
     HEAL_EFFICIENCY = "heal_factor"
     MANAL_EFFICIENCY = "mana_efficiency"
     CRIT_RES = "crit_res"
+    IIQ = "item_quant"
+    IIR = "item_qual"
     HELM = "helms"
     HANDS = "gloves"
     ARMOR = "armors"
