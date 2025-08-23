@@ -35,6 +35,21 @@ class Slash():
         else:
             self._debuffs = debuffs
 
+    def clone(self, entity, origin):
+        """Returns a deep copy of the slash."""
+        return Slash(
+            entity,
+            origin,
+            self._image,
+            self._damage,
+            self._aim_right,
+            self._evil,
+            self._flags.copy(),
+            self._offset[0],
+            self._offset[1],
+            self._debuffs.copy()
+        )
+
     def get_image(self):
         """Returns the slash image."""
         return SYSTEM["images"][self._image].get_image(self._animation_state)

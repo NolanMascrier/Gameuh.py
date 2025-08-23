@@ -268,8 +268,8 @@ class TestingImages(unittest.TestCase):
         self.cmp_damage(a._base_damage, b._base_damage)
         self.assertEqual(a.flags, b.flags)
         i = 0
-        for _ in a._afflictions:
-            self.cmp_affliction(a._afflictions[i], b._afflictions[i])
+        for _ in a._buffs:
+            self.cmp_affliction(a._buffs[i], b._buffs[i])
             i += 1
         self.assertEqual(a.icon.uri, b.icon.uri)
         i = 0

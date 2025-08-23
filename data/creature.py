@@ -138,7 +138,8 @@ class Creature:
         """Takes a raw damage source (ie from a spell) and applies the creature's
         own multipliers to it."""
         crit_roll = random.uniform(0, 1)
-        crit = bool(crit_roll <= self._stats["crit_rate"].get_value())
+        crit = bool(crit_roll <= self._stats["crit_rate"].get_value())\
+            if not damage_source.is_crit else True
         multi = damage_source.coeff
         flags = damage_source.flags
         if Flags.MELEE in flags:

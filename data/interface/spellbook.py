@@ -2,8 +2,8 @@
 
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_WIDTH,\
-    MENU_SPELLBOOK_Q, MENU_SPELLBOOK_F, MENU_SPELLBOOK_E, MENU_SPELLBOOK_R,\
-    MENU_SPELLBOOK_SHIFT, MENU_SPELLBOOK_T, K_q, K_t, K_e, K_r, K_f, K_LSHIFT, trad
+    MENU_SPELLBOOK_1, MENU_SPELLBOOK_3, MENU_SPELLBOOK_2, MENU_SPELLBOOK_5,\
+    MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, K_q, K_t, K_e, K_r, K_f, K_LSHIFT, trad
 from data.game.spell import Spell
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
@@ -12,25 +12,25 @@ from data.image.text import Text
 from data.interface.render import render, renders
 
 PAGES = {
-    MENU_SPELLBOOK_Q: 0,
-    MENU_SPELLBOOK_E: 1,
-    MENU_SPELLBOOK_F: 2,
-    MENU_SPELLBOOK_T: 3,
-    MENU_SPELLBOOK_R: 4,
-    MENU_SPELLBOOK_SHIFT: 5
+    MENU_SPELLBOOK_1: 0,
+    MENU_SPELLBOOK_2: 1,
+    MENU_SPELLBOOK_3: 2,
+    MENU_SPELLBOOK_4: 3,
+    MENU_SPELLBOOK_5: 4,
+    MENU_SPELLBOOK_DASH: 5
 }
 
 INPUT = {
-    MENU_SPELLBOOK_Q: "spell_1",
-    MENU_SPELLBOOK_E: "spell_2",
-    MENU_SPELLBOOK_F: "spell_3",
-    MENU_SPELLBOOK_T: "spell_4",
-    MENU_SPELLBOOK_R: "spell_5",
-    MENU_SPELLBOOK_SHIFT: "dash"
+    MENU_SPELLBOOK_1: "spell_1",
+    MENU_SPELLBOOK_2: "spell_2",
+    MENU_SPELLBOOK_3: "spell_3",
+    MENU_SPELLBOOK_4: "spell_4",
+    MENU_SPELLBOOK_5: "spell_5",
+    MENU_SPELLBOOK_DASH: "dash"
 }
 
-STATES = [MENU_SPELLBOOK_Q, MENU_SPELLBOOK_E, MENU_SPELLBOOK_F,\
-    MENU_SPELLBOOK_T, MENU_SPELLBOOK_R, MENU_SPELLBOOK_SHIFT]
+STATES = [MENU_SPELLBOOK_1, MENU_SPELLBOOK_2, MENU_SPELLBOOK_3,\
+    MENU_SPELLBOOK_4, MENU_SPELLBOOK_5, MENU_SPELLBOOK_DASH]
 
 def slot_in(contain, slot):
     """Slots in a spell."""
@@ -66,7 +66,7 @@ def open_spell_screen():
     """Sets up the spell screen menu."""
     SYSTEM["game_state"] = MENU_SPELLBOOK
     setup_bottom_bar()
-    SYSTEM["spell_page"] = MENU_SPELLBOOK_Q
+    SYSTEM["spell_page"] = MENU_SPELLBOOK_1
     spells = []
     dashes = []
     for spell_ref in SYSTEM["player"].spellbook:
@@ -88,17 +88,17 @@ def open_spell_screen():
     x_offset_slot = SCREEN_WIDTH / 2 - 32
     SYSTEM["gear_tabs"] = Tabs(x_offset, 300, images, STATES, "spell_page",\
         SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"])
-    SYSTEM["ui"]["slot_q"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_1"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1")
-    SYSTEM["ui"]["slot_e"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_2"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_2"]], flag="spell_2")
-    SYSTEM["ui"]["slot_f"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_3"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_3"]], flag="spell_3")
-    SYSTEM["ui"]["slot_r"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_4"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_4"]], flag="spell_4")
-    SYSTEM["ui"]["slot_t"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_5"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5")
-    SYSTEM["ui"]["slot_shift"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_dash"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash")
     for key in ["spell_1", "spell_2", "spell_3", "spell_4", "spell_5", "dash"]:
         spell = SYSTEM["spells"][SYSTEM["player"].equipped_spells[key]]\
@@ -144,22 +144,22 @@ def draw_spells(events):
     SYSTEM["gear_tabs"].tick()
     match val:
         case 1:
-            SYSTEM["ui"]["slot_e"].tick().draw()
+            SYSTEM["ui"]["slot_2"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 2:
-            SYSTEM["ui"]["slot_f"].tick().draw()
+            SYSTEM["ui"]["slot_3"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 3:
-            SYSTEM["ui"]["slot_t"].tick().draw()
+            SYSTEM["ui"]["slot_4"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 4:
-            SYSTEM["ui"]["slot_r"].tick().draw()
+            SYSTEM["ui"]["slot_5"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 5:
-            SYSTEM["ui"]["slot_shift"].tick().draw()
+            SYSTEM["ui"]["slot_dash"].tick().draw()
             SYSTEM["dash_panel"].tick().draw()
         case _:
-            SYSTEM["ui"]["slot_q"].tick().draw()
+            SYSTEM["ui"]["slot_1"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
     key = INPUT[SYSTEM["spell_page"]]
     if SYSTEM["ui"][key] is not None:

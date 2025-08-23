@@ -3,11 +3,18 @@
 import random
 import numpy
 from math import atan2, pi
-from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
+from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM, PROJECTILE_TRACKER
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
+
+class DummyEntity():
+    """Emulates an entity of the projectile."""
+    def __init__(self, x, y, hitbox):
+        self.x = x
+        self.y = y
+        self.hitbox = hitbox
 
 class Projectile():
     """Defines a projectile."""
@@ -15,7 +22,7 @@ class Projectile():
                 evil = False, width = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
-                behaviours = None, debuffs = None):
+                behaviours = None, debuffs = None, explosion = None):
         self._x = x
         self._y = y
         self._speed = speed
@@ -43,6 +50,7 @@ class Projectile():
         self._bounces = bounces
         self._image = imagefile
         self._delay = delay
+        self._explosion = explosion
         if hitbox_len is None:
             hitbox_len = width
         if hitbox_height is None:
@@ -101,6 +109,9 @@ class Projectile():
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
                     target.afflict(debuff.clone(), True)
+            if self._explosion is not None:
+                sl = self._explosion.clone(DummyEntity(self._x, self._y, self._box), self._origin)
+                PROJECTILE_TRACKER.append(sl)
             return num, crit
         return (None, None)
 

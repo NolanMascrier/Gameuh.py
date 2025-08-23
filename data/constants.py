@@ -72,12 +72,12 @@ GAME_DEATH = 111
 MENU_GEAR = 12
 MENU_INVENTORY = 13
 MENU_SPELLBOOK = 131
-MENU_SPELLBOOK_Q = 1311
-MENU_SPELLBOOK_E = 1312
-MENU_SPELLBOOK_F = 1313
-MENU_SPELLBOOK_R = 1314
-MENU_SPELLBOOK_T = 1315
-MENU_SPELLBOOK_SHIFT = 1316
+MENU_SPELLBOOK_1 = 1311
+MENU_SPELLBOOK_2 = 1312
+MENU_SPELLBOOK_3 = 1313
+MENU_SPELLBOOK_5 = 1314
+MENU_SPELLBOOK_4 = 1315
+MENU_SPELLBOOK_DASH = 1316
 MENU_OPTIONS_GAME = 14
 MENU_TREE = 15
 LOADING = 999
@@ -361,6 +361,7 @@ class Flags(str, Enum):
     AIMED_AT_MOUSE = "aimed_at_mouse"
     AIMED_AT_CLOSEST = "aimed_at_closest"
     HARD_TRACKING = "hard_tracking"
+    EXPLODES = "explodes"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"
@@ -373,6 +374,7 @@ class Flags(str, Enum):
     TRIGGER_ON_CRIT = "trigger_on_crit"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
+    COMBO_SPELL = "combo_spell"
     #Flags for ennemies
     SHOOTER = "shooter"
     CHASER = "chaser"

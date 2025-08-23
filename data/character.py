@@ -50,9 +50,11 @@ class Character():
         self._immune = []
         self._spellbook = [
             "firebolt",
+            "fireball",
             "voidbolt",
             "arc",
             "icebolt",
+            "masterstrike",
             "exult",
             "elefury",
             "furyslash",
@@ -93,7 +95,7 @@ class Character():
         already_ticked = []
         for spell, skill in self._equipped_spells.items():
             if skill is not None and skill not in already_ticked:
-                SYSTEM["spells"][self._equipped_spells[spell]].tick()
+                SYSTEM["spells"][self._equipped_spells[spell]].tick(self._creature)
                 already_ticked.append(skill)
         SYSTEM["player.x"] = self.hitbox.center[0]
         SYSTEM["player.y"] = self.hitbox.center[1]

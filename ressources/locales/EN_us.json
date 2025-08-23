@@ -256,7 +256,9 @@
         "exult": "Exultation",
         "elefury": "Elemental Fury",
         "wdash": "Wind Dash",
-        "fslash": "Fury Slash"
+        "fslash": "Fury Slash",
+        "fireball": "Fireball",
+        "masterstrike": "Masterstrike"
     },
     "spells_desc": {
         "none": "No spell equipped.",
@@ -268,7 +270,9 @@
         "exult": "This spell cannot be cast.\nUpon inflicting a critical hit, release a bloody shockwave.",
         "elefury": "Unleash the fury of the elements, increasing\nelemental damage dealt.",
         "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",
-        "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage."
+        "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage.",
+        "fireball": "Launch a powerful fireball toward the mouse\ndealing medium fire damage.\nOn contact, creates a powerful explosion.",
+        "masterstrike": "Deliver a serie a quick blows.\nThe third strike is a guaranteed critical hit."
     },
     "descripts": {
         "life": "Life",

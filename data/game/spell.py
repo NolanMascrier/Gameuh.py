@@ -2,7 +2,7 @@
 
 import pygame
 import json
-from data.image.animation import Animation, Image
+from data.image.animation import Image
 from data.projectile import Projectile
 from data.creature import Creature
 from data.physics.entity import Entity
@@ -11,7 +11,7 @@ from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
 from data.slash import Slash
 from data.numerics.damage import Damage
-from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, PROJECTILE_TRACKER, trad
+from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable, Text
 
@@ -39,13 +39,15 @@ class Spell():
         Defaults to 1.
         flags (list, optionnal): List of flags of the spell. Defaults to\
         `[]` (no flags) but flags SHOULD be given for the spell to work.
-        afflictions (list, optionnal): List of afflictions that the spell\
+        buffs (list, optionnal): List of afflictions that the spell\
         will inflict. Defaults to `[]`.
+        debuffs
     """
     def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,\
                  bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,\
-                 cooldown = 0.1, projectiles = 1, flags = None, afflictions = None,\
-                 debuffs = None, offset_x = 0, offset_y = 0):
+                 explosion = None, sequence = None,\
+                 cooldown = 0.1, projectiles = 1, flags = None, buffs = None,\
+                 debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -60,23 +62,29 @@ class Spell():
             "projectiles": Stat(projectiles, "projectiles"),
             "distance": Stat(distance, "distance"),
             "chains": Stat(chains, "chains"),
-            "spread": Stat(spread, "spread")
+            "spread": Stat(spread, "spread"),
+            "projectile_speed": Stat(proj_speed, "proj_speed")
         }
         self._cooldown = 0
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
             self._flags = flags
-        if afflictions is None or not isinstance(afflictions, list):
-            self._afflictions = []
+        if buffs is None or not isinstance(buffs, list):
+            self._buffs = []
         else:
-            self._afflictions = afflictions
+            self._buffs = buffs
         if debuffs is None or not isinstance(debuffs, list):
             self._debuffs = []
         else:
             self._debuffs = debuffs
+        self._sequence = sequence
+        self._sequence_timer = 0
+        self._sequence_step = 0
+        self._explosion = explosion
         self._surface = None
         self._offset = (offset_x, offset_y)
+        self._started = False
         self.generate_surface()
 
     def generate_surface(self):
@@ -107,11 +115,21 @@ class Spell():
         sfc.blit(desc.surface, desc_pos)
         self._surface = sfc
 
-    def tick(self):
+    def tick(self, caster = None):
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
-
+        if Flags.COMBO_SPELL in self._flags:
+            for s in self._sequence:
+                s.tick(caster)
+            if self._started:
+                self._sequence_timer += 0.016
+            if (self._sequence_step >= len(self._sequence) or self._sequence_timer >= 3)\
+                and self._started:
+                self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
+                self._sequence_step = 0
+                self._sequence_timer = 0
+                self._started = False
     def reset(self):
         """Resets the spell's data."""
         self._cooldown = 0
@@ -131,7 +149,7 @@ class Spell():
         """Describe the spell's buff and debuff components."""
         buffs = []
         if Flags.BUFF in self._flags:
-            for afflic in self._afflictions:
+            for afflic in self._buffs:
                 buffs.append(afflic.describe(True))
         if Flags.DEBUFF in self._flags:
             for afflic in self._debuffs:
@@ -174,17 +192,29 @@ class Spell():
             return
         if Flags.TRIGGER in self._flags:
             return
-        self.on_cast(caster, entity, evil, aim_right, force)
+        if Flags.COMBO_SPELL in self._flags:
+            if self._cooldown > 0:
+                return
+            if self._sequence[self._sequence_step].on_cast(caster, entity, evil, aim_right, force):
+                self._started = True
+                self._sequence_step += 1
+                self._sequence_timer = 0
+                if self._sequence_step < len(self._sequence):
+                    self._sequence[self._sequence_step].start_cooldown(0.5, caster)
+        else:
+            self.on_cast(caster, entity, evil, aim_right, force)
 
     def spawn_projectile(self, entity, caster, evil = False, x_diff = 0, y_diff = 0, delay = 1, angle = 0):
         """Spanws a projectile."""
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
                         self._base_damage, caster, evil,\
+                        speed=self._stats["projectile_speed"].c_value,\
                         delay=self._stats["delay"].c_value * delay,\
                         bounces=self._stats["bounces"].c_value, \
                         chains=self._stats["chains"].c_value, \
-                        behaviours=self._flags, caster=entity, debuffs=self._debuffs)
+                        behaviours=self._flags, caster=entity, debuffs=self._debuffs,
+                        explosion=self._explosion)
         PROJECTILE_TRACKER.append(proj)
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False):
@@ -200,11 +230,11 @@ class Spell():
 
         if not force:
             if self._cooldown > 0:
-                return
+                return False
             if caster.stats["mana"].current_value < mana_cost:
-                return
+                return False
             if caster.stats["life"].current_value < life_cost:
-                return
+                return False
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         caster.consume_mana(self._stats["mana_cost"].c_value)
         caster.stats["life"].current_value -= life_cost
@@ -220,7 +250,7 @@ class Spell():
                     for i in range(0, int(self._stats["projectiles"].c_value)):
                         self.spawn_projectile(entity, caster, evil, 0, 0, i + 1, -45 + spread * i)
         if Flags.BUFF in self._flags:
-            for afflic in self._afflictions:
+            for afflic in self._buffs:
                 if not isinstance(afflic, Affliction):
                     continue
                 caster.afflict(afflic.clone())
@@ -228,15 +258,33 @@ class Spell():
             entity.dash(self._stats["distance"].c_value)
         if Flags.MELEE in self._flags:
             self.spawn_slash(entity, caster, evil, aim_right)
+        return True
+
+    def start_cooldown(self, reduce_factor = 0, caster = None):
+        """Starts the spell's cooldown.
+        
+        Args:
+            reduce_factor (float, optional): Starts the cooldown\
+            with a fraction of the time already elapsed. Defaults to 0.
+        """
+        self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
+        self._cooldown *= 1 - reduce_factor
+        
 
     def export(self) -> str:
         """Serialize the spell as JSON."""
         stats = {}
-        afflictions = []
+        buffs = []
+        debuffs = []
+        sequence = []
         for s in self._stats:
             stats[s] = self._stats[s].export()
-        for a in self._afflictions:
-            afflictions.append(a.export())
+        for a in self._buffs:
+            buffs.append(a.export())
+        for a in self._debuffs:
+            debuffs.append(a.export())
+        for s in self._sequence:
+            sequence.append(s.export())
         data = {
             "type": "spell",
             "name": self._name,
@@ -246,7 +294,11 @@ class Spell():
             "animation": self._attack_anim if self._attack_anim is not None else None,
             "damage": self._base_damage.export() if self._base_damage is not None else None,
             "flags": self._flags,
-            "afflictions": afflictions
+            "buffs": buffs,
+            "debuffs": debuffs,
+            "offset": self._offset,
+            "sequence": sequence,
+            "explosion": self._explosion.export() if self._explosion is not None else None,
         }
         return json.dumps(data)
 
@@ -254,7 +306,9 @@ class Spell():
     def imports(data):
         """Reads a json data and creates a spell."""
         stats = {}
-        afflictions = []
+        buffs = []
+        debuffs = []
+        sequence = []
         for s in data["stats"]:
             val = json.loads(data["stats"][s])
             if val["type"] == "stat":
@@ -263,15 +317,21 @@ class Spell():
                 stats[s] = Ressource.imports(val)
             elif val["type"] == "rangestat":
                 stats[s] = RangeStat.imports(val)
-        for a in data["afflictions"]:
-            afflictions.append(Affliction.imports(json.loads(a)))
+        for a in data["buffs"]:
+            buffs.append(Affliction.imports(json.loads(a)))
+        for a in data["debuffs"]:
+            debuffs.append(Affliction.imports(json.loads(a)))
         spell = Spell(
             data["name"],
             Image(data["icon"]).scale(64, 64) if data["icon"] is not None else None,
             data["animation"],
             Damage.imports(json.loads(data["damage"])) if data["damage"] is not None else None,
             flags=data["flags"],
-            afflictions=afflictions
+            buffs=buffs,
+            debuffs=debuffs,
+            explosion=Spell.imports(json.loads(data["explosion"]))\
+                if data["explosion"] is not None else None,
+            sequence=sequence
         )
         spell.stats = stats
         spell.level = int(data["level"])
@@ -289,6 +349,8 @@ class Spell():
     @property
     def icon(self):
         """Returns the spell's icon."""
+        if Flags.COMBO_SPELL in self._flags:
+            return self._sequence[self._sequence_step].icon
         return self._icon
 
     @icon.setter
