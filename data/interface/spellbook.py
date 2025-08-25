@@ -34,6 +34,49 @@ INPUT = {
 STATES = [MENU_SPELLBOOK_1, MENU_SPELLBOOK_2, MENU_SPELLBOOK_3,\
     MENU_SPELLBOOK_4, MENU_SPELLBOOK_5, MENU_SPELLBOOK_DASH]
 
+def slot_jewel(jewel, slot):
+    """Slots the jewel."""
+    if jewel is None:
+        return
+    SYSTEM["spells"]\
+        [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].equip(slot.flag, jewel)
+    SYSTEM["player"].inventory.remove(jewel)
+
+def unslot_jewel(jewel, slot):
+    """Unslots the jewel."""
+    it = SYSTEM["spells"]\
+        [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].unequip(slot.flag)
+    if it is not None:
+        SYSTEM["player"].inventory.append(it)
+
+def overwrite_jewel(jewel, slot):
+    """Overwrites the jewel."""
+    if jewel is None:
+        return
+    it = SYSTEM["spells"]\
+        [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].unequip(slot.flag)
+    if it is not None:
+        SYSTEM["player"].inventory.append(it)
+        SYSTEM["gear_panel"].insert(None, None, it)
+
+def make_slot(spell: Spell, key):
+    """Creates the description data of the spell."""
+    SYSTEM["ui"][key] = [
+        Text(spell.describe()["name"],\
+            font="item_titles", size=45, default_color=BLACK),
+        Text(f"{trad('meta_words', 'level')} " +\
+            f"{spell.describe()['level']}",\
+            font="item_desc", size=20, default_color=BLACK),
+        Text(spell.describe()["desc"],\
+            font="item_desc", size=20, default_color=BLACK),
+        Text(spell.describe()["damage"],\
+            font="item_desc", size=20, default_color=BLACK),
+        spell.describe()["buffs"],
+        Text(f"{spell.exp}/{spell.exp_to_next}",font="item_desc", size=20, default_color=BLACK),
+        [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
+         slot, jewel) for slot, jewel in spell.jewels.items()]
+    ] if spell is not None else None
+
 def slot_in(contain, slot):
     """Slots in a spell."""
     for f in SYSTEM["spells"]:
@@ -41,19 +84,7 @@ def slot_in(contain, slot):
             key = f
             break
     SYSTEM["player"].equipped_spells[slot.flag] = key
-    SYSTEM["ui"][slot.flag] = [
-        Text(contain.describe()["name"],\
-            font="item_titles", size=45, default_color=BLACK),
-        Text(f"{trad('meta_words', 'level')} " +\
-            f"{contain.describe()['level']}",\
-            font="item_desc", size=20, default_color=BLACK),
-        Text(contain.describe()["desc"],\
-            font="item_desc", size=20, default_color=BLACK),
-        Text(contain.describe()["damage"],\
-            font="item_desc", size=20, default_color=BLACK),
-        contain.describe()["buffs"],
-        Text(f"{contain.exp}/{contain.exp_to_next}",font="item_desc", size=20, default_color=BLACK)
-    ]
+    make_slot(contain, slot.flag)
 
 def slot_out(contain, slot):
     """Slots out a spell."""
@@ -106,23 +137,13 @@ def open_spell_screen():
     for key in ["spell_1", "spell_2", "spell_3", "spell_4", "spell_5", "dash"]:
         spell = SYSTEM["spells"][SYSTEM["player"].equipped_spells[key]]\
             if SYSTEM["player"].equipped_spells[key] is not None else None
-        SYSTEM["ui"][key] = [
-            Text(spell.describe()["name"],\
-                font="item_titles", size=45, default_color=BLACK),
-            Text(f"{trad('meta_words', 'level')} " +\
-                f"{spell.describe()['level']}",\
-                font="item_desc", size=20, default_color=BLACK),
-            Text(spell.describe()["desc"],\
-                font="item_desc", size=20, default_color=BLACK),
-            Text(spell.describe()["damage"],\
-                font="item_desc", size=20, default_color=BLACK),
-            spell.describe()["buffs"],
-            Text(f"{spell.exp}/{spell.exp_to_next}",font="item_desc", size=20, default_color=BLACK)
-        ] if spell is not None else None
+        make_slot(spell, key)
     SYSTEM["ui"]["no_spells"] = [
         Text(trad('spells_name', 'none'), font="item_titles", size=45, default_color=BLACK),
         Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=BLACK)
     ]
+    SYSTEM["gear_panel"] = SlotPanel(10, 10,\
+        default=SYSTEM["player"].inventory, filter=Flags.JEWEL)
     SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells, immutable=True)
     SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes, immutable=True)
 
@@ -146,6 +167,7 @@ def draw_spells(events):
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     val = PAGES[SYSTEM["spell_page"]]
     SYSTEM["gear_tabs"].tick()
+    SYSTEM["gear_panel"].tick().draw()
     match val:
         case 1:
             SYSTEM["ui"]["slot_2"].tick().draw()
@@ -180,6 +202,11 @@ def draw_spells(events):
                 y += afflic.height
         except IndexError:
             pass
+        y = SCREEN_HEIGHT - 64 * 5
+        x = SCREEN_WIDTH / 2 - int((64 * 5) / 2)
+        for slot in SYSTEM["ui"][key][6]:
+            slot.set(x, y).tick().draw()
+            x += 64
     else:
         SYSTEM["ui"]["no_spells"][0].draw(680, 450)
         SYSTEM["ui"]["no_spells"][1].draw(680, 490)

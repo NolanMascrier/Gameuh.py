@@ -2,7 +2,7 @@
 inventories and such"""
 
 from collections.abc import Iterable
-from data.constants import SYSTEM
+from data.constants import SYSTEM, Flags
 from data.image.slot import Slot
 from data.image.draggable import Draggable
 from data.interface.render import render
@@ -25,9 +25,11 @@ class SlotPanel:
         immutable (bool, optional): Whether or not the panel should be immutable\
         , ie the user can't add items inside, and if they take one, it'll stay inside.\
         Defaults to `False`.
+        filter (Flags, optional): What flag to use to filter out the data. Defaults\
+        to None.
     """
     def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None,\
-        immutable = False):
+        immutable = False, filter = None):
         self._x = x
         self._y = y
         self._slot_size = slot_size
@@ -42,6 +44,7 @@ class SlotPanel:
         self._default = default
         self._scroll = 0
         self._immutable = immutable
+        self._filter = filter
         if isinstance(default, Iterable):
             for item in default:
                 y, x = self.get_index()
@@ -102,7 +105,10 @@ class SlotPanel:
     def tick(self):
         """ticks down the panel. Removes empty slots."""
         for slot in self._slots.copy():
-            if slot.contains.dragging:
+            if slot.contains is not None and self._filter is not None\
+                and self._filter not in slot.contains.contains.flags:
+                continue
+            elif slot.contains.dragging:
                 self._slots.remove(slot)
             else:
                 slot.contains.tick()
@@ -159,6 +165,9 @@ class SlotPanel:
         real_x = self._x + self._padding + x * self._slot_size
         real_y = self._y + self._padding + y * self._slot_size
         for slot in self._slots:
+            if slot.contains is not None and self._filter is not None\
+                and self._filter not in slot.contains.contains.flags:
+                continue
             diff_x += 1
             if diff_x > self._columns:
                 diff_x = 0

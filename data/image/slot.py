@@ -114,6 +114,14 @@ class Slot():
             return True
         return False
 
+    def set(self, x, y):
+        """Sets the slot at the x;y position."""
+        self._x = x
+        self._y = y
+        if self._contains is not None:
+            self._contains.set(x, y)
+        return self
+
     def tick(self):
         """tick"""
         if self._contains is not None:
@@ -142,6 +150,8 @@ class Slot():
                             render(SYSTEM["images"]["slot_rare"].image, (x, y))
                         case 3:
                             render(SYSTEM["images"]["slot_exalted"].image, (x, y))
+                        case 4:
+                            render(SYSTEM["images"]["slot_unique"].image, (x, y))
                     if self._contains.contains.gray_out():
                         render(self._contains.contains.get_image().opacity(100).image, (x, y))
                     else:
@@ -162,6 +172,8 @@ class Slot():
                         surface.blit(SYSTEM["images"]["slot_rare"].image, (x, y))
                     case 3:
                         surface.blit(SYSTEM["images"]["slot_exalted"].image, (x, y))
+                    case 4:
+                        surface.blit(SYSTEM["images"]["slot_unique"].image, (x, y))
                 if self._contains.contains.gray_out():
                     surface.blit(self._contains.contains.get_image().opacity(100).image, (x, y))
                 else:

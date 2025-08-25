@@ -43,7 +43,7 @@ class Item():
         affixes (list, optionnal): List of the item's affixes,\
         aka its effects. Defaults to [].
     """
-    def __init__(self, name:str, base:str, price, power, max_held = 64,\
+    def __init__(self, name:str, base:str, price, power = 0, max_held = 64,\
         image:Image|Animation = None, rarity = 0,\
         flags = None, affixes = None, implicits = None):
         self._name = name

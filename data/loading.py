@@ -198,6 +198,7 @@ def load_images():
     SYSTEM["images"]["slot_magic"] = Image("ui/item_top_m.png").scale(64, 64)
     SYSTEM["images"]["slot_rare"] = Image("ui/item_top_r.png").scale(64, 64)
     SYSTEM["images"]["slot_exalted"] = Image("ui/item_top_e.png").scale(64, 64)
+    SYSTEM["images"]["slot_unique"] = Image("ui/item_top_u.png").scale(64, 64)
     SYSTEM["images"]["slot_green"] = Image("ui/item_top_g.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"][K_q] = Image("ui/kb_q.png")
