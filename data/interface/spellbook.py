@@ -11,6 +11,8 @@ from data.image.tabs import Tabs
 from data.image.text import Text
 from data.interface.render import render, renders
 
+BLACK = (0,0,0)
+
 PAGES = {
     MENU_SPELLBOOK_1: 0,
     MENU_SPELLBOOK_2: 1,
@@ -41,15 +43,16 @@ def slot_in(contain, slot):
     SYSTEM["player"].equipped_spells[slot.flag] = key
     SYSTEM["ui"][slot.flag] = [
         Text(contain.describe()["name"],\
-            font="item_titles", size=45, default_color=(0,0,0)),
+            font="item_titles", size=45, default_color=BLACK),
         Text(f"{trad('meta_words', 'level')} " +\
             f"{contain.describe()['level']}",\
-            font="item_desc", size=20, default_color=(0,0,0)),
+            font="item_desc", size=20, default_color=BLACK),
         Text(contain.describe()["desc"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
+            font="item_desc", size=20, default_color=BLACK),
         Text(contain.describe()["damage"],\
-            font="item_desc", size=20, default_color=(0,0,0)),
-        contain.describe()["buffs"]
+            font="item_desc", size=20, default_color=BLACK),
+        contain.describe()["buffs"],
+        Text(f"{contain.exp}/{contain.exp_to_next}",font="item_desc", size=20, default_color=BLACK)
     ]
 
 def slot_out(contain, slot):
@@ -105,19 +108,20 @@ def open_spell_screen():
             if SYSTEM["player"].equipped_spells[key] is not None else None
         SYSTEM["ui"][key] = [
             Text(spell.describe()["name"],\
-                font="item_titles", size=45, default_color=(0,0,0)),
+                font="item_titles", size=45, default_color=BLACK),
             Text(f"{trad('meta_words', 'level')} " +\
                 f"{spell.describe()['level']}",\
-                font="item_desc", size=20, default_color=(0,0,0)),
+                font="item_desc", size=20, default_color=BLACK),
             Text(spell.describe()["desc"],\
-                font="item_desc", size=20, default_color=(0,0,0)),
+                font="item_desc", size=20, default_color=BLACK),
             Text(spell.describe()["damage"],\
-                font="item_desc", size=20, default_color=(0,0,0)),
-            spell.describe()["buffs"]
+                font="item_desc", size=20, default_color=BLACK),
+            spell.describe()["buffs"],
+            Text(f"{spell.exp}/{spell.exp_to_next}",font="item_desc", size=20, default_color=BLACK)
         ] if spell is not None else None
     SYSTEM["ui"]["no_spells"] = [
-        Text(trad('spells_name', 'none'), font="item_titles", size=45, default_color=(0,0,0)),
-        Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=(0,0,0))
+        Text(trad('spells_name', 'none'), font="item_titles", size=45, default_color=BLACK),
+        Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=BLACK)
     ]
     SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells, immutable=True)
     SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes, immutable=True)
@@ -165,6 +169,7 @@ def draw_spells(events):
     if SYSTEM["ui"][key] is not None:
         SYSTEM["ui"][key][0].draw(680, 450)
         SYSTEM["ui"][key][1].draw(680, 490)
+        SYSTEM["ui"][key][5].draw(710 + SYSTEM["ui"][key][1].width , 490)
         SYSTEM["ui"][key][2].draw(680, 510)
         y = 530 + SYSTEM["ui"][key][2].height
         SYSTEM["ui"][key][3].draw(680, y)

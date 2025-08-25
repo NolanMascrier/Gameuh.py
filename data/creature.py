@@ -413,7 +413,7 @@ class Creature:
 
     def tick(self):
         """Ticks down all buffs and debuffs."""
-        for buff in self._buffs.copy():
+        for buff in self._buffs:
             buff.tick()
             if buff.expired:
                 self._buffs.remove(buff)
@@ -445,6 +445,8 @@ class Creature:
         final_amount = self._stats["exp_mult"].value * amount
         self._exp += final_amount
         self._exp = round(self._exp)
+        if self._origin is not None:
+            self._origin.gain_exp(final_amount)
         while self._exp >= self._exp_to_next:
             self._exp -= self._exp_to_next
             self._exp_to_next *= 1.35

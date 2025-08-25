@@ -347,6 +347,7 @@ class Flags(str, Enum):
     ITEM = "items"
     GOLD = "gold"
     EXPERIENCE = "exp"
+    JEWEL = "jewel"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"

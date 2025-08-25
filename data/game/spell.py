@@ -4,6 +4,7 @@ import pygame
 import json
 from data.image.animation import Image
 from data.projectile import Projectile
+from data.item import Item
 from data.creature import Creature
 from data.physics.entity import Entity
 from data.numerics.stat import Stat
@@ -53,6 +54,8 @@ class Spell():
         self._attack_anim = attack_anim
         self._base_damage = base_damage
         self._level = 1
+        self._exp = 0
+        self._exp_to_next = 10000
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
             "life_cost": Stat(life_cost, "life_cost"),
@@ -63,8 +66,18 @@ class Spell():
             "distance": Stat(distance, "distance"),
             "chains": Stat(chains, "chains"),
             "spread": Stat(spread, "spread"),
-            "projectile_speed": Stat(proj_speed, "proj_speed")
+            "projectile_speed": Stat(proj_speed, "proj_speed"),
+            "damage_mod": Stat(1, "damage_mod")
         }
+        self._jewels = {
+            0: None,
+            1: None,
+            2: None,
+            3: None,
+            4: None
+        }
+        self._modifiers = []
+        self._changed = set()
         self._cooldown = 0
         if flags is None or not isinstance(flags, list):
             self._flags = []
@@ -78,7 +91,10 @@ class Spell():
             self._debuffs = []
         else:
             self._debuffs = debuffs
-        self._sequence = sequence
+        if sequence is None or not isinstance(sequence, list):
+            self._sequence = []
+        else:
+            self._sequence = sequence
         self._sequence_timer = 0
         self._sequence_step = 0
         self._explosion = explosion
@@ -115,6 +131,19 @@ class Spell():
         sfc.blit(desc.surface, desc_pos)
         self._surface = sfc
 
+    def gain_exp(self, amount: int):
+        """Grants the skill experience."""
+        if self._level >= 20:
+            return
+        self._exp += amount
+        while self._exp >= self._exp_to_next:
+            self._level += 1
+            self._exp -= self._exp_to_next
+            self._exp_to_next = round(self._exp_to_next * 1.85)
+            if self._level >= 20:
+                self._exp_to_next = 9999999999
+                break
+
     def tick(self, caster = None):
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
@@ -130,6 +159,108 @@ class Spell():
                 self._sequence_step = 0
                 self._sequence_timer = 0
                 self._started = False
+
+    def __apply_afflict(self, affliction: Affliction):
+        """Applies the affliction."""
+        for flag in affliction.flags:
+            stat_key = flag.value
+            if stat_key in self._stats:
+                self._stats[stat_key].afflict(affliction)
+                self._changed.add(stat_key)
+        if affliction.stackable:
+            self._modifiers.append(affliction)
+        else:
+            for i, existing_aff in enumerate(self._modifiers):
+                if existing_aff.name == affliction.name:
+                    self._modifiers[i] = affliction
+                    return
+            self._modifiers.append(affliction)
+
+    def afflict(self, affliction):
+        """Afflicts the spell with an affliction from a jewel.
+        Jewels being gear-like, there's no need to tick them.
+        
+        Args:
+            affliction (Affliction): Affliction to afflict.
+        """
+        if isinstance(affliction, tuple):
+            for a in affliction:
+                self.__apply_afflict(a)
+        elif isinstance(affliction, Affliction):
+            self.__apply_afflict(affliction)
+
+    def __remove_afflic(self, affliction: Affliction):
+        """Removes an affliction from the spell.
+        
+        Args:
+            affliction (Affliction): Affliction to remove.
+        """
+        for f in affliction.flags:
+            stat_key = f.value
+            if stat_key in self._stats:
+                self._changed.add(stat_key)
+        for d in self._modifiers.copy():
+            if d == affliction:
+                self._modifiers.remove(d)
+        for st in self._stats:
+            self._stats[st].remove_affliction(affliction)
+
+    def remove_affliction(self, affliction: Affliction):
+        """Removes an affliction from the spell.
+        
+        Args:
+            affliction (Affliction): Affliction to remove.
+        """
+        if isinstance(affliction, tuple):
+            for a in affliction:
+                self.__remove_afflic(a)
+        elif isinstance(affliction, Affliction):
+            self.__remove_afflic(affliction)
+
+    def equip(self, slot: int, item: Item) -> Item | None:
+        """Equips a jewel in the slot. Returns the
+        equipped jewel if the slot is already occupied.
+        
+        Args:
+            slot (int):Index of the slot to equip.
+            item (Item): Item to equip. The item needs the JEWEL flag !
+            left_hand (bool, optionnal): If the slot is\
+            a ring, `True` will indicate the left ring\
+            and `False` the right ring. Defaults to `False`.
+        """
+        if item is None or Flags.JEWEL not in item.flags:
+            return None
+        if slot not in self._jewels:
+            return None
+        old = self.unequip(slot)
+        self._jewels[slot] = item
+        for affix in item.affixes:
+            self.afflict(affix.as_affliction())
+        for affix in item.implicits:
+            self.afflict(affix.as_affliction())
+        return old
+
+    def unequip(self, slot: int) -> Item | None:
+        """Removes an item from the user's gear, and returns it.
+        
+        Args:
+            slot (int): Index of the slot to empty.
+        
+        Returns:
+            item: Item removed. `None` if the slot was\
+            empty.
+        """
+        if slot not in self._jewels:
+            return None
+        item = self._jewels[slot]
+        self._jewels[slot] = None
+        if item is not None:
+            for affix in item.affixes :
+                self.remove_affliction(affix.as_affliction())
+            for affix in item.implicits :
+                self.remove_affliction(affix.as_affliction())
+        return item
+
     def reset(self):
         """Resets the spell's data."""
         self._cooldown = 0
@@ -277,6 +408,7 @@ class Spell():
         buffs = []
         debuffs = []
         sequence = []
+        jewels = {}
         for s in self._stats:
             stats[s] = self._stats[s].export()
         for a in self._buffs:
@@ -285,6 +417,11 @@ class Spell():
             debuffs.append(a.export())
         for s in self._sequence:
             sequence.append(s.export())
+        for j in self._jewels:
+            if self._jewels[j] is None:
+                jewels[j] = None
+            else:
+                jewels[j] = self._jewels[j].export()
         data = {
             "type": "spell",
             "name": self._name,
@@ -299,6 +436,9 @@ class Spell():
             "offset": self._offset,
             "sequence": sequence,
             "explosion": self._explosion.export() if self._explosion is not None else None,
+            "jewels": jewels,
+            "exp": self._exp,
+            "exp_next": self._exp_to_next
         }
         return json.dumps(data)
 
@@ -309,6 +449,7 @@ class Spell():
         buffs = []
         debuffs = []
         sequence = []
+        jewels = []
         for s in data["stats"]:
             val = json.loads(data["stats"][s])
             if val["type"] == "stat":
@@ -321,6 +462,8 @@ class Spell():
             buffs.append(Affliction.imports(json.loads(a)))
         for a in data["debuffs"]:
             debuffs.append(Affliction.imports(json.loads(a)))
+        for s in data["sequence"]:
+            sequence.append(Spell.imports(json.loads(s)))
         spell = Spell(
             data["name"],
             Image(data["icon"]).scale(64, 64) if data["icon"] is not None else None,
@@ -329,12 +472,16 @@ class Spell():
             flags=data["flags"],
             buffs=buffs,
             debuffs=debuffs,
-            explosion=Spell.imports(json.loads(data["explosion"]))\
+            explosion=Slash.imports(json.loads(data["explosion"]))\
                 if data["explosion"] is not None else None,
-            sequence=sequence
+            sequence=sequence,
+            offset_x=int(data["offset"][0]),
+            offset_y=int(data["offset"][1])
         )
-        spell.stats = stats
         spell.level = int(data["level"])
+        spell.exp = int(data["exp"])
+        spell.exp_to_next = int(data["exp_next"])
+        spell.stats = stats
         return spell
 
     @property
@@ -397,3 +544,30 @@ class Spell():
     def surface(self):
         """Returns the spell's description surface."""
         return self._surface
+
+    @property
+    def exp(self):
+        """Return's the spell experience."""
+        return self._exp
+
+    @exp.setter
+    def exp(self, value):
+        self._exp = value
+
+    @property
+    def exp_to_next(self):
+        """Return's the spell's needed experience for the next level."""
+        return self._exp_to_next
+
+    @exp_to_next.setter
+    def exp_to_next(self, value):
+        self._exp_to_next = value
+
+    @property
+    def jewels(self):
+        """Return's the spell's slotted jewels."""
+        return self._jewels
+
+    @jewels.setter
+    def jewels(self, value):
+        self._jewels = value

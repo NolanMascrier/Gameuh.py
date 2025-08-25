@@ -1,11 +1,14 @@
 """A slash is a type of attack that attaches itself to its caster,
 plays its animation and disappear. It's used for melee attacks."""
 
+import json
 from data.numerics.damage import Damage
 from data.creature import Creature
+from data.projectile import DummyEntity
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.projectile import Projectile
+from data.numerics.affliction import Affliction
 from data.constants import PROJECTILE_GRID, Flags, SYSTEM
 
 class Slash():
@@ -88,6 +91,36 @@ class Slash():
             self._immune.append(target)
             return num, crit
         return (None, None)
+
+    def export(self) -> str:
+        """Serializes the slash as JSON data."""
+        debuffs = []
+        for d in self._debuffs:
+            debuffs.append(d.export())
+        data = {
+            "type": "slash",
+            "anim": self._image,
+            "damage": self._damage.export(),
+            "flags": self._flags,
+            "offset": self._offset,
+            "debuffs": debuffs
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def imports(data):
+        """Reads JSON data and returns a slash."""
+        dt = DummyEntity(0,0,0)
+        return Slash(
+            dt,
+            None,
+            data["anim"],
+            Damage.imports(json.loads(data["damage"])),
+            flags = data["flags"],
+            offset_x=int(data["offset"][0]),
+            offset_y=int(data["offset"][1]),
+            debuffs=[Affliction.imports(json.loads(d)) for d in data["debuffs"]]
+        )
 
     @property
     def caster(self) -> Entity:

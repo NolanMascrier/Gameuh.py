@@ -132,6 +132,12 @@ class Character():
     def on_damage(self, value):
         """Called when the creature inflicts damage."""
 
+    def gain_exp(self, amount):
+        """Grants exp to the equipped skills."""
+        for _, s in self._equipped_spells.items():
+            if s is not None:
+                SYSTEM["spells"][s].gain_exp(amount)
+
     def __move(self, dx, dy):
         """Moves the character by dx, dy."""
         new_x = self._entity.x + dx
