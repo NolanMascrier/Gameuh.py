@@ -5,6 +5,13 @@ Currently in a playble state !
 A python rewrite of my favourite University project, a small incremental dungeon crawler.
 
 Instead, it's now a looter bullet hell. Yeah
+# TODO list
+* Adding the jewel system for spells
+* Adding jewels to the loot pools
+* Adding area modifier and level selector
+* Adding general content
+* Deciding on a art style and theme (thinking of going for Mechas ?)
+* Sounds and musics ?
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
