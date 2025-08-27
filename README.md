@@ -12,6 +12,8 @@ Instead, it's now a looter bullet hell. Yeah
 * Adding general content
 * Deciding on a art style and theme (thinking of going for Mechas ?)
 * Sounds and musics ?
+* Lore and story mode ?
+* More game modes (boss rush, rogue like infinite waves, dungeons ?)
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
