@@ -37,6 +37,8 @@ class Slot():
         immutable (bool, optional): Whether or not this slot is immutable.\
         If it is, the user can take the content, but not replace it. Furthermore,\
         taking the content will NOT remove it from the slot. Defualts to `False`.
+        accept_only (type|Iterable[type]): Types that can be slotted inside.\
+        Defaults to None. If this is set to None, any kind of object can be slotted.
     """
     def __init__(self, x, y, back_image = None, on_slot = None,\
         on_remove = None, on_overwrite = None,\
@@ -57,7 +59,7 @@ class Slot():
         self._left = left
         self._immutable = immutable
         if isinstance (accept_only, type):
-            self._accept_only = (accept_only)
+            self._accept_only = accept_only
         elif isinstance (accept_only, Iterable):
             self._accept_only = tuple(accept_only)
         else:
@@ -117,8 +119,6 @@ class Slot():
                 not isinstance(draggable.contains, self._accept_only):
                 return False
             print(self._immutable, draggable.immutable)
-            if self._immutable != draggable.immutable:
-                return False
             if self._immutable:
                 draggable.set_panel(None)
                 draggable.set_parent(None)

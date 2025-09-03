@@ -6,9 +6,12 @@ A python rewrite of my favourite University project, a small incremental dungeon
 
 Instead, it's now a looter bullet hell. Yeah
 # TODO list
-* Adding the jewel system for spells
+* ~~Adding the jewel system for spells~~ Done !
 * Adding jewels to the loot pools
 * Adding area modifier and level selector
+* Adding at least two bosses (Wave boss and unique boss)
+* Adding more options in the options menu (gamma, color correction, etc)
+* Real saving system
 * Adding general content
 * Deciding on a art style and theme (thinking of going for Mechas ?)
 * Sounds and musics ?
