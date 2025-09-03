@@ -366,7 +366,8 @@
         "armor_mind_over_matter": "Lesser Spirit Shield",
         "crit_res": "Critical damage resistance",
         "estimate_armor": "Damage reduction",
-        "estimate_dodge": "Dodge chance"
+        "estimate_dodge": "Dodge chance",
+        "damage_mod": "Base damage"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"

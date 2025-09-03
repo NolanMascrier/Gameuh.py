@@ -75,7 +75,7 @@ class Draggable(Image):
                         return self
                     if self._immutable:
                         copy = Draggable(self._uri, self._x, self._y,\
-                            self._contains, False)
+                            self._contains, True)
                         copy.dragging = True
                         SYSTEM["dragged"] = copy
                         SYSTEM["cooldown"] = 0.5
@@ -161,3 +161,8 @@ class Draggable(Image):
     def parent(self):
         """Returns the parent."""
         return self._parent_slot
+
+    @property
+    def immutable(self):
+        """Returns whether or not the draggable is immutable."""
+        return self._immutable

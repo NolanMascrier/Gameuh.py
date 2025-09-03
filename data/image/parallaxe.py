@@ -46,8 +46,7 @@ class Parallaxe(Animation):
 
     def draw(self):
         """Draws the parallaxe."""
-        if SYSTEM["gm_background"] != self._background:
-            SYSTEM["gm_background"] = self._background
+        SYSTEM["gm_background"] = self._background
         x = []
         if self._scroll_left:
             for i in range(len(self._sequence)):

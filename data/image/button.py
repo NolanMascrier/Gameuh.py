@@ -111,7 +111,7 @@ class Button():
 
     def tick(self):
         """Ticks the button, checking if is pressed."""
-        if SYSTEM["mouse_click"][0]:
+        if SYSTEM["mouse_click"][0] and SYSTEM["dragged"] is None:
             self.press()
         else:
             self._clicked = False

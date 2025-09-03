@@ -148,6 +148,9 @@ class SlotPanel:
             return False
         if self.is_hovered():
             pos = self.__get_pos()
+            if self._immutable != draggable.immutable:
+                SYSTEM["dragged"] = None
+                return False
             if self._immutable:
                 draggable.set_panel(None)
                 draggable.set_parent(None)

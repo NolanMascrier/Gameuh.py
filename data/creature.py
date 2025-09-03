@@ -153,9 +153,9 @@ class Creature:
         values = {}
         for types in DAMAGE_TYPE:
             base = dmg[types]
-            roll = self._stats[f"{types}_flat"].roll()
+            roll = self._stats[f"{types}_flat"].roll() + base
             mult = roll * multi * self._stats[f"{types}_dmg"].get_value()
-            values[types] = base + mult
+            values[types] = mult
 
         pp = pen["phys"] + self._stats["phys_pen"].get_value()
         fp = pen["fire"] + self._stats["fire_pen"].get_value()

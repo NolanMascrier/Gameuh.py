@@ -5,6 +5,7 @@ from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_
     MENU_SPELLBOOK_1, MENU_SPELLBOOK_3, MENU_SPELLBOOK_2, MENU_SPELLBOOK_5,\
     MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, K_q, K_t, K_e, K_r, K_f, K_LSHIFT, trad
 from data.game.spell import Spell
+from data.item import Item
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.image.tabs import Tabs
@@ -34,13 +35,22 @@ INPUT = {
 STATES = [MENU_SPELLBOOK_1, MENU_SPELLBOOK_2, MENU_SPELLBOOK_3,\
     MENU_SPELLBOOK_4, MENU_SPELLBOOK_5, MENU_SPELLBOOK_DASH]
 
+def refresh():
+    """Refreshs the current spell window."""
+    SYSTEM["spells"]\
+        [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].recalculate_damage()
+    make_slot(SYSTEM["spells"]\
+        [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]],
+        INPUT[SYSTEM["spell_page"]])
+
 def slot_jewel(jewel, slot):
     """Slots the jewel."""
-    if jewel is None:
+    if jewel is None or not isinstance(jewel, Item):
         return
     SYSTEM["spells"]\
         [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].equip(slot.flag, jewel)
     SYSTEM["player"].inventory.remove(jewel)
+    refresh()
 
 def unslot_jewel(jewel, slot):
     """Unslots the jewel."""
@@ -48,16 +58,18 @@ def unslot_jewel(jewel, slot):
         [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].unequip(slot.flag)
     if it is not None:
         SYSTEM["player"].inventory.append(it)
+    refresh()
 
 def overwrite_jewel(jewel, slot):
     """Overwrites the jewel."""
-    if jewel is None:
+    if jewel is None or not isinstance(jewel, Item):
         return
     it = SYSTEM["spells"]\
         [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].unequip(slot.flag)
     if it is not None:
         SYSTEM["player"].inventory.append(it)
         SYSTEM["gear_panel"].insert(None, None, it)
+    refresh()
 
 def make_slot(spell: Spell, key):
     """Creates the description data of the spell."""
@@ -74,11 +86,13 @@ def make_slot(spell: Spell, key):
         spell.describe()["buffs"],
         Text(f"{spell.exp}/{spell.exp_to_next}",font="item_desc", size=20, default_color=BLACK),
         [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
-         slot, jewel) for slot, jewel in spell.jewels.items()]
+         slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()]
     ] if spell is not None else None
 
 def slot_in(contain, slot):
     """Slots in a spell."""
+    if not isinstance(contain, Spell):
+        return
     for f in SYSTEM["spells"]:
         if SYSTEM["spells"][f] == contain:
             key = f
@@ -90,11 +104,6 @@ def slot_out(contain, slot):
     """Slots out a spell."""
     SYSTEM["player"].equipped_spells[slot.flag] = None
     SYSTEM["ui"][slot.flag] = None
-
-def set_page(page):
-    """Changes the page of the spellbook."""
-    if page in PAGES:
-        SYSTEM["spell_page"] = PAGES[page]
 
 def open_spell_screen():
     """Sets up the spell screen menu."""
@@ -121,17 +130,22 @@ def open_spell_screen():
     x_offset = SCREEN_WIDTH / 2 - 300
     x_offset_slot = SCREEN_WIDTH / 2 - 32
     SYSTEM["gear_tabs"] = Tabs(x_offset, 300, images, STATES, "spell_page",\
-        SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"])
+        SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"], additional_action=refresh)
     SYSTEM["ui"]["slot_1"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1")
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_2"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_2"]], flag="spell_2")
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_2"]], flag="spell_2",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_3"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_3"]], flag="spell_3")
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_3"]], flag="spell_3",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_4"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_4"]], flag="spell_4")
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_4"]], flag="spell_4",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_5"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5")
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_dash"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash")
     for key in ["spell_1", "spell_2", "spell_3", "spell_4", "spell_5", "dash"]:

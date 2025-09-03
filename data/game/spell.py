@@ -53,6 +53,7 @@ class Spell():
         self._icon = icon
         self._attack_anim = attack_anim
         self._base_damage = base_damage
+        self._real_damage = base_damage.clone() if base_damage is not None else None
         self._level = 1
         self._exp = 0
         self._exp_to_next = 10000
@@ -102,6 +103,15 @@ class Spell():
         self._offset = (offset_x, offset_y)
         self._started = False
         self.generate_surface()
+        self.recalculate_damage()
+
+    def recalculate_damage(self):
+        """Recalculates the damage using the spell's stats."""
+        if self._base_damage is None:
+            return
+        mod = self._stats["damage_mod"].get_value()
+        for dmg in self._base_damage.types:
+            self._real_damage.types[dmg] = mod * self._base_damage.types[dmg]
 
     def generate_surface(self):
         """Creates the hoverable surface of the spell."""
@@ -268,8 +278,8 @@ class Spell():
     def __damage_describe(self, caster):
         """Describes the damage and buffs components."""
         descript = ""
-        if self._base_damage is not None:
-            descript += self._base_damage.describe(caster, Flags.MELEE in self._flags,\
+        if self._real_damage is not None:
+            descript += self._real_damage.describe(caster, Flags.MELEE in self._flags,\
                 Flags.RANGED in self._flags, Flags.SPELL in self._flags)
         if Flags.DASH in self._flags:
             descript += f"{trad('meta_words', 'dash')} {self._stats['distance'].c_value}" +\
@@ -339,7 +349,7 @@ class Spell():
         """Spanws a projectile."""
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
-                        self._base_damage, caster, evil,\
+                        self._real_damage, caster, evil,\
                         speed=self._stats["projectile_speed"].c_value,\
                         delay=self._stats["delay"].c_value * delay,\
                         bounces=self._stats["bounces"].c_value, \
@@ -350,7 +360,7 @@ class Spell():
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False):
         """Spawns a slash."""
-        sl = Slash(entity, caster, self._attack_anim, self._base_damage,\
+        sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
                        aim_right, evil, self._flags, self._offset[0], self._offset[1], debuffs=self._debuffs)
         PROJECTILE_TRACKER.append(sl)
 

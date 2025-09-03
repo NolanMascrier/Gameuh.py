@@ -135,17 +135,28 @@ class Damage():
         if is_spell:
             mult *= caster.stats["spell_dmg"].c_value
         for typ in types:
-            low_roll = self._types[typ] * self._bounds[0]
-            hig_roll = self._types[typ] * self._bounds[1]
-            low = caster.stats[f"{typ}_flat"].lower.c_value*\
-                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult + low_roll
-            up = caster.stats[f"{typ}_flat"].upper.c_value*\
-                caster.stats[f"{typ}_dmg"].c_value * self._coeff * mult + hig_roll
+            type_mult = caster.stats[f"{typ}_dmg"].c_value * mult
+            low_roll = self._types[typ] * self._bounds[0] * type_mult
+            hig_roll = self._types[typ] * self._bounds[1] * type_mult
+            added_low = caster.stats[f"{typ}_flat"].lower.c_value * type_mult * self._coeff
+            added_high = caster.stats[f"{typ}_flat"].upper.c_value * type_mult * self._coeff
+            low = low_roll + added_low
+            up = hig_roll + added_high
             if low == 0 and up == 0:
                 continue
             txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} " +\
                 f"{trad('meta_words', typ)} {trad('meta_words', 'damage')}\n"
         return txt
+
+    def clone(self):
+        """Creates a deep copy of the damage source."""
+        dmg = Damage(self._coeff, is_crit=self._is_crit, crit_mult=self._crit_mult,
+            flags=self._flags.copy(), ignore_block=self._ignore_block,
+            ignore_dodge=self._ignore_dodge, origin=self._origin, 
+            lower_bound=self._bounds[0], upper_bound=self._bounds[1])
+        dmg.types = self._types.copy()
+        dmg.penetration = self._penetration.copy()
+        return dmg
 
     def export(self) -> str:
         """Serialize the damage as JSON data."""

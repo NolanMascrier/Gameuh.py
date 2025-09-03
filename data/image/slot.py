@@ -1,5 +1,6 @@
 """A slot is a component that can hold a draggable."""
 
+from collections.abc import Iterable
 from data.constants import SYSTEM
 from data.image.draggable import Draggable
 from data.item import Item
@@ -39,7 +40,8 @@ class Slot():
     """
     def __init__(self, x, y, back_image = None, on_slot = None,\
         on_remove = None, on_overwrite = None,\
-        flag = None, default = None, left = False, immutable = False):
+        flag = None, default = None, left = False, immutable = False,\
+        accept_only = None):
         if back_image is None:
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
@@ -54,6 +56,12 @@ class Slot():
         self._flag = flag
         self._left = left
         self._immutable = immutable
+        if isinstance (accept_only, type):
+            self._accept_only = (accept_only)
+        elif isinstance (accept_only, Iterable):
+            self._accept_only = tuple(accept_only)
+        else:
+            self._accept_only = None
         if default is not None:
             dr = Draggable(contains=default, immutable=immutable)
             dr.set(self._x, self._y)
@@ -105,6 +113,12 @@ class Slot():
         if draggable is None:
             return False
         if self.is_hovered():
+            if self._accept_only is not None and\
+                not isinstance(draggable.contains, self._accept_only):
+                return False
+            print(self._immutable, draggable.immutable)
+            if self._immutable != draggable.immutable:
+                return False
             if self._immutable:
                 draggable.set_panel(None)
                 draggable.set_parent(None)

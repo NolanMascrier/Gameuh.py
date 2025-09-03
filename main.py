@@ -21,6 +21,7 @@ from data.interface.render import render_all, render, resolution, renders
 from data.projectile import Projectile
 from data.slash import Slash
 from data.item import Item
+from data.numerics.affix import Affix
 
 PLAYING = True
 
@@ -31,7 +32,8 @@ def debug_create_items():
     base_loot = []
     for _ in range(40):
         base_loot.append(SYSTEM["looter"].generate_item(5, random.randint(0, 3)))
-    SYSTEM["player"].inventory.append(Item("Super Jewel", "Jewel", 99999, image=SYSTEM["images"]["rune_1"], rarity=4, flags=[Flags.JEWEL]))
+    SYSTEM["player"].inventory.append(Item("Super Jewel", "Jewel", 99999, image=SYSTEM["images"]["rune_1"], rarity=4, flags=[Flags.JEWEL],
+        affixes=[Affix("JEWELLL", 1, flag=[Flags.BLESS, Flags.DAMAGE_MOD])]))
     SYSTEM["player"].inventory.extend(base_loot)
 
 def check_collisions():

@@ -4,9 +4,11 @@ will change a state."""
 from data.image.button import Button
 from data.constants import SYSTEM
 
-def set_var(variable, state):
+def set_var(variable, state, act = None):
     """Sets the variable to the state."""
     SYSTEM[variable] = state
+    if act is not None:
+        act()
 
 class Tabs:
     """Define a tab.
@@ -24,9 +26,12 @@ class Tabs:
         to `False`.
         actions (list, optional): List of function calls to use with\
         the previous option. Defaults to None. 
+        addition_action (function, optional): Function to call when \
+        clicking a button. Defauts to None.
     """
     def __init__(self, x, y, values, states, variable,\
-        image = None, held = None, is_action = False, actions = None):
+        image = None, held = None, is_action = False, actions = None,\
+        additional_action = None):
         self._x = x
         self._y = y
         if values is None:
@@ -36,6 +41,7 @@ class Tabs:
             states = []
         self._states = states
         self._variable = variable
+        self._other_action = additional_action
         if image is None:
             image = SYSTEM["images"]["btn_tab"]
         if held is None:
@@ -44,7 +50,7 @@ class Tabs:
         self._fake_buttons = []
         for i, v in enumerate(values):
             self._buttons.append(Button(image, image,\
-                lambda i=i: set_var(self._variable, self._states[i])\
+                lambda i=i: set_var(self._variable, self._states[i], additional_action)\
                 if not is_action else actions[i](),\
                 v))
             self._fake_buttons.append(Button(held, held, None, v))
