@@ -2,7 +2,7 @@
 inventories and such"""
 
 from collections.abc import Iterable
-from data.constants import SYSTEM, Flags
+from data.constants import SYSTEM
 from data.image.slot import Slot
 from data.image.draggable import Draggable
 from data.interface.render import render

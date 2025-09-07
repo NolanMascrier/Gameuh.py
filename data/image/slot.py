@@ -118,7 +118,6 @@ class Slot():
             if self._accept_only is not None and\
                 not isinstance(draggable.contains, self._accept_only):
                 return False
-            print(self._immutable, draggable.immutable)
             if self._immutable:
                 draggable.set_panel(None)
                 draggable.set_parent(None)

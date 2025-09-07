@@ -367,7 +367,9 @@
         "crit_res": "Critical damage resistance",
         "estimate_armor": "Damage reduction",
         "estimate_dodge": "Dodge chance",
-        "damage_mod": "Base damage"
+        "damage_mod": "Base damage",
+        "life_cost": "Life cost",
+        "mana_cost": "Mana cost"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"

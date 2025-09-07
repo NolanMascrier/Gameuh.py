@@ -349,6 +349,8 @@ class Flags(str, Enum):
     EXPERIENCE = "exp"
     JEWEL = "jewel"
     DAMAGE_MOD = "damage_mod"
+    LIFE_COST = "life_cost"
+    MANA_COST = "mana_cost"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"

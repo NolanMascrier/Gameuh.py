@@ -103,6 +103,17 @@ class Spell():
         self._offset = (offset_x, offset_y)
         self._started = False
         self.generate_surface()
+        self.__update()
+
+    def __update(self):
+        """Updates the data of the spell."""
+        dmg = Affliction("DAMGE_FROM_LEVEL", 1.02 * (self._level - 1), -1,\
+            [Flags.DAMAGE_MOD, Flags.BOON])
+        hp = Affliction("LIFE_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
+            [Flags.LIFE_COST, Flags.BLESS])
+        mana = Affliction("MANA_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
+            [Flags.MANA_COST, Flags.BLESS])
+        self.afflict((dmg, hp, mana))
         self.recalculate_damage()
 
     def recalculate_damage(self):
@@ -148,6 +159,7 @@ class Spell():
         self._exp += amount
         while self._exp >= self._exp_to_next:
             self._level += 1
+            self.__update()
             self._exp -= self._exp_to_next
             self._exp_to_next = round(self._exp_to_next * 1.85)
             if self._level >= 20:
@@ -248,6 +260,7 @@ class Spell():
             self.afflict(affix.as_affliction())
         for affix in item.implicits:
             self.afflict(affix.as_affliction())
+        self.__update()
         return old
 
     def unequip(self, slot: int) -> Item | None:
@@ -269,6 +282,7 @@ class Spell():
                 self.remove_affliction(affix.as_affliction())
             for affix in item.implicits :
                 self.remove_affliction(affix.as_affliction())
+        self.__update()
         return item
 
     def reset(self):
