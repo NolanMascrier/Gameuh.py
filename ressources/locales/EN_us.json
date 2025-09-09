@@ -148,6 +148,11 @@
         "Void damage is often #c#(71, 0, 125)black and purple #c#(255, 255, 255)in color. It disrupts",
         "the very laws of the universe."
     ],
+    "dmg_effic": [
+        "Effect of added damage impacts how much the added damage from your",
+        "gear affect the damage of the spell. The higher the multiplier, the higher",
+        "your gear will grant damage to the spell."
+    ],
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "tree": {
@@ -371,7 +376,8 @@
         "life_cost": "Life cost",
         "mana_cost": "Mana cost",
         "cooldown": "Cooldown",
-        "projectiles": "Projectiles"
+        "projectiles": "Projectiles",
+        "dmg_effic": "Added damage magnitude"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"
@@ -1591,12 +1597,6 @@
         ["Stone", "Stone"],
         ["Iron", "Bastion"],
         ["Steel", "Steel"]
-      ],
-      "dodge_rating": [
-        ["Slippery", "Slip"],
-        ["Spectral", "Ghost"],
-        ["Mist", "Wisp"],
-        ["Unreachable", "Untouched"]
       ],
       "dodge": [
         ["Slippery", "Slip"],

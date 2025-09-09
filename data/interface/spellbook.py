@@ -13,6 +13,8 @@ from data.image.text import Text
 from data.interface.render import render, renders
 
 BLACK = (0,0,0)
+RED = (255, 25, 25)
+BLUE = (25, 25, 255)
 
 PAGES = {
     MENU_SPELLBOOK_1: 0,
@@ -73,20 +75,33 @@ def overwrite_jewel(jewel, slot):
 
 def make_slot(spell: Spell, key):
     """Creates the description data of the spell."""
+    data = spell.describe()
+    cost_l = f"{trad('descripts', 'life_cost')}: {data['costs'][0]}" if\
+        data["costs"][0] > 0 else None
+    cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
+        data["costs"][1] > 0 else None
     SYSTEM["ui"][key] = [
-        Text(spell.describe()["name"],\
+        Text(data["name"],\
             font="item_titles", size=45, default_color=BLACK),
         Text(f"{trad('meta_words', 'level')} " +\
-            f"{spell.describe()['level']}",\
+            f"{data['level']}",\
             font="item_desc", size=20, default_color=BLACK),
-        Text(spell.describe()["desc"],\
+        Text(data["desc"],\
             font="item_desc", size=20, default_color=BLACK),
-        Text(spell.describe()["damage"],\
+        Text(data["damage"],\
             font="item_desc", size=20, default_color=BLACK),
-        spell.describe()["buffs"],
+        data["buffs"],
         Text(f"{spell.exp}/{spell.exp_to_next}",font="item_desc", size=20, default_color=BLACK),
         [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
-         slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()]
+         slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
+        Text(f"{trad('descripts', 'cooldown')}: {data['cooldown']}s",\
+            font="item_desc", size=20, default_color=BLACK),
+        Text(f"{trad('descripts', 'projectiles')}: {round(data['projectiles'])}",\
+            font="item_desc", size=20, default_color=BLACK) if data["projectiles"] is not None\
+            else None,
+        Text(cost_l, font="item_desc", size=20, default_color=RED) if cost_l is not None else None,
+        Text(cost_m, font="item_desc", size=20, default_color=BLUE) if cost_m is not None else None,
+        data["dmg_effic"]
     ] if spell is not None else None
 
 def slot_in(contain, slot):
@@ -129,24 +144,24 @@ def open_spell_screen():
     ]
     x_offset = SCREEN_WIDTH / 2 - 300
     x_offset_slot = SCREEN_WIDTH / 2 - 32
-    SYSTEM["gear_tabs"] = Tabs(x_offset, 300, images, STATES, "spell_page",\
+    SYSTEM["gear_tabs"] = Tabs(x_offset, 100, images, STATES, "spell_page",\
         SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"], additional_action=refresh)
-    SYSTEM["ui"]["slot_1"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_1"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1",\
         accept_only=Spell)
-    SYSTEM["ui"]["slot_2"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_2"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_2"]], flag="spell_2",\
         accept_only=Spell)
-    SYSTEM["ui"]["slot_3"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_3"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_3"]], flag="spell_3",\
         accept_only=Spell)
-    SYSTEM["ui"]["slot_4"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_4"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_4"]], flag="spell_4",\
         accept_only=Spell)
-    SYSTEM["ui"]["slot_5"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_5"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5",\
         accept_only=Spell)
-    SYSTEM["ui"]["slot_dash"] = Slot(x_offset_slot, 380, "skill_top", slot_in, slot_out,\
+    SYSTEM["ui"]["slot_dash"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash")
     for key in ["spell_1", "spell_2", "spell_3", "spell_4", "spell_5", "dash"]:
         spell = SYSTEM["spells"][SYSTEM["player"].equipped_spells[key]]\
@@ -176,9 +191,8 @@ def unloader():
 def draw_spells(events):
     """Draws the gear menu."""
     renders(SYSTEM["city_back"].as_background)
-    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
-    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg_alt"].width / 2
+    render(SYSTEM["images"]["menu_bg_alt"].image, (x_offset, 10))
     val = PAGES[SYSTEM["spell_page"]]
     SYSTEM["gear_tabs"].tick()
     SYSTEM["gear_panel"].tick().draw()
@@ -203,25 +217,36 @@ def draw_spells(events):
             SYSTEM["spell_panel"].tick().draw()
     key = INPUT[SYSTEM["spell_page"]]
     if SYSTEM["ui"][key] is not None:
-        SYSTEM["ui"][key][0].draw(680, 450)
-        SYSTEM["ui"][key][1].draw(680, 490)
-        SYSTEM["ui"][key][5].draw(710 + SYSTEM["ui"][key][1].width , 490)
-        SYSTEM["ui"][key][2].draw(680, 510)
-        y = 530 + SYSTEM["ui"][key][2].height
+        SYSTEM["ui"][key][0].draw(680, 250)
+        SYSTEM["ui"][key][1].draw(680, 290)
+        SYSTEM["ui"][key][5].draw(710 + SYSTEM["ui"][key][1].width , 290)
+        SYSTEM["ui"][key][2].draw(680, 310)
+        y = 330 + SYSTEM["ui"][key][2].height
         SYSTEM["ui"][key][3].draw(680, y)
         y += SYSTEM["ui"][key][3].height
+        if SYSTEM["ui"][key][11] is not None:
+            SYSTEM["ui"][key][11].set(680, y).tick().draw()
+            y += SYSTEM["ui"][key][11].height
         try:
             for afflic in SYSTEM["ui"][key][4]:
                 afflic.set(680, y).tick().draw()
                 y += afflic.height
         except IndexError:
             pass
-        y = SCREEN_HEIGHT - 64 * 5
+        SYSTEM["ui"][key][7].draw(680, y + 30)
+        if SYSTEM["ui"][key][8] is not None:
+            SYSTEM["ui"][key][8].draw(680, y + 60)
+        if SYSTEM["ui"][key][9] is not None:
+            SYSTEM["ui"][key][9].draw(900, y + 30)
+            y += 30
+        if SYSTEM["ui"][key][10] is not None:
+            SYSTEM["ui"][key][10].draw(900, y + 30)
+        y = SCREEN_HEIGHT - 64 * 4
         x = SCREEN_WIDTH / 2 - int((64 * 5) / 2)
         for slot in SYSTEM["ui"][key][6]:
             slot.set(x, y).tick().draw()
             x += 64
     else:
-        SYSTEM["ui"]["no_spells"][0].draw(680, 450)
-        SYSTEM["ui"]["no_spells"][1].draw(680, 490)
+        SYSTEM["ui"]["no_spells"][0].draw(680, 250)
+        SYSTEM["ui"]["no_spells"][1].draw(680, 290)
     draw_bottom_bar(events)

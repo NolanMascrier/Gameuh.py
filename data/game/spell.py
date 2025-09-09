@@ -1,7 +1,7 @@
 """For spells"""
 
-import pygame
 import json
+import pygame
 from data.image.animation import Image
 from data.projectile import Projectile
 from data.item import Item
@@ -15,6 +15,8 @@ from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable, Text
+
+BLACK = (0,0,0)
 
 class Spell():
     """Creates a spell. A spell is how creature interact with each other
@@ -62,7 +64,7 @@ class Spell():
             "life_cost": Stat(life_cost, "life_cost"),
             "bounces": Stat(bounces, "bounces"),
             "delay": Stat(delay, "delay"),
-            "cooldown": Stat(cooldown, "cooldown"),
+            "cooldown": Stat(cooldown, "cooldown", min_cap=0.1),
             "projectiles": Stat(projectiles, "projectiles"),
             "distance": Stat(distance, "distance"),
             "chains": Stat(chains, "chains"),
@@ -177,7 +179,8 @@ class Spell():
                 self._sequence_timer += 0.016
             if (self._sequence_step >= len(self._sequence) or self._sequence_timer >= 3)\
                 and self._started:
-                self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
+                self._cooldown = self._stats["cooldown"].c_value *\
+                    caster.stats["cast_speed"].c_value
                 self._sequence_step = 0
                 self._sequence_timer = 0
                 self._started = False
@@ -310,7 +313,7 @@ class Spell():
             for afflic in self._debuffs:
                 buffs.append(afflic.describe(False))
         if Flags.CUTS_PROJECTILE in self._flags:
-            buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, (0,0,0)))
+            buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, BLACK))
         return buffs
 
     def describe(self):
@@ -320,14 +323,22 @@ class Spell():
             "desc": trad('spells_desc', self._name),
             "level": str(self._level),
             "damage": self.__damage_describe(SYSTEM["player"].creature),
-            "buffs": self.__describe_afflictions()
+            "buffs": self.__describe_afflictions(),
+            "cooldown": str(self._stats["cooldown"].get_value()),
+            "costs": (self._stats["life_cost"].c_value, self._stats["mana_cost"].c_value),
+            "projectiles": self._stats["projectiles"].c_value\
+                if Flags.PROJECTILE in self._flags else None,
+            "dmg_effic": Hoverable(0, 0, f"{trad('descripts', 'dmg_effic')}:" +\
+                f"{round(self._base_damage.coeff * 100, 2)}%",\
+                trad('dmg_effic'), BLACK) if self._base_damage is not None else None,
         }
         return data
 
     def on_hit(self, value):
         """Called when the creature is hit."""
 
-    def on_crit(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
+    def on_crit(self, caster: Creature, entity: Entity,
+            evil: bool, aim_right = True, force = False):
         """Called when the creature crits."""
         if Flags.TRIGGER_ON_CRIT in self._flags:
             self.on_cast(caster, entity, evil, aim_right, force)
@@ -359,7 +370,8 @@ class Spell():
         else:
             self.on_cast(caster, entity, evil, aim_right, force)
 
-    def spawn_projectile(self, entity, caster, evil = False, x_diff = 0, y_diff = 0, delay = 1, angle = 0):
+    def spawn_projectile(self, entity, caster, evil = False,\
+            x_diff = 0, y_diff = 0, delay = 1, angle = 0):
         """Spanws a projectile."""
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
@@ -375,10 +387,12 @@ class Spell():
     def spawn_slash(self, entity, caster, evil = False, aim_right = False):
         """Spawns a slash."""
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
-                       aim_right, evil, self._flags, self._offset[0], self._offset[1], debuffs=self._debuffs)
+                       aim_right, evil, self._flags, self._offset[0],\
+                       self._offset[1], debuffs=self._debuffs)
         PROJECTILE_TRACKER.append(sl)
 
-    def on_cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
+    def on_cast(self, caster: Creature, entity: Entity, evil: bool,\
+            aim_right = True, force = False):
         """Shoots the spell."""
         mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
         life_cost = caster.get_efficient_value(self._stats["life_cost"].c_value)
@@ -424,7 +438,6 @@ class Spell():
         """
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         self._cooldown *= 1 - reduce_factor
-        
 
     def export(self) -> str:
         """Serialize the spell as JSON."""
@@ -473,7 +486,7 @@ class Spell():
         buffs = []
         debuffs = []
         sequence = []
-        jewels = []
+        jewels = {}
         for s in data["stats"]:
             val = json.loads(data["stats"][s])
             if val["type"] == "stat":
@@ -488,6 +501,11 @@ class Spell():
             debuffs.append(Affliction.imports(json.loads(a)))
         for s in data["sequence"]:
             sequence.append(Spell.imports(json.loads(s)))
+        for j in data["jewels"]:
+            if data["jewels"][j] is not None:
+                jewels[j] = Item.imports(json.loads(data["jewels"][j]))
+            else:
+                jewels[j] = None
         spell = Spell(
             data["name"],
             Image(data["icon"]).scale(64, 64) if data["icon"] is not None else None,
@@ -506,6 +524,7 @@ class Spell():
         spell.exp = int(data["exp"])
         spell.exp_to_next = int(data["exp_next"])
         spell.stats = stats
+        spell.jewels = jewels
         return spell
 
     @property

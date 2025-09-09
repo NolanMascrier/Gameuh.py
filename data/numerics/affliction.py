@@ -62,9 +62,13 @@ class Affliction():
     def __eq__(self, other):
         if not isinstance(other, Affliction):
             return False
-        if self._name == other._name:
-            return True
-        return False
+        if self._name != other._name:
+            return False
+        if self._value != other._value:
+            return False
+        if self._duration != other.duration:
+            return False
+        return True
 
     def describe(self, is_buff = False) -> Hoverable:
         """Returns a hoverable about the affliction. Used for skills description."""

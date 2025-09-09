@@ -218,6 +218,7 @@ def load_images():
     SYSTEM["images"]["btn_tab_pressed"] = Image("ui/button_press.png").scale(35, 100)
     SYSTEM["images"]["btn_p"] = Image("ui/button_press.png").scale(55, 280)
     SYSTEM["images"]["menu_bg"] = Image("ui/menu.png")
+    SYSTEM["images"]["menu_bg_alt"] = Image("ui/menu.png").scale(950, 1360)
     SYSTEM["images"]["menu_button"] = Image("ui/button.png").scale(55, 280)
     SYSTEM["images"]["rune_0"] = Image("icons/rune01.png")
     SYSTEM["images"]["rune_1"] = Image("icons/rune02.png")

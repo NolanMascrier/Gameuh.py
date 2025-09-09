@@ -30,7 +30,7 @@ DAMAGE_COLOR = (255, 30, 30)
 def debug_create_items():
     """Creates a bunch of items."""
     base_loot = []
-    for _ in range(10):
+    for _ in range(100):
         base_loot.append(SYSTEM["looter"].generate_item(5, random.randint(2,3)))
     SYSTEM["player"].inventory.extend(base_loot)
     print(len(SYSTEM["player"].inventory))

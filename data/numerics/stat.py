@@ -51,14 +51,20 @@ class Stat:
         """Returns the product of the mult values"""
         final_mults = 1
         for multiplier in self._mults:
-            final_mults *= 1 + multiplier.value
+            if Flags.HEX in multiplier.flags or Flags.CURSE in multiplier.flags:
+                final_mults *= 1 - multiplier.value
+            else:
+                final_mults *= 1 + multiplier.value
         return final_mults
 
     def get_increases(self):
         """Returns the sum of the increases."""
         final_incr = 0
         for increase in self._incr:
-            final_incr += increase.value
+            if Flags.HEX in increase.flags or Flags.CURSE in increase.flags:
+                final_incr -= increase.value
+            else:
+                final_incr += increase.value
         return final_incr
 
     def get_value(self):
