@@ -6,6 +6,41 @@ from data.numerics.affix import Affix
 from data.numerics.double_affix import DoubleAffix
 
 AFFIXES = {
+    "jewels": 
+    {
+        "dmg_jew": ([
+            (Affix("JEWEL_DAMAGE_1", 0.1, [Flags.BOON, Flags.DAMAGE_MOD]), 1, 0, 80),
+            (Affix("JEWEL_DAMAGE_2", 0.2, [Flags.BOON, Flags.DAMAGE_MOD]), 0.8, 20, 90),
+            (Affix("JEWEL_DAMAGE_3", 0.3, [Flags.BOON, Flags.DAMAGE_MOD]), 0.6, 40, 999),
+            (Affix("JEWEL_DAMAGE_4", 0.4, [Flags.BOON, Flags.DAMAGE_MOD]), 0.25, 60, 999),
+            (Affix("JEWEL_DAMAGE_5", 0.8, [Flags.BOON, Flags.DAMAGE_MOD]), 0.1, 80, 999)
+        ], 1),
+        "cd_jew": ([
+            (Affix("JEWEL_CD_1", 0.1, [Flags.CURSE, Flags.COOLDOWN]), 1, 0, 80),
+            (Affix("JEWEL_CD_2", 0.2, [Flags.CURSE, Flags.COOLDOWN]), 0.8, 20, 90),
+            (Affix("JEWEL_CD_3", 0.3, [Flags.CURSE, Flags.COOLDOWN]), 0.6, 40, 999),
+            (Affix("JEWEL_CD_4", 0.4, [Flags.CURSE, Flags.COOLDOWN]), 0.25, 60, 999)
+        ], 0.8),
+        "hp_cost": ([
+            (Affix("JEWEL_LIFE_COST_1", 0.1, [Flags.CURSE, Flags.LIFE_COST]), 1, 0, 80),
+            (Affix("JEWEL_LIFE_COST_2", 0.2, [Flags.CURSE, Flags.LIFE_COST]), 0.8, 20, 90),
+            (Affix("JEWEL_LIFE_COST_3", 0.3, [Flags.CURSE, Flags.LIFE_COST]), 0.6, 40, 999),
+            (Affix("JEWEL_LIFE_COST_4", 0.4, [Flags.CURSE, Flags.LIFE_COST]), 0.25, 60, 999),
+            (Affix("JEWEL_LIFE_COST_5", 0.6, [Flags.CURSE, Flags.LIFE_COST]), 0.1, 80, 999)
+        ], 0.5),
+        "mp_cost": ([
+            (Affix("JEWEL_MANA_COST_1", 0.1, [Flags.CURSE, Flags.MANA_COST]), 1, 0, 80),
+            (Affix("JEWEL_MANA_COST_2", 0.2, [Flags.CURSE, Flags.MANA_COST]), 0.8, 20, 90),
+            (Affix("JEWEL_MANA_COST_3", 0.3, [Flags.CURSE, Flags.MANA_COST]), 0.6, 40, 999),
+            (Affix("JEWEL_MANA_COST_4", 0.4, [Flags.CURSE, Flags.MANA_COST]), 0.25, 60, 999),
+            (Affix("JEWEL_MANA_COST_5", 0.6, [Flags.CURSE, Flags.MANA_COST]), 0.1, 80, 999)
+        ], 0.5),
+        "projs": ([
+            (Affix("JEWEL_PROJECTILE_1", 1, [Flags.FLAT, Flags.PROJECTILES], 1, 1), 1, 0, 80),
+            (Affix("JEWEL_PROJECTILE_2", 2, [Flags.FLAT, Flags.PROJECTILES], 1, 1), 0.8, 20, 90),
+            (Affix("JEWEL_PROJECTILE_3", 3, [Flags.FLAT, Flags.PROJECTILES], 1, 1), 0.6, 40, 999)
+        ], 0.01),
+    },
     "armors": {
         "str": ([
             (Affix("ARMOR_STR_1", 5, [Flags.FLAT, Flags.DESC_FLAT, Flags.STR]), 1, 0, 25),
@@ -110,11 +145,11 @@ AFFIXES = {
                                                         Flags.DODGE]), 0.1, 75, 999),
         ], 0.2),
         "life_regen": ([
-            (Affix("ARMOR_LIFE_REGEN_1", 5, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 0, 60),
-            (Affix("ARMOR_LIFE_REGEN_2", 10, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 20, 60),
-            (Affix("ARMOR_LIFE_REGEN_3", 20, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 40, 999),
-            (Affix("ARMOR_LIFE_REGEN_4", 30, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 50, 999),
-            (Affix("ARMOR_LIFE_REGEN_5", 50, [Flags.FLAT, Flags.LIFE_REGEN]), 1, 70, 999),
+            (Affix("ARMOR_LIFE_REGEN_1", 5, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 0, 60),
+            (Affix("ARMOR_LIFE_REGEN_2", 10, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 20, 60),
+            (Affix("ARMOR_LIFE_REGEN_3", 20, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 40, 999),
+            (Affix("ARMOR_LIFE_REGEN_4", 30, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 50, 999),
+            (Affix("ARMOR_LIFE_REGEN_5", 50, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 70, 999),
         ], 0.8),
         "phys_res": ([
             (Affix("ARMOR_PHYS_RES_1", 0.10, [Flags.PHYS, Flags.FLAT]), 1, 0, 60),

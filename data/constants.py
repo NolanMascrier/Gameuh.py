@@ -9,7 +9,6 @@ from data.physics.spatialgrid import SpatialGrid
 
 
 ROOT = ""
-#ROOT = "Gameuh.py/"
 RESSOURCES = f"{ROOT}ressources"
 
 SCREEN_WIDTH = 1920
@@ -82,14 +81,6 @@ MENU_OPTIONS_GAME = 14
 MENU_TREE = 15
 LOADING = 999
 
-"""self._equipped_spells = {
-            K_q: SYSTEM["spells"]["firebolt"],
-            K_e: SYSTEM["spells"]["voidbolt"],
-            K_f: SYSTEM["spells"]["icebolt"],
-            K_t: SYSTEM["spells"]["elefury"],
-            K_r: SYSTEM["spells"]["furyslash"],
-            K_LSHIFT: SYSTEM["spells"]["winddash"]
-        }"""
 
 SYSTEM = {
     "loaded": False,
@@ -183,7 +174,7 @@ def export_options():
 
 def reload_options():
     """Reloads the options from the SYSTEM."""
-    flags = pygame.SCALED | DOUBLEBUF
+    flags = DOUBLEBUF
     if SYSTEM["options"]["fullscreen"]:
         flags |= pygame.FULLSCREEN
     SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\
@@ -351,6 +342,8 @@ class Flags(str, Enum):
     DAMAGE_MOD = "damage_mod"
     LIFE_COST = "life_cost"
     MANA_COST = "mana_cost"
+    COOLDOWN = "cooldown"
+    PROJECTILES = "projectiles"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"

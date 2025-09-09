@@ -302,6 +302,7 @@ def load_icons():
         "oh": "offhands",
         "wpn": "weapons",
         "rune": "runes",
+        "jewel": "jewels"
     }
     SYSTEM["images"]["helmets"] = []
     SYSTEM["images"]["armors"] = []
@@ -314,6 +315,7 @@ def load_icons():
     SYSTEM["images"]["offhands"] = []
     SYSTEM["images"]["weapons"] = []
     SYSTEM["images"]["runes"] = []
+    SYSTEM["images"]["jewels"] = []
     pattern = re.compile(r"^(.+?)(\d+)\.png$")
     unsorted = []
     for filename in os.listdir(f"{RESSOURCES}/icons"):

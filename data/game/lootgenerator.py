@@ -247,6 +247,14 @@ class LootGenerator():
             (Item("", "Mage belt", 250, 0, 1, SYSTEM["images"]["belts"][3],\
                     0, [Flags.BELT, Flags.GEAR], implicits=[]), 1),
         ]
+        self._jewels = [
+            (Item("", "Mind Jewel", 500, 0, 1, SYSTEM["images"]["jewels"][0],\
+                  0, [Flags.JEWEL]), 1),
+            (Item("", "Wit Jewel", 500, 0, 1, SYSTEM["images"]["jewels"][1],\
+                  0, [Flags.JEWEL]), 1),
+            (Item("", "Might Jewel", 500, 0, 1, SYSTEM["images"]["jewels"][2],\
+                  0, [Flags.JEWEL]), 1)
+        ]
 
     def pick_weighted(self, items_with_weights):
         """Picks items with the weights"""
@@ -276,7 +284,6 @@ class LootGenerator():
         existing_keys = set()
         if already_exists is not None:
                 existing_keys = {affix.name for affix in already_exists}
-        # Step 1: Build list of usable affixes with their valid tiers
         candidates = []
         for affix_key, (tiers, affix_weight) in affix_pool.items():
             if affix_key in existing_keys:
@@ -287,17 +294,12 @@ class LootGenerator():
                 if min_lvl <= item_level <= max_lvl
             ]
             if valid_tiers:
-                candidates.append(((valid_tiers, affix_key), affix_weight))  # affix_key is only used to enforce uniqueness
-
+                candidates.append(((valid_tiers, affix_key), affix_weight))
         if num_affixes > len(candidates):
             raise ValueError("Not enough unique affixes for this level.")
-
-        # Step 2: Weighted sample without replacement
         chosen_affix_groups = self.weighted_sample_without_replacement(candidates, num_affixes)
-
-        # Step 3: Pick one tier per chosen affix
         result_affixes = [self.pick_weighted(valid_tiers) for valid_tiers, _ in chosen_affix_groups]
-        return result_affixes  # List of Affix objects
+        return result_affixes
 
     def select_base(self, type: list):
         """Selects a random base of the type."""
@@ -313,16 +315,26 @@ class LootGenerator():
 
     def generate_item(self, level, rarity):
         """Generates a random armor."""
+        item_type = numpy.random.randint(0, 11)
         match rarity:
             case 1:
-                affx = numpy.random.randint(1, 2)
+                if item_type == 10:
+                    affx = 1
+                else:
+                    affx = numpy.random.randint(1, 2)
             case 2:
-                affx = numpy.random.randint(3, 6)
+                if item_type == 10:
+                    affx = 2
+                else:
+                    affx = numpy.random.randint(3, 6)
             case 3:
-                affx = numpy.random.randint(7, 8)
+                if item_type == 10:
+                    affx = numpy.random.randint(3, 4)
+                else:
+                    affx = numpy.random.randint(7, 8)
             case _:
                 affx = 0
-        item_type = numpy.random.randint(0, 9)
+
         match item_type:
             case 1:
                 affixes = [a.roll() for a in self.generate_affixes("helms", affx, level)]
@@ -351,6 +363,9 @@ class LootGenerator():
             case 9:
                 affixes = [a.roll() for a in self.generate_affixes("belts", affx, level)]
                 it = self.select_base(self._belts).copy()
+            case 10:
+                affixes = [a.roll() for a in self.generate_affixes("jewels", affx, level)]
+                it = self.select_base(self._jewels).copy()
             case _:
                 affixes = [a.roll() for a in self.generate_affixes("armors", affx, level)]
                 it = self.select_base(self._armors).copy()

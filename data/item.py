@@ -97,7 +97,7 @@ class Item():
             self._max_held,
             self._image,
             self._rarity,
-            self._flags.copy(),
+            self._flags,
             self._affixes.copy(),
             self._implicits.copy()
         )
@@ -128,9 +128,13 @@ class Item():
                 name_pool = names_data["2"]
                 key1 = self._affixes[0].flag_key
                 key2 = self._affixes[1].flag_key
+                print(f"Key 1 is {key1}, key 2 is {key2}")
+                print(f"Choice 1 is {name_pool.get(key1, [key1])}, Choice 2 is {name_pool.get(key2, [key2])}")
                 word1 = random.choice(name_pool.get(key1, [key1]))[0]
                 word2 = random.choice(name_pool.get(key2, [key2]))[1]
+                print(f"Word 1 is {word1}, word 2 is {word2}")
                 self._name = f"{word1.capitalize()} {word2.capitalize()}"
+                print(name_pool.get(key1, [key1]), name_pool.get(key2, [key2]), self._name)
             case _:
                 return
 

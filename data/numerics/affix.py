@@ -75,7 +75,7 @@ class Affix():
         elif Flags.BLESS in self._flags:
             adds = f"{value} {trad('meta_words', 'more')}"
         elif Flags.CURSE in self._flags:
-            adds = f"x{value} {trad('meta_words', 'less')}"
+            adds = f"{value} {trad('meta_words', 'less')}"
         elif Flags.FLAT in self._flags:
             if self._value < 0:
                 adds = f"{value}"
@@ -117,7 +117,7 @@ class Affix():
         elif Flags.BLESS in self._flags:
             adds = f"{value} {trad('meta_words', 'more')}"
         elif Flags.CURSE in self._flags:
-            adds = f"x{value} {trad('meta_words', 'less')}"
+            adds = f"{value} {trad('meta_words', 'less')}"
         elif Flags.FLAT in self._flags:
             if self._value < 0:
                 adds = f"{value}"

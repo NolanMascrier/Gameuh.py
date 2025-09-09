@@ -67,7 +67,7 @@ class Stat:
         Returns:
             float: value of the stat with computed increases \
             and multipliers."""
-        final_incr = (self.get_increases())
+        final_incr = self.get_increases()
         final_flats = self.get_flats()
         final_mults = self.get_multipliers()
         final_value = round((self._value + final_flats) *\

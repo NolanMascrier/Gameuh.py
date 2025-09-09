@@ -369,7 +369,9 @@
         "estimate_dodge": "Dodge chance",
         "damage_mod": "Base damage",
         "life_cost": "Life cost",
-        "mana_cost": "Mana cost"
+        "mana_cost": "Mana cost",
+        "cooldown": "Cooldown",
+        "projectiles": "Projectiles"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"
@@ -1529,7 +1531,29 @@
       "OH_CRIT_RES_3": "Wrath",
       "OH_ALL_RESISTANCES_1": "Blast",
       "OH_ALL_RESISTANCES_2": "Surge",
-      "OH_ALL_RESISTANCES_3": "Howl"
+      "OH_ALL_RESISTANCES_3": "Howl",
+      "JEWEL_DAMAGE_1": "Strength",
+      "JEWEL_DAMAGE_2": "Might",
+      "JEWEL_DAMAGE_3": "Power",
+      "JEWEL_DAMAGE_4": "Dominance",
+      "JEWEL_DAMAGE_5": "Ultimate power",
+      "JEWEL_CD_1": "Reusing",
+      "JEWEL_CD_2": "Swiftness",
+      "JEWEL_CD_3": "Recovery",
+      "JEWEL_CD_4": "Utmost Swiftness",
+      "JEWEL_LIFE_COST_1": "Economy",
+      "JEWEL_LIFE_COST_2": "Clarity",
+      "JEWEL_LIFE_COST_3": "Humility",
+      "JEWEL_LIFE_COST_4": "Lucidity",
+      "JEWEL_LIFE_COST_5": "Transcendance",
+      "JEWEL_MANA_COST_1": "Economy",
+      "JEWEL_MANA_COST_2": "Clarity",
+      "JEWEL_MANA_COST_3": "Humility",
+      "JEWEL_MANA_COST_4": "Lucidity",
+      "JEWEL_MANA_COST_5": "Transcendance",
+      "JEWEL_PROJECTILE_1": "Forking",
+      "JEWEL_PROJECTILE_2": "Hosing",
+      "JEWEL_PROJECTILE_3": "Spreading"
     },
     "2": {
       "str": [
@@ -1553,6 +1577,9 @@
         ["Vigorous", "Vigor"],
         ["Soul", "Blood"]
       ],
+      "abs_def": [
+        ["Impassible", "Fortress"]
+      ],
       "mana": [
         ["Mana", "Mana"],
         ["Willful", "Will"],
@@ -1564,6 +1591,12 @@
         ["Stone", "Stone"],
         ["Iron", "Bastion"],
         ["Steel", "Steel"]
+      ],
+      "dodge_rating": [
+        ["Slippery", "Slip"],
+        ["Spectral", "Ghost"],
+        ["Mist", "Wisp"],
+        ["Unreachable", "Untouched"]
       ],
       "dodge": [
         ["Slippery", "Slip"],
@@ -1771,6 +1804,10 @@
         ["Primordial", "Primal"],
         ["Equilibrium", "Equilibrium"]
       ],
+      "precision": [
+        ["Precise", "Precision"],
+        ["Atomic", "Atom"]
+      ],
       "all_damage": [
         ["Overlord", "Overlord"],
         ["All-Seeing", "All-Seer"],
@@ -1799,6 +1836,38 @@
         ["Sniping", "Sniper"],
         ["Feather", "Feather"],
         ["Fang", "Fang"]
+      ],
+      "life_regen": [
+        ["Sanguine", "Baste"],
+        ["Flowing", "Flow"],
+        ["Circulating", "Circulation"]
+      ],
+      "mana_regen": [
+        ["Sanguine", "Baste"],
+        ["Flowing", "Flow"],
+        ["Circulating", "Circulation"]
+      ],
+      "damage_mod": [
+        ["Powerful", "Power"],
+        ["Dominating", "Dominance"],
+        ["Powering", "Power"]
+      ],
+      "cooldown": [
+        ["Swift", "Promptitude"]
+      ],
+      "life_cost": [
+        ["Quarting", "Quarter"],
+        ["Clear", "Clarity"],
+        ["Opaque", "Opacity"]
+      ],
+      "mana_cost": [
+        ["Quarting", "Quarter"],
+        ["Clear", "Clarity"],
+        ["Opaque", "Opacity"]
+      ],
+      "projs": [
+        ["Forking", "Fork"],
+        ["Barraging", "Barrage"]
       ]
     }
   }
