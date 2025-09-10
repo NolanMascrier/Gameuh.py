@@ -1,5 +1,5 @@
-"""A slash is a type of attack that attaches itself to its caster,
-plays its animation and disappear. It's used for melee attacks."""
+"""A slash is a type of attack that attaches itself to its caster or a position,
+plays its animation and disappear. It's used for melee attacks or explosions."""
 
 import json
 from data.numerics.damage import Damage
@@ -12,16 +12,20 @@ from data.numerics.affliction import Affliction
 from data.constants import PROJECTILE_GRID, Flags, SYSTEM
 
 class Slash():
+    """Defines a slash."""
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
-                offset_x = 0, offset_y = 0, debuffs = None):
+                offset_x = 0, offset_y = 0, debuffs = None, area = 1):
         self._caster = caster
         self._origin = origin
         self._image = animation
+        self._real_image = SYSTEM["images"][self._image].clone().scale(area, area, False)
         self._damage = damage
+        self._real_damage = damage
         self._evil = evil
-        self._hitbox = HitBox(caster.x, caster.y, SYSTEM["images"][self._image].width,\
-            SYSTEM["images"][self._image].height)
+        self._area = area
+        self._hitbox = HitBox(caster.x, caster.y, self._real_image.width,\
+            self._real_image.height)
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
@@ -50,22 +54,24 @@ class Slash():
             self._flags.copy(),
             self._offset[0],
             self._offset[1],
-            self._debuffs.copy()
+            self._debuffs.copy(),
+            self._area
         )
 
     def get_image(self):
         """Returns the slash image."""
-        return SYSTEM["images"][self._image].get_image(self._animation_state)
+        return self._real_image.get_image(self._animation_state)
 
     def get_pos(self):
         """Returns the slash's position."""
         x, y = self._caster.hitbox.center
         cx, cy = self._hitbox.width / 2, self._hitbox.height / 2
-        return (x - cx + self._offset[0], y - cy + self._offset[1])
+        ox, oy = self._offset[0], self._offset[1]
+        return (x - cx + ox, y - cy + oy)
 
     def tick(self):
         """Ticks down the slash."""
-        SYSTEM["images"][self._image].tick(self._animation_state)
+        self._real_image.tick(self._animation_state)
         x, y = self.get_pos()
         self._hitbox.move((x, y))
         if self._animation_state[1]:
@@ -76,12 +82,12 @@ class Slash():
                     return
                 if proj.hitbox.is_colliding(self._hitbox) and\
                     proj.evil is not self._evil:
-                        proj.flag()
+                    proj.flag()
 
     def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
         """Called when the slash hits a target."""
         if target not in self._immune:
-            dmg = self._origin.recalculate_damage(self._damage)
+            dmg = self._origin.recalculate_damage(self._real_damage)
             num, crit = target.damage(dmg)
             if num != "Dodged !":
                 for debuff in self._debuffs:
@@ -103,7 +109,8 @@ class Slash():
             "damage": self._damage.export(),
             "flags": self._flags,
             "offset": self._offset,
-            "debuffs": debuffs
+            "debuffs": debuffs,
+            "area": self._area
         }
         return json.dumps(data)
 
@@ -119,7 +126,8 @@ class Slash():
             flags = data["flags"],
             offset_x=int(data["offset"][0]),
             offset_y=int(data["offset"][1]),
-            debuffs=[Affliction.imports(json.loads(d)) for d in data["debuffs"]]
+            debuffs=[Affliction.imports(json.loads(d)) for d in data["debuffs"]],
+            area=float(data["area"])
         )
 
     @property
@@ -148,6 +156,15 @@ class Slash():
     @damage.setter
     def damage(self, value):
         self._damage = value
+
+    @property
+    def real_damage(self):
+        """Returns the slash's real_damage."""
+        return self._real_damage
+
+    @real_damage.setter
+    def real_damage(self, value):
+        self._real_damage = value
 
     @property
     def evil(self):

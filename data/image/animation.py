@@ -46,7 +46,7 @@ class Animation():
         self._play_once = plays_once
         self._finished = False
         #
-        self._scaled = (frame_y, frame_x)
+        self._scaled = (frame_y, frame_x, True)
         self._flipped = (False, False)
         self._rotated = 0
 
@@ -104,18 +104,20 @@ class Animation():
             frame.rotate(deg)
         return self
 
-    def scale(self, height: float, width: float):
+    def scale(self, height: float, width: float, absolute = True):
         """Scales up or down the sequence.
         
         Args:
             height (float): New height of the sequence.
             width (float): New width of the sequence
+            absolute (bool, optional): Whether or not to use absolute\
+            values when scaling. If set to `True`, the image will be\
+            resized to the given dimension. Otherwise, it'll be scaled\
+            by the dimensions. Defaults to `True`.
         """
-        self._scaled = (height, width)
+        self._scaled = (height, width, absolute)
         for frame in self._sequence:
-            frame.scale(height, width)
-        self._frame_x = width
-        self._frame_y = height
+            frame.scale(height, width, absolute)
         return self
 
     def flip(self, vertical: bool, horizontal: bool):
@@ -132,8 +134,8 @@ class Animation():
 
     def clone(self):
         """Returns a deep clone of the animation."""
-        return Animation(
-            self._base_image,
+        ani = Animation(
+            self._base_image.clone(),
             self._frame_x,
             self._frame_y,
             self._lines,
@@ -144,7 +146,9 @@ class Animation():
             self._play_once
         ).flip(self._flipped[0], self._flipped[1])\
         .rotate(self._rotated)\
-        .scale(self._scaled[0], self._scaled[1])
+        .scale(self._scaled[0], self._scaled[1], self._scaled[2])
+        ani.frame_max = self._frame_max
+        return ani
 
     def export(self) -> str:
         """Serializes the animation as JSON."""
@@ -180,7 +184,7 @@ class Animation():
         )
         anim.flip(bool(data["flipped"][0]), bool(data["flipped"][1]))
         anim.rotate(int(data["rotated"]))
-        anim.scale(float(data["scaled"][0]), float(data["scaled"][1]))
+        anim.scale(float(data["scaled"][0]), float(data["scaled"][1]), data["scaled"][2])
         anim.frame = 0
         return anim
 
@@ -211,3 +215,12 @@ class Animation():
     @finished.setter
     def finished(self, value):
         self._finished = value
+
+    @property
+    def frame_max(self):
+        """Returns the maximum frame of the animation."""
+        return self._frame_max
+
+    @frame_max.setter
+    def frame_max(self, value):
+        self._frame_max = value

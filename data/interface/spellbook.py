@@ -34,8 +34,13 @@ INPUT = {
     MENU_SPELLBOOK_DASH: "dash"
 }
 
+LEFT_COLUMN = ["crit_r", "cooldown", "aoe", "projs"]
+RIGHT_COLUMN = ["crit_d", "life_cost", "mana_cost"]
+
 STATES = [MENU_SPELLBOOK_1, MENU_SPELLBOOK_2, MENU_SPELLBOOK_3,\
     MENU_SPELLBOOK_4, MENU_SPELLBOOK_5, MENU_SPELLBOOK_DASH]
+
+STEPS = [0,1,2,3,4,5]
 
 def refresh():
     """Refreshs the current spell window."""
@@ -54,7 +59,7 @@ def slot_jewel(jewel, slot):
     SYSTEM["player"].inventory.remove(jewel)
     refresh()
 
-def unslot_jewel(jewel, slot):
+def unslot_jewel(_, slot):
     """Unslots the jewel."""
     it = SYSTEM["spells"]\
         [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].unequip(slot.flag)
@@ -73,36 +78,78 @@ def overwrite_jewel(jewel, slot):
         SYSTEM["gear_panel"].insert(None, None, it)
     refresh()
 
-def make_slot(spell: Spell, key):
-    """Creates the description data of the spell."""
+def single_slot(spell, superspell = None):
+    """Creates the description data of a single spell."""
     data = spell.describe()
+    data_super = superspell.describe() if superspell is not None else spell.describe()
     cost_l = f"{trad('descripts', 'life_cost')}: {data['costs'][0]}" if\
         data["costs"][0] > 0 else None
     cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
         data["costs"][1] > 0 else None
-    SYSTEM["ui"][key] = [
-        Text(data["name"],\
+    crit_c = data["crit_rate"] * SYSTEM["player"].creature.stats["crit_rate"].c_value\
+        if data["crit_rate"] is not None else None
+    crit_d = data["crit_dmg"] * SYSTEM["player"].creature.stats["crit_dmg"].c_value\
+        if data["crit_dmg"] is not None else None
+    area = data["area"] + SYSTEM["player"].creature.stats["area"].c_value\
+        if data["area"] is not None else None
+    slot = {
+        "type": "single",
+        "name": Text(data_super["name"],\
             font="item_titles", size=45, default_color=BLACK),
-        Text(f"{trad('meta_words', 'level')} " +\
-            f"{data['level']}",\
+        "level": Text(f"{trad('meta_words', 'level')} " +\
+            f"{data_super['level']}",\
             font="item_desc", size=20, default_color=BLACK),
-        Text(data["desc"],\
+        "desc": Text(data_super["desc"],\
             font="item_desc", size=20, default_color=BLACK),
-        Text(data["damage"],\
+        "damage": Text(data["damage"],\
             font="item_desc", size=20, default_color=BLACK),
-        data["buffs"],
-        Text(f"{spell.exp}/{spell.exp_to_next}",font="item_desc", size=20, default_color=BLACK),
-        [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
-         slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
-        Text(f"{trad('descripts', 'cooldown')}: {data['cooldown']}s",\
+        "buffs": data["buffs"],
+        "exp": Text(f"{spell.exp}/{spell.exp_to_next}",\
             font="item_desc", size=20, default_color=BLACK),
-        Text(f"{trad('descripts', 'projectiles')}: {round(data['projectiles'])}",\
+        "slots": [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
+            slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
+        "crit_r": Text(f"{trad('descripts', 'crit_rate')}: {int(crit_c * 100)}%",\
+            font="item_desc", size=20, default_color=BLACK)\
+            if crit_c is not None else None,
+        "crit_d": Text(f"{trad('descripts', 'crit_dmg')}: {int(crit_d * 100)}%",\
+            font="item_desc", size=20, default_color=BLACK)\
+            if crit_d is not None else None,
+        "cooldown": Text(f"{trad('descripts', 'cooldown')}: {data['cooldown']}s",\
+            font="item_desc", size=20, default_color=BLACK),
+        "projs": Text(f"{trad('descripts', 'projectiles')}: {round(data['projectiles'])}",\
             font="item_desc", size=20, default_color=BLACK) if data["projectiles"] is not None\
             else None,
-        Text(cost_l, font="item_desc", size=20, default_color=RED) if cost_l is not None else None,
-        Text(cost_m, font="item_desc", size=20, default_color=BLUE) if cost_m is not None else None,
-        data["dmg_effic"]
-    ] if spell is not None else None
+        "life_cost": Text(cost_l, font="item_desc", size=20, default_color=RED)\
+                if cost_l is not None else None,
+        "mana_cost": Text(cost_m, font="item_desc", size=20, default_color=BLUE)\
+                if cost_m is not None else None,
+        "dmg_eff": data["dmg_effic"],
+        "aoe": Text(f"{trad('descripts', 'area')}: {int(area * 100)}%",\
+            font="item_desc", size=20, default_color=BLACK)\
+            if area is not None else None,
+    } if spell is not None else None
+    return slot
+
+def make_slot(spell: Spell, key):
+    """Creates the description data of the spell."""
+    if spell is None:
+        SYSTEM["ui"][key] = None
+        return
+    data = spell.describe()
+    if data["sequence"] is None:
+        SYSTEM["ui"][key] = single_slot(spell)
+    else:
+        values = [f"{trad('descripts', 'step')} {(f + 1)}" for f in STEPS]
+        SYSTEM["ui"][key] = {
+            "type": "sequence",
+            "data": [single_slot(s, spell) for s in data["sequence"]],
+            "slots": [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
+                slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
+            "tabs": Tabs(0, 0, values[:len(spell.sequence)],\
+                STEPS[:len(spell.sequence)], "step_page",\
+                SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"],\
+                additional_action=refresh)
+        }
 
 def slot_in(contain, slot):
     """Slots in a spell."""
@@ -115,7 +162,7 @@ def slot_in(contain, slot):
     SYSTEM["player"].equipped_spells[slot.flag] = key
     make_slot(contain, slot.flag)
 
-def slot_out(contain, slot):
+def slot_out(_, slot):
     """Slots out a spell."""
     SYSTEM["player"].equipped_spells[slot.flag] = None
     SYSTEM["ui"][slot.flag] = None
@@ -125,6 +172,7 @@ def open_spell_screen():
     SYSTEM["game_state"] = MENU_SPELLBOOK
     setup_bottom_bar()
     SYSTEM["spell_page"] = MENU_SPELLBOOK_1
+    SYSTEM["step_page"] = 0
     spells = []
     dashes = []
     for spell_ref in SYSTEM["player"].spellbook:
@@ -188,6 +236,40 @@ def unloader():
     SYSTEM["ui"]["slot_t"] = None
     SYSTEM["ui"]["slot_shift"] = None
 
+def draw_single(spell, y_offset = 0):
+    """Draws the details of a single spell."""
+    spell["name"].draw(680, 250 + y_offset)
+    spell["level"].draw(680, 290 + y_offset)
+    spell["exp"].draw(710 + spell["level"].width , 290 + y_offset)
+    spell["desc"].draw(680, 310 + y_offset)
+    y = 330 + spell["desc"].height  + y_offset
+    spell["damage"].draw(680, y)
+    y += spell["damage"].height
+    try:
+        for afflic in spell["buffs"]:
+            afflic.set(680, y).tick().draw()
+            y += afflic.height
+    except IndexError:
+        pass
+    if spell["dmg_eff"] is not None:
+        spell["dmg_eff"].set(680, y + 30).draw()
+    y_ = y + 60
+    for f in LEFT_COLUMN:
+        if spell[f] is not None:
+            spell[f].draw(680, y_)
+            y_ += 30
+    y_ = y + 60
+    for f in RIGHT_COLUMN:
+        if spell[f] is not None:
+            spell[f].draw(960, y_)
+            y_ += 30
+
+def draw_sequence(key):
+    """Draw the detail of a sequence of spells."""
+    x = SCREEN_WIDTH / 2 - SYSTEM["ui"][key]["tabs"].width / 2
+    SYSTEM["ui"][key]["tabs"].set(x, 250).tick()
+    draw_single(SYSTEM["ui"][key]["data"][SYSTEM["step_page"]], 100)
+
 def draw_spells(events):
     """Draws the gear menu."""
     renders(SYSTEM["city_back"].as_background)
@@ -217,33 +299,13 @@ def draw_spells(events):
             SYSTEM["spell_panel"].tick().draw()
     key = INPUT[SYSTEM["spell_page"]]
     if SYSTEM["ui"][key] is not None:
-        SYSTEM["ui"][key][0].draw(680, 250)
-        SYSTEM["ui"][key][1].draw(680, 290)
-        SYSTEM["ui"][key][5].draw(710 + SYSTEM["ui"][key][1].width , 290)
-        SYSTEM["ui"][key][2].draw(680, 310)
-        y = 330 + SYSTEM["ui"][key][2].height
-        SYSTEM["ui"][key][3].draw(680, y)
-        y += SYSTEM["ui"][key][3].height
-        if SYSTEM["ui"][key][11] is not None:
-            SYSTEM["ui"][key][11].set(680, y).tick().draw()
-            y += SYSTEM["ui"][key][11].height
-        try:
-            for afflic in SYSTEM["ui"][key][4]:
-                afflic.set(680, y).tick().draw()
-                y += afflic.height
-        except IndexError:
-            pass
-        SYSTEM["ui"][key][7].draw(680, y + 30)
-        if SYSTEM["ui"][key][8] is not None:
-            SYSTEM["ui"][key][8].draw(680, y + 60)
-        if SYSTEM["ui"][key][9] is not None:
-            SYSTEM["ui"][key][9].draw(900, y + 30)
-            y += 30
-        if SYSTEM["ui"][key][10] is not None:
-            SYSTEM["ui"][key][10].draw(900, y + 30)
+        if SYSTEM["ui"][key]["type"] == "single":
+            draw_single(SYSTEM["ui"][key])
+        elif SYSTEM["ui"][key]["type"] == "sequence":
+            draw_sequence(key)
         y = SCREEN_HEIGHT - 64 * 4
         x = SCREEN_WIDTH / 2 - int((64 * 5) / 2)
-        for slot in SYSTEM["ui"][key][6]:
+        for slot in SYSTEM["ui"][key]["slots"]:
             slot.set(x, y).tick().draw()
             x += 64
     else:

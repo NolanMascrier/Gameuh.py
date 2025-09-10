@@ -57,7 +57,7 @@ class Creature:
             "exp_mult": Stat(1, "exp_mult"),
             "abs_def": Stat(0, "abs_def", scaling_value=0.001),
             "crit_rate": Stat(0.05, "crit_rate", 1, 0, scaling_value=0.001),
-            "crit_dmg": Stat(1.5, "crit_dmg", scaling_value=0.02),
+            "crit_dmg": Stat(0.5, "crit_dmg", scaling_value=0.02),
             "heal_factor": Stat(1, "heal_factor"),
             "mana_efficiency": Stat(1, "mana_efficiency", 1.95, 0.05, 0),
             "item_quant": Stat(0, "item_quant"),
@@ -72,6 +72,7 @@ class Creature:
             "melee_dmg": Stat(1, "melee_dmg", scaling_value=0.01),
             "spell_dmg": Stat(1, "spell_dmg", scaling_value=0.01),
             "ranged_dmg": Stat(1, "ranged_dmg", scaling_value=0.01),
+            "area": Stat(0, "area", min_cap=-0.9, scaling_value=0),
 
             "precision": Stat(0, "precision", scaling_value=0.01, min_cap=0),
             "block": Stat(0, "block", scaling_value=0, min_cap=0, max_cap=0.9),
@@ -138,8 +139,10 @@ class Creature:
         """Takes a raw damage source (ie from a spell) and applies the creature's
         own multipliers to it."""
         crit_roll = random.uniform(0, 1)
-        crit = bool(crit_roll <= self._stats["crit_rate"].get_value())\
+        crit_tresh = self._stats["crit_rate"].get_value() * (1 + damage_source.crit_rate)
+        crit = bool(crit_roll <= crit_tresh)\
             if not damage_source.is_crit else True
+        crit_mult = self._stats["crit_dmg"].c_value * (1 + damage_source.crit_mult)
         multi = damage_source.coeff
         flags = damage_source.flags
         if Flags.MELEE in flags:
@@ -168,7 +171,7 @@ class Creature:
         return Damage(multi, values["phys"], values["fire"], values["ice"], values["elec"],\
                       values["energy"], values["light"], values["dark"], \
                       pp, fp, ip, ep, enp, lp, dp, crit,\
-                      self._stats["crit_dmg"].get_value(), flags,\
+                      crit_mult, flags,\
                       damage_source.ignore_dodge, damage_source.ignore_block, self)
 
     def __get_bonuses_from_stat(self):

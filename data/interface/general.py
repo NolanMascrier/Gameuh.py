@@ -53,7 +53,7 @@ def draw_game(show_player = True, show_enemies = True,\
     if show_text:
         SYSTEM["layers"]["pickup"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
 
-def tick():
+def logic_tick():
     """Ticks all there is to tick."""
     generate_grids()
     SYSTEM["player"].tick()

@@ -237,7 +237,9 @@
         "debuffs": "Inflict status effect",
         "for": "for",
         "seconds": "seconds",
-        "cut_proj": "Can destroy enemy projectiles"
+        "cut_proj": "Can destroy enemy projectiles",
+        "trigger": "This spell cannot be used",
+        "trigger_on_crit": "This spell is triggered by critical hits"
     },
     "affliction_name":{
         "elemental_fury": "Elemental Fury",
@@ -277,13 +279,13 @@
         "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",
         "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage.",
         "fireball": "Launch a powerful fireball toward the mouse\ndealing medium fire damage.\nOn contact, creates a powerful explosion.",
-        "masterstrike": "Deliver a serie a quick blows.\nThe third strike is a guaranteed critical hit."
+        "masterstrike": "Deliver a series a quick blows.\nThe third strike is a guaranteed critical hit."
     },
     "descripts": {
         "life": "Life",
         "mana": "Mana",
         "life_regen": "Life regeneration",
-        "mana_regen": "Mana regenration",
+        "mana_regen": "Mana regeneration",
         "str": "Strength",
         "dex": "Dexterity",
         "int": "Intelligence",
@@ -377,7 +379,11 @@
         "mana_cost": "Mana cost",
         "cooldown": "Cooldown",
         "projectiles": "Projectiles",
-        "dmg_effic": "Added damage magnitude"
+        "projectile": "Projectile",
+        "explosion": "Explosion",
+        "step": "Step",
+        "dmg_effic": "Added damage magnitude",
+        "area": "Area of effect"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)35% of damage is taken on Mana first"
@@ -1559,7 +1565,22 @@
       "JEWEL_MANA_COST_5": "Transcendance",
       "JEWEL_PROJECTILE_1": "Forking",
       "JEWEL_PROJECTILE_2": "Hosing",
-      "JEWEL_PROJECTILE_3": "Spreading"
+      "JEWEL_PROJECTILE_3": "Spreading",
+      "JEWEL_AREA_1": "Width",
+      "JEWEL_AREA_2": "Area",
+      "JEWEL_AREA_3": "Fielding",
+      "JEWEL_AREA_4": "Reaching",
+      "JEWEL_AREA_5": "Giantness",
+      "JEWEL_CRIT_CHANCE_1": "Torrent",
+      "JEWEL_CRIT_CHANCE_2": "Blast",
+      "JEWEL_CRIT_CHANCE_3": "Wrath",
+      "JEWEL_CRIT_CHANCE_4": "Howl",
+      "JEWEL_CRIT_CHANCE_5": "Roar",
+      "JEWEL_CRIT_DAMAGE_1": "Blast",
+      "JEWEL_CRIT_DAMAGE_2": "Vigor",
+      "JEWEL_CRIT_DAMAGE_3": "Shock",
+      "JEWEL_CRIT_DAMAGE_4": "Might",
+      "JEWEL_CRIT_DAMAGE_5": "Wrath"
     },
     "2": {
       "str": [
@@ -1868,6 +1889,21 @@
       "projs": [
         ["Forking", "Fork"],
         ["Barraging", "Barrage"]
+      ],
+      "area": [
+        ["Reaching", "Reach"],
+        ["Wide", "Width"],
+        ["Humongous", "Gigantomany"]
+      ],
+      "crit_rate": [
+        ["Piercing", "Piercer"],
+        ["Critical", "Alacricity"],
+        ["Perfected", "Perfection"]
+      ],
+      "crit_damage": [
+        ["Piercing", "Piercer"],
+        ["Critical", "Alacricity"],
+        ["Perfected", "Perfection"]
       ]
     }
   }

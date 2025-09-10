@@ -80,14 +80,22 @@ class Image():
         self._height = self._image.get_height()
         return self
 
-    def scale(self, height: float, width: float):
+    def scale(self, height: float, width: float, absolute = True):
         """Scales up or down the image.
         
         Args:
             height (float): New height of the image.
             width (float): New width of the image
+            absolute (bool, optional): Whether or not to use absolute\
+            values when scaling. If set to `True`, the image will be\
+            resized to the given dimension. Otherwise, it'll be scaled\
+            by the dimensions. Defaults to `True`.
         """
-        self._image = pygame.transform.scale(self._image, (width, height))
+        if absolute:
+            self._image = pygame.transform.scale(self._image, (width, height))
+        else:
+            self._image = pygame.transform.scale(self._image, (self._width * width,\
+                                                 self._height * height))
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         return self
@@ -127,14 +135,9 @@ class Image():
             self._image.set_alpha(opacity)
         return self
 
-    @lru_cache(maxsize=32)
     def clone(self):
         """Returns a deep copy of the image."""
-        new = Image.__new__(Image)
-        new.uri = self._uri
-        new.image = self._image.copy()
-        new.width, new._height = self._width, self._height
-        new.visible = self._visible
+        new = Image(self._uri)
         return new
 
     @property

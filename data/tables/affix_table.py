@@ -21,6 +21,27 @@ AFFIXES = {
             (Affix("JEWEL_CD_3", 0.3, [Flags.CURSE, Flags.COOLDOWN]), 0.6, 40, 999),
             (Affix("JEWEL_CD_4", 0.4, [Flags.CURSE, Flags.COOLDOWN]), 0.25, 60, 999)
         ], 0.8),
+        "area_jew": ([
+            (Affix("JEWEL_AREA_1", 0.2, [Flags.BOON, Flags.AREA]), 1, 0, 80),
+            (Affix("JEWEL_AREA_2", 0.4, [Flags.BOON, Flags.AREA]), 0.8, 20, 90),
+            (Affix("JEWEL_AREA_3", 0.6, [Flags.BOON, Flags.AREA]), 0.6, 40, 999),
+            (Affix("JEWEL_AREA_4", 0.8, [Flags.BOON, Flags.AREA]), 0.25, 60, 999),
+            (Affix("JEWEL_AREA_5", 1.1, [Flags.BOON, Flags.AREA]), 0.1, 60, 999)
+        ], 0.8),
+        "crit_d_jew": ([
+            (Affix("JEWEL_CRIT_DAMAGE_1", 0.2, [Flags.BOON, Flags.CRIT_DAMAGE]), 1, 0, 80),
+            (Affix("JEWEL_CRIT_DAMAGE_2", 0.4, [Flags.BOON, Flags.CRIT_DAMAGE]), 0.8, 20, 90),
+            (Affix("JEWEL_CRIT_DAMAGE_3", 0.6, [Flags.BOON, Flags.CRIT_DAMAGE]), 0.6, 40, 999),
+            (Affix("JEWEL_CRIT_DAMAGE_4", 0.8, [Flags.BOON, Flags.CRIT_DAMAGE]), 0.25, 60, 999),
+            (Affix("JEWEL_CRIT_DAMAGE_5", 1.5, [Flags.BOON, Flags.CRIT_DAMAGE]), 0.01, 80, 999)
+        ], 0.8),
+        "crit_r_jew": ([
+            (Affix("JEWEL_CRIT_CHANCE_1", 0.05, [Flags.BOON, Flags.CRIT_CHANCE]), 1, 0, 80),
+            (Affix("JEWEL_CRIT_CHANCE_2", 0.1, [Flags.BOON, Flags.CRIT_CHANCE]), 0.8, 20, 90),
+            (Affix("JEWEL_CRIT_CHANCE_3", 0.15, [Flags.BOON, Flags.CRIT_CHANCE]), 0.6, 40, 999),
+            (Affix("JEWEL_CRIT_CHANCE_4", 0.2, [Flags.BOON, Flags.CRIT_CHANCE]), 0.25, 60, 999),
+            (Affix("JEWEL_CRIT_CHANCE_5", 0.3, [Flags.BOON, Flags.CRIT_CHANCE]), 0.01, 80, 999)
+        ], 0.4),
         "hp_cost": ([
             (Affix("JEWEL_LIFE_COST_1", 0.1, [Flags.CURSE, Flags.LIFE_COST]), 1, 0, 80),
             (Affix("JEWEL_LIFE_COST_2", 0.2, [Flags.CURSE, Flags.LIFE_COST]), 0.8, 20, 90),

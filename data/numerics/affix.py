@@ -207,7 +207,8 @@ class Affix():
         """Returns the price factor depending on how well the affix
         is rolled."""
         tier = int(self._name[len(self._name) - 1:len(self._name)])
-        roll = (self._value - self._bounds[0]) / (self._bounds[1] - self._bounds[0])
+        div = abs(self._bounds[1] - self._bounds[0]) + 1
+        roll = (self._value - self._bounds[0]) / div
         return tier, roll
 
     @property

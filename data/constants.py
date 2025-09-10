@@ -344,6 +344,7 @@ class Flags(str, Enum):
     MANA_COST = "mana_cost"
     COOLDOWN = "cooldown"
     PROJECTILES = "projectiles"
+    AREA = "area"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"

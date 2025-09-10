@@ -66,13 +66,15 @@ class Damage():
         roll. Defaults to 0.9.
         upper_bound (float, optionnal): Maximal value for the damage\
         roll. Defaults to 1.1.
+        crit_rate (float, optional): Default critical chance of the damage\
+        source. Defaults to 5%.
     """
     def __init__(self, multiplier, phys = 0, fire = 0, ice = 0,\
                 elec = 0, energ = 0, light = 0, dark = 0, pp = 0, fp = 0, \
                 ip = 0, ep = 0, enp = 0, lp = 0, dp = 0, is_crit = False, \
                 crit_mult = 1.5, flags = None, ignore_dodge = False,\
                 ignore_block = False, origin = None, lower_bound = 0.9,\
-                upper_bound = 1.1):
+                upper_bound = 1.1, crit_rate = 0.05):
         self._coeff = multiplier
         self._types = {
             "phys": phys,
@@ -94,6 +96,7 @@ class Damage():
         }
         self._is_crit = is_crit
         self._crit_mult = crit_mult
+        self._crit_rate = crit_rate
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
@@ -236,6 +239,10 @@ class Damage():
         """Returns the critical multiplier of the damage."""
         return self._crit_mult
 
+    @crit_mult.setter
+    def crit_mult(self, value):
+        self._crit_mult = value
+
     @property
     def ignore_block(self):
         """Returns whether or not the damage can be blocked."""
@@ -262,3 +269,12 @@ class Damage():
     @origin.setter
     def origin(self, value):
         self._origin = value
+
+    @property
+    def crit_rate(self):
+        """Returns the damage source's crit rate."""
+        return self._crit_rate
+
+    @crit_rate.setter
+    def crit_rate(self, value):
+        self._crit_rate = value

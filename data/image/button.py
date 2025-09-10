@@ -160,3 +160,14 @@ class Button():
         if self._pressed and self._pressed is not None:
             return self._pressed
         return self._image
+
+    @property
+    def width(self):
+        """Returns the buttons' width."""
+        return self._width
+
+    @property
+    def height(self):
+        """Returns the buttons' height."""
+        return self._height
+

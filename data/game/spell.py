@@ -70,7 +70,12 @@ class Spell():
             "chains": Stat(chains, "chains"),
             "spread": Stat(spread, "spread"),
             "projectile_speed": Stat(proj_speed, "proj_speed"),
-            "damage_mod": Stat(1, "damage_mod")
+            "damage_mod": Stat(1, "damage_mod"),
+            "area": Stat(1, "area", min_cap=0.2),
+            "crit_rate": Stat(base_damage.crit_rate if base_damage is not None else 0,\
+                            "crit_rate", 1, 0),
+            "crit_dmg": Stat(base_damage.crit_mult if base_damage is not None else 0,\
+                            "crit_dmg"),
         }
         self._jewels = {
             0: None,
@@ -105,9 +110,9 @@ class Spell():
         self._offset = (offset_x, offset_y)
         self._started = False
         self.generate_surface()
-        self.__update()
+        self.update()
 
-    def __update(self):
+    def update(self):
         """Updates the data of the spell."""
         dmg = Affliction("DAMGE_FROM_LEVEL", 1.02 * (self._level - 1), -1,\
             [Flags.DAMAGE_MOD, Flags.BOON])
@@ -117,6 +122,8 @@ class Spell():
             [Flags.MANA_COST, Flags.BLESS])
         self.afflict((dmg, hp, mana))
         self.recalculate_damage()
+        for step in self._sequence:
+            step.update()
 
     def recalculate_damage(self):
         """Recalculates the damage using the spell's stats."""
@@ -125,6 +132,13 @@ class Spell():
         mod = self._stats["damage_mod"].get_value()
         for dmg in self._base_damage.types:
             self._real_damage.types[dmg] = mod * self._base_damage.types[dmg]
+        self._real_damage.crit_mult = self._stats["crit_dmg"].c_value
+        self._real_damage.crit_rate = self._stats["crit_rate"].c_value
+        if self._explosion is not None and isinstance(self._explosion, Slash):
+            for dmg in self._base_damage.types:
+                self._explosion.real_damage.types[dmg] = mod * self._explosion.damage.types[dmg]
+            self._explosion.real_damage.crit_mult = self._stats["crit_dmg"].c_value
+            self._explosion.real_damage.crit_rate = self._stats["crit_rate"].c_value
 
     def generate_surface(self):
         """Creates the hoverable surface of the spell."""
@@ -161,7 +175,7 @@ class Spell():
         self._exp += amount
         while self._exp >= self._exp_to_next:
             self._level += 1
-            self.__update()
+            self.update()
             self._exp -= self._exp_to_next
             self._exp_to_next = round(self._exp_to_next * 1.85)
             if self._level >= 20:
@@ -213,6 +227,9 @@ class Spell():
                 self.__apply_afflict(a)
         elif isinstance(affliction, Affliction):
             self.__apply_afflict(affliction)
+        for step in self._sequence:
+            if isinstance(step, Spell):
+                step.afflict(affliction)
 
     def __remove_afflic(self, affliction: Affliction):
         """Removes an affliction from the spell.
@@ -241,6 +258,9 @@ class Spell():
                 self.__remove_afflic(a)
         elif isinstance(affliction, Affliction):
             self.__remove_afflic(affliction)
+        for step in self._sequence:
+            if isinstance(step, Spell):
+                step.remove_affliction(affliction)
 
     def equip(self, slot: int, item: Item) -> Item | None:
         """Equips a jewel in the slot. Returns the
@@ -263,7 +283,7 @@ class Spell():
             self.afflict(affix.as_affliction())
         for affix in item.implicits:
             self.afflict(affix.as_affliction())
-        self.__update()
+        self.update()
         return old
 
     def unequip(self, slot: int) -> Item | None:
@@ -285,7 +305,7 @@ class Spell():
                 self.remove_affliction(affix.as_affliction())
             for affix in item.implicits :
                 self.remove_affliction(affix.as_affliction())
-        self.__update()
+        self.update()
         return item
 
     def reset(self):
@@ -314,10 +334,15 @@ class Spell():
                 buffs.append(afflic.describe(False))
         if Flags.CUTS_PROJECTILE in self._flags:
             buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, BLACK))
+        if Flags.TRIGGER in self._flags:
+            buffs.append(Hoverable(0, 0, trad('meta_words', 'trigger'), None, BLACK))
+        if Flags.TRIGGER_ON_CRIT in self._flags:
+            buffs.append(Hoverable(0, 0, trad('meta_words', 'trigger_on_crit'), None, BLACK))
         return buffs
 
     def describe(self):
         """Returns a description of the spell."""
+        sequence = None if len(self._sequence) == 0 else self._sequence
         data = {
             "name": trad('spells_name', self._name),
             "desc": trad('spells_desc', self._name),
@@ -331,6 +356,10 @@ class Spell():
             "dmg_effic": Hoverable(0, 0, f"{trad('descripts', 'dmg_effic')}:" +\
                 f"{round(self._base_damage.coeff * 100, 2)}%",\
                 trad('dmg_effic'), BLACK) if self._base_damage is not None else None,
+            "area": self._stats['area'].c_value,
+            "crit_rate": 1 + self._stats['crit_rate'].c_value,
+            "crit_dmg": 1 + self._stats['crit_dmg'].c_value,
+            "sequence": sequence
         }
         return data
 
@@ -386,9 +415,10 @@ class Spell():
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False):
         """Spawns a slash."""
+        area = self._stats["area"].c_value + caster.stats["area"].c_value
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
                        aim_right, evil, self._flags, self._offset[0],\
-                       self._offset[1], debuffs=self._debuffs)
+                       self._offset[1], debuffs=self._debuffs, area=area)
         PROJECTILE_TRACKER.append(sl)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\
@@ -614,3 +644,8 @@ class Spell():
     @jewels.setter
     def jewels(self, value):
         self._jewels = value
+
+    @property
+    def sequence(self):
+        """Returns the spell's sequence."""
+        return self._sequence

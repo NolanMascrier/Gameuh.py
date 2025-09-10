@@ -1,4 +1,4 @@
-from time import sleep
+"""Game launcher."""
 
 import cProfile
 import pstats
@@ -8,22 +8,17 @@ from data.image.text import Text
 from data.constants import *
 from data.interface.gameui import draw_ui
 from data.game.level import Level
-from data.game.lootgenerator import LootGenerator
 from data.interface.general import setup_bottom_bar, draw_bottom_bar
 from data.interface.inventory import draw_inventory
 from data.interface.spellbook import draw_spells
 from data.interface.skilltree import draw_skills
 from data.interface.options import draw_options
-from data.interface.general import tick, draw_game
+from data.interface.general import logic_tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
 from data.interface.render import render_all, render, resolution, renders
 from data.projectile import Projectile
 from data.slash import Slash
-from data.item import Item
-from data.numerics.affix import Affix
-
-PLAYING = True
 
 DAMAGE_COLOR = (255, 30, 30)
 
@@ -33,7 +28,6 @@ def debug_create_items():
     for _ in range(100):
         base_loot.append(SYSTEM["looter"].generate_item(5, random.randint(2,3)))
     SYSTEM["player"].inventory.extend(base_loot)
-    print(len(SYSTEM["player"].inventory))
 
 def check_collisions():
     """Checks all collisions."""
@@ -81,7 +75,8 @@ def game_loop(keys, events):
         if event.type == WAVE_TIMER:
             SYSTEM["level"].next_wave()
         if event.type == TICKER_TIMER:
-            tick()
+            print("Ticker")
+            logic_tick()
     SYSTEM["level"].background.draw()
     draw_game()
     draw_ui()
@@ -95,7 +90,7 @@ def draw_victory(events):
     """Draws the victory screen."""
     for event in events:
         if event.type == TICKER_TIMER:
-            tick()
+            logic_tick()
     SYSTEM["level"].background.draw()
     draw_game()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
@@ -115,7 +110,7 @@ def draw_game_over(events):
     """Draws the defeat screen."""
     for event in events:
         if event.type == TICKER_TIMER:
-            tick()
+            logic_tick()
     SYSTEM["level"].background.draw()
     draw_game()
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
@@ -203,7 +198,7 @@ def main_loop():
         events = pygame.event.get()
         for event in events:
             if event.type == QUIT:
-                PLAYING = False
+                SYSTEM["playing"] = False
             if event.type == MOUSEWHEEL:
                 SYSTEM["mouse_wheel"][0] = SYSTEM["mouse_wheel"][1]
                 SYSTEM["mouse_wheel"][1] = (event.x, event.y)

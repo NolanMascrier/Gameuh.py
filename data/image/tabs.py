@@ -65,3 +65,14 @@ class Tabs:
             else:
                 b.set(self._x + i * b.image.width, self._y).tick().draw()
             i += 1
+
+    def set(self, x, y):
+        """Sets the tab at the x;y position."""
+        self._x = x
+        self._y = y
+        return self
+
+    @property
+    def width(self):
+        """Returns the total of the button's width."""
+        return sum([b.width for b in self._buttons])

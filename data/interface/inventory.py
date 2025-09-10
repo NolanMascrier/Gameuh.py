@@ -1,7 +1,7 @@
 """Handles the inventory tab of the main menu."""
 
 import pygame
-from data.interface.general import draw_bottom_bar, draw_game, tick, setup_bottom_bar
+from data.interface.general import draw_bottom_bar, draw_game, logic_tick, setup_bottom_bar
 from data.constants import SYSTEM, MENU_INVENTORY, trad, TEXT_TRACKER
 from data.image.button import Button
 from data.image.slotpanel import SlotPanel
@@ -179,7 +179,7 @@ def draw_inventory(events):
     if SYSTEM["rune"] != -1:
         render(SYSTEM["rune_display"].image, SYSTEM["mouse"])
     draw_game(False, False, False, False, True)
-    tick()
+    logic_tick()
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["buttons"]["button_rune_0"].press()
