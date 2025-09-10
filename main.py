@@ -19,6 +19,7 @@ from data.loading import init_game, init_timers
 from data.interface.render import render_all, render, resolution, renders
 from data.projectile import Projectile
 from data.slash import Slash
+from data.tables.uniques_table import UNIQUES
 
 DAMAGE_COLOR = (255, 30, 30)
 
@@ -28,6 +29,7 @@ def debug_create_items():
     for _ in range(100):
         base_loot.append(SYSTEM["looter"].generate_item(5, random.randint(2,3)))
     SYSTEM["player"].inventory.extend(base_loot)
+    SYSTEM["player"].inventory.extend([f[0] for f in UNIQUES])
 
 def check_collisions():
     """Checks all collisions."""

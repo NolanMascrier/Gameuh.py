@@ -163,8 +163,14 @@ class Item():
             return None
         method = self.describe_details if is_details else self.describe
         affixes = Text(method(), True, font="item_desc")
-        text = f"{self._name}\n#s#(24)#c#(128, 128, 128)" +\
-            f"{trad('rarities', self._rarity)}{self._base}"
+        if self._rarity == 4:
+            text = f"{trad('uniques', self._name)}\n#s#(24)#c#(128, 128, 128)" +\
+                f"{trad('rarities', self._rarity)}{self._base}"
+            desc = Text(trad('uniques_desc', self._name), True, font="item_desc")
+        else:
+            text = f"{self._name}\n#s#(24)#c#(128, 128, 128)" +\
+                f"{trad('rarities', self._rarity)}{self._base}"
+            desc = None
         title = Text(text, size=30, bold=True, font="item_titles")
         width = max(affixes.width, title.width) + 20
         affixes = Text(method(), True, force_x=width, font="item_desc")
@@ -185,9 +191,11 @@ class Item():
             case _:
                 title_card = SYSTEM["images"]["ui_normal"]\
                     .duplicate(width, 48)
-        affix_card = SYSTEM["images"]["item_desc"].duplicate(width, affixes.height)
+        affix_card = SYSTEM["images"]["item_desc"].duplicate(width, affixes.height +\
+                ((desc.height + 15) if desc is not None else 0))
         sfc = pygame.Surface((title_card.get_width(), title_card.get_height()\
-                                + affix_card.get_height()), pygame.SRCALPHA)
+                + affix_card.get_height() +\
+                ((desc.height + 20) if desc is not None else 0)), pygame.SRCALPHA)
         title_pos = (title_card.get_width() / 2 - title.width / 2,
                      title_card.get_height() / 2 - title.height / 2)
         affix_pos = (affix_card.get_width() / 2 - affixes.width / 2,
@@ -197,6 +205,11 @@ class Item():
         if is_details or self._rarity > 0:
             affix_card.blit(affixes.surface, affix_pos)
             sfc.blit(affix_card, (0, title_card.get_height()))
+        if desc is not None:
+            desc_pos = (title_card.get_width() / 2 - desc.width / 2,
+                     affix_pos[1] + title_pos[1] + affixes.height\
+                     + title.height + desc.height / 2 + 10)
+            sfc.blit(desc.surface, desc_pos)
         return sfc
 
     def __get_gear_flags(self):

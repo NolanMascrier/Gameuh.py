@@ -86,7 +86,7 @@ class Affix():
             adds = ""
         for aff in self._flags:
             if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
-                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE]:
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
         return f"{col}{adds} {lst}"
@@ -126,7 +126,7 @@ class Affix():
         affx = []
         for aff in self._flags:
             if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
-                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE]:
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
         if Flags.DESC_UNIQUE in self._flags:

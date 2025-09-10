@@ -103,6 +103,7 @@ class Spell():
             self._sequence = []
         else:
             self._sequence = sequence
+        self._gathered_flags = []
         self._sequence_timer = 0
         self._sequence_step = 0
         self._explosion = explosion
@@ -124,6 +125,10 @@ class Spell():
         self.recalculate_damage()
         for step in self._sequence:
             step.update()
+        self._gathered_flags = []
+        for _, j in self._jewels.items():
+            if j is not None:
+                self._gathered_flags.extend(j.flags)
 
     def recalculate_damage(self):
         """Recalculates the damage using the spell's stats."""
@@ -186,7 +191,7 @@ class Spell():
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
-        if Flags.COMBO_SPELL in self._flags:
+        if Flags.COMBO_SPELL in self.all_flags:
             for s in self._sequence:
                 s.tick(caster)
             if self._started:
@@ -316,9 +321,9 @@ class Spell():
         """Describes the damage and buffs components."""
         descript = ""
         if self._real_damage is not None:
-            descript += self._real_damage.describe(caster, Flags.MELEE in self._flags,\
-                Flags.RANGED in self._flags, Flags.SPELL in self._flags)
-        if Flags.DASH in self._flags:
+            descript += self._real_damage.describe(caster, Flags.MELEE in self.all_flags,\
+                Flags.RANGED in self.all_flags, Flags.SPELL in self.all_flags)
+        if Flags.DASH in self.all_flags:
             descript += f"{trad('meta_words', 'dash')} {self._stats['distance'].c_value}" +\
                 f" {trad('meta_words', 'meters')}\n"
         return descript
@@ -326,17 +331,17 @@ class Spell():
     def __describe_afflictions(self):
         """Describe the spell's buff and debuff components."""
         buffs = []
-        if Flags.BUFF in self._flags:
+        if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
                 buffs.append(afflic.describe(True))
-        if Flags.DEBUFF in self._flags:
+        if Flags.DEBUFF in self.all_flags:
             for afflic in self._debuffs:
                 buffs.append(afflic.describe(False))
-        if Flags.CUTS_PROJECTILE in self._flags:
+        if Flags.CUTS_PROJECTILE in self.all_flags:
             buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, BLACK))
-        if Flags.TRIGGER in self._flags:
+        if Flags.TRIGGER in self.all_flags:
             buffs.append(Hoverable(0, 0, trad('meta_words', 'trigger'), None, BLACK))
-        if Flags.TRIGGER_ON_CRIT in self._flags:
+        if Flags.TRIGGER_ON_CRIT in self.all_flags:
             buffs.append(Hoverable(0, 0, trad('meta_words', 'trigger_on_crit'), None, BLACK))
         return buffs
 
@@ -352,7 +357,7 @@ class Spell():
             "cooldown": str(self._stats["cooldown"].get_value()),
             "costs": (self._stats["life_cost"].c_value, self._stats["mana_cost"].c_value),
             "projectiles": self._stats["projectiles"].c_value\
-                if Flags.PROJECTILE in self._flags else None,
+                if Flags.PROJECTILE in self.all_flags else None,
             "dmg_effic": Hoverable(0, 0, f"{trad('descripts', 'dmg_effic')}:" +\
                 f"{round(self._base_damage.coeff * 100, 2)}%",\
                 trad('dmg_effic'), BLACK) if self._base_damage is not None else None,
@@ -369,7 +374,7 @@ class Spell():
     def on_crit(self, caster: Creature, entity: Entity,
             evil: bool, aim_right = True, force = False):
         """Called when the creature crits."""
-        if Flags.TRIGGER_ON_CRIT in self._flags:
+        if Flags.TRIGGER_ON_CRIT in self.all_flags:
             self.on_cast(caster, entity, evil, aim_right, force)
 
     def on_dodge(self):
@@ -383,11 +388,11 @@ class Spell():
 
     def cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False):
         """Launches the spell."""
-        if Flags.AURA in self._flags:
+        if Flags.AURA in self.all_flags:
             return
-        if Flags.TRIGGER in self._flags:
+        if Flags.TRIGGER in self.all_flags:
             return
-        if Flags.COMBO_SPELL in self._flags:
+        if Flags.COMBO_SPELL in self.all_flags:
             if self._cooldown > 0:
                 return
             if self._sequence[self._sequence_step].on_cast(caster, entity, evil, aim_right, force):
@@ -437,25 +442,25 @@ class Spell():
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         caster.consume_mana(self._stats["mana_cost"].c_value)
         caster.stats["life"].current_value -= life_cost
-        if Flags.PROJECTILE in self._flags:
-            if Flags.BARRAGE in self._flags:
+        if Flags.PROJECTILE in self.all_flags:
+            if Flags.BARRAGE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
                     self.spawn_projectile(entity, caster, evil, 0, i * 20, i + 1, 0)
-            elif Flags.SPREAD in self._flags:
+            elif Flags.SPREAD in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)
                 else:
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
                         self.spawn_projectile(entity, caster, evil, 0, 0, i + 1, -45 + spread * i)
-        if Flags.BUFF in self._flags:
+        if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
                 if not isinstance(afflic, Affliction):
                     continue
                 caster.afflict(afflic.clone())
-        if Flags.DASH in self._flags:
+        if Flags.DASH in self.all_flags:
             entity.dash(self._stats["distance"].c_value)
-        if Flags.MELEE in self._flags:
+        if Flags.MELEE in self.all_flags:
             self.spawn_slash(entity, caster, evil, aim_right)
         return True
 
@@ -569,7 +574,7 @@ class Spell():
     @property
     def icon(self):
         """Returns the spell's icon."""
-        if Flags.COMBO_SPELL in self._flags:
+        if Flags.COMBO_SPELL in self.all_flags:
             return self._sequence[self._sequence_step].icon
         return self._icon
 
@@ -649,3 +654,11 @@ class Spell():
     def sequence(self):
         """Returns the spell's sequence."""
         return self._sequence
+
+    @property
+    def all_flags(self):
+        """Returns the spell's flags native and from jewels."""
+        fl = []
+        fl.extend(self._flags)
+        fl.extend(self._gathered_flags)
+        return fl

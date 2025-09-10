@@ -32,6 +32,8 @@ from data.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
 
+from data.tables.uniques_table import load_uniques
+
 from data.image.posteffects import PostEffects
 
 def generate_random_level():
@@ -345,6 +347,7 @@ def load_others():
         "bullets": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
         "characters": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     }
+    load_uniques()
 
 def load_start():
     """Loads the starting events."""
