@@ -8,7 +8,7 @@ Instead, it's now a looter bullet hell. Yeah
 # TODO list
 * ~~Adding the jewel system for spells~~ Done !
 * ~~Adding jewels to the loot pools~~ Done !
-* Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...
+* ~~Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...~~ Done !
 * Adding area modifier and level selector
 * Adding at least two bosses (Wave boss and unique boss)
 * Adding more options in the options menu (gamma, color correction, etc)
