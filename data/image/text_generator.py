@@ -13,9 +13,7 @@ def make_text(text, color = WHITE, bold = False, size = 35):
     return Text(text, default_color=color, bold=bold, size=size, font="item_desc")
 
 class TextGenerator():
-    def __init__(self):
-        pass
-
+    """Generator of text."""
     def generate_damage_text(self, x, y, color, crit, dmg):
         """Shows a damage pop up."""
         if not isinstance(color, tuple):

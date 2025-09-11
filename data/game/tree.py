@@ -293,4 +293,3 @@ class Node:
     @connected.setter
     def connected(self, value):
         self._connected = value
-

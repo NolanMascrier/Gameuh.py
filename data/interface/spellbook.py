@@ -7,7 +7,7 @@ from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_
 from data.game.spell import Spell
 from data.item import Item
 from data.image.slotpanel import SlotPanel
-from data.image.slot import Slot, Draggable
+from data.image.slot import Slot
 from data.image.tabs import Tabs
 from data.image.text import Text
 from data.interface.render import render, renders
@@ -244,7 +244,7 @@ def open_spell_screen():
         Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=BLACK)
     ]
     SYSTEM["gear_panel"] = SlotPanel(10, 10,\
-        default=SYSTEM["player"].inventory, filter=Flags.JEWEL)
+        default=SYSTEM["player"].inventory, display_filter=Flags.JEWEL)
     SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells, immutable=True)
     SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes, immutable=True)
 
@@ -338,7 +338,7 @@ def draw_slots(key):
         slot.set(x, y).tick().draw()
         x += 64
 
-def draw_spells(events):
+def draw_spells(_):
     """Draws the gear menu."""
     renders(SYSTEM["city_back"].as_background)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg_alt"].width / 2

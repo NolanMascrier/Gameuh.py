@@ -142,7 +142,8 @@ def draw_buffs():
             data.append((SYSTEM["images"][f"buff_{buff}"].image, (x + i * 64, y)))
             if duration[1] > 1:
                 txt = make_text(f"{duration[1]}", size=30)
-                data.append((txt.surface, (x + i * 64 - txt.width / 2 + 32, y - txt.height / 2 + 32)))
+                data.append((txt.surface,
+                            (x + i * 64 - txt.width / 2 + 32, y - txt.height / 2 + 32)))
             i += 1
     return data
 

@@ -3,8 +3,8 @@ Rather than stretching the original image, a tile
 will section the image in 9 and will repeat those sections
 as needed."""
 
-import pygame
 from functools import lru_cache
+import pygame
 from data.image.image import Image
 
 class Tile(Image):
@@ -38,7 +38,7 @@ class Tile(Image):
                 self.extracts(self._tile_width, 0, self._tile_width,\
                                             self._tile_height),
                 self.extracts(self._tile_width * 2, 0,\
-                                            self._tile_width, self._tile_height),    
+                                            self._tile_width, self._tile_height),
             ],
             [
                 self.extracts(0, self._tile_height,\
@@ -46,7 +46,7 @@ class Tile(Image):
                 self.extracts(self._tile_width, self._tile_height,\
                                             self._tile_width, self._tile_height),
                 self.extracts(self._tile_width * 2, self._tile_height,\
-                                            self._tile_width, self._tile_height),    
+                                            self._tile_width, self._tile_height),
             ],
             [
                 self.extracts(0, self._tile_height * 2,\

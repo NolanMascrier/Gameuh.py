@@ -133,7 +133,7 @@ class Ressource(Stat):
         self._buffs_multi.clear()
         self.refill()
 
-    def describe(self, is_percentage = True):
+    def describe(self, is_percentage = True, _ = None):
         """Describe the stat as a surface."""
         name = f"{trad('descripts', self.name)}: "
         name_hover = Hoverable(0, 0, name, trad(self.name))

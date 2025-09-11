@@ -75,4 +75,4 @@ class Tabs:
     @property
     def width(self):
         """Returns the total of the button's width."""
-        return sum([b.width for b in self._buttons])
+        return sum(b.width for b in self._buttons)

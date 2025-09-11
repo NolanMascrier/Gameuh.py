@@ -16,9 +16,11 @@ IMPLICITS = {
     "bushi_armor": Affix("IMPLICIT_ARMOR", 0.02, [Flags.FLAT, Flags.CRIT_CHANCE]),
     "diamond_armor": Affix("IMPLICIT_ARMOR", 0.05, [Flags.FLAT, Flags.ALL_RESISTANCES]),
 
-    "worker_clothes": Affix("IMPLICIT_ARMOR", 250, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+    "worker_clothes": Affix("IMPLICIT_ARMOR", 250,
+        [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
     "gambeson": Affix("IMPLICIT_ARMOR", 500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
-    "leather_armor": Affix("IMPLICIT_ARMOR", 1000, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
+    "leather_armor": Affix("IMPLICIT_ARMOR", 1000,
+        [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
     "brigandine": Affix("IMPLICIT_ARMOR", 1500, [Flags.FLAT, Flags.DODGE_RATING, Flags.DESC_FLAT]),
     "vagabond": Affix("IMPLICIT_ARMOR", 0.03, [Flags.FLAT, Flags.DODGE]),
     "heroic": Affix("IMPLICIT_ARMOR", 0.05, [Flags.BLESS, Flags.LIFE]),

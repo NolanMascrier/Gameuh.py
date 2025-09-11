@@ -4,7 +4,7 @@ by clicking and dragging the mouse."""
 import pygame
 from data.constants import SYSTEM
 from data.image.animation import Animation, Image
-from data.interface.render import render, renders
+from data.interface.render import render
 
 class Scrollable():
     """Defines a scrollable surface, which contains another that
@@ -187,4 +187,3 @@ class Scrollable():
     def diff_y(self):
         """Returns the scrollable's y difference."""
         return self._diff_y
-

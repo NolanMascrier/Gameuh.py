@@ -1,7 +1,6 @@
 """Simple wrapper for image surfaces in Pygame."""
 
 from collections import Counter
-from functools import lru_cache
 import pygame
 from data.constants import RESSOURCES
 

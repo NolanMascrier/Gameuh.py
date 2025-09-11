@@ -60,7 +60,7 @@ def open_option_screen():
 def unloader():
     """Unloads all option-specific data."""
 
-def draw_options(events):
+def draw_options(_):
     """Draws the optino tree menu."""
     renders(SYSTEM["city_back"].as_background)
     SYSTEM["ui"]["button_validate"].set(10, 350).tick().draw()

@@ -29,7 +29,7 @@ class SlotPanel:
         to None.
     """
     def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None,\
-        immutable = False, filter = None):
+        immutable = False, display_filter = None):
         self._x = x
         self._y = y
         self._slot_size = slot_size
@@ -44,7 +44,7 @@ class SlotPanel:
         self._default = default
         self._scroll = 0
         self._immutable = immutable
-        self._filter = filter
+        self._filter = display_filter
         if isinstance(default, Iterable):
             for item in default:
                 y, x = self.get_index()

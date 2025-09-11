@@ -166,11 +166,16 @@ AFFIXES = {
                                                         Flags.DODGE]), 0.1, 75, 999),
         ], 0.2),
         "life_regen": ([
-            (Affix("ARMOR_LIFE_REGEN_1", 5, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 0, 60),
-            (Affix("ARMOR_LIFE_REGEN_2", 10, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 20, 60),
-            (Affix("ARMOR_LIFE_REGEN_3", 20, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 40, 999),
-            (Affix("ARMOR_LIFE_REGEN_4", 30, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 50, 999),
-            (Affix("ARMOR_LIFE_REGEN_5", 50, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]), 1, 70, 999),
+            (Affix("ARMOR_LIFE_REGEN_1", 5, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]),\
+                1, 0, 60),
+            (Affix("ARMOR_LIFE_REGEN_2", 10, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]),\
+                1, 20, 60),
+            (Affix("ARMOR_LIFE_REGEN_3", 20, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]),\
+                1, 40, 999),
+            (Affix("ARMOR_LIFE_REGEN_4", 30, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]),\
+                1, 50, 999),
+            (Affix("ARMOR_LIFE_REGEN_5", 50, [Flags.FLAT, Flags.LIFE_REGEN, Flags.DESC_FLAT]),\
+                1, 70, 999),
         ], 0.8),
         "phys_res": ([
             (Affix("ARMOR_PHYS_RES_1", 0.10, [Flags.PHYS, Flags.FLAT]), 1, 0, 60),

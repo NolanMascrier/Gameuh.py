@@ -1,8 +1,8 @@
 """Projectile are the most common type of attacks."""
 
+from math import atan2, pi
 import random
 import numpy
-from math import atan2, pi
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM, PROJECTILE_TRACKER
 from data.numerics.damage import Damage
 from data.creature import Creature

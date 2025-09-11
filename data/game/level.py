@@ -42,7 +42,8 @@ class Level():
         y_pos = random.randint(0, SCREEN_HEIGHT - 300)
         enemy_type = reference[3]
         img = reference[0]
-        hb = HitBox(SCREEN_WIDTH - 100, y_pos, SYSTEM["images"][img].width, SYSTEM["images"][img].height)
+        hb = HitBox(SCREEN_WIDTH - 100, y_pos,
+                SYSTEM["images"][img].width, SYSTEM["images"][img].height)
         ent = Entity(SCREEN_WIDTH - 100, y_pos, img, hb)
         exp_value = random.randint(int(reference[5]*(level + 1) *0.9),\
                                    int(reference[5]*(level + 1) * 1.1))

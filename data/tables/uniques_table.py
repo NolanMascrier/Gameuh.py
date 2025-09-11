@@ -21,7 +21,8 @@ def load_uniques():
     """Loads up all unique items."""
     UNIQUES.extend([
         (Item("coc_jewel", "Spirit Jewel", 3500, 0, 0, SYSTEM["images"]["jewels"][3], 4,\
-            [Flags.JEWEL, Flags.TRIGGER, Flags.TRIGGER_ON_CRIT], [UNIQUE_AFFIXES["coc_jewel"]]), 10, 0),
+            [Flags.JEWEL, Flags.TRIGGER, Flags.TRIGGER_ON_CRIT],\
+            [UNIQUE_AFFIXES["coc_jewel"]]), 10, 0),
         (Item("weight_jewel", "Might Jewel", 3500, 0, 0, SYSTEM["images"]["jewels"][4], 4,\
             [Flags.JEWEL], UNIQUE_AFFIXES["weight_jewel"]), 10, 0)
     ])

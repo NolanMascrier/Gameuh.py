@@ -159,7 +159,7 @@ class Damage():
         """Creates a deep copy of the damage source."""
         dmg = Damage(self._coeff, is_crit=self._is_crit, crit_mult=self._crit_mult,
             flags=self._flags.copy(), ignore_block=self._ignore_block,
-            ignore_dodge=self._ignore_dodge, origin=self._origin, 
+            ignore_dodge=self._ignore_dodge, origin=self._origin,
             lower_bound=self._bounds[0], upper_bound=self._bounds[1])
         dmg.types = self._types.copy()
         dmg.penetration = self._penetration.copy()

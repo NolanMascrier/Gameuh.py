@@ -2,7 +2,7 @@
 a name, a value, a duration, flags."""
 
 import json
-from data.constants import SYSTEM, trad, META_FLAGS, Flags
+from data.constants import trad, META_FLAGS, Flags
 from data.image.hoverable import Hoverable
 from data.numerics.damage import Damage
 

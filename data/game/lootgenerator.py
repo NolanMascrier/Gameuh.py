@@ -1,8 +1,7 @@
 """Generates random loot."""
 
-import numpy
 import random
-from functools import lru_cache
+import numpy
 from data.item import Item
 from data.constants import SYSTEM, Flags
 from data.tables.affix_table import AFFIXES
@@ -279,11 +278,13 @@ class LootGenerator():
                     break
         return result
 
-    def generate_affixes(self, item_type: str, num_affixes: int, item_level: int, already_exists = None):
+    def generate_affixes(self, item_type: str, num_affixes: int,
+                         item_level: int, already_exists = None):
+        """Generates a list of affixes for the item."""
         affix_pool = AFFIXES[item_type]
         existing_keys = set()
         if already_exists is not None:
-                existing_keys = {affix.name for affix in already_exists}
+            existing_keys = {affix.name for affix in already_exists}
         candidates = []
         for affix_key, (tiers, affix_weight) in affix_pool.items():
             if affix_key in existing_keys:
@@ -301,14 +302,14 @@ class LootGenerator():
         result_affixes = [self.pick_weighted(valid_tiers) for valid_tiers, _ in chosen_affix_groups]
         return result_affixes
 
-    def select_base(self, type: list):
+    def select_base(self, types: list):
         """Selects a random base of the type."""
         max_weight = 0
-        for _, weight in type:
+        for _, weight in types:
             max_weight += float(weight)
         roll = random.uniform(0, max_weight)
         cress = 0
-        for item, weight in type:
+        for item, weight in types:
             cress += float(weight)
             if cress >= roll:
                 return item

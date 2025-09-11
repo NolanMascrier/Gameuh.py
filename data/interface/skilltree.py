@@ -13,7 +13,7 @@ def open_skill_screen():
 def unloader():
     """Unloads all skill tree-specific data."""
 
-def draw_skills(events):
+def draw_skills(_):
     """Draws the skill tree menu."""
     renders(SYSTEM["city_back"].as_background)
     draw_bottom_bar()

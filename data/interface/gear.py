@@ -16,8 +16,8 @@ DEFENSE_STATS = ["def", "abs_def", "block", "dodge_rating", "crit_res"\
 OFFENSE_STATS = ["crit_rate", "crit_dmg", "mana_efficiency", "cast_speed",
     "melee_dmg", "spell_dmg", "ranged_dmg", "precision", "phys_dmg", "fire_dmg",
     "ice_dmg", "elec_dmg", "energy_dmg", "light_dmg", "dark_dmg"]
-OTHER_STATS = ["exp_mult", "item_quant", "item_qual", "speed", "proj_quant", "proj_speed", "chains",
-    "area"]
+OTHER_STATS = ["exp_mult", "item_quant", "item_qual", "speed", "proj_quant", "proj_speed",
+    "chains", "area"]
 STATES = ["defenses", "damages", "other"]
 
 def equip(item: Item, slot: Slot):
@@ -65,30 +65,41 @@ def open_gear_screen():
     SYSTEM["gear_tabs"] = Tabs(15, 200, STATES, STATES, "gear_tab")
     x = SCREEN_WIDTH / 2- 32
     y = SCREEN_HEIGHT / 2 - 128
-    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm", equip, unequip, overwrite_gear,\
-         Flags.HELM, SYSTEM["player"].creature.gear["helms"])
-    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet", equip, unequip, overwrite_gear,\
-         Flags.AMULET, SYSTEM["player"].creature.gear["amulets"])
-    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor", equip, unequip, overwrite_gear,\
-         Flags.ARMOR, SYSTEM["player"].creature.gear["armors"])
-    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon", equip, unequip, overwrite_gear,\
-         Flags.WEAPON, SYSTEM["player"].creature.gear["weapons"])
-    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring", equip, unequip, overwrite_gear,\
-         Flags.RING, SYSTEM["player"].creature.gear["rings"]["left"], True)
-    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring", equip, unequip, overwrite_gear,\
-         Flags.RING, SYSTEM["player"].creature.gear["rings"]["right"])
-    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand", equip, unequip, overwrite_gear,\
-         Flags.OFFHAND, SYSTEM["player"].creature.gear["offhand"])
-    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands", equip, unequip, overwrite_gear,\
-         Flags.HANDS, SYSTEM["player"].creature.gear["gloves"])
-    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic", equip, unequip, overwrite_gear,\
-         Flags.RELIC, SYSTEM["player"].creature.gear["relics"])
-    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt", equip, unequip, overwrite_gear,\
-         Flags.BELT, SYSTEM["player"].creature.gear["belts"])
-    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots", equip, unequip, overwrite_gear,\
-         Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
+    SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm",\
+        equip, unequip, overwrite_gear,\
+        Flags.HELM, SYSTEM["player"].creature.gear["helms"])
+    SYSTEM["ui"]["gear_amulet"] = Slot(x, y + 32, "gear_amulet",\
+        equip, unequip, overwrite_gear,\
+        Flags.AMULET, SYSTEM["player"].creature.gear["amulets"])
+    SYSTEM["ui"]["gear_armor"] = Slot(x, y + 96, "gear_armor",\
+        equip, unequip, overwrite_gear,\
+        Flags.ARMOR, SYSTEM["player"].creature.gear["armors"])
+    SYSTEM["ui"]["gear_weapon"] = Slot(x - 128, y + 96, "gear_weapon",\
+        equip, unequip, overwrite_gear,\
+        Flags.WEAPON, SYSTEM["player"].creature.gear["weapons"])
+    SYSTEM["ui"]["gear_ring"] = Slot(x - 64, y + 64, "gear_ring",\
+        equip, unequip, overwrite_gear,\
+        Flags.RING, SYSTEM["player"].creature.gear["rings"]["left"], True)
+    SYSTEM["ui"]["gear_ring2"] = Slot(x + 64, y + 64, "gear_ring",\
+        equip, unequip, overwrite_gear,\
+        Flags.RING, SYSTEM["player"].creature.gear["rings"]["right"])
+    SYSTEM["ui"]["gear_offhand"] = Slot(x + 128, y + 96, "gear_offhand",\
+        equip, unequip, overwrite_gear,\
+        Flags.OFFHAND, SYSTEM["player"].creature.gear["offhand"])
+    SYSTEM["ui"]["gear_hands"] = Slot(x + 64, y + 128, "gear_hands",\
+        equip, unequip, overwrite_gear,\
+        Flags.HANDS, SYSTEM["player"].creature.gear["gloves"])
+    SYSTEM["ui"]["gear_relic"] = Slot(x - 64, y + 128, "gear_relic",\
+        equip, unequip, overwrite_gear,\
+        Flags.RELIC, SYSTEM["player"].creature.gear["relics"])
+    SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt",\
+        equip, unequip, overwrite_gear,\
+        Flags.BELT, SYSTEM["player"].creature.gear["belts"])
+    SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots",\
+        equip, unequip, overwrite_gear,\
+        Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
     SYSTEM["gear_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10,\
-        default=SYSTEM["player"].inventory, filter=Flags.GEAR)
+        default=SYSTEM["player"].inventory, display_filter=Flags.GEAR)
     lst = SYSTEM["player"].creature.generate_stat_details()
     for f in lst:
         STAT_LIST[f] = lst[f]
@@ -110,7 +121,7 @@ def unloader():
     SYSTEM["gear_panel"] = None
     STAT_LIST.clear()
 
-def draw_gear(events):
+def draw_gear(_):
     """Draws the gear menu."""
     renders(SYSTEM["city_back"].as_background)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2

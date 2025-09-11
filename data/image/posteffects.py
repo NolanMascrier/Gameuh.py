@@ -5,6 +5,7 @@ import numpy
 from data.constants import SYSTEM, SCREEN_WIDTH
 
 class PostEffects():
+    """Handle whole screen effects."""
     def __init__(self):
         self._timer = 0
         self._shake_x = 0
@@ -80,4 +81,5 @@ class PostEffects():
 
     @property
     def pause(self):
+        """Returns the processor's pause status."""
         return self._pause > 0

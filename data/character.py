@@ -2,8 +2,7 @@
 
 import json
 from math import atan2
-from data.constants import *
-from data.tables.spell_table import *
+from data.constants import SCREEN_HEIGHT, SYSTEM, POWER_UP_GRID
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
@@ -32,7 +31,8 @@ class Character():
         if imagefile is None:
             box = None
         else:
-            box = HitBox(x, y, SYSTEM["images"][imagefile].width / 3, SYSTEM["images"][imagefile].height / 1.3)
+            box = HitBox(x, y, SYSTEM["images"][imagefile].width / 3,\
+                        SYSTEM["images"][imagefile].height / 1.3)
         self._entity = Entity(x, y, imagefile, box, speed)
         self._creature = Creature("hero", self)
         self._cooldown = 0
@@ -172,7 +172,7 @@ class Character():
                 continue
             if (SYSTEM["key_chart"][k][0] is not None and keys[SYSTEM["key_chart"][k][0]]) or\
                 (SYSTEM["key_chart"][k][1] is not None and keys[SYSTEM["key_chart"][k][1]]):
-                    actions[k]()
+                actions[k]()
         dx = self._input[0] * self._entity.move_speed
         dy = self._input[1] * self._entity.move_speed
         self.__move(dx, dy)
