@@ -45,6 +45,8 @@ class Animation():
         self._animated = animated
         self._play_once = plays_once
         self._finished = False
+        self._width = self._sequence[0].width
+        self._height = self._sequence[0].height
         #
         self._scaled = (frame_y, frame_x, True)
         self._flipped = (False, False)
@@ -118,6 +120,8 @@ class Animation():
         self._scaled = (height, width, absolute)
         for frame in self._sequence:
             frame.scale(height, width, absolute)
+        self._width = self._sequence[0].width
+        self._height = self._sequence[0].height
         return self
 
     def flip(self, vertical: bool, horizontal: bool):
@@ -197,6 +201,16 @@ class Animation():
     def height(self):
         """Returns the sequence's frame height."""
         return self._frame_y
+
+    @property
+    def w(self):
+        """Returns the sequence's image width."""
+        return self._width
+
+    @property
+    def h(self):
+        """Returns the sequence's image height."""
+        return self._height
 
     @property
     def frame(self):

@@ -76,6 +76,7 @@ class Damage():
                 ignore_block = False, origin = None, lower_bound = 0.9,\
                 upper_bound = 1.1, crit_rate = 0.05):
         self._coeff = multiplier
+        self._mod = 1
         self._types = {
             "phys": phys,
             "fire": fire,
@@ -131,6 +132,7 @@ class Damage():
         types = ["phys", "fire", "ice", "elec", "energy", "light", "dark"]
         txt = ""
         mult = 1
+        total = [0, 0]
         if is_melee:
             mult *= caster.stats["melee_dmg"].c_value
         if is_ranged:
@@ -143,13 +145,15 @@ class Damage():
             hig_roll = self._types[typ] * self._bounds[1] * type_mult
             added_low = caster.stats[f"{typ}_flat"].lower.c_value * type_mult * self._coeff
             added_high = caster.stats[f"{typ}_flat"].upper.c_value * type_mult * self._coeff
-            low = low_roll + added_low
-            up = hig_roll + added_high
+            low = (low_roll + added_low) * self._mod
+            up = (hig_roll + added_high) * self._mod
             if low == 0 and up == 0:
                 continue
+            total[0] += round(low)
+            total[1] += round(up)
             txt += f"{trad('meta_words', 'deal')} {round(low)}-{round(up)} " +\
                 f"{trad('meta_words', typ)} {trad('meta_words', 'damage')}\n"
-        return txt
+        return txt + f"{trad('meta_words', 'total')}: {total[0]}-{total[1]}\n"
 
     def clone(self):
         """Creates a deep copy of the damage source."""
@@ -278,3 +282,12 @@ class Damage():
     @crit_rate.setter
     def crit_rate(self, value):
         self._crit_rate = value
+
+    @property
+    def mod(self):
+        """Returns the damage source's final damage modifier."""
+        return self._mod
+
+    @mod.setter
+    def mod(self, value):
+        self._mod = value

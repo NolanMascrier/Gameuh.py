@@ -34,6 +34,8 @@ INPUT = {
     MENU_SPELLBOOK_DASH: "dash"
 }
 
+
+
 LEFT_COLUMN = ["crit_r", "cooldown", "aoe", "projs"]
 RIGHT_COLUMN = ["crit_d", "life_cost", "mana_cost"]
 
@@ -78,10 +80,13 @@ def overwrite_jewel(jewel, slot):
         SYSTEM["gear_panel"].insert(None, None, it)
     refresh()
 
-def single_slot(spell, superspell = None):
+def single_slot(spell, superspell = None, decoded_data = None):
     """Creates the description data of a single spell."""
-    data = spell.describe()
-    data_super = superspell.describe() if superspell is not None else spell.describe()
+    if spell is None and decoded_data is None:
+        return None
+    data = spell.describe() if decoded_data is None else decoded_data
+    data_super = (superspell.describe() if superspell is not None else spell.describe()) if\
+        spell is not None else decoded_data
     cost_l = f"{trad('descripts', 'life_cost')}: {data['costs'][0]}" if\
         data["costs"][0] > 0 else None
     cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
@@ -99,15 +104,17 @@ def single_slot(spell, superspell = None):
         "level": Text(f"{trad('meta_words', 'level')} " +\
             f"{data_super['level']}",\
             font="item_desc", size=20, default_color=BLACK),
+        "level_int": int(data_super['level']),
         "desc": Text(data_super["desc"],\
             font="item_desc", size=20, default_color=BLACK),
         "damage": Text(data["damage"],\
             font="item_desc", size=20, default_color=BLACK),
         "buffs": data["buffs"],
         "exp": Text(f"{spell.exp}/{spell.exp_to_next}",\
-            font="item_desc", size=20, default_color=BLACK),
+            font="item_desc", size=20, default_color=BLACK) if spell is not None else None,
         "slots": [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
-            slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
+            slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()]\
+                if spell is not None else None,
         "crit_r": Text(f"{trad('descripts', 'crit_rate')}: {int(crit_c * 100)}%",\
             font="item_desc", size=20, default_color=BLACK)\
             if crit_c is not None else None,
@@ -115,7 +122,8 @@ def single_slot(spell, superspell = None):
             font="item_desc", size=20, default_color=BLACK)\
             if crit_d is not None else None,
         "cooldown": Text(f"{trad('descripts', 'cooldown')}: {data['cooldown']}s",\
-            font="item_desc", size=20, default_color=BLACK),
+            font="item_desc", size=20, default_color=BLACK) if data['cooldown']\
+                is not None else None,
         "projs": Text(f"{trad('descripts', 'projectiles')}: {round(data['projectiles'])}",\
             font="item_desc", size=20, default_color=BLACK) if data["projectiles"] is not None\
             else None,
@@ -127,7 +135,7 @@ def single_slot(spell, superspell = None):
         "aoe": Text(f"{trad('descripts', 'area')}: {int(area * 100)}%",\
             font="item_desc", size=20, default_color=BLACK)\
             if area is not None else None,
-    } if spell is not None else None
+    }
     return slot
 
 def make_slot(spell: Spell, key):
@@ -136,8 +144,21 @@ def make_slot(spell: Spell, key):
         SYSTEM["ui"][key] = None
         return
     data = spell.describe()
-    if data["sequence"] is None:
+    if data["sequence"] is None and data["explosion"] is None:
         SYSTEM["ui"][key] = single_slot(spell)
+    elif data["sequence"] is None:
+        values = [trad('descripts', 'projectile'), trad('descripts', 'explosion')]
+        SYSTEM["ui"][key] = {
+            "type": "explosion",
+            "proj": single_slot(spell),
+            "tabs": Tabs(0, 0, values, [0, 1], "step_page",\
+                SYSTEM["images"]["btn_fat_2"], SYSTEM["images"]["btn_fat_2_pressed"],\
+                additional_action=refresh),
+            "explosion": single_slot(None, decoded_data=data["explosion"]),
+            "level_int": int(data['level']),
+            "slots": [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
+                slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
+        }
     else:
         values = [f"{trad('descripts', 'step')} {(f + 1)}" for f in STEPS]
         SYSTEM["ui"][key] = {
@@ -145,6 +166,7 @@ def make_slot(spell: Spell, key):
             "data": [single_slot(s, spell) for s in data["sequence"]],
             "slots": [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
                 slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()],
+            "level_int": int(data['level']),
             "tabs": Tabs(0, 0, values[:len(spell.sequence)],\
                 STEPS[:len(spell.sequence)], "step_page",\
                 SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"],\
@@ -240,7 +262,8 @@ def draw_single(spell, y_offset = 0):
     """Draws the details of a single spell."""
     spell["name"].draw(680, 250 + y_offset)
     spell["level"].draw(680, 290 + y_offset)
-    spell["exp"].draw(710 + spell["level"].width , 290 + y_offset)
+    if spell["exp"] is not None:
+        spell["exp"].draw(710 + spell["level"].width , 290 + y_offset)
     spell["desc"].draw(680, 310 + y_offset)
     y = 330 + spell["desc"].height  + y_offset
     spell["damage"].draw(680, y)
@@ -268,7 +291,50 @@ def draw_sequence(key):
     """Draw the detail of a sequence of spells."""
     x = SCREEN_WIDTH / 2 - SYSTEM["ui"][key]["tabs"].width / 2
     SYSTEM["ui"][key]["tabs"].set(x, 250).tick()
-    draw_single(SYSTEM["ui"][key]["data"][SYSTEM["step_page"]], 100)
+    draw_single(SYSTEM["ui"][key]["data"][SYSTEM["step_page"]], 64)
+
+def draw_explosion(key):
+    """Draws the detail of a spell with an exposive component."""
+    x = SCREEN_WIDTH / 2 - SYSTEM["ui"][key]["tabs"].width / 2
+    SYSTEM["ui"][key]["tabs"].set(x, 250).tick()
+    if SYSTEM["step_page"] == 0:
+        draw_single(SYSTEM["ui"][key]["proj"], 64)
+    else:
+        draw_single(SYSTEM["ui"][key]["explosion"], 64)
+
+def draw_slots(key):
+    """Draw the jewel slots. The amount of slots depends on the
+    spell's level: 
+
+    1-2  : No slots
+    3-5  : One slot
+    6-8 : Two slots
+    9-11: Three slots
+    12-14: Four slots
+    15+  : Five slots
+    """
+    lvl = SYSTEM["ui"][key]["level_int"]
+    if lvl <= 2:
+        max_slot = 0
+    elif lvl <= 5:
+        max_slot = 1
+    elif lvl <= 8:
+        max_slot = 2
+    elif lvl <= 11:
+        max_slot = 3
+    elif lvl <= 14:
+        max_slot = 4
+    else:
+        max_slot = 5
+    y = SCREEN_HEIGHT - 64 * 4
+    x = SCREEN_WIDTH / 2 - int((64 * max_slot) / 2)
+    i = 0
+    for slot in SYSTEM["ui"][key]["slots"]:
+        if i >= max_slot:
+            break
+        i += 1
+        slot.set(x, y).tick().draw()
+        x += 64
 
 def draw_spells(events):
     """Draws the gear menu."""
@@ -303,11 +369,9 @@ def draw_spells(events):
             draw_single(SYSTEM["ui"][key])
         elif SYSTEM["ui"][key]["type"] == "sequence":
             draw_sequence(key)
-        y = SCREEN_HEIGHT - 64 * 4
-        x = SCREEN_WIDTH / 2 - int((64 * 5) / 2)
-        for slot in SYSTEM["ui"][key]["slots"]:
-            slot.set(x, y).tick().draw()
-            x += 64
+        elif SYSTEM["ui"][key]["type"] == "explosion":
+            draw_explosion(key)
+        draw_slots(key)
     else:
         SYSTEM["ui"]["no_spells"][0].draw(680, 250)
         SYSTEM["ui"]["no_spells"][1].draw(680, 290)

@@ -22,12 +22,13 @@ class Projectile():
                 evil = False, width = 64, height = 32, speed = 20, \
                 hitbox_len = None, hitbox_height = None, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
-                behaviours = None, debuffs = None, explosion = None):
+                behaviours = None, debuffs = None, explosion = None, area = 1):
         self._x = x
         self._y = y
         self._speed = speed
         self._angle = angle
         self._target = None
+        self._area = area
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - numpy.atan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
@@ -45,7 +46,7 @@ class Projectile():
         self._length = width
         self._height = height
         self._origin = origin
-        self._damage = origin.recalculate_damage(damage)
+        self._damage = damage
         self._evil = evil
         self._bounces = bounces
         self._image = imagefile
@@ -110,7 +111,8 @@ class Projectile():
                         debuff.damage.origin = self._origin
                     target.afflict(debuff.clone(), True)
             if self._explosion is not None:
-                sl = self._explosion.clone(DummyEntity(self._x, self._y, self._box), self._origin)
+                sl = self._explosion.clone(DummyEntity(self._x, self._y, self._box),\
+                    self._origin, self._area, True)
                 PROJECTILE_TRACKER.append(sl)
             return num, crit
         return (None, None)

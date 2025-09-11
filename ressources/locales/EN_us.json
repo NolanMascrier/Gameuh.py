@@ -236,6 +236,7 @@
         "buffs": "Gain status effect",
         "debuffs": "Inflict status effect",
         "for": "for",
+        "total": "Total",
         "seconds": "seconds",
         "cut_proj": "Can destroy enemy projectiles",
         "trigger": "This spell cannot be used",
@@ -265,6 +266,7 @@
         "wdash": "Wind Dash",
         "fslash": "Fury Slash",
         "fireball": "Fireball",
+        "fireball_explosion": "Fireball's Explosion",
         "masterstrike": "Masterstrike"
     },
     "spells_desc": {
@@ -279,6 +281,7 @@
         "wdash": "Quickly dashes in the direction of your movement\nand increase your movement speed.",
         "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage.",
         "fireball": "Launch a powerful fireball toward the mouse\ndealing medium fire damage.\nOn contact, creates a powerful explosion.",
+        "fireball_explosion": "Deals powerful fire damage in the \narea.",
         "masterstrike": "Deliver a series a quick blows.\nThe third strike is a guaranteed critical hit."
     },
     "descripts": {

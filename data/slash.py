@@ -15,17 +15,17 @@ class Slash():
     """Defines a slash."""
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
-                offset_x = 0, offset_y = 0, debuffs = None, area = 1):
+                offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False):
         self._caster = caster
         self._origin = origin
         self._image = animation
         self._real_image = SYSTEM["images"][self._image].clone().scale(area, area, False)
         self._damage = damage
-        self._real_damage = damage
         self._evil = evil
         self._area = area
-        self._hitbox = HitBox(caster.x, caster.y, self._real_image.width,\
-            self._real_image.height)
+        self._center = center
+        self._hitbox = HitBox(caster.x, caster.y, self._real_image.w,\
+            self._real_image.h)
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
@@ -42,7 +42,7 @@ class Slash():
         else:
             self._debuffs = debuffs
 
-    def clone(self, entity, origin):
+    def clone(self, entity, origin, area = None, center=False):
         """Returns a deep copy of the slash."""
         return Slash(
             entity,
@@ -55,7 +55,8 @@ class Slash():
             self._offset[0],
             self._offset[1],
             self._debuffs.copy(),
-            self._area
+            self._area if area is None else area,
+            center
         )
 
     def get_image(self):
@@ -66,8 +67,12 @@ class Slash():
         """Returns the slash's position."""
         x, y = self._caster.hitbox.center
         cx, cy = self._hitbox.width / 2, self._hitbox.height / 2
-        ox, oy = self._offset[0], self._offset[1]
-        return (x - cx + ox, y - cy + oy)
+        ox, oy = self._offset
+        if self._center:
+            dx, dy = self._real_image.width / 2, self._real_image.height / 2
+        else:
+            dx, dy = 0, 0
+        return (x - cx - dx + ox, y - cy - dy + oy)
 
     def tick(self):
         """Ticks down the slash."""
@@ -87,7 +92,7 @@ class Slash():
     def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
         """Called when the slash hits a target."""
         if target not in self._immune:
-            dmg = self._origin.recalculate_damage(self._real_damage)
+            dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
             if num != "Dodged !":
                 for debuff in self._debuffs:
@@ -158,15 +163,6 @@ class Slash():
         self._damage = value
 
     @property
-    def real_damage(self):
-        """Returns the slash's real_damage."""
-        return self._real_damage
-
-    @real_damage.setter
-    def real_damage(self, value):
-        self._real_damage = value
-
-    @property
     def evil(self):
         """Returns whether or nto the slash's shot by an enemy."""
         return self._evil
@@ -183,6 +179,24 @@ class Slash():
     @hitbox.setter
     def hitbox(self, value):
         self._hitbox = value
+
+    @property
+    def area(self):
+        """Returns the slash's area."""
+        return self._area
+
+    @area.setter
+    def area(self, value):
+        self._area = value
+
+    @property
+    def debuffs(self):
+        """Returns the slash's debuffs."""
+        return self._debuffs
+
+    @debuffs.setter
+    def debuffs(self, value):
+        self._debuffs = value
 
     @property
     def flags(self) -> list[Flags]:

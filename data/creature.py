@@ -143,22 +143,24 @@ class Creature:
         crit = bool(crit_roll <= crit_tresh)\
             if not damage_source.is_crit else True
         crit_mult = self._stats["crit_dmg"].c_value * (1 + damage_source.crit_mult)
-        multi = damage_source.coeff
+        coeff = damage_source.coeff
+        mod = damage_source.mod
         flags = damage_source.flags
         if Flags.MELEE in flags:
-            multi *= self._stats["melee_dmg"].get_value()
+            coeff *= self._stats["melee_dmg"].get_value()
         if Flags.RANGED in flags:
-            multi *= self._stats["ranged_dmg"].get_value()
+            coeff *= self._stats["ranged_dmg"].get_value()
         if Flags.SPELL in flags:
-            multi *= self._stats["spell_dmg"].get_value()
+            coeff *= self._stats["spell_dmg"].get_value()
         dmg, pen = damage_source.get_damage()
 
         values = {}
         for types in DAMAGE_TYPE:
-            base = dmg[types]
-            roll = self._stats[f"{types}_flat"].roll() + base
-            mult = roll * multi * self._stats[f"{types}_dmg"].get_value()
-            values[types] = mult
+            type_mult = self._stats[f"{types}_dmg"].c_value
+            roll_base = dmg[types] * type_mult
+            roll_added = self._stats[f"{types}_flat"].roll() * type_mult * coeff
+            full_roll = (roll_base + roll_added) * mod
+            values[types] = full_roll
 
         pp = pen["phys"] + self._stats["phys_pen"].get_value()
         fp = pen["fire"] + self._stats["fire_pen"].get_value()
@@ -168,7 +170,7 @@ class Creature:
         lp = pen["light"] + self._stats["light_pen"].get_value()
         dp = pen["dark"] + self._stats["dark_pen"].get_value()
 
-        return Damage(multi, values["phys"], values["fire"], values["ice"], values["elec"],\
+        return Damage(coeff, values["phys"], values["fire"], values["ice"], values["elec"],\
                       values["energy"], values["light"], values["dark"], \
                       pp, fp, ip, ep, enp, lp, dp, crit,\
                       crit_mult, flags,\
@@ -252,8 +254,8 @@ class Creature:
                 self.on_block()
                 return "Blocked !", False
         for dmg_type in dmg:
-            dmga = float(dmg[dmg_type]) * mitig
-            res = self._stats[dmg_type].get_value() - pen[dmg_type]
+            dmga = dmg[dmg_type] * mitig
+            res = self._stats[dmg_type].c_value - pen[dmg_type]
             damage += dmga * (1 - res)
         if damage_source.is_crit:
             SYSTEM["post_effects"].flash(WHITE, 5)

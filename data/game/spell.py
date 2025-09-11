@@ -135,15 +135,13 @@ class Spell():
         if self._base_damage is None:
             return
         mod = self._stats["damage_mod"].get_value()
-        for dmg in self._base_damage.types:
-            self._real_damage.types[dmg] = mod * self._base_damage.types[dmg]
+        self._real_damage.mod = mod
         self._real_damage.crit_mult = self._stats["crit_dmg"].c_value
         self._real_damage.crit_rate = self._stats["crit_rate"].c_value
         if self._explosion is not None and isinstance(self._explosion, Slash):
-            for dmg in self._base_damage.types:
-                self._explosion.real_damage.types[dmg] = mod * self._explosion.damage.types[dmg]
-            self._explosion.real_damage.crit_mult = self._stats["crit_dmg"].c_value
-            self._explosion.real_damage.crit_rate = self._stats["crit_rate"].c_value
+            self._explosion.damage.mod = mod
+            self._explosion.damage.crit_mult = self._stats["crit_dmg"].c_value
+            self._explosion.damage.crit_rate = self._stats["crit_rate"].c_value
 
     def generate_surface(self):
         """Creates the hoverable surface of the spell."""
@@ -328,6 +326,17 @@ class Spell():
                 f" {trad('meta_words', 'meters')}\n"
         return descript
 
+    def __explosion_describe(self, caster):
+        """Describes the damage and buffs components."""
+        if self._explosion is None:
+            return None
+        descript = ""
+        if self._explosion.damage is not None:
+            descript += self._explosion.damage.describe(caster,\
+                Flags.MELEE in self._explosion.flags,\
+                Flags.RANGED in self._explosion.flags, Flags.SPELL in self._explosion.flags)
+        return descript
+
     def __describe_afflictions(self):
         """Describe the spell's buff and debuff components."""
         buffs = []
@@ -345,9 +354,39 @@ class Spell():
             buffs.append(Hoverable(0, 0, trad('meta_words', 'trigger_on_crit'), None, BLACK))
         return buffs
 
+    def __explosion_afflictions(self):
+        """Describe the spell's buff and debuff components."""
+        if self._explosion is None:
+            return None
+        buffs = []
+        if Flags.DEBUFF in self._explosion.flags:
+            for afflic in self._explosion.flags:
+                buffs.append(afflic.describe(False))
+        if Flags.CUTS_PROJECTILE in self._explosion.flags:
+            buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, BLACK))
+        return buffs
+
     def describe(self):
         """Returns a description of the spell."""
         sequence = None if len(self._sequence) == 0 else self._sequence
+        explosion = None if self._explosion is None else {
+            "damage": self.__explosion_describe(SYSTEM["player"].creature),
+            "buffs": self.__explosion_afflictions(),
+            "name": trad('spells_name', f"{self._name}_explosion"),
+            "desc": trad('spells_desc', f"{self._name}_explosion"),
+            "level": str(self._level),
+            "cooldown": None,
+            "projectiles": None,
+            "area": self._explosion.area,
+            "costs": (0, 0),
+            "crit_rate": 1 + self._explosion.damage.crit_rate,
+            "crit_dmg": 1 + self._explosion.damage.crit_mult,
+            "dmg_effic": Hoverable(0, 0, f"{trad('descripts', 'dmg_effic')}:" +\
+                f"{round(self._explosion.damage.coeff * 100, 2)}%",\
+                trad('dmg_effic'), BLACK) if self._explosion.damage is not None else None,
+            "sequence": None,
+            "explosion": None
+        }
         data = {
             "name": trad('spells_name', self._name),
             "desc": trad('spells_desc', self._name),
@@ -364,7 +403,8 @@ class Spell():
             "area": self._stats['area'].c_value,
             "crit_rate": 1 + self._stats['crit_rate'].c_value,
             "crit_dmg": 1 + self._stats['crit_dmg'].c_value,
-            "sequence": sequence
+            "sequence": sequence,
+            "explosion": explosion
         }
         return data
 
@@ -407,6 +447,7 @@ class Spell():
     def spawn_projectile(self, entity, caster, evil = False,\
             x_diff = 0, y_diff = 0, delay = 1, angle = 0):
         """Spanws a projectile."""
+        area = self._stats["area"].c_value + caster.stats["area"].c_value
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
                         self._real_damage, caster, evil,\
@@ -415,7 +456,7 @@ class Spell():
                         bounces=self._stats["bounces"].c_value, \
                         chains=self._stats["chains"].c_value, \
                         behaviours=self._flags, caster=entity, debuffs=self._debuffs,
-                        explosion=self._explosion)
+                        explosion=self._explosion, area=area)
         PROJECTILE_TRACKER.append(proj)
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False):

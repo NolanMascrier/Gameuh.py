@@ -28,6 +28,8 @@ from data.interface.options import open_option_screen
 from data.interface.gameui import generate_foreground, generate_background
 from data.game.level import Level
 
+from data.interface.render import RENDER_LIST
+
 from data.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
@@ -214,6 +216,8 @@ def load_images():
     SYSTEM["images"]["btn"] = Image("ui/button.png").scale(55, 280)
     SYSTEM["images"]["btn_fat"] = Image("ui/button.png").scale(55, 100)
     SYSTEM["images"]["btn_fat_pressed"] = Image("ui/button_press.png").scale(55, 100)
+    SYSTEM["images"]["btn_fat_2"] = Image("ui/button.png").scale(55, 164)
+    SYSTEM["images"]["btn_fat_2_pressed"] = Image("ui/button_press.png").scale(55, 164)
     SYSTEM["images"]["btn_small"] = Image("ui/button.png").scale(35, 200)
     SYSTEM["images"]["btn_small_pressed"] = Image("ui/button_press.png").scale(35, 200)
     SYSTEM["images"]["btn_tab"] = Image("ui/button.png").scale(35, 100)

@@ -39,7 +39,7 @@ def check_collisions():
                 if proj in SYSTEM["player"].immune:
                     continue
                 if isinstance(proj, Projectile):
-                    dmg, crit = SYSTEM["player"].creature.damage(proj.damage)
+                    dmg, crit = proj.on_hit(SYSTEM["player"].creature)
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
@@ -77,7 +77,6 @@ def game_loop(keys, events):
         if event.type == WAVE_TIMER:
             SYSTEM["level"].next_wave()
         if event.type == TICKER_TIMER:
-            print("Ticker")
             logic_tick()
     SYSTEM["level"].background.draw()
     draw_game()

@@ -71,7 +71,7 @@ def generate_spell_list():
 
     firebolt = Spell("firebolt", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     firebolt2 = Spell("firebolt2", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3, cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
-    fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 25, cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12)
+    fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 0, cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 40, cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE, Flags.DELAYED, Flags.PIERCING])
     exult = Spell("exult", exult_icon, "exult_img", EXULT, 0, cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER, Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED])
     voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1, cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
