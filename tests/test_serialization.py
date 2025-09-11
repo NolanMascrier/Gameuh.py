@@ -55,9 +55,17 @@ class TestingImages(unittest.TestCase):
         self.assertEqual(a.flags, b.flags)
         self.assertEqual(a.value, b.value)
         self.assertEqual(a._bounds, b._bounds)
+        self.assertEqual(a.sealed, b.sealed)
 
     def test_affix(self):
         test = Affix("machin", 5, [Flags.FIRE, Flags.AIMED_AT_PLAYER], 0.5, 1.8)
+        json_data = test.export()
+        read = Affix.imports(json.loads(json_data))
+        self.cmp_affix(test, read)
+
+    def test_affix2(self):
+        test = Affix("machin", 5, [Flags.FIRE, Flags.AIMED_AT_PLAYER], 0.5, 1.8)
+        test.seal(True)
         json_data = test.export()
         read = Affix.imports(json.loads(json_data))
         self.cmp_affix(test, read)
@@ -120,7 +128,11 @@ class TestingImages(unittest.TestCase):
     def test_ressources(self):
         stat = Ressource(10, "Truc", 0.01, 500, 0, 1, True)
         afl = Affliction("machin", 1, 5, [Flags.ABS_DEF, Flags.FLAT])
+        afl2 = Affliction("machin2", 1, 5, [Flags.ABS_DEF, Flags.MDOT])
+        afl3 = Affliction("machin3", 1, 5, [Flags.ABS_DEF, Flags.DOT])
         stat.afflict(afl)
+        stat.afflict(afl2)
+        stat.afflict(afl3)
         stat.tick()
         self.assertEqual(stat.get_value(), 11)
         json_data = stat.export()

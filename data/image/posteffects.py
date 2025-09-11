@@ -41,7 +41,7 @@ class PostEffects():
         duration *= SYSTEM["options"]["fps"] / 60
         self._flash_timer = duration
         self._flash_max = duration
-        self._flash_opacity = 255
+        self._flash_opacity = 150
         self._flash_surface.fill(color)
         self._flash_surface.set_alpha(self._flash_opacity)
 
@@ -68,7 +68,8 @@ class PostEffects():
             SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
                                 (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0))
         window = pygame.transform.scale(SYSTEM["windows"],\
-                (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
+                (SYSTEM["options"]["screen_resolution"][0],\
+                 SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].blit(window, (self._shake_x, self._shake_y))
         if self._flash_timer > 0:
             self._flash_timer -= 1

@@ -147,6 +147,22 @@ class DoubleAffix():
             afx.seal(True)
         return afx
 
+    def __eq__(self, o):
+        if not isinstance(o, DoubleAffix):
+            return False
+        if self._name != o.name:
+            return False
+        if self.value != o.value:
+            return False
+        if self._flags != o._flags:
+            return False
+        return True
+
+    def __ne__(self, o):
+        if not isinstance(o, DoubleAffix):
+            return True
+        return not self == o
+
     @property
     def name(self):
         """Return the affix's name."""
@@ -159,11 +175,11 @@ class DoubleAffix():
     @property
     def value(self):
         """Return the affix's value."""
-        return self._value
+        return self._value_min, self._value_max
 
     @value.setter
     def value(self, value):
-        self._value = value
+        self._value_min, self._value_max = value
 
     @property
     def flags(self):
@@ -185,9 +201,9 @@ class DoubleAffix():
         is rolled."""
         tier = int(self._name[len(self._name) - 1:len(self._name)])
         roll1 = (self._value_min - self._bounds_min[0]) /\
-            (self._bounds_min[1] - self._bounds_min[0])
+            (self._bounds_min[1] - self._bounds_min[0] + 1)
         roll2 = (self._value_max - self._bounds_max[0]) /\
-            (self._bounds_max[1] - self._bounds_max[0])
+            (self._bounds_max[1] - self._bounds_max[0] + 1)
         roll = roll1 * 0.7 + roll2 * 0.7
         return tier, roll
 

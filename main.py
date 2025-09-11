@@ -289,4 +289,4 @@ if __name__ == "__main__":
         pass
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats("cumtime")
-    stats.print_stats(10)
+    stats.print_stats(25)

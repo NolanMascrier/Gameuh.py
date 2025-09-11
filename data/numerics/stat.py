@@ -127,13 +127,13 @@ class Stat:
         Args:
             affliction (Afflicton): Affliction to remove.
         """
-        for afflic in self._incr.copy():
+        for afflic in self._incr:
             if afflic == affliction:
                 self._incr.remove(afflic)
-        for afflic in self._mults.copy():
+        for afflic in self._mults:
             if afflic == affliction:
                 self._mults.remove(afflic)
-        for afflic in self._flats.copy():
+        for afflic in self._flats:
             if afflic == affliction:
                 self._flats.remove(afflic)
 
@@ -143,13 +143,13 @@ class Stat:
         If a duration reaches 0, it'll be deleted. 
         If a duration is negative, it's considered infinite.  
         """
-        for flats in self._flats.copy():
+        for flats in self._flats:
             if flats.expired:
                 self._flats.remove(flats)
-        for mults in self._mults.copy():
+        for mults in self._mults:
             if mults.expired:
                 self._mults.remove(mults)
-        for incr in self._incr.copy():
+        for incr in self._incr:
             if incr.expired:
                 self._incr.remove(incr)
 
@@ -245,6 +245,20 @@ class Stat:
         for f in data["flats"]:
             stat.afflict(Affliction.imports(json.loads(f)))
         return stat
+
+    def __eq__(self, other):
+        if not isinstance(other, Stat):
+            return False
+        if self._value != other.value:
+            return False
+        if self._name != other.name:
+            return False
+        return True
+
+    def __ne__(self, other):
+        if not isinstance(other, Stat):
+            return True
+        return not self == other
 
     @property
     def value(self) -> float:

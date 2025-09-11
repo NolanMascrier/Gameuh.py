@@ -57,7 +57,8 @@ class Affliction():
         )
 
     def __str__(self):
-        return f"{self._name} with value {self._value} and flags {self._flags}\n"
+        return f"{self._name} with value {self._value}," +\
+            f" duration {self._duration} and flags {self._flags}\n"
 
     def __eq__(self, other):
         if not isinstance(other, Affliction):
@@ -68,7 +69,14 @@ class Affliction():
             return False
         if self._duration != other.duration:
             return False
+        if self._flags != other.flags:
+            return False
         return True
+
+    def __ne__(self, other):
+        if not isinstance(other, Affliction):
+            return True
+        return not self == other
 
     def describe(self, is_buff = False) -> Hoverable:
         """Returns a hoverable about the affliction. Used for skills description."""

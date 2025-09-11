@@ -161,14 +161,20 @@ class Affix():
         return afx
 
     def __eq__(self, o):
-        """== operator overload."""
         if not isinstance(o, Affix):
             return False
         if self._name != o.name:
             return False
         if self._value != o.value:
             return False
+        if self._flags != o._flags:
+            return False
         return True
+
+    def __ne__(self, o):
+        if not isinstance(o, Affix):
+            return True
+        return not self == o
 
     @property
     def name(self):

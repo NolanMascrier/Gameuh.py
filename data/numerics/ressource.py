@@ -99,7 +99,7 @@ class Ressource(Stat):
         for buff in self._buffs_multi:
             self._current_value += buff.value * self._current_value
             if buff.expired:
-                self._buffs.remove(buff)
+                self._buffs_multi.remove(buff)
         if self._current_value > self.get_value():
             self._current_value = self.get_value()
         elif self._current_value < 0:
@@ -198,6 +198,20 @@ class Ressource(Stat):
         for f in data["buff_multi"]:
             stat.afflict(Affliction.imports(json.loads(f)))
         return stat
+
+    def __eq__(self, other):
+        if not isinstance(other, Ressource):
+            return False
+        if self.name != other.name:
+            return False
+        if self.value != other.value:
+            return False
+        return super().__eq__(other)
+
+    def __ne__(self, other):
+        if not isinstance(other, Ressource):
+            return True
+        return not self == other
 
     @property
     def current_value(self) -> float:

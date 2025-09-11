@@ -616,4 +616,3 @@ class Item():
     @drop_time.setter
     def drop_time(self, value):
         self._drop_time = value
-
