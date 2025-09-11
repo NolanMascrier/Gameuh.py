@@ -74,4 +74,4 @@ def draw_options(events):
     SYSTEM["ui"]["drop_lang"].set(1050, 10).tick().draw()
     SYSTEM["ui"]["button_save"].set(10, 650).tick().draw()
     SYSTEM["ui"]["button_load"].set(10, 700).tick().draw()
-    draw_bottom_bar(events)
+    draw_bottom_bar()

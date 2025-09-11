@@ -16,7 +16,7 @@ def unloader():
 def draw_skills(events):
     """Draws the skill tree menu."""
     renders(SYSTEM["city_back"].as_background)
-    draw_bottom_bar(events)
+    draw_bottom_bar()
     SYSTEM["images"]["tree_surface"].fill((0,0,0,0))
     SYSTEM["tree"].tick()
     SYSTEM["tree"].draw(SYSTEM["images"]["tree_surface"])

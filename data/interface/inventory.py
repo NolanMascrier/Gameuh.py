@@ -175,7 +175,7 @@ def draw_inventory(events):
     SYSTEM["buttons"]["button_sort_value"].set(1300, 80).draw(SYSTEM["windows"])
     SYSTEM["buttons"]["button_sort_date"].set(1300, 110).draw(SYSTEM["windows"])
     SYSTEM["ui"]["sell_slot"].tick().draw()
-    draw_bottom_bar(events)
+    draw_bottom_bar()
     if SYSTEM["rune"] != -1:
         render(SYSTEM["rune_display"].image, SYSTEM["mouse"])
     draw_game(False, False, False, False, True)

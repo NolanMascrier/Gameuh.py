@@ -129,8 +129,8 @@
         "powerful burns behind."
     ],
     "ice": [
-        "Ice damage is often #c#(89, 219, 255)blue #c#(255, 255, 255)in color. It can slow",
-        "down targets and even outright immobilize them."
+        "Ice damage is often #c#(89, 219, 255)blue #c#(255, 255, 255)in color. It can",
+        "slowdown targets and even outright immobilize them."
     ],
     "elec": [
         "Thunder damage is often #c#(250, 233, 0)yellow #c#(255, 255, 255)in color. It can spread",
@@ -152,6 +152,13 @@
         "Effect of added damage impacts how much the added damage from your",
         "gear affect the damage of the spell. The higher the multiplier, the higher",
         "your gear will grant damage to the spell."
+    ],
+    "debuff_res": [
+      "Some afflictions can be resisted. The higher your",
+      "avoidance, the higher the chance of resisting them."
+    ],
+    "area":[
+      "Area of effect affects the size of your abilities."
     ],
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
@@ -387,7 +394,8 @@
         "explosion": "Explosion",
         "step": "Step",
         "dmg_effic": "Added damage magnitude",
-        "area": "Area of effect"
+        "area": "Area of effect",
+        "debuff_res": "Affliction avoidance"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",

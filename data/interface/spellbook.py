@@ -7,7 +7,7 @@ from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_
 from data.game.spell import Spell
 from data.item import Item
 from data.image.slotpanel import SlotPanel
-from data.image.slot import Slot
+from data.image.slot import Slot, Draggable
 from data.image.tabs import Tabs
 from data.image.text import Text
 from data.interface.render import render, renders
@@ -46,6 +46,8 @@ STEPS = [0,1,2,3,4,5]
 
 def refresh():
     """Refreshs the current spell window."""
+    if SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]] is None:
+        return
     SYSTEM["spells"]\
         [SYSTEM["player"].equipped_spells[INPUT[SYSTEM["spell_page"]]]].recalculate_damage()
     make_slot(SYSTEM["spells"]\
@@ -375,4 +377,4 @@ def draw_spells(events):
     else:
         SYSTEM["ui"]["no_spells"][0].draw(680, 250)
         SYSTEM["ui"]["no_spells"][1].draw(680, 290)
-    draw_bottom_bar(events)
+    draw_bottom_bar()

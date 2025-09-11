@@ -79,6 +79,7 @@ class Creature:
             "dodge_rating": Stat(0, "dodge_rating", scaling_value=0, min_cap=0),
             "dodge": Stat(0, "dodge", scaling_value=0, min_cap=0, max_cap=0.95),
             "crit_res": Stat(0, "crit_res", 1, 0, scaling_value=0),
+            "debuff_res": Stat(0, "debuff_res", 1, 0, scaling_value=0.005, precision=4),
 
             "phys": Stat(0, "phys", 0.9, -2, scaling_value=0.005),
             "fire": Stat(0, "fire", 0.9, -2, scaling_value=0.005),
@@ -375,8 +376,16 @@ class Creature:
         """
         if isinstance(affliction, tuple):
             for a in affliction:
+                if is_debuff:
+                    roll = random.uniform(0, 1)
+                    if roll <= self._stats["debuff_res"].c_value:
+                        continue
                 self.__apply_afflict(a)
         elif isinstance(affliction, Affliction):
+            if is_debuff:
+                roll = random.uniform(0, 1)
+                if roll <= self._stats["debuff_res"].c_value:
+                    return
             self.__apply_afflict(affliction)
 
     def __remove_afflic(self, affliction: Affliction):

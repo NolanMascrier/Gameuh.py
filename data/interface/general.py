@@ -31,7 +31,7 @@ def setup_bottom_bar():
                 SYSTEM["images"]["btn"], SYSTEM["images"]["btn_p"], True,\
                 SYSTEM["buttons"]["menu_states"])
 
-def draw_bottom_bar(events):
+def draw_bottom_bar():
     """Draws the bottom bar, quick access to the menus."""
     SYSTEM["ui"]["bottom_bar"].tick()
 

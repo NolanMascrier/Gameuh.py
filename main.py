@@ -172,7 +172,7 @@ def draw_menu(events):
         render(lvl.surface, (1500, 775))
         SYSTEM["buttons"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
         render(SYSTEM["selected"].icon.image, (1500, 800))
-    draw_bottom_bar(events)
+    draw_bottom_bar()
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             SYSTEM["buttons_e"][0].press()
