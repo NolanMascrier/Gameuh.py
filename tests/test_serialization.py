@@ -73,6 +73,7 @@ class TestingImages(unittest.TestCase):
     def cmp_double_affix(self, a:DoubleAffix, b:DoubleAffix):
         self.assertEqual(a.name, b.name)
         self.assertEqual(a.flags, b.flags)
+        self.assertEqual(a.sealed, b.sealed)
         self.assertEqual(a._value_min, b._value_min)
         self.assertEqual(a._value_max, b._value_max)
         self.assertEqual(a._bounds_max, b._bounds_max)
@@ -80,6 +81,7 @@ class TestingImages(unittest.TestCase):
 
     def test_double_affix(self):
         test = DoubleAffix("machin", 5, 15, [Flags.FIRE, Flags.AIMED_AT_PLAYER], 0.5, 1.8, 0.7, 1.9)
+        test.seal(True)
         json_data = test.export()
         read = DoubleAffix.imports(json.loads(json_data))
         self.cmp_double_affix(test, read)
@@ -116,11 +118,13 @@ class TestingImages(unittest.TestCase):
         json_data = stat.export()
         read = RangeStat.imports(json.loads(json_data))
 
-    def cmp_ressource(self, a, b):
+    def cmp_ressource(self, a:Ressource, b:Ressource):
         self.assertEqual(a.get_value(), b.get_value())
         self.assertEqual(a.rate.get_value(), b.rate.get_value())
         self.assertEqual(a.value, b.value)
         self.assertEqual(a.name, b.name)
+        self.assertEqual(len(a.buffs_multi), len(b.buffs_multi))
+        self.assertEqual(len(a.buffs), len(b.buffs))
         self.assertEqual(a._cap, b._cap)
         self.assertEqual(a._round, b._round)
         self.assertEqual(a._scaling_value, b._scaling_value)

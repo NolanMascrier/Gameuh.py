@@ -29,7 +29,7 @@ class DoubleAffix():
         self._bounds_max = (lower_bound_max, upper_bound_min)
         self._seal = False
 
-    def as_affliction(self) -> Affliction:
+    def as_affliction(self) -> tuple[Affliction, Affliction]:
         """Makes the affix into an affliction."""
         flags = self._flags.copy()
         flags.append(Flags.GEAR)
