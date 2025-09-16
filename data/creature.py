@@ -60,8 +60,8 @@ class Creature:
             "crit_dmg": Stat(0.5, "crit_dmg", scaling_value=0.02),
             "heal_factor": Stat(1, "heal_factor"),
             "mana_efficiency": Stat(1, "mana_efficiency", 1.95, 0.05, 0),
-            "item_quant": Stat(0, "item_quant"),
-            "item_qual": Stat(0, "item_qual"),
+            "item_quant": Stat(1, "item_quant"),
+            "item_qual": Stat(1, "item_qual"),
             "speed": Stat(1, "speed", scaling_value=0.001),
             "cast_speed": Stat(1, "cast_speed", scaling_value=0.001),
 

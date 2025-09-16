@@ -5,6 +5,7 @@ import re
 import os
 import random
 import pygame
+import numpy as np
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
@@ -28,8 +29,6 @@ from data.interface.options import open_option_screen
 from data.interface.gameui import generate_foreground, generate_background
 from data.game.level import Level
 
-from data.interface.render import RENDER_LIST
-
 from data.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
@@ -40,8 +39,11 @@ from data.image.posteffects import PostEffects
 
 def generate_random_level():
     """Creates a random level."""
-    area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 0)
-    zone = random.randint(0, 3)
+    area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 1)
+    zone = random.randint(0, 6)
+    diff_level = [0,1,2,3]
+    diff_weight = [0.4, 0.25, 0.2, 0.15]
+    diff = np.random.choice(diff_level, p=diff_weight)
     match zone:
         case 0:
             area = SYSTEM["sunrise"]
@@ -59,7 +61,19 @@ def generate_random_level():
             area = SYSTEM["mountains"]
             icon = SYSTEM["images"]["mount_icon"]
             name = "Above the sky"
-    level = Level(name, area_lvl, icon, 6000, area)
+        case 4:
+            area = SYSTEM["ice"]
+            icon = SYSTEM["images"]["ice_icon"]
+            name = "Frozen Hollow"
+        case 5:
+            area = SYSTEM["space"]
+            icon = SYSTEM["images"]["space_icon"]
+            name = "Transcending All"
+        case 6:
+            area = SYSTEM["creepy"]
+            icon = SYSTEM["images"]["creepy_icon"]
+            name = "Murderforest of Murderbourgh"
+    level = Level(name, area_lvl, icon, 6000, area, difficulty=diff)
     return level
 
 def reset():
@@ -161,6 +175,10 @@ def load_parallaxes():
         speeds = [0.2, 0.6, 1.0, 2.0, 1, 2.5, 3, 3])
     SYSTEM["cybercity"] = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
     SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2, 2])
+    SYSTEM["ice"] = Parallaxe("icemount.png", 455, 256,\
+                            speeds = [0.1, 0.2, 0.3, 0.3, 0.4, 0.5, 0.5, 0.6, 0.7])
+    SYSTEM["creepy"] = Parallaxe("creepy.png", 400, 300, speeds = [0.0, 0.1, 0.5, 1, 1.2, 1.3, 1.3])
+    SYSTEM["space"] = Parallaxe("space.png", 272, 160, speeds = [2.2, 3.3, 3.4, 1.5, 3.6, 2.5])
     SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240,\
         speeds = [0.0, 0.1, 0.2, 0.9, 1.0, 1.5, 1.5], scroll_left=False)
 
@@ -276,6 +294,9 @@ def load_images():
     SYSTEM["images"]["sell_slot"] = Image("ui/gear_helm.png").scale(128, 128)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
+    SYSTEM["images"]["ice_icon"] = Image("icons/ice.png")
+    SYSTEM["images"]["space_icon"] = Image("icons/space.png")
+    SYSTEM["images"]["creepy_icon"] = Image("icons/creepy.png")
     SYSTEM["images"]["city_icon"] = Image("icons/cybercity.png")
     SYSTEM["images"]["sunrise_icon"] = Image("icons/sunrise.png")
     SYSTEM["images"]["forest_icon"] = Image("icons/forest.png")

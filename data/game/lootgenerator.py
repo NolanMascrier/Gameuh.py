@@ -389,7 +389,8 @@ class LootGenerator():
             "items": [],
             "runes": []
         }
-        luck = SYSTEM["player"].creature.stats["item_qual"].c_value + 1
+        luck = SYSTEM["player"].creature.stats["item_qual"].c_value +\
+            enemy.creature.stats["item_qual"].c_value
         adjusted_loot = apply_luck(LOOT_WEIGHT, LOOT_LUCK, luck)
         adjusted_rare = apply_luck(RARITY_WEIGHTS, RARITY_LUCK, luck)
         adjusted_rune = apply_luck(RUNE_WEIGHT, RUNE_LUCK, luck)
@@ -398,7 +399,8 @@ class LootGenerator():
         rune_sum = sum(adjusted_rune)
         rarity = enemy.tier
         amount = max(rarity * numpy.random.randint(-2, 6) *\
-                (SYSTEM["player"].creature.stats["item_quant"].c_value + 1), 0)
+                (SYSTEM["player"].creature.stats["item_quant"].c_value +\
+                enemy.creature.stats["item_quant"].c_value), 0)
         while amount > 0:
             choice = numpy.random.choice(LOOT_VALUES, p=[d / loot_sum for d in adjusted_loot])
             match choice:
@@ -417,7 +419,8 @@ class LootGenerator():
                     loot["runes"].append(roll)
                 case _: #gold
                     gold = enemy.gold_value * (0.7 + numpy.random.rand()) *\
-                        (SYSTEM["player"].creature.stats["item_quant"].c_value + 1)
+                        (SYSTEM["player"].creature.stats["item_quant"].c_value +\
+                        enemy.creature.stats["item_quant"].c_value)
                     loot["gold"] += gold
             amount -= 1
         return loot

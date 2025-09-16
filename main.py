@@ -165,13 +165,15 @@ def draw_menu(events):
     SYSTEM["images"]["mission_scroller"].tick().draw()
     draw_small_card()
     if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
-        name = Text(f'{SYSTEM["selected"].name}', True)
-        lvl = Text(f'Area level: {SYSTEM["selected"].area_level}', True)
+        x = SCREEN_WIDTH - SYSTEM["images"]["char_details"].width / 2
+        y = SCREEN_HEIGHT - SYSTEM["images"]["char_details"].height / 2
+        name = Text(f'{SYSTEM["selected"].describe()}', True, "item_desc",
+                force_x=SYSTEM["images"]["char_details"].width - 20, line_wrap=True)
         #TODO: modifiers ...
-        render(name.surface, (1500, 750))
-        render(lvl.surface, (1500, 775))
-        SYSTEM["buttons"]["button_assault"].set(1500, 1000).draw(SYSTEM["windows"])
-        render(SYSTEM["selected"].icon.image, (1500, 800))
+        render(name.surface, (x - name.width / 2, 25))
+        SYSTEM["buttons"]["button_assault"].set(x - SYSTEM["buttons"]["button_assault"].width / 2,\
+                                                930).draw(SYSTEM["windows"])
+        render(SYSTEM["selected"].icon.image, (x - SYSTEM["selected"].icon.width / 2, 780))
     draw_bottom_bar()
     for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:

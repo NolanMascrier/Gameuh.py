@@ -247,7 +247,8 @@
         "seconds": "seconds",
         "cut_proj": "Can destroy enemy projectiles",
         "trigger": "This spell cannot be used",
-        "trigger_on_crit": "This spell is triggered by critical hits"
+        "trigger_on_crit": "This spell is triggered by critical hits",
+        "enemies": "Enemies have"
     },
     "affliction_name":{
         "elemental_fury": "Elemental Fury",
@@ -395,7 +396,8 @@
         "step": "Step",
         "dmg_effic": "Added damage magnitude",
         "area": "Area of effect",
-        "debuff_res": "Affliction avoidance"
+        "debuff_res": "Affliction avoidance",
+        "difficulty": "Threat level"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",
@@ -408,6 +410,13 @@
     "uniques_desc": {
         "weight_jewel": "#s#(12)#i#(1)#c#(212, 163, 19)Feel the pressure, tear asunder\n#s#(12)#i#(1)#c#(212, 163, 19)your body and your foes alike.",
         "coc_jewel": "#s#(12)#i#(1)#c#(212, 163, 19)Never let a perfect strike go to waste."
+    },
+    "difficulties": {
+      "0": "Benign",
+      "1": "Average",
+      "2": "High",
+      "3": "Alpha",
+      "4": "Omega" 
     },
     "runes": {
         "blank": [

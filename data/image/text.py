@@ -31,8 +31,9 @@ class Text():
     def __init__(self, text: str, centered = False,\
                 font = "tiny", force_x = -1, force_y = -1,\
                 size = 20, bold = False, italic = False,\
-                default_color = (255, 255, 255)):
-        style = {"color": default_color, "size": size, "bold": bold, "italic": italic}
+                default_color = (255, 255, 255), line_wrap=False):
+        style = {"color": default_color, "size": size, "bold": bold,\
+                 "italic": italic, "font": font}
         if text is None:
             text = ""
         self._data = []
@@ -71,10 +72,35 @@ class Text():
                         style_buff["bold"] = value == "1"
                     case 'i':
                         style_buff["italic"] = value == "1"
+                    case 'f':
+                        style_buff["font"] = value
                 pos = end
-            if len(styled_line) == 0:
-                continue
-            self._data.append(styled_line)
+            if force_x > 0 and line_wrap:
+                wrapped_lines = []
+                current_line = []
+                current_width = 0
+                for style_buff, text_buff in styled_line:
+                    words = re.split(r'(\s+)', text_buff)
+                    font_buff = open_font(f'{RESSOURCES}/fonts/{style_buff["font"]}.ttf',
+                                        style_buff["size"])
+                    for word in words:
+                        if word == "":
+                            continue
+                        sfc, _ = font_buff.render(word, fgcolor=style_buff["color"])
+                        word_width = sfc.get_rect().width
+                        if current_line and current_width + word_width > force_x:
+                            wrapped_lines.append(current_line)
+                            current_line = []
+                            current_width = 0
+                        current_line.append((style_buff.copy(), word))
+                        current_width += word_width + 3
+                if current_line:
+                    wrapped_lines.append(current_line)
+
+                self._data.extend(wrapped_lines)
+            else:
+                if styled_line:
+                    self._data.append(styled_line)
         #Generating the surfaces
         for tab in self._data:
             cell_buffer = []
@@ -85,7 +111,7 @@ class Text():
                     flags |= pygame.freetype.STYLE_STRONG
                 if style["italic"]:
                     flags |= pygame.freetype.STYLE_OBLIQUE
-                font_buff = open_font(f'{RESSOURCES}/fonts/{font}.ttf',\
+                font_buff = open_font(f'{RESSOURCES}/fonts/{style_buff["font"]}.ttf',\
                     style_buff["size"])
                 sfc, _ = font_buff.render(\
                     f'{text_buff}', fgcolor=style_buff["color"], style=flags)

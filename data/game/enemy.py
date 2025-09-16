@@ -26,7 +26,7 @@ class Enemy():
             self._behaviours = []
         else:
             self._behaviours = behaviours
-        self._timer = timer
+        self._timer = timer / self.creature.stats["cast_speed"].c_value
         self._power = power
         self._counter = 0
         self._abilities = abilities

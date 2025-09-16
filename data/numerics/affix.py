@@ -17,13 +17,17 @@ class Affix():
         for the random roll. Defaults to 80%.
         upper_bound(float, optional): Upper bound multiplier\
         for the random roll. Defaults to 120%.
+        level_modifier (bool, optional): Whether or not the affix describes a level modifier.\
+        Impacts the describe function. Defaults to `False`.
     """
-    def __init__(self, name, value, flag, lower_bound:float = 0.8, upper_bound:float = 1.2):
+    def __init__(self, name, value, flag, lower_bound:float = 0.8, upper_bound:float = 1.2,\
+                level_modifier = False):
         self._name = name
         self._value = value
         self._flags = flag
         self._bounds = (lower_bound, upper_bound)
         self._seal = False
+        self._level_modifier = level_modifier
 
     def as_affliction(self) -> Affliction:
         """Makes the affix into an affliction."""
@@ -41,7 +45,8 @@ class Affix():
             value,
             self._flags,
             lower,
-            upper
+            upper,
+            self._level_modifier
         )
 
     def reroll(self):
@@ -62,6 +67,10 @@ class Affix():
             col = "#c#(194, 168, 107)"
         else:
             col = "#c#(255, 255, 255)"
+        if self._level_modifier:
+            mod = f"{trad('meta_words', 'enemies')} "
+        else:
+            mod = ""
         if Flags.DESC_FLAT in self._flags:
             value = f"{round(self._value)}"
         elif Flags.DESC_PERCENT in self._flags:
@@ -89,7 +98,7 @@ class Affix():
                 Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
-        return f"{col}{adds} {lst}"
+        return f"{mod}{col}{adds} {lst}"
 
     def describe_details(self):
         """Generates a detailed description of the affix."""
