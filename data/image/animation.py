@@ -67,6 +67,11 @@ class Animation():
             self._frame_max = max_frame
         self._frame_max = min(max_frame, self._frame_max)
 
+    def reset(self):
+        """Restarts the animation."""
+        self._finished = False
+        self._current_frame = 0
+
     def get_image(self, caller = None) -> pygame.Surface:
         """Returns the current image of the sequence."""
         if caller is not None:

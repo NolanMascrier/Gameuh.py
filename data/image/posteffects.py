@@ -4,6 +4,8 @@ import pygame
 import numpy
 from data.constants import SYSTEM, SCREEN_WIDTH
 
+BLACK = (0,0,0)
+
 class PostEffects():
     """Handle whole screen effects."""
     def __init__(self):
@@ -71,6 +73,7 @@ class PostEffects():
         window = pygame.transform.scale(SYSTEM["windows"],\
                 (SYSTEM["options"]["screen_resolution"][0],\
                  SYSTEM["options"]["screen_resolution"][1]))
+        SYSTEM["real_windows"].fill(BLACK)
         SYSTEM["real_windows"].blit(window, (self._shake_x, self._shake_y))
         if self._flash_timer > 0:
             self._flash_timer -= 1

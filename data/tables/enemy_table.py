@@ -12,6 +12,7 @@ from data.constants import Flags
 #  5: exp modifier
 #  6: gold modifier
 #  7: Abilities (Spell, weight)
+#  8: Animation delay (in second)
 # ]
 
 VOIDLING = [
@@ -38,11 +39,12 @@ VOIDLING = [
     10,
     [
         ("e_charge", 1)
-    ]
+    ],
+    0
 ]
 
 VOIDSNIPER = [
-    "badguy",
+    "necromancer",
     "Void Sniper",
     {
             "life": Ressource(10, "Life"),
@@ -65,5 +67,6 @@ VOIDSNIPER = [
     8,
     [
         ("e_voidbolt", 1)
-    ]
+    ],
+    0.8
 ]

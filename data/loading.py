@@ -11,7 +11,7 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language, UPDATE_TIMER
-from data.image.animation import Animation, Image
+from data.image.sprite import Animation, Image, Sprite
 from data.image.button import Button
 from data.image.tile import Tile
 from data.image.parallaxe import Parallaxe
@@ -151,6 +151,10 @@ def load_animations():
     SYSTEM["images"]["witch_flipped"] = Animation("witch.png", 64, 64, frame_rate = 0.25)\
         .flip(False, True)
     SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
+    SYSTEM["images"]["necromancer"] = Sprite("necro.png", 160, 128, ["idle", "blink", "attack",\
+        "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
+        [8, 8, 13, 13, 17, 5, 10], [True, False, False, False, False, False, False],\
+        [-1, -1, -1, -1, -1, -1, 1]).scale(320, 256)
 
 def load_tiles():
     """Load the tiles."""

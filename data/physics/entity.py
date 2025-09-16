@@ -5,6 +5,7 @@ import json
 from math import cos, sin
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.physics.hitbox import HitBox
+from data.image.sprite import Sprite
 
 class Entity():
     """Defines an entity.
@@ -26,6 +27,7 @@ class Entity():
         self._x_def = x
         self._y_def = y
         self._image = imagefile
+        self._real_image = SYSTEM["images"][self._image].clone()
         self._hitbox = hitbox
         self._move_speed = move_speed
         self._keys = []
@@ -39,10 +41,11 @@ class Entity():
         self._dash_dy = 0
         self._dash_time = 0
         self._animation_state = [0, False]
+        self._sprite = isinstance(self._real_image, Sprite)
 
     def tick(self, character, speed_mod = 1):
         """Ticks down the entity."""
-        SYSTEM["images"][self._image].tick(self._animation_state)
+        self._real_image.tick()
         base_speed = character.creature.stats["speed"].c_value * speed_mod
         self._move_speed = base_speed
         if self._dashing:
@@ -68,9 +71,7 @@ class Entity():
 
     def get_image(self):
         """Returns the current image."""
-        if self._flipped:
-            return SYSTEM["images"][f"{self._image}_flipped"].get_image(self._animation_state)
-        return SYSTEM["images"][self._image].get_image(self._animation_state)
+        return self._real_image.get_image()
 
     def move(self, pos):
         """Moves the entity toward the x;y position."""
@@ -120,6 +121,16 @@ class Entity():
             "move_speed": self._move_speed
         }
         return json.dumps(data)
+
+    def play(self, key):
+        """Plays an animation."""
+        if self._sprite:
+            self._real_image.play(key)
+
+    def detach(self, key):
+        """Detach an animation."""
+        if self._sprite:
+            self._real_image.detach(key, self._x, self._y)
 
     @staticmethod
     def imports(data):
@@ -180,6 +191,15 @@ class Entity():
     @move_speed.setter
     def move_speed(self, value):
         self._move_speed = value
+
+    @property
+    def real_image(self):
+        """Returns the entity's image instance."""
+        return self._real_image
+
+    @real_image.setter
+    def real_image(self, value):
+        self._real_image = value
 
     @property
     def flipped(self):

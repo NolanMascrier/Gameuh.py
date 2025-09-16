@@ -103,23 +103,25 @@ class Level():
                                    int(reference[5]*(level + 1) * 1.1))
         gold_value = random.randint(int(reference[6]*(level + 1) *0.9),\
                                     int(reference[6]*(level + 1) * 1.1))
+        attack_delay = reference[8]
         crea = Creature(reference[1])
         crea.import_stackblock(reference[2])
         for mod in self._modifiers:
             crea.afflict(mod.as_affliction())
         crea.scale(level)
         enemy = Enemy(ent, crea, reference[7], behaviours=enemy_type,\
-            timer=1, exp_value=exp_value, gold_value=gold_value)
+            timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay)
         return enemy
 
     def summon_wave(self, level:int, wave:int):
         """Summons a wave of monsters."""
         min_monsters = (1 + random.randint(0, 3)) * wave
         max_monsters = (4 + random.randint(0, 3)) * wave
-        monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
+        #monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
+        monsters = 1
         for _ in range(monsters):
             #TODO: Actual random choice of monster depending on zone
-            monster = VOIDLING if random.randint(0, 1) == 0 else VOIDSNIPER
+            monster = VOIDSNIPER if random.randint(0, 1) == 0 else VOIDSNIPER
             mob = self.generate_enemy(monster, level)
             ENNEMY_TRACKER.append(mob)
 

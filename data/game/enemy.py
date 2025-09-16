@@ -10,6 +10,7 @@ from data.creature import Creature
 from data.constants import Flags, POWER_UP_TRACKER, SYSTEM
 from data.game.pickup import PickUp
 from data.game.spell import Spell
+from data.image.sprite import Sprite
 
 DAMAGE_COLOR = (255, 30, 30)
 VALUE_GROUPS = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
@@ -19,9 +20,10 @@ class Enemy():
     with set behaviours."""
     def __init__(self, entity: Entity, creature: Creature, abilities, power = 1,\
                 timer = 2, exp_value = 10, gold_value = 10, behaviours = None,\
-                tier = 1):
+                tier = 1, delay = 0):
         self._entity = entity
         self._creature = creature
+        self._creature.origin = self
         if behaviours is None:
             self._behaviours = []
         else:
@@ -37,6 +39,9 @@ class Enemy():
         self._stopped = False
         self._aim_right = False
         self._tier = tier
+        self._delay = delay
+        self._attacking = False
+        self._attack_delay = 0
 
     def explode(self):
         """Explodes the creature in loot, life and mana orbs,
@@ -88,6 +93,7 @@ class Enemy():
 
     def on_hit(self, value):
         """Called when the creature is hit."""
+        self._entity.play("hit")
 
     def on_crit(self):
         """Called when the creature crits."""
@@ -109,16 +115,25 @@ class Enemy():
         if self._exploded:
             return
         if self._creature.stats["life"].current_value <= 0:
+            self._entity.detach("die")
             self.explode()
             return
-        self._counter += 0.016
         self._entity.tick(self)
         self._creature.tick()
+        if self._attacking and self._attack_delay >= self._delay:
+            self.attack()
+            self._attacking = False
+        elif self._attacking:
+            self._attack_delay += 0.016
+            return
+        self._counter += 0.016
         if Flags.CHASER in self._behaviours:
             if self._stopped:
                 if self._counter >= self._timer:
-                    self.attack()
+                    self._entity.play("attack")
                     self._stopped = False
+                    self._attack_delay = 0
+                    self._attacking = True
             else:
                 if not self._entity.flipped and player.x > self.x:
                     self.entity.flip()
@@ -133,7 +148,9 @@ class Enemy():
                     self._entity.move((player.x, player.y))
         if Flags.SHOOTER in self._behaviours:
             if self._counter >= self._timer:
-                self.attack()
+                self._entity.play("attack")
+                self._attack_delay = 0
+                self._attacking = True
         if self._counter >= self._timer:
             self._counter -= self._timer
 

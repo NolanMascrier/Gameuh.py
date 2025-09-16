@@ -819,3 +819,12 @@ class Creature:
     @ap.setter
     def ap(self, value):
         self._ap = value
+
+    @property
+    def origin(self):
+        """Returns the creatures's origin."""
+        return self._origin
+
+    @origin.setter
+    def origin(self, value):
+        self._origin = value

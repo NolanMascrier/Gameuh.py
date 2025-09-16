@@ -9,7 +9,7 @@ Instead, it's now a looter bullet hell. Yeah
 * ~~Adding the jewel system for spells~~ Done !
 * ~~Adding jewels to the loot pools~~ Done !
 * ~~Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...~~ Done !
-* Adding area modifier and level selector
+* ~~Adding area modifier and level selector~~ Done !
 * Adding at least two bosses (Wave boss and unique boss)
 * Adding more options in the options menu (gamma, color correction, etc)
 * Real saving system
@@ -18,6 +18,7 @@ Instead, it's now a looter bullet hell. Yeah
 * Sounds and musics ?
 * Lore and story mode ?
 * More game modes (boss rush, rogue like infinite waves, dungeons ?)
+* General optimisation -> Objective is a stable 50-60 FPS in battle
 
 # Known Bugs
 * After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded
