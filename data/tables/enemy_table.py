@@ -13,6 +13,7 @@ from data.constants import Flags
 #  6: gold modifier
 #  7: Abilities (Spell, weight)
 #  8: Animation delay (in second)
+#  9: Hitbox adjustment (w, h, offset x, offset_y)
 # ]
 
 VOIDLING = [
@@ -40,7 +41,8 @@ VOIDLING = [
     [
         ("e_charge", 1)
     ],
-    0
+    0,
+    (0.3, 0.5, 100, 10)
 ]
 
 VOIDSNIPER = [
@@ -68,5 +70,6 @@ VOIDSNIPER = [
     [
         ("e_voidbolt", 1)
     ],
-    0.8
+    0.8,
+    (1,1,0,0)
 ]

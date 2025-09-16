@@ -25,7 +25,7 @@ class Sprite():
             self._loop_times[f] = final[i]
             i += 1
         self._flagged = False
-        self._scaled = (1, 1, True)
+        self._scaled = (1, 1, False)
         self._flipped = (False, False)
         self._rotated = 0
 
@@ -140,12 +140,12 @@ class Sprite():
     @property
     def w(self):
         """Returns the sequence's image width."""
-        return self._animations[self._keys[0]].width
+        return self._animations[self._keys[0]].w
 
     @property
     def h(self):
         """Returns the sequence's image height."""
-        return self._animations[self._keys[0]]
+        return self._animations[self._keys[0]].h
 
     @property
     def frame(self):

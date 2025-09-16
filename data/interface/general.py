@@ -1,5 +1,6 @@
 """Handles the general UI operations such as the bottom bar."""
 
+import pygame
 from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
@@ -8,6 +9,14 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACK
 from data.image.tabs import Tabs
 from data.projectile import Projectile
 from data.slash import Slash
+from data.physics.hitbox import HitBox
+
+RED = (255, 0, 0, 155)
+GRE = (0, 255, 0, 155)
+BLU = (0, 0, 255, 155)
+RED_B = (255, 0, 0, 255)
+GRE_B = (0, 255, 0, 255)
+BLU_B = (0, 0, 255, 255)
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""
@@ -36,6 +45,13 @@ def draw_bottom_bar():
     """Draws the bottom bar, quick access to the menus."""
     SYSTEM["ui"]["bottom_bar"].tick()
 
+def draw_hitbox(hitbox: HitBox, color, color_border, layer):
+    """Draws the hitbox."""
+    pygame.draw.rect(layer, color, (hitbox.x, hitbox.y, hitbox.width, hitbox.height))
+    pygame.draw.rect(layer, color_border, (hitbox.x, hitbox.y, hitbox.width, hitbox.height), 2)
+    pygame.draw.rect(layer, color_border, (hitbox.x + hitbox.width / 2 - 2,
+                    hitbox.y + hitbox.height /2 - 2 , 4, 4), 2)
+
 def draw_game(show_player = True, show_enemies = True,\
     show_loot = True, show_projectiles = True,\
     show_text = True, show_animations = True):
@@ -43,16 +59,27 @@ def draw_game(show_player = True, show_enemies = True,\
     for _, layer in SYSTEM["layers"].items():
         layer.fill((0,0,0,0))
     if show_player:
+        if SYSTEM["options"]["show_hitboxes"]:
+            draw_hitbox(SYSTEM["player"].entity.hitbox, GRE, GRE_B, SYSTEM["layers"]["characters"])
         SYSTEM["layers"]["characters"].blit(SYSTEM["player"].get_image(),\
             SYSTEM["player"].get_pos())
     if show_loot:
+        if SYSTEM["options"]["show_hitboxes"]:
+            for b in POWER_UP_TRACKER:
+                draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["pickup"])
         SYSTEM["layers"]["pickup"].blits([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
     if show_enemies:
+        if SYSTEM["options"]["show_hitboxes"]:
+            for b in ENNEMY_TRACKER:
+                draw_hitbox(b.hitbox, RED, RED_B, SYSTEM["layers"]["characters"])
         SYSTEM["layers"]["characters"].blits([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
     if show_animations:
         SYSTEM["layers"]["characters"].blits([p[0].get_image(), (p[1], p[2])]\
                                              for p in ANIMATION_TRACKER)
     if show_projectiles:
+        if SYSTEM["options"]["show_hitboxes"]:
+            for b in PROJECTILE_TRACKER:
+                draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
         SYSTEM["layers"]["bullets"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_text:
         SYSTEM["layers"]["pickup"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)

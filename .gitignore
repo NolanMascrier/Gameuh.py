@@ -12,3 +12,4 @@ ressources/*.png~
 user_config.json
 *.char
 *.log
+/tools/*

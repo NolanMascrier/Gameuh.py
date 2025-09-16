@@ -158,12 +158,22 @@ class Image():
         """Returns the image's width."""
         return self._width
 
+    @property
+    def w(self):
+        """Returns the image's width."""
+        return self._width
+
     @width.setter
     def width(self, value):
         self._width = value
 
     @property
     def height(self):
+        """Returns the image's height."""
+        return self._height
+
+    @property
+    def h(self):
         """Returns the image's height."""
         return self._height
 

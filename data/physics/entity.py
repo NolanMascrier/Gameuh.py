@@ -21,14 +21,17 @@ class Entity():
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
-    def __init__(self, x, y, imagefile: str, hitbox:HitBox, move_speed = 1):
+    def __init__(self, x, y, imagefile: str, hitbox:HitBox = None, move_speed = 1):
         self._x = x
         self._y = y
         self._x_def = x
         self._y_def = y
         self._image = imagefile
         self._real_image = SYSTEM["images"][self._image].clone()
-        self._hitbox = hitbox
+        if hitbox is not None:
+            self._hitbox = hitbox
+        else:
+            self._hitbox = HitBox(x, y, self._real_image.w, self._real_image.h)
         self._move_speed = move_speed
         self._keys = []
         self._flipped = False
