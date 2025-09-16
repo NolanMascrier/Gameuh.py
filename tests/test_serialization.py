@@ -215,8 +215,9 @@ class TestingImages(unittest.TestCase):
         for item in a.inventory:
             self.cmp_item(a.inventory[i], b.inventory[i])
             i+=1
-    
+
     def test_character(self):
+        SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
         bob = Character(0, 0, "witch", 12)
         it = Item("Bob's armor", "Armor", 12, 0, 1, Image("a"), 3, [Flags.ARMOR], [], [])
         it2 = Item("Bob's gloves", "Armor", 12, 0, 1, Image("a"), 3, [Flags.HANDS], [], [])
