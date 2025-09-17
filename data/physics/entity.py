@@ -21,17 +21,25 @@ class Entity():
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
-    def __init__(self, x, y, imagefile: str, hitbox:HitBox = None, move_speed = 1):
+    def __init__(self, x, y, imagefile: str, hitbox:HitBox = None,\
+                move_speed = 1, hitbox_mod = None):
         self._x = x
         self._y = y
         self._x_def = x
         self._y_def = y
         self._image = imagefile
-        self._real_image = SYSTEM["images"][self._image].clone()
+        if imagefile is None:
+            self._real_image = None
+        else:
+            self._real_image = SYSTEM["images"][self._image].clone()
         if hitbox is not None:
             self._hitbox = hitbox
-        else:
+        elif self._real_image is not None:
             self._hitbox = HitBox(x, y, self._real_image.w, self._real_image.h)
+        else:
+            self._hitbox = None
+        if hitbox_mod is not None:
+            self._hitbox.resize(hitbox_mod, self._real_image.scale_factor)
         self._move_speed = move_speed
         self._keys = []
         self._flipped = False
@@ -130,10 +138,10 @@ class Entity():
         if self._sprite:
             self._real_image.play(key)
 
-    def detach(self, key):
+    def detach(self, key, center = False):
         """Detach an animation."""
         if self._sprite:
-            self._real_image.detach(key, self._x, self._y)
+            self._real_image.detach(key, self._x, self._y, center)
 
     @staticmethod
     def imports(data):

@@ -76,11 +76,14 @@ class Sprite():
             if self._loop_times[self._akey] == 0:
                 self._flagged = True
 
-    def detach(self, key, x, y):
+    def detach(self, key, x, y, center = False):
         """Detaches the sprite, allowing one of its animation to be played at a 
         specified location."""
         if key not in self._animations:
             return
+        if center:
+            x -= self.w / 2
+            y -= self.h / 2
         self._animations[key].reset()
         ANIMATION_TRACKER.append((self._animations[key], x, y))
 
@@ -178,3 +181,8 @@ class Sprite():
     def flagged(self):
         """Returns whether or not the animation is flagged for deletion."""
         return self._flagged
+
+    @property
+    def scale_factor(self):
+        """Returns the factor of the latest scaling."""
+        return self._scaled

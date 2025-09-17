@@ -243,3 +243,8 @@ class Animation():
     @frame_max.setter
     def frame_max(self, value):
         self._frame_max = value
+
+    @property
+    def scale_factor(self):
+        """Returns the factor of the latest scaling."""
+        return self._scaled

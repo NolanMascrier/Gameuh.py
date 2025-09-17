@@ -19,8 +19,7 @@ class DummyEntity():
 class Projectile():
     """Defines a projectile."""
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
-                evil = False, width = 64, height = 32, speed = 20, \
-                hitbox_len = None, hitbox_height = None, caster = None,\
+                evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1):
         self._x = x
@@ -28,6 +27,7 @@ class Projectile():
         self._speed = speed
         self._angle = angle
         self._target = None
+        self._image = imagefile
         self._area = area
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - numpy.atan2(SYSTEM["player.x"] - x,\
@@ -43,19 +43,18 @@ class Projectile():
                 self._angle = 90 - numpy.atan2(closest.entity.hitbox.center_x - x,\
                     closest.entity.hitbox.center_y - y) * 180 / pi
                 self._target = closest
-        self._length = width
-        self._height = height
+        self._real_image = SYSTEM["images"][self._image].clone()\
+            .rotate(-self._angle).scale(area, area, False)
+        self._width = self._real_image.w
+        self._height = self._real_image.h
         self._origin = origin
         self._damage = damage
         self._evil = evil
         self._bounces = bounces
-        self._image = imagefile
         self._delay = delay
         self._explosion = explosion
-        if hitbox_len is None:
-            hitbox_len = width
-        if hitbox_height is None:
-            hitbox_height = height
+        hitbox_len = self._width
+        hitbox_height = self._height
         self._box = HitBox(x, y, hitbox_len, hitbox_height)
         if behaviours is None or not isinstance(behaviours, list):
             self._behaviours = []
@@ -77,7 +76,7 @@ class Projectile():
 
     def get_image(self):
         """Returns the projectile image."""
-        return SYSTEM["images"][self._image].get_image(self._animation_state)
+        return self._real_image.get_image()
 
     def can_be_destroyed(self):
         """Checks whether or not the projectile is out of the screen
@@ -119,7 +118,7 @@ class Projectile():
 
     def tick(self):
         """Ticks down the projectile."""
-        SYSTEM["images"][self._image].tick(self._animation_state)
+        self._real_image.tick()
         if Flags.HARD_TRACKING in self._behaviours:
             self._angle = 90 - atan2(SYSTEM["player.x"] - self._target.entity.hitbox.x,\
                     SYSTEM["player.y"] - self._target.entity.hitbox.y) * 180 / pi
@@ -153,10 +152,10 @@ class Projectile():
             self._damage.coeff = round(self._damage.coeff * 0.7, 2)
             self._speed *= 1.4
             if self._x <= 0:
-                self._x += self._length
+                self._x += self._width
                 self._angle = random.randint(45, 135)
             if self._x >= SCREEN_WIDTH:
-                self._x -= self._length * 2
+                self._x -= self._width * 2
                 self._angle = random.randint(135, 225)
             if self._y <= 0:
                 self._y += self._height

@@ -20,7 +20,7 @@ class Enemy():
     with set behaviours."""
     def __init__(self, entity: Entity, creature: Creature, abilities, power = 1,\
                 timer = 2, exp_value = 10, gold_value = 10, behaviours = None,\
-                tier = 1, delay = 0):
+                tier = 1, delay = 0, destination = None):
         self._entity = entity
         self._creature = creature
         self._creature.origin = self
@@ -31,6 +31,10 @@ class Enemy():
         self._timer = timer / self.creature.stats["cast_speed"].c_value
         self._power = power
         self._counter = 0
+        self._destination = destination
+        self._started = False if destination is not None else True
+        if not self._started:
+            self._entity.play("dash")
         self._abilities = abilities
         self._gold_value = gold_value
         self._exp_value = exp_value
@@ -91,6 +95,12 @@ class Enemy():
         dy = player.y - self.y
         return dx*dx + dy*dy
 
+    def distance_to_destination(self):
+        """Returns the distance to the destination."""
+        dx = self._destination[0] - self.x
+        dy = self._destination[1] - self.y
+        return dx*dx + dy*dy
+
     def on_hit(self, value):
         """Called when the creature is hit."""
         self._entity.play("hit")
@@ -115,7 +125,7 @@ class Enemy():
         if self._exploded:
             return
         if self._creature.stats["life"].current_value <= 0:
-            self._entity.detach("die")
+            self._entity.detach("die", True)
             self.explode()
             return
         self._entity.tick(self)
@@ -127,6 +137,12 @@ class Enemy():
             self._attack_delay += 0.016
             return
         self._counter += 0.016
+        if not self._started:
+            self._entity.move(self._destination)
+            if self.distance_to_destination() < 100:
+                self._started = True
+                self._entity.play("idle")
+            return
         if Flags.CHASER in self._behaviours:
             if self._stopped:
                 if self._counter >= self._timer:
@@ -141,7 +157,7 @@ class Enemy():
                 if self._entity.flipped and player.x < self.x:
                     self.entity.flip()
                     self._aim_right = False
-                if self.distance_to_player(player) < 1000:
+                if self.distance_to_player(player) < 10000:
                     self._stopped = True
                     self._counter = 0
                 else:
@@ -170,6 +186,10 @@ class Enemy():
     def get_image(self):
         """Returns the entity's image."""
         return self._entity.get_image()
+
+    def get_pos(self) -> tuple:
+        """Returns the position for the image."""
+        return self._entity.hitbox.center_offset
 
     @property
     def entity(self):

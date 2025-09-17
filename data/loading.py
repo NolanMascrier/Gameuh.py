@@ -151,10 +151,10 @@ def load_animations():
     SYSTEM["images"]["witch_flipped"] = Animation("witch.png", 64, 64, frame_rate = 0.25)\
         .flip(False, True)
     SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
-    SYSTEM["images"]["necromancer"] = Sprite("necro_old.png", 160, 128, ["idle", "blink", "attack",\
+    SYSTEM["images"]["necromancer"] = Sprite("necro_old.png", 160, 128, ["idle", "dash", "attack",\
         "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
-        [8, 8, 13, 13, 17, 5, 10], [True, False, False, False, False, False, False],\
-        [-1, -1, -1, -1, -1, -1, 1])
+        [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
+        [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False)
 
 def load_tiles():
     """Load the tiles."""

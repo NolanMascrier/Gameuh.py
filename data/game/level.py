@@ -94,9 +94,10 @@ class Level():
     def generate_enemy(self, reference: list, level:int):
         """Creates a single enemy."""
         y_pos = random.randint(0, SCREEN_HEIGHT - 300)
+        x_pos = random.randint(100, 300)
         enemy_type = reference[3]
         img = reference[0]
-        ent = Entity(SCREEN_WIDTH - 200, y_pos, img)
+        ent = Entity(SCREEN_WIDTH + 200, y_pos, img, hitbox_mod=reference[9])
         exp_value = random.randint(int(reference[5]*(level + 1) *0.9),\
                                    int(reference[5]*(level + 1) * 1.1))
         gold_value = random.randint(int(reference[6]*(level + 1) *0.9),\
@@ -107,8 +108,10 @@ class Level():
         for mod in self._modifiers:
             crea.afflict(mod.as_affliction())
         crea.scale(level)
+        dest = (SCREEN_WIDTH - x_pos, y_pos)
         enemy = Enemy(ent, crea, reference[7], behaviours=enemy_type,\
-            timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay)
+            timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay,\
+            destination=dest)
         return enemy
 
     def summon_wave(self, level:int, wave:int):

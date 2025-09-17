@@ -98,7 +98,7 @@ def generate_spell_list():
     fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 0,\
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12)
-    icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 40,\
+    icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING])
     exult = Spell("exult", exult_icon, "exult_img", EXULT, 0,\

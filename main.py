@@ -40,16 +40,18 @@ def check_collisions():
                     continue
                 if isinstance(proj, Projectile):
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature)
+                    if dmg is None or crit is None:
+                        continue
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
-                    SYSTEM["player"].immune.append(proj)
                 elif isinstance(proj, Slash):
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature)
+                    if dmg is None or crit is None:
+                        continue
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
-                    SYSTEM["player"].immune.append(proj)
         else: #Check for each enemy
             for enemy in ENNEMY_TRACKER.copy():
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):
@@ -57,16 +59,18 @@ def check_collisions():
                         continue
                     if isinstance(proj, Projectile):
                         dmg, crit = proj.on_hit(enemy.creature)
+                        if dmg is None or crit is None:
+                            continue
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
-                        enemy.immune.append(proj)
                     elif isinstance(proj, Slash):
                         dmg, crit = proj.on_hit(enemy.creature)
+                        if dmg is None or crit is None:
+                            continue
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
-                        enemy.immune.append(proj)
 
 def game_loop(keys, events):
     """Main game loop."""

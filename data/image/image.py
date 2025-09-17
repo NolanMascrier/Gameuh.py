@@ -1,38 +1,7 @@
 """Simple wrapper for image surfaces in Pygame."""
 
-from collections import Counter
 import pygame
 from data.constants import RESSOURCES
-
-def load(path):
-    """Loads an image through pygame, then attempts to detect its alpha key.
-    Then converts the image with its needed method (convert, convert with colorkey,
-    convert alpha) depending on the picture."""
-    img = pygame.image.load(path)
-    if img.get_alpha() is None and not img.get_masks()[3]:
-        return img.convert()
-    img = img.convert_alpha()
-    w, h = img.get_size()
-    transparent_colors = Counter()
-    opaque_colors = set()
-    has_partial_alpha = False
-    for y in range(h):
-        for x in range(w):
-            r, g, b, a = img.get_at((x, y))
-            if a == 0:
-                transparent_colors[(r, g, b)] += 1
-            elif a == 255:
-                opaque_colors.add((r, g, b))
-            else:
-                has_partial_alpha = True
-    if has_partial_alpha or not transparent_colors:
-        return img.convert_alpha()
-    colorkey = transparent_colors.most_common(1)[0][0]
-    if colorkey not in opaque_colors:
-        img_no_alpha = img.convert()
-        img_no_alpha.set_colorkey(colorkey)
-        return img_no_alpha
-    return img.convert_alpha()
 
 class Image():
     """Defines an image. If the URI does not points
@@ -68,6 +37,9 @@ class Image():
             self._width = self._image.get_width()
             self._height = self._image.get_height()
         self._visible = True
+        self._scaled = (self._height, self._width, True)
+        self._rotated = 0
+        self._flipped = (False, False)
 
     def get_image(self) -> pygame.Surface:
         """Returns the image."""
@@ -82,6 +54,7 @@ class Image():
         self._image = pygame.transform.rotate(self._image, deg)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
+        self._rotated = deg
         return self
 
     def scale(self, height: float, width: float, absolute = True):
@@ -102,6 +75,7 @@ class Image():
                                                  self._height * height))
         self._width = self._image.get_width()
         self._height = self._image.get_height()
+        self._scaled = (height, width, absolute)
         return self
 
     def flip(self, vertical: bool, horizontal: bool):
@@ -114,6 +88,7 @@ class Image():
         self._image = pygame.transform.flip(self._image, horizontal, vertical)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
+        self._flipped = (vertical, horizontal)
         return self
 
     def extracts(self, x, y, width, height):
@@ -141,8 +116,10 @@ class Image():
 
     def clone(self):
         """Returns a deep copy of the image."""
-        new = Image(self._uri)
-        return new
+        return Image(self._uri)\
+            .flip(self._flipped[0], self._flipped[1])\
+            .rotate(self._rotated)\
+            .scale(self._scaled[0], self._scaled[1], self._scaled[2])
 
     @property
     def image(self) -> pygame.Surface:
@@ -199,3 +176,8 @@ class Image():
     @uri.setter
     def uri(self, value):
         self._uri = value
+
+    @property
+    def scale_factor(self):
+        """Returns the factor of the latest scaling."""
+        return self._scaled

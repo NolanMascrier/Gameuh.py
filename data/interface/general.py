@@ -72,7 +72,7 @@ def draw_game(show_player = True, show_enemies = True,\
         if SYSTEM["options"]["show_hitboxes"]:
             for b in ENNEMY_TRACKER:
                 draw_hitbox(b.hitbox, RED, RED_B, SYSTEM["layers"]["characters"])
-        SYSTEM["layers"]["characters"].blits([b.get_image(), (b.x, b.y)] for b in ENNEMY_TRACKER)
+        SYSTEM["layers"]["characters"].blits([b.get_image(), b.get_pos()] for b in ENNEMY_TRACKER)
     if show_animations:
         SYSTEM["layers"]["characters"].blits([p[0].get_image(), (p[1], p[2])]\
                                              for p in ANIMATION_TRACKER)

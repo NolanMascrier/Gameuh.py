@@ -8,6 +8,7 @@ class HitBox():
         self._y = y
         self._width = w
         self._height = h
+        self._offset = (0, 0)
 
     def is_inside(self, pos: tuple) -> bool:
         """Checks wether the x;y position is inside the box.
@@ -38,6 +39,24 @@ class HitBox():
     def get_rect(self) -> tuple:
         """Return's the hitbox as a rect tuple."""
         return (self._x, self._y, self._width, self._height)
+
+    def resize(self, values, scale_factor = None):
+        """Resizes the hitbox and recenters it.
+        
+        Args:
+            values (tuple): Tuple of 4 values in that order: `width`, `height`,\
+            `x offset` and `y_offset`.
+            scale_factor (tuple, optional): Scale factor of the image. Resizes the\
+            hitbox if the origin image was.
+        """
+        w, h, offset_x, offset_y = values
+        center = self.center
+        self._offset = (offset_x, offset_y)
+        if scale_factor is not None:
+            self._offset = (offset_x * scale_factor[0], offset_y * scale_factor[1])
+        self._width *= w
+        self._height *= h
+        self.move_center(center)
 
     def move(self, pos: tuple):
         """Moves the box to a new position."""
@@ -128,4 +147,12 @@ class HitBox():
         center."""
         x = self.left + (self._width / 2)
         y = self.top + (self._height / 2)
+        return (x, y)
+
+    @property
+    def center_offset(self):
+        """Returns the x;y position of the box's
+        including the offset."""
+        x = self.left + self._offset[0]
+        y = self.top + self._offset[1]
         return (x, y)
