@@ -125,6 +125,9 @@ class Enemy():
         if self._exploded:
             return
         if self._creature.stats["life"].current_value <= 0:
+            if Flags.SUICIDER in self._behaviours:
+                self._entity.play("attack")
+                self.attack()
             self._entity.detach("die", True)
             self.explode()
             return
@@ -143,7 +146,7 @@ class Enemy():
                 self._started = True
                 self._entity.play("idle")
             return
-        if Flags.CHASER in self._behaviours:
+        if Flags.CHASER in self._behaviours or Flags.SUICIDER in self._behaviours:
             if self._stopped:
                 if self._counter >= self._timer:
                     self._entity.play("attack")
@@ -180,8 +183,14 @@ class Enemy():
                 if ability not in SYSTEM["spells"] or \
                     not isinstance(SYSTEM["spells"][ability], Spell):
                     return
+                if Flags.SUICIDER in self._behaviours:
+                    ignore = True
+                else:
+                    ignore = False
                 SYSTEM["spells"][ability].cast(self._creature, self._entity,\
-                                               True, self._aim_right, True)
+                                               True, self._aim_right, True, ignore)
+        if Flags.SUICIDER in self._behaviours:
+            self.creature.stats["life"].value = 0
 
     def get_image(self):
         """Returns the entity's image."""

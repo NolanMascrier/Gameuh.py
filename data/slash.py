@@ -15,7 +15,8 @@ class Slash():
     """Defines a slash."""
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
-                offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False):
+                offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\
+                ignore_team = False):
         self._caster = caster
         self._origin = origin
         self._image = animation
@@ -41,6 +42,7 @@ class Slash():
             self._debuffs = []
         else:
             self._debuffs = debuffs
+        self._ignore_team = ignore_team
 
     def clone(self, entity, origin, area = None, center=False):
         """Returns a deep copy of the slash."""
@@ -215,3 +217,8 @@ class Slash():
     @finished.setter
     def finished(self, value):
         self._finished = value
+
+    @property
+    def ignore_team(self) -> bool:
+        """Returns wether or not the slash's ignore the evil flag."""
+        return self._ignore_team

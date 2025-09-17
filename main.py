@@ -34,7 +34,7 @@ def debug_create_items():
 def check_collisions():
     """Checks all collisions."""
     for proj in PROJECTILE_TRACKER.copy():
-        if proj.evil: #check for player
+        if proj.ignore_team or proj.evil: #check for player
             if proj.hitbox.is_colliding(SYSTEM["player"].entity.hitbox):
                 if proj in SYSTEM["player"].immune:
                     continue
@@ -52,7 +52,7 @@ def check_collisions():
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
-        else: #Check for each enemy
+        elif proj.ignore_team or not proj.evil: #Check for each enemy
             for enemy in ENNEMY_TRACKER.copy():
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):
                     if proj in enemy.immune:
@@ -187,9 +187,25 @@ def draw_menu(events):
             SYSTEM["buttons_e"][3].press()
             SYSTEM["buttons"]["button_assault"].press()
 
+def loading():
+    """Displays the loading screen."""
+    if SYSTEM["loading_text"] is not None:
+        render(SYSTEM["loading_text"].surface, (200, SCREEN_HEIGHT - 128))
+    SYSTEM["images"]["load_orb"].tick()
+    render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
+    render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
+    width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
+    render(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
+        , (200, SCREEN_HEIGHT - 111))
+    render_all()
+    resolution()
+
 def main_loop():
     """Main loop. Temporary"""
     while SYSTEM["playing"]:
+        if SYSTEM["game_state"] == LOADING:
+            loading()
+            continue
         if SYSTEM["post_effects"].pause:
             SYSTEM["post_effects"].tick()
             continue

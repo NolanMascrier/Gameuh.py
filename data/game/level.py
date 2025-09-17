@@ -3,19 +3,29 @@ A level can be of multiple type:
 Waves, dungeon ...
 Only waves for now."""
 
+import threading
 import random
 import pygame
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
-    GAME_VICTORY, trad
+    GAME_VICTORY, trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER
 from data.game.enemy import Enemy
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
 from data.image.parallaxe import Parallaxe
 from data.numerics.affix import Affix
+from data.image.text import Text
 from data.tables.area_table import MODIFIERS
 from data.tables.enemy_table import *
+
+def init_timers():
+    """Inits Pygame's timers."""
+    pygame.time.set_timer(WAVE_TIMER, 1000)
+    pygame.time.set_timer(USEREVENT+1, 2000)
+    pygame.time.set_timer(USEREVENT+2, 100)
+    pygame.time.set_timer(TICKER_TIMER, int(0.016 * 1000))
+    pygame.time.set_timer(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
 
 class Level():
     """A level."""
@@ -40,6 +50,7 @@ class Level():
         self._wave_timer = wave_timer
         self._gold = 0
         self._loot = []
+        self._wave_tracker = []
         self._modifiers = self.generate_modifiers()
 
     def generate_modifiers(self):
@@ -95,21 +106,22 @@ class Level():
         """Creates a single enemy."""
         y_pos = random.randint(0, SCREEN_HEIGHT - 300)
         x_pos = random.randint(100, 300)
-        enemy_type = reference[3]
-        img = reference[0]
-        ent = Entity(SCREEN_WIDTH + 200, y_pos, img, hitbox_mod=reference[9])
-        exp_value = random.randint(int(reference[5]*(level + 1) *0.9),\
-                                   int(reference[5]*(level + 1) * 1.1))
-        gold_value = random.randint(int(reference[6]*(level + 1) *0.9),\
-                                    int(reference[6]*(level + 1) * 1.1))
-        attack_delay = reference[8]
-        crea = Creature(reference[1])
-        crea.import_stackblock(reference[2])
+        enemy_type = reference["flags"]
+        img = reference["image"]
+        ent = Entity(SCREEN_WIDTH + 200, y_pos, img, hitbox_mod=reference["hitbox"])
+        exp_value = random.randint(int(reference["exp"]*(level + 1) *0.9),\
+                                   int(reference["exp"]*(level + 1) * 1.1))
+        gold_value = random.randint(int(reference["gold"]*(level + 1) *0.9),\
+                                    int(reference["gold"]*(level + 1) * 1.1))
+        attack_delay = reference["delay"]
+        crea = Creature(reference["name"])
+        crea.import_stackblock(reference["stats"])
         for mod in self._modifiers:
             crea.afflict(mod.as_affliction())
         crea.scale(level)
+        crea.reset()
         dest = (SCREEN_WIDTH - x_pos, y_pos)
-        enemy = Enemy(ent, crea, reference[7], behaviours=enemy_type,\
+        enemy = Enemy(ent, crea, reference["spelllist"], behaviours=enemy_type,\
             timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay,\
             destination=dest)
         return enemy
@@ -118,18 +130,36 @@ class Level():
         """Summons a wave of monsters."""
         min_monsters = (1 + random.randint(0, 3)) * wave
         max_monsters = (4 + random.randint(0, 3)) * wave
-        #monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
-        monsters = 1
+        monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
+        wave = []
         for _ in range(monsters):
             #TODO: Actual random choice of monster depending on zone
-            monster = VOIDSNIPER if random.randint(0, 1) == 0 else VOIDSNIPER
+            monster = VOIDSNIPER if random.randint(0, 1) == 0 else VOIDBOMBER
             mob = self.generate_enemy(monster, level)
-            ENNEMY_TRACKER.append(mob)
+            wave.append(mob)
+        self._wave_tracker.append(wave)
+
+    def load_level(self):
+        """Loading function of the level."""
+        SYSTEM["game_state"] = LOADING
+        tasks = [(self.summon_wave, i, 1) for i in range(self._waves)]
+        total = sum(weight for _, _, weight in tasks)
+        progress = 0
+        for t, i, w in tasks:
+            SYSTEM["loading_text"] = Text(trad('loading', 'level'), font="item_titles", size=30)
+            t(self._area_level, i)
+            progress += w
+            SYSTEM["progress"] = progress / total * 100
+        SYSTEM["loaded"] = True
+        SYSTEM["game_state"] = GAME_LEVEL
+        init_timers()
 
     def init(self):
         """Sets up the background of the level."""
         SYSTEM["gm_background"].fill((0,0,0,0))
         SYSTEM["gm_background"].blit(self._background.background, (0,0))
+        loading_thread = threading.Thread(target=self.load_level)
+        loading_thread.start()
 
     def start(self):
         """Starts the level."""
@@ -149,7 +179,10 @@ class Level():
                 SYSTEM["player"].gold += self._gold
                 SYSTEM["game_state"] = GAME_VICTORY
             return
-        self.summon_wave(self._area_level, self._current_wave)
+        #self.summon_wave(self._area_level, self._current_wave)
+        for e in self._wave_tracker[self._current_wave]:
+            ENNEMY_TRACKER.append(e)
+        self._wave_tracker[self._current_wave].clear()
         self._current_wave += 1
 
     def distance_to_player(self, player, hitbox):

@@ -377,6 +377,7 @@ class Flags(str, Enum):
     #Flags for ennemies
     SHOOTER = "shooter"
     CHASER = "chaser"
+    SUICIDER = "suicider"
     #Flags for levels
     WAVES = "waves"
     DUNGEON = "dungeon"

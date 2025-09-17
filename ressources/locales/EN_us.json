@@ -177,7 +177,8 @@
       "others": "Generating handlers ...",
       "buttons": "Generating buttons ...",
       "player": "Generating player data ...",
-      "start": "Finishing ..."
+      "start": "Finishing ...",
+      "level": "Preparing level ..."
     },
     "options": {
       "fullscreen": "Fullscreen",

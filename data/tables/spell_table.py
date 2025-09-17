@@ -12,6 +12,8 @@ FIREBOLT = Damage(1.5, fire=2, flags=[Flags.SPELL])
 FIREBALL = Damage(2, fire=5, flags=[Flags.SPELL])
 FIREBALL_EXPLOSION = Damage(2, fire=7, flags=[Flags.SPELL])
 
+KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
+
 DARKBOLT = Damage(1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
@@ -26,6 +28,9 @@ MASTER_3 = Damage(1.2, phys=12, flags=[Flags.MELEE], is_crit=True)
 
 BLEED_DMG = Damage(1, pp=0.5, phys=5, ignore_block=True, ignore_dodge=True)
 BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED_DMG)
+
+BURN_DMG = Damage(2, fire=4, ignore_block=True, ignore_dodge=True)
+BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG)
 
 ELEFURY = Affliction("elemental_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
@@ -78,6 +83,9 @@ def generate_spell_list():
     SYSTEM["images"]["master3_img"] =\
         Animation("anims/master3.png", 64, 64, frame_rate=0.5, loops=False, plays_once=True)\
         .scale(128, 128)
+    SYSTEM["images"]["kamikaze_img"] =\
+        Animation("anims/kamikaze.png", 64, 64, frame_rate=0.2, loops=False, plays_once=True,
+                lines=4).scale(256, 256)
 
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img", FIREBALL_EXPLOSION)
@@ -120,6 +128,9 @@ def generate_spell_list():
         flags=[Flags.MELEE], offset_x=60)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,
         flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
+    kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
+        cooldown=0, flags=[Flags.FIRE, Flags.MELEE, Flags.DEBUFF, Flags.CUTS_PROJECTILE],\
+        debuffs=[BURN])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
@@ -134,3 +145,4 @@ def generate_spell_list():
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy
+    SYSTEM["spells"]["e_kamikaze"] = kamikaze

@@ -1,7 +1,7 @@
 """"Renders the screen."""
 
 import pygame
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING
 
 RENDER_LIST = []
 
@@ -21,8 +21,9 @@ def renders(lst):
 def render_all():
     """Renders the screen."""
     SYSTEM["windows"].fill((0,0,0, 255))
-    SYSTEM["windows"].blit(SYSTEM["gm_background"], (0,0))
-    SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], (0,0))
+    if SYSTEM["game_state"] != LOADING:
+        SYSTEM["windows"].blit(SYSTEM["gm_background"], (0,0))
+        SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], (0,0))
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:

@@ -21,7 +21,8 @@ class Projectile():
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
-                behaviours = None, debuffs = None, explosion = None, area = 1):
+                behaviours = None, debuffs = None, explosion = None, area = 1,\
+                ignore_team = False):
         self._x = x
         self._y = y
         self._speed = speed
@@ -29,6 +30,7 @@ class Projectile():
         self._target = None
         self._image = imagefile
         self._area = area
+        self._ignore_team = ignore_team
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - numpy.atan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
@@ -102,7 +104,7 @@ class Projectile():
             num, crit = target.damage(dmg)
             self._immune.append(target)
             self._bounced = True
-            if self._bounces <= 0 and self._chains <= 0:
+            if self._bounces <= 0 and self._chains <= 0 and Flags.PIERCING not in self._behaviours:
                 self._flagged = True
             if num != "Dodged !":
                 for debuff in self._debuffs:
@@ -261,3 +263,8 @@ class Projectile():
     @behaviours.setter
     def behaviours(self, value):
         self._behaviours = value
+
+    @property
+    def ignore_team(self) -> bool:
+        """Returns wether or not the slash's ignore the evil flag."""
+        return self._ignore_team

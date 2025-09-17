@@ -77,7 +77,6 @@ def draw_exp_bar():
     char = SYSTEM["player"]
     exp_len = char.creature.exp / char.creature.exp_to_next * 1434
     exp_len = min(max(exp_len, 0), SYSTEM["images"]["exp_jauge"].width - 1)
-    #c = pygame.transform.scale(SYSTEM["images"]["exp_jauge"].image, (exp_len, 9))
     c = SYSTEM["images"]["exp_jauge"].image.subsurface(0, 0, exp_len, 9)
     data.append((c, (243, SCREEN_HEIGHT - 39)))
     return data

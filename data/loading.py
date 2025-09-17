@@ -113,7 +113,7 @@ def start_level():
     generate_foreground()
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["level"].init()
-    SYSTEM["game_state"] = GAME_LEVEL
+    #SYSTEM["game_state"] = GAME_LEVEL
     init_timers()
 
 def quit_level():
