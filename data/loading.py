@@ -166,6 +166,7 @@ def load_tiles():
     SYSTEM["images"]["ui_unique"] = Tile("ui/border_unique.png", scale_factor=2)
     SYSTEM["images"]["tile_panel_back"] = Tile("ui/inventory_back.png", 7, 14, 3)
     SYSTEM["images"]["tile_panel_inv"] = Tile("ui/inventory_back.png", 17, 13, 3)
+    SYSTEM["images"]["tile_panel_small"] = Tile("ui/inventory_back.png", 7, 5, 3)
     SYSTEM["images"]["hoverable"] = Tile("ui/hoverable.png")
     SYSTEM["images"]["dropdown"] = Tile("ui/inventory_back.png")
     SYSTEM["images"]["dropdown_menu"] = Tile("ui/border_unique.png")

@@ -126,6 +126,7 @@ class Button():
             self._action()
             self._clicked = True
             SYSTEM["cooldown"] = 0.1
+            SYSTEM["mouse_click"] = (False, False, False)
 
     @property
     def x(self):

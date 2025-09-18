@@ -9,7 +9,7 @@ import threading
 import random
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
-    GAME_VICTORY, trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
+    trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
     PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER
 from data.game.enemy import Enemy
 from data.physics.entity import Entity
@@ -20,6 +20,7 @@ from data.numerics.affix import Affix
 from data.image.text import Text
 from data.tables.area_table import MODIFIERS
 from data.tables.enemy_table import *
+from data.interface.endlevel import generate_victory
 
 def init_timers():
     """Inits Pygame's timers."""
@@ -186,11 +187,12 @@ class Level():
             self._started = True
             self.start()
             return
-        if self._current_wave > self._waves:
+        if self._current_wave >= self._waves:
             if len(ENNEMY_TRACKER) <= 0:
                 self._finished = True
                 SYSTEM["player"].gold += self._gold
-                SYSTEM["game_state"] = GAME_VICTORY
+                #SYSTEM["game_state"] = GAME_VICTORY
+                generate_victory()
                 SYSTEM["deltatime"].stop(WAVE_TIMER)
             return
         for e in self._wave_tracker[self._current_wave]:
