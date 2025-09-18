@@ -3,6 +3,8 @@ A level can be of multiple type:
 Waves, dungeon ...
 Only waves for now."""
 
+import time
+
 import threading
 import random
 from data.creature import Creature
@@ -21,7 +23,7 @@ from data.tables.enemy_table import *
 
 def init_timers():
     """Inits Pygame's timers."""
-    SYSTEM["deltatime"].start(WAVE_TIMER, 500)
+    SYSTEM["deltatime"].start(WAVE_TIMER, 1500)
     SYSTEM["deltatime"].start(USEREVENT+1, 2000)
     SYSTEM["deltatime"].start(USEREVENT+2, 100)
     SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
@@ -52,6 +54,8 @@ class Level():
         self._loot = []
         self._wave_tracker = []
         self._modifiers = self.generate_modifiers()
+
+        self._t = time.time()
 
     def generate_modifiers(self):
         """Generates a list of modifiers for the level."""
@@ -169,10 +173,12 @@ class Level():
 
     def start(self):
         """Starts the level."""
-        SYSTEM["deltatime"].start(WAVE_TIMER, self._wave_timer)
-        self.summon_wave(self._area_level, self._current_wave)
-        self._current_wave += 1
         SYSTEM["deltatime"].clear()
+        SYSTEM["deltatime"].start(WAVE_TIMER, self._wave_timer)
+        for e in self._wave_tracker[self._current_wave]:
+            ENNEMY_TRACKER.append(e)
+        self._wave_tracker[self._current_wave].clear()
+        self._current_wave += 1
 
     def next_wave(self):
         """Summons the next wave."""

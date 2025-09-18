@@ -75,7 +75,6 @@ def check_collisions():
 def game_loop(keys, time_event):
     """Main game loop."""
     #Handle Events
-    print(time_event)
     for event in time_event:
         if event == QUIT:
             SYSTEM["playing"] = False
