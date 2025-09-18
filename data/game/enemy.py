@@ -104,6 +104,9 @@ class Enemy():
     def on_hit(self, value):
         """Called when the creature is hit."""
         self._entity.play("hit")
+        if Flags.SUICIDER in self._behaviours:
+            self.attack()
+            self.explode()
 
     def on_crit(self):
         """Called when the creature crits."""
@@ -142,9 +145,10 @@ class Enemy():
         self._counter += 0.016
         if not self._started:
             self._entity.move(self._destination)
-            if self.distance_to_destination() < 100:
+            if self.distance_to_destination() < 1000 or self._counter >= 3:
                 self._started = True
                 self._entity.play("idle")
+                self._counter = 0
             return
         if Flags.CHASER in self._behaviours or Flags.SUICIDER in self._behaviours:
             if self._stopped:

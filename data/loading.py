@@ -6,11 +6,13 @@ import os
 import random
 import pygame
 import numpy as np
+
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language, UPDATE_TIMER
+
 from data.image.sprite import Animation, Image, Sprite
 from data.image.button import Button
 from data.image.tile import Tile
@@ -18,8 +20,8 @@ from data.image.parallaxe import Parallaxe
 from data.image.scrollable import Scrollable
 from data.image.text_generator import TextGenerator, Text
 from data.image.slotpanel import SlotPanel
+from data.image.posteffects import PostEffects
 
-from data.game.lootgenerator import LootGenerator
 from data.interface.general import setup_bottom_bar
 from data.interface.gear import open_gear_screen
 from data.interface.spellbook import open_spell_screen
@@ -27,15 +29,16 @@ from data.interface.skilltree import open_skill_screen
 from data.interface.inventory import open_inventory
 from data.interface.options import open_option_screen
 from data.interface.gameui import generate_foreground, generate_background
-from data.game.level import Level
 
 from data.character import Character
+
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
-
 from data.tables.uniques_table import load_uniques
 
-from data.image.posteffects import PostEffects
+from data.game.level import Level
+from data.game.lootgenerator import LootGenerator
+from data.game.deltatime import DeltaTime
 
 def generate_random_level():
     """Creates a random level."""
@@ -98,11 +101,11 @@ def reset():
 
 def init_timers():
     """Inits Pygame's timers."""
-    pygame.time.set_timer(WAVE_TIMER, 1000)
-    pygame.time.set_timer(USEREVENT+1, 2000)
-    pygame.time.set_timer(USEREVENT+2, 100)
-    pygame.time.set_timer(TICKER_TIMER, int(0.016 * 1000))
-    pygame.time.set_timer(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
+    SYSTEM["deltatime"].start(WAVE_TIMER, 1000)
+    SYSTEM["deltatime"].start(USEREVENT+1, 2000)
+    SYSTEM["deltatime"].start(USEREVENT+2, 100)
+    SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
+    SYSTEM["deltatime"].start(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
 
 def start_level():
     """Starts the level stored in the SYSTEM."""
@@ -113,8 +116,6 @@ def start_level():
     generate_foreground()
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["level"].init()
-    #SYSTEM["game_state"] = GAME_LEVEL
-    init_timers()
 
 def quit_level():
     """Quits the current level and resets the player."""
@@ -433,6 +434,8 @@ def init_game():
     pygame.font.init()
     SYSTEM["keys"] = pygame.key.get_pressed()
     load_options()
+    SYSTEM["clock"] = pygame.time.Clock()
+    SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["post_effects"] = PostEffects()
     SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -444,7 +447,6 @@ def init_game():
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
     SYSTEM["loading_text"] = None
-    SYSTEM["clock"] = pygame.time.Clock()
     SYSTEM["fps_counter"] = None
     loading_thread = threading.Thread(target=load)
     loading_thread.start()

@@ -247,8 +247,8 @@ def trad(keys, subkey = None):
     except KeyError:
         return ["Unknown text data."]
 
-WAVE_TIMER = USEREVENT+4
-TICKER_TIMER = USEREVENT+5
+WAVE_TIMER = "wave"
+TICKER_TIMER = "ticker"
 UPDATE_TIMER = USEREVENT+6
 
 class Flags(str, Enum):

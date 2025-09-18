@@ -5,10 +5,10 @@ Only waves for now."""
 
 import threading
 import random
-import pygame
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
-    GAME_VICTORY, trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER
+    GAME_VICTORY, trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
+    PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER
 from data.game.enemy import Enemy
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
@@ -21,11 +21,11 @@ from data.tables.enemy_table import *
 
 def init_timers():
     """Inits Pygame's timers."""
-    pygame.time.set_timer(WAVE_TIMER, 1000)
-    pygame.time.set_timer(USEREVENT+1, 2000)
-    pygame.time.set_timer(USEREVENT+2, 100)
-    pygame.time.set_timer(TICKER_TIMER, int(0.016 * 1000))
-    pygame.time.set_timer(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
+    SYSTEM["deltatime"].start(WAVE_TIMER, 500)
+    SYSTEM["deltatime"].start(USEREVENT+1, 2000)
+    SYSTEM["deltatime"].start(USEREVENT+2, 100)
+    SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
+    SYSTEM["deltatime"].start(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
 
 class Level():
     """A level."""
@@ -134,7 +134,7 @@ class Level():
         wave = []
         for _ in range(monsters):
             #TODO: Actual random choice of monster depending on zone
-            monster = VOIDSNIPER if random.randint(0, 1) == 0 else VOIDBOMBER
+            monster = VOIDSNIPER if random.randint(0, 1) == 0 else VOIDSNIPER
             mob = self.generate_enemy(monster, level)
             wave.append(mob)
         self._wave_tracker.append(wave)
@@ -144,6 +144,7 @@ class Level():
         SYSTEM["game_state"] = LOADING
         tasks = [(self.summon_wave, i, 1) for i in range(self._waves)]
         total = sum(weight for _, _, weight in tasks)
+        SYSTEM["progress"] = 0
         progress = 0
         for t, i, w in tasks:
             SYSTEM["loading_text"] = Text(trad('loading', 'level'), font="item_titles", size=30)
@@ -153,19 +154,25 @@ class Level():
         SYSTEM["loaded"] = True
         SYSTEM["game_state"] = GAME_LEVEL
         init_timers()
+        SYSTEM["deltatime"].clear()
 
     def init(self):
         """Sets up the background of the level."""
         SYSTEM["gm_background"].fill((0,0,0,0))
         SYSTEM["gm_background"].blit(self._background.background, (0,0))
+        ENNEMY_TRACKER.clear()
+        PROJECTILE_TRACKER.clear()
+        POWER_UP_TRACKER.clear()
+        ANIMATION_TRACKER.clear()
         loading_thread = threading.Thread(target=self.load_level)
         loading_thread.start()
 
     def start(self):
         """Starts the level."""
-        pygame.time.set_timer(WAVE_TIMER, self._wave_timer)
+        SYSTEM["deltatime"].start(WAVE_TIMER, self._wave_timer)
         self.summon_wave(self._area_level, self._current_wave)
         self._current_wave += 1
+        SYSTEM["deltatime"].clear()
 
     def next_wave(self):
         """Summons the next wave."""
@@ -178,8 +185,8 @@ class Level():
                 self._finished = True
                 SYSTEM["player"].gold += self._gold
                 SYSTEM["game_state"] = GAME_VICTORY
+                SYSTEM["deltatime"].stop(WAVE_TIMER)
             return
-        #self.summon_wave(self._area_level, self._current_wave)
         for e in self._wave_tracker[self._current_wave]:
             ENNEMY_TRACKER.append(e)
         self._wave_tracker[self._current_wave].clear()

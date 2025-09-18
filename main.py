@@ -72,15 +72,16 @@ def check_collisions():
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
 
-def game_loop(keys, events):
+def game_loop(keys, time_event):
     """Main game loop."""
     #Handle Events
-    for event in events:
-        if event.type == QUIT:
+    print(time_event)
+    for event in time_event:
+        if event == QUIT:
             SYSTEM["playing"] = False
-        if event.type == WAVE_TIMER:
+        if event == WAVE_TIMER:
             SYSTEM["level"].next_wave()
-        if event.type == TICKER_TIMER:
+        if event == TICKER_TIMER:
             logic_tick()
     SYSTEM["level"].background.draw()
     draw_game()
@@ -203,6 +204,7 @@ def loading():
 def main_loop():
     """Main loop. Temporary"""
     while SYSTEM["playing"]:
+        SYSTEM["deltatime"].tick()
         if SYSTEM["game_state"] == LOADING:
             loading()
             continue
@@ -219,6 +221,7 @@ def main_loop():
             SYSTEM["held"] = False
         SYSTEM["mouse_wheel"] = [(0, 0), (0, 0)]
         events = pygame.event.get()
+        time_event = SYSTEM["deltatime"].get()
         for event in events:
             if event.type == QUIT:
                 SYSTEM["playing"] = False
@@ -235,7 +238,7 @@ def main_loop():
                 elif SYSTEM["game_state"] == GAME_PAUSE:
                     SYSTEM["game_state"] = GAME_LEVEL
         if SYSTEM["game_state"] == GAME_LEVEL:
-            game_loop(keys, events)
+            game_loop(keys, time_event)
         if SYSTEM["game_state"] == GAME_PAUSE:
             draw_pause(events)
         if SYSTEM["game_state"] == GAME_VICTORY:
