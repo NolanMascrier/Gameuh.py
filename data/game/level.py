@@ -4,9 +4,11 @@ Waves, dungeon ...
 Only waves for now."""
 
 import time
-
 import threading
 import random
+
+import pygame
+
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
     trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
@@ -14,10 +16,11 @@ from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIM
 from data.game.enemy import Enemy
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
-from data.image.animation import Animation
+from data.image.animation import Animation, Image
 from data.image.parallaxe import Parallaxe
 from data.numerics.affix import Affix
 from data.image.text import Text
+from data.item import Item
 from data.tables.area_table import MODIFIERS
 from data.tables.enemy_table import *
 from data.interface.endlevel import generate_victory
@@ -29,6 +32,38 @@ def init_timers():
     SYSTEM["deltatime"].start(USEREVENT+2, 100)
     SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
     SYSTEM["deltatime"].start(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
+
+class DummyItems(Item):
+    """Fake items to show in the showcase at the end of a level."""
+    def __init__(self, name, image = None, quantity = 1):
+        self._amount = quantity
+        super().__init__(name, "", 0, image=image)
+        self._quantity = Text(f"{quantity}" if quantity <= 999 else "999+", font="item_desc")
+        self._img = pygame.Surface((64, 64), pygame.SRCALPHA)
+        self._img.blit(self._image.image, (0, 0))
+        self._img.blit(self._quantity.image, (0, 0))
+        self._img = Image(self._img)
+        self._image = self._img
+
+    def create_popup(self, is_details = False):
+        """Creates the detailed popup surface."""
+        if self._image is None:
+            return None
+        txt = "\n".join(trad('runes', self._name)) + "\n"\
+            + trad('descripts', 'amount') + f"{self._amount}"
+        desc = Text(txt, font="item_desc")
+        title_card = SYSTEM["images"]["item_desc"]\
+                    .duplicate(desc.width, desc.height)
+        sfc = pygame.Surface((title_card.get_width(), title_card.get_height()), pygame.SRCALPHA)
+        title_pos = (title_card.get_width() / 2 - desc.width / 2,
+                     title_card.get_height() / 2 - desc.height / 2)
+        sfc.blit(title_card, (0, 0))
+        sfc.blit(desc.surface, title_pos)
+        return sfc
+
+    def get_image(self):
+        """returns the item's image."""
+        return self._img
 
 class Level():
     """A level."""
@@ -52,10 +87,13 @@ class Level():
             self._flags = flags
         self._wave_timer = wave_timer
         self._gold = 0
+        self._exp = 0
         self._loot = []
         self._wave_tracker = []
+        self._runes = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ]
         self._modifiers = self.generate_modifiers()
-
         self._t = time.time()
 
     def generate_modifiers(self):
@@ -181,6 +219,19 @@ class Level():
         self._wave_tracker[self._current_wave].clear()
         self._current_wave += 1
 
+    def end_level(self):
+        """End level sequence. Sets the needed flag and creates the dummy items."""
+        for pick in POWER_UP_TRACKER:
+            pick.pickup(SYSTEM["player"].creature)
+        self._finished = True
+        SYSTEM["player"].gold += self._gold
+        gold = DummyItems("gold", SYSTEM["images"]["gold_icon"], self._gold)
+        self._loot.insert(0, gold)
+        exp = DummyItems("exp", SYSTEM["images"]["exp_orb_big"], self._exp)
+        self._loot.insert(1, exp)
+        generate_victory()
+        SYSTEM["deltatime"].stop(WAVE_TIMER)
+
     def next_wave(self):
         """Summons the next wave."""
         if not self._started:
@@ -189,11 +240,7 @@ class Level():
             return
         if self._current_wave >= self._waves:
             if len(ENNEMY_TRACKER) <= 0:
-                self._finished = True
-                SYSTEM["player"].gold += self._gold
-                #SYSTEM["game_state"] = GAME_VICTORY
-                generate_victory()
-                SYSTEM["deltatime"].stop(WAVE_TIMER)
+                self.end_level()
             return
         for e in self._wave_tracker[self._current_wave]:
             ENNEMY_TRACKER.append(e)
@@ -314,3 +361,21 @@ class Level():
     @loot.setter
     def loot(self, value):
         self._loot = value
+
+    @property
+    def exp(self):
+        """Returns the exp gained during this level."""
+        return self._exp
+
+    @exp.setter
+    def exp(self, value):
+        self._exp = value
+
+    @property
+    def runes(self):
+        """Returns the runes gained during this level."""
+        return self._runes
+
+    @runes.setter
+    def runes(self, value):
+        self._runes = value

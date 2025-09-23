@@ -9,7 +9,7 @@ import numpy as np
 
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
+    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, ANIMATION_TICK_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language, UPDATE_TIMER
 
@@ -321,6 +321,8 @@ def load_images():
     SYSTEM["images"]["buff_fury"] = Image("icons/fury.png")
     SYSTEM["images"]["buff_celerity"] = Image("icons/celerity.png")
     SYSTEM["images"]["buff_bleed"] = Image("icons/bleed.png")
+    SYSTEM["images"]["gold_icon"] = Image("icons/gold.png")
+    SYSTEM["images"]["exp_orb_big"] = Image("icons/exp.png").scale(64, 64)
 
 def load_icons():
     """Loads the icons."""

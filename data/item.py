@@ -98,8 +98,8 @@ class Item():
             self._image,
             self._rarity,
             self._flags,
-            self._affixes.copy(),
-            self._implicits.copy()
+            [affix.copy() for affix in self._affixes] if self._affixes else None,
+            [implicit.copy() for implicit in self._implicits] if self._implicits else None
         )
 
     def describe(self):

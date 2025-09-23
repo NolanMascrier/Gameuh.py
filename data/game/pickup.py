@@ -112,6 +112,8 @@ class PickUp():
 
     def pickup(self, player):
         """Picks up the pickup."""
+        if self._to_delete:
+            return
         if Flags.LIFE in self._flags:
             value = round(self._value / 100 * player.creature.stats["life"].get_value())
             player.creature.stats["life"].current_value += value
@@ -122,6 +124,7 @@ class PickUp():
             self.generate_text(BLUE, value)
         if Flags.EXPERIENCE in self._flags:
             player.creature.grant_experience(self._value)
+            SYSTEM["level"].exp += self._value
         if Flags.GOLD in self._flags:
             SYSTEM["level"].gold += self._value
         if Flags.ITEM in self._flags:
@@ -130,6 +133,7 @@ class PickUp():
             self.generate_item_text()
         if Flags.RUNE in self._flags:
             SYSTEM["player"].runes[self._value] += 1
+            SYSTEM["level"].runes[self._value] += 1
         self._to_delete = True
 
     def tick(self, player):

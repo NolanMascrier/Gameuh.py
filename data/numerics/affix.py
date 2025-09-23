@@ -49,6 +49,17 @@ class Affix():
             self._level_modifier
         )
 
+    def copy(self):
+        """Creates a deep copy of the item."""
+        return Affix(
+            self._name,
+            self._value,
+            self._flags.copy(),
+            self._bounds[0],
+            self._bounds[1],
+            self._level_modifier
+        )
+
     def reroll(self):
         """Rerolls an affix within its bounds."""
         if not self._seal:

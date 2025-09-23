@@ -29,6 +29,19 @@ class DoubleAffix():
         self._bounds_max = (lower_bound_max, upper_bound_min)
         self._seal = False
 
+    def copy(self):
+        """Creates a deep copy of the double affix."""
+        return DoubleAffix(
+            self._name,
+            self._value_min,
+            self._value_max,
+            self._flags.copy(),
+            self._bounds_min[0],
+            self._bounds_min[1],
+            self._bounds_max[0],
+            self._bounds_max[1]
+        )
+
     def as_affliction(self) -> tuple[Affliction, Affliction]:
         """Makes the affix into an affliction."""
         flags = self._flags.copy()

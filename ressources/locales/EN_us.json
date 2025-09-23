@@ -398,7 +398,8 @@
         "dmg_effic": "Added damage magnitude",
         "area": "Area of effect",
         "debuff_res": "Affliction avoidance",
-        "difficulty": "Threat level"
+        "difficulty": "Threat level",
+        "amount": "Obtained x"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",
@@ -459,6 +460,17 @@
         "algiz": [
             "#s#(35)Rune of Algiz",
             "Randomly changes the modifiers of an enchanted item."
+        ],
+        "gold": [
+          "#s#(35)Gold",
+          "Gold can be used to buy runes and items."
+        ],
+        "exp": [
+          "#s#(35)Experience",
+          "Experience dictates the level of your character.",
+          "When you gain enough experience, your character levels up.",
+          "By leveling up, not only they fully heal, they also gain",
+          "a stat point and a tree point."
         ]
     },
     "rarities": [

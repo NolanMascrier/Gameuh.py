@@ -27,4 +27,3 @@ def draw_victory(events):
     SYSTEM["buttons"]["button_continue"].set(x_offset + 200, y_offset + 450)
     SYSTEM["buttons"]["button_continue"].tick().draw(SYSTEM["windows"])
     SYSTEM["ui"]["showcase"].tick().draw()
-    render(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))

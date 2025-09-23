@@ -198,6 +198,11 @@ class Animation():
         return anim
 
     @property
+    def image(self):
+        """Returns the image."""
+        return self.get_image()
+
+    @property
     def width(self):
         """Returns the sequence's frame width."""
         return self._frame_x

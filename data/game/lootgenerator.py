@@ -386,7 +386,7 @@ class LootGenerator():
             "gold": 0,
             "mana": [],
             "life": [],
-            "items": [],
+            "items": set(),
             "runes": []
         }
         luck = SYSTEM["player"].creature.stats["item_qual"].c_value +\
@@ -407,7 +407,7 @@ class LootGenerator():
                 case "item":
                     roll = numpy.random.choice(RARITIES, p=[d / rare_sum for d in adjusted_rare])
                     level = round(enemy.creature.level * (0.7 + numpy.random.rand()))
-                    loot["items"].append(self.generate_item(level, roll))
+                    loot["items"].add(self.generate_item(level, roll))
                 case "mana":
                     roll = numpy.random.randint(1, 6)
                     loot["mana"].append(roll)

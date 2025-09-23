@@ -2,7 +2,7 @@
 
 import pygame
 import numpy
-from data.constants import SYSTEM, SCREEN_WIDTH
+from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER
 
 BLACK = (0,0,0)
 
@@ -50,6 +50,8 @@ class PostEffects():
 
     def tick(self):
         """Applies the effects."""
+        for f in ANIMATION_TICK_TRACKER:
+            f.tick()
         if self._pause > 0:
             self._pause -= 1
         if self._shaking and self._simple_shaking:

@@ -15,6 +15,8 @@ from data.image.sprite import Sprite
 DAMAGE_COLOR = (255, 30, 30)
 VALUE_GROUPS = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
 
+ALREADY = []
+
 class Enemy():
     """Defines an enemy, which associates an entity to a creature
     with set behaviours."""
@@ -87,6 +89,10 @@ class Enemy():
             y = self.y + numpy.random.randint(-20, 20)
             pu = PickUp(x, y, 1, flags=[Flags.ITEM], contained=l)
             POWER_UP_TRACKER.append(pu)
+            if l in ALREADY:
+                print("DUPLICATE")
+            else:
+                ALREADY.append(l)
         self._exploded = True
 
     def distance_to_player(self, player):
