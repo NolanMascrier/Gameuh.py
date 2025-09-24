@@ -7,6 +7,8 @@ import time
 import threading
 import random
 
+import numpy as np
+
 import pygame
 
 from data.creature import Creature
@@ -23,7 +25,24 @@ from data.image.text import Text
 from data.item import Item
 from data.tables.area_table import MODIFIERS
 from data.tables.enemy_table import *
-from data.interface.endlevel import generate_victory
+from data.interface.endlevel import generate_victory, generate_defeat
+
+RUNE_ORDER = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
+
+RED = (255,0,0)
+
+RUNES = {
+    0: "blank",
+    1: "thurisaz",
+    2: "ansuz",
+    3: "ingwaz",
+    4: "othalan",
+    5: "uruz",
+    6: "raido",
+    7: "tiwaz",
+    8: "eihwaz",
+    9: "algiz",
+}
 
 def init_timers():
     """Inits Pygame's timers."""
@@ -35,23 +54,34 @@ def init_timers():
 
 class DummyItems(Item):
     """Fake items to show in the showcase at the end of a level."""
-    def __init__(self, name, image = None, quantity = 1):
+    def __init__(self, name, image = None, quantity = 1, stolen = 0, rarity = 0):
         self._amount = quantity
-        super().__init__(name, "", 0, image=image)
-        self._quantity = Text(f"{quantity}" if quantity <= 999 else "999+", font="item_desc")
+        self._stolen = stolen
+        super().__init__(name, "", 0, image=image, rarity=rarity)
+        if stolen == 0:
+            self._quantity = Text(f"{quantity}" if quantity <= 999 else "999+", font="item_desc")
+        else:
+            self._quantity = Text(f"{quantity - stolen}" if quantity <= 999 else "999+",\
+                                  font="item_desc", default_color=RED)
         self._img = pygame.Surface((64, 64), pygame.SRCALPHA)
         self._img.blit(self._image.image, (0, 0))
-        self._img.blit(self._quantity.image, (0, 0))
+        if quantity > 1:
+            self._img.blit(self._quantity.image, (0, 0))
         self._img = Image(self._img)
         self._image = self._img
 
-    def create_popup(self, is_details = False):
+    def create_popup(self, _ = False):
         """Creates the detailed popup surface."""
         if self._image is None:
             return None
-        txt = "\n".join(trad('runes', self._name)) + "\n"\
-            + trad('descripts', 'amount') + f"{self._amount}"
-        desc = Text(txt, font="item_desc")
+        if self._stolen == 0:
+            txt = "\n".join(trad('runes', self._name)) + "\n"\
+                + trad('descripts', 'amount') + f"{self._amount}"
+        else:
+            txt = "\n".join(trad('runes', self._name)) + "\n"\
+                + trad('descripts', 'amount') + f"{self._amount - self._stolen}"\
+                + f"({trad('descripts', 'stolen')}: #c#(255,0,0){self._stolen}#c#(255,255,255))"
+        desc = Text(txt.format(rarity=trad('rarities', self._rarity)), font="item_desc")
         title_card = SYSTEM["images"]["item_desc"]\
                     .duplicate(desc.width, desc.height)
         sfc = pygame.Surface((title_card.get_width(), title_card.get_height()), pygame.SRCALPHA)
@@ -222,14 +252,57 @@ class Level():
     def end_level(self):
         """End level sequence. Sets the needed flag and creates the dummy items."""
         for pick in POWER_UP_TRACKER:
-            pick.pickup(SYSTEM["player"].creature)
+            pick.pickup(SYSTEM["player"])
         self._finished = True
         SYSTEM["player"].gold += self._gold
         gold = DummyItems("gold", SYSTEM["images"]["gold_icon"], self._gold)
         self._loot.insert(0, gold)
         exp = DummyItems("exp", SYSTEM["images"]["exp_orb_big"], self._exp)
         self._loot.insert(1, exp)
+        pos = 2
+        for i in RUNE_ORDER:
+            if self._runes[i] > 0:
+                rune = DummyItems(RUNES[i], SYSTEM["images"][f"rune_{i}"], self._runes[i])
+                self._loot.insert(pos, rune)
+                pos += 1
         generate_victory()
+        SYSTEM["deltatime"].stop(WAVE_TIMER)
+
+    def fail_level(self):
+        """Game over sequence. Removes half the gold gained, 10% of the player's current exp,
+        and a random amount of items."""
+        self._finished = True
+        failure = int(len(self._loot) * np.random.random())
+        loss = np.random.choice(len(self._loot), size=failure, replace=False).tolist()
+        for i in loss:
+            it = self._loot[i]
+            if it in SYSTEM["player"].inventory:
+                SYSTEM["player"].inventory.remove(it)
+            fake = DummyItems("stolen", SYSTEM["images"]["loss"], rarity=it.rarity)
+            self._loot[i] = fake
+        gold = DummyItems("gold", SYSTEM["images"]["gold_icon"], self._gold, int(self._gold / 2))
+        self._loot.insert(0, gold)
+        exp_loss = int(SYSTEM["player"].creature.exp_to_next / 10)
+        SYSTEM["player"].creature.exp -= exp_loss
+        exp = DummyItems("exp", SYSTEM["images"]["exp_orb_big"], self._exp, exp_loss)
+        self._loot.insert(1, exp)
+        pos = 2
+        runes_loss = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ]
+        for i in RUNE_ORDER:
+            if self._runes[i] > 0:
+                runes_loss[i] = np.random.randint(0, self._runes[i] + 1)
+                SYSTEM["player"].runes[i] -= runes_loss[i]
+                if runes_loss[i] == self._runes[i]:
+                    rune = DummyItems("stolen_rune", SYSTEM["images"]["loss"])
+                else:
+                    rune = DummyItems(RUNES[i], SYSTEM["images"][f"rune_{i}"],\
+                                        self._runes[i], runes_loss[i])
+                self._loot.insert(pos, rune)
+                pos += 1
+        SYSTEM["player"].gold += self._gold / 2
+        generate_defeat()
         SYSTEM["deltatime"].stop(WAVE_TIMER)
 
     def next_wave(self):

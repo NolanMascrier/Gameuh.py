@@ -11,6 +11,8 @@ from data.image.hoverable import Hoverable
 from data.image.slot import Slot
 from data.interface.render import render, renders
 
+RUNE_ORDER = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
+
 def sell(item: Item, slot: Slot):
     """Sells the item."""
     TEXT_TRACKER.append([item.get_image(), SYSTEM["mouse"][0], SYSTEM["mouse"][1], 255])
@@ -164,7 +166,7 @@ def draw_inventory(events):
     render(SYSTEM["images"]["gold_icon"].image, (1520, 40))
     render(text.surface, (1584, 72))
     c = 0
-    for i in [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]:
+    for i in RUNE_ORDER:
         SYSTEM["buttons"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
         SYSTEM["images"][f"pop_rune_{i}"].set(1520, 110 + c * 74).tick()
         Text(f"{SYSTEM['player'].runes[i] if SYSTEM['player'].runes[i] < 1000 else '999+'}",\

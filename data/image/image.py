@@ -19,7 +19,7 @@ class Image():
             self._height = 0
         elif isinstance(uri, pygame.Surface):
             self._image = uri.copy()
-            self._uri = "unknown"
+            self._uri = "unknown.png"
             self._width = self._image.get_width()
             self._height = self._image.get_height()
         elif isinstance(uri, Image):

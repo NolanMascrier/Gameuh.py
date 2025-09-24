@@ -399,7 +399,10 @@
         "area": "Area of effect",
         "debuff_res": "Affliction avoidance",
         "difficulty": "Threat level",
-        "amount": "Obtained x"
+        "amount": "Obtained x",
+        "stolen": "Lost",
+        "victory": "You have triumphed",
+        "defeat": "You have fallen"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",
@@ -471,6 +474,14 @@
           "When you gain enough experience, your character levels up.",
           "By leveling up, not only they fully heal, they also gain",
           "a stat point and a tree point."
+        ],
+        "stolen": [
+          "#s#(35)Lost {rarity}item",
+          "This item was lost with your defeat."
+        ],
+        "stolen_rune": [
+          "#s#(35)Lost rune",
+          "This rune was lost with your defeat."
         ]
     },
     "rarities": [

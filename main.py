@@ -17,7 +17,7 @@ from data.interface.general import logic_tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
 from data.interface.render import render_all, render, resolution, renders
-from data.interface.endlevel import draw_victory
+from data.interface.endlevel import draw_end
 from data.projectile import Projectile
 from data.slash import Slash
 from data.tables.uniques_table import UNIQUES
@@ -90,27 +90,7 @@ def game_loop(keys, time_event):
     SYSTEM["player"].action(keys)
     check_collisions()
     if SYSTEM["player"].creature.stats["life"].current_value <= 0:
-        SYSTEM["game_state"] = GAME_DEATH
-
-def draw_game_over(events):
-    """Draws the defeat screen."""
-    for event in events:
-        if event.type == TICKER_TIMER:
-            logic_tick()
-    SYSTEM["level"].background.draw()
-    draw_game()
-    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
-    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
-    SYSTEM["buttons"]["button_continue"].set(x_offset + 200, y_offset + 300)
-    SYSTEM["buttons"]["button_continue"].draw(SYSTEM["windows"])
-    gold = SYSTEM["level"].gold
-    text = Text(f"#c#{(255, 179, 0)}{gold}")
-    render(SYSTEM["images"]["gold_icon"].image, (x_offset, y_offset))
-    render(text.surface, (x_offset + 80, y_offset + 32))
-    for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"]["button_continue"].press()
+        SYSTEM["level"].fail_level()
 
 def draw_pause(events):
     """Draws the pause menu."""
@@ -222,9 +202,9 @@ def main_loop():
         if SYSTEM["game_state"] == GAME_PAUSE:
             draw_pause(events)
         if SYSTEM["game_state"] == GAME_VICTORY:
-            draw_victory(events)
+            draw_end(events)
         if SYSTEM["game_state"] == GAME_DEATH:
-            draw_game_over(events)
+            draw_end(events)
         if SYSTEM["game_state"] == MENU_MAIN:
             draw_menu(events)
         if SYSTEM["game_state"] == MENU_GEAR:

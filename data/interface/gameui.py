@@ -25,8 +25,6 @@ def generate_background():
                         (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
     data.append((SYSTEM["images"]["mana_potion"].get_image(),\
                         (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    #GOLD
-    data.append((SYSTEM["images"]["gold_icon"].image, (10, 10)))
     #EXP
     data.append((SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60)))
     #SKILLS
@@ -62,14 +60,6 @@ def generate_foreground():
         i += 1
     #
     SYSTEM["ui_foreground"].blits(data)
-
-def draw_gold():
-    """Draws the gold and item counter."""
-    data = []
-    gold = SYSTEM["level"].gold
-    text = Text(f"#c#(255, 179, 0){gold}")
-    data.append((text.surface, (80, 42)))
-    return data
 
 def draw_exp_bar():
     """Draws the EXP bar."""
@@ -186,7 +176,6 @@ def draw_ui():
     to_draw.extend(draw_potions())
     to_draw.extend(draw_exp_bar())
     to_draw.extend(draw_skills())
-    to_draw.extend(draw_gold())
     to_draw.extend(draw_buffs())
     SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
     SYSTEM["ui_surface"].blits(to_draw)

@@ -762,6 +762,8 @@ class Creature:
     @exp.setter
     def exp(self, value):
         self._exp = value
+        if self._exp < 0:
+            self._exp = 0
 
     @property
     def exp_to_next(self) -> int:
