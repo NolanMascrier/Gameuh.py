@@ -80,6 +80,8 @@ def draw_game(show_player = True, show_enemies = True,\
         if SYSTEM["options"]["show_hitboxes"]:
             for b in PROJECTILE_TRACKER:
                 draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
+        SYSTEM["layers"]["bullets"].blits([p.warning, (-100, p.y)] for p in PROJECTILE_TRACKER\
+                                          if p.warning is not None)
         SYSTEM["layers"]["bullets"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_text:
         SYSTEM["layers"]["pickup"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)

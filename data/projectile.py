@@ -3,11 +3,15 @@
 from math import atan2, pi
 import random
 import numpy
+
+import pygame
+
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM, PROJECTILE_TRACKER
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
+from data.interface.render import render
 
 class DummyEntity():
     """Emulates an entity of the projectile."""
@@ -77,6 +81,7 @@ class Projectile():
         self._immune = []
         self._bounced = False
         self._chains = chains
+        self._warning = None
 
     def get_image(self):
         """Returns the projectile image."""
@@ -120,6 +125,19 @@ class Projectile():
             return num, crit
         return (None, None)
 
+    def _distance_to_edge(self):
+        """Return how far this projectile can go before leaving the screen."""
+        angle = numpy.radians(self._angle)
+        dx, dy = numpy.cos(angle), numpy.sin(angle)
+        max_dist = 500000
+        x, y = self._x, self._y
+        for dist in range(0, max_dist, 50):
+            test_x = x + dx * dist
+            test_y = y + dy * dist
+            if test_x < 0 or test_x > SCREEN_WIDTH or test_y < 0 or test_y > SCREEN_HEIGHT:
+                return dist
+        return max_dist
+
     def tick(self):
         """Ticks down the projectile."""
         self._real_image.tick()
@@ -133,38 +151,23 @@ class Projectile():
                     self.y = self._caster.y + self._offset[1]
                     self._box.move((self._x, self._y))
                 if Flags.WARN in self._behaviours:
-                    progress = 1 - (self._delay / self._initial_delay)  # 0 → 1
-
-                    # alpha (fade in/out)
+                    progress = 1 - (self._delay / self._initial_delay)
                     if progress < 0.3:
-                        alpha = int((progress / 0.3) * 255)   # fade in
-                    elif progress < 0.7:
-                        alpha = 255                           # hold
+                        alpha = int((progress / 0.3) * 185)
                     else:
-                        alpha = int((1 - (progress - 0.7) / 0.3) * 255)  # fade out
-
-                    # length (shrink at the end)
-                    max_len = 2000  # adjust depending on projectile lifetime
+                        alpha = 185
+                    max_len = self._distance_to_edge() + 30
                     if progress < 0.7:
                         length = max_len
                     else:
-                        shrink_p = (progress - 0.7) / 0.3     # 0 → 1 in shrink phase
+                        shrink_p = (progress - 0.7) / 0.3
                         length = int(max_len * (1 - shrink_p))
-                    angle_rad = numpy.radians(self._angle)
-                    start_x, start_y = int(self._x), int(self._y)
-
-                    # end point moves with shrinking length
-                    end_x = int(start_x + numpy.cos(angle_rad) * length)
-                    end_y = int(start_y + numpy.sin(angle_rad) * length)
-
-                    # create a transparent surface
-                    line_surf = pygame.Surface((length, 4), pygame.SRCALPHA)
-                    line_surf.fill((255, 0, 0, alpha))
-
-                    # rotate and blit
-                    rotated = pygame.transform.rotate(line_surf, -self._angle)
-                    rect = rotated.get_rect(center=(start_x, start_y))
-                    SYSTEM["screen"].blit(rotated, rect.topleft)
+                    if length > 0:
+                        line_surf = pygame.Surface((length, self._box.height), pygame.SRCALPHA)
+                        line_surf.fill((255, 0, 0, alpha))
+                        self._warning = pygame.transform.rotate(line_surf, -self._angle)
+                    else:
+                        self._warning = None
                 self._delay -= float(0.016)
                 return
         angle = numpy.radians(self._angle)
@@ -304,3 +307,8 @@ class Projectile():
     def ignore_team(self) -> bool:
         """Returns wether or not the slash's ignore the evil flag."""
         return self._ignore_team
+
+    @property
+    def warning(self) -> bool:
+        """Returns the aoe warning surface."""
+        return self._warning

@@ -19,7 +19,7 @@ VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
-VOIDSPEAR = Damage(10, dark=8, flags=[Flags.SPELL])
+VOIDSPEAR = Damage(10, dark=15, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=10, flags=[Flags.MELEE])
 EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
@@ -117,7 +117,7 @@ def generate_spell_list():
         Flags.DELAYED, Flags.PIERCING])
     voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\
         cooldown=0, projectiles=3, delay=2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
-        Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN], offset_y=30)
+        Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN], offset_y=50)
     exult = Spell("exult", exult_icon, "exult_img", EXULT, 0,\
         cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER,\
         Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED])
