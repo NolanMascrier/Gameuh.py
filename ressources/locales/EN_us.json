@@ -164,7 +164,8 @@
       "voidboss": "Norcus the Fake",
       "voidbomber": "Void Bomber",
       "voidsniper": "Necromancer",
-      "voidling": "Void Bat"
+      "voidling": "Void Bat",
+      "monolith": "The Monolith"
     },
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",

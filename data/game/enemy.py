@@ -10,7 +10,6 @@ from data.creature import Creature
 from data.constants import Flags, POWER_UP_TRACKER, SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.game.pickup import PickUp
 from data.game.spell import Spell
-from data.image.sprite import Sprite
 
 DAMAGE_COLOR = (255, 30, 30)
 VALUE_GROUPS = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]

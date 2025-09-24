@@ -39,6 +39,15 @@ class PostEffects():
         self._simple_shaking = True
         self._timer = duration
 
+    def stop_shaking(self):
+        """force Stops the shaking."""
+        self._shaking = False
+        self._simple_shaking = False
+        self._shake_x = 0
+        self._shake_y = 0
+        self._max_x = 0
+        self._max_y = 0
+
     def flash(self, color, duration: int = 120):
         """Flashs the screen for a duration."""
         duration *= SYSTEM["options"]["fps"] / 60
@@ -61,12 +70,7 @@ class PostEffects():
                 self._shake_y = numpy.random.randint(-self._max_y, self._max_y)
             self._timer -= 1
             if self._timer <= 0:
-                self._shaking = False
-                self._simple_shaking = False
-                self._shake_x = 0
-                self._shake_y = 0
-                self._max_x = 0
-                self._max_y = 0
+                self.stop_shaking()
         SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
         SYSTEM["text_generator"].generate_fps()
         if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
@@ -76,7 +80,7 @@ class PostEffects():
                 (SYSTEM["options"]["screen_resolution"][0],\
                  SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].fill(BLACK)
-        SYSTEM["real_windows"].blit(window, (self._shake_x, self._shake_y))
+        SYSTEM["real_windows"].blit(window, (0, 0))
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)
@@ -88,3 +92,8 @@ class PostEffects():
     def pause(self):
         """Returns the processor's pause status."""
         return self._pause > 0
+
+    @property
+    def shake_factor(self):
+        """Returns the shake factor."""
+        return self._shake_x, self._shake_y

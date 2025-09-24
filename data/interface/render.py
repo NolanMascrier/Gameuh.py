@@ -21,17 +21,18 @@ def renders(lst):
 def render_all():
     """Renders the screen."""
     SYSTEM["windows"].fill((0,0,0, 255))
+    shake = SYSTEM["post_effects"].shake_factor
     if SYSTEM["game_state"] != LOADING:
-        SYSTEM["windows"].blit(SYSTEM["gm_background"], (0,0))
-        SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], (0,0))
+        SYSTEM["windows"].blit(SYSTEM["gm_background"], shake)
+        SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], shake)
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:
         for _, layer in SYSTEM["layers"].items():
-            SYSTEM["windows"].blit(layer, (0, 0))
+            SYSTEM["windows"].blit(layer, shake)
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
     elif SYSTEM["game_state"] in [MENU_INVENTORY]:
-        SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], (0, 0))
+        SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], shake)
 
 def resolution():
     """Applies the resolution morph of the screen."""

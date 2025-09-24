@@ -115,3 +115,32 @@ VOIDBOSS = {
     "delay": 0,
     "hitbox": None
 }
+
+MONOLITH = {
+    "image": "monolith",
+    "name": "monolith",
+    "stats": {
+            "life": Ressource(1500, "Life"),
+            "mana": Ressource(1, "Mana"),
+            "life_regen": Stat(0, "life_regen"),
+            "mana_regen": Stat(0, "mana_regen"),
+            "str": Stat(10, "Strength"),
+            "dex": Stat(10, "Dexterity"),
+            "int": Stat(10, "Intelligence"),
+            "def": Stat(10, "Endurance"),
+            "light": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "dark": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "fire": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "ice": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "elec": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "energy": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "speed": Stat(0.3, "speed", scaling_value=0),
+    },
+    "flags": [Flags.BOSS, Flags.PINNACLE, Flags.MONOLITH],
+    "cooldown": 0.25,
+    "exp": 15,
+    "gold": 25,
+    "spelllist": [("e_voidflurry", 1), ("e_voidspear", 0.7)],
+    "delay": 0,
+    "hitbox": None
+}

@@ -16,6 +16,7 @@ from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIM
     trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
     PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER
 from data.game.enemy import Enemy
+from data.game.enemy_monolith import Monolith
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation, Image
@@ -224,16 +225,59 @@ class Level():
         self._wave_tracker.append(wave)
         return wave
 
-    def load_level(self):
-        """Loading function of the level."""
-        SYSTEM["game_state"] = LOADING
+    def summon_pinnacle(self, level: int, _):
+        """Summons a pinnacle boss."""
+        wave = []
+        if Flags.MONOLITH in self._flags:
+            y_pos = 340
+            x_pos = SCREEN_WIDTH
+            enemy_type = self._boss["flags"]
+            img = self._boss["image"]
+            ent = Entity(SCREEN_WIDTH + 200, y_pos, img, hitbox_mod=self._boss["hitbox"])
+            exp_value = random.randint(int(self._boss["exp"]*(level + 1) *0.9),\
+                                    int(self._boss["exp"]*(level + 1) * 1.1))
+            gold_value = random.randint(int(self._boss["gold"]*(level + 1) *0.9),\
+                                        int(self._boss["gold"]*(level + 1) * 1.1))
+            attack_delay = self._boss["delay"]
+            crea = Creature(self._boss["name"])
+            crea.import_stackblock(self._boss["stats"])
+            for mod in self._modifiers:
+                crea.afflict(mod.as_affliction())
+            crea.scale(level)
+            crea.reset()
+            dest = (SCREEN_WIDTH - x_pos, y_pos)
+            enemy = Monolith(ent, crea, self._boss["spelllist"], behaviours=enemy_type,\
+                timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay,\
+                destination=dest)
+            wave = [enemy]
+        self._wave_tracker.append(wave)
+        return wave
+
+    def load_simple_level(self):
+        """Loads a basic level."""
         tasks = [(self.summon_wave, i, 1) for i in range(self._waves)]
         if self._boss is not None:
             self._waves += 1
             tasks.append((self.summon_boss, 1, 1))
         total = sum(weight for _, _, weight in tasks)
         SYSTEM["progress"] = 0
+        return total, tasks
+
+    def load_pinnacle(self):
+        """Loads a basic level."""
+        tasks = [(self.summon_pinnacle, 1, 1)]
+        total = sum(weight for _, _, weight in tasks)
+        SYSTEM["progress"] = 0
+        return total, tasks
+
+    def load_level(self):
+        """Loading function of the level."""
+        SYSTEM["game_state"] = LOADING
         progress = 0
+        if Flags.PINNACLE in self._flags:
+            total, tasks = self.load_pinnacle()
+        else:
+            total, tasks = self.load_simple_level()
         for t, i, w in tasks:
             SYSTEM["loading_text"] = Text(trad('loading', 'level'), font="item_titles", size=30)
             t(self._area_level, i)
@@ -261,6 +305,8 @@ class Level():
         SYSTEM["deltatime"].start(WAVE_TIMER, self._wave_timer)
         for e in self._wave_tracker[self._current_wave]:
             ENNEMY_TRACKER.append(e)
+        if Flags.MONOLITH in self._flags:
+            SYSTEM["post_effects"].shake(50, 0, 500)
         self._wave_tracker[self._current_wave].clear()
         self._current_wave += 1
 
@@ -483,3 +529,7 @@ class Level():
     def boss(self):
         """Returns the boss' stats."""
         return self._boss_stat
+
+    @boss.setter
+    def boss(self, value):
+        self._boss_stat = value

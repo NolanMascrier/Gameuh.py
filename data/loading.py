@@ -9,7 +9,7 @@ import numpy as np
 
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
+    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, Flags,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language, UPDATE_TIMER
 
@@ -35,7 +35,7 @@ from data.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
 from data.tables.uniques_table import load_uniques
-from data.tables.enemy_table import VOIDBOSS
+from data.tables.enemy_table import VOIDBOSS, MONOLITH
 
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
@@ -49,6 +49,8 @@ def generate_random_level():
     diff_level = [0,1,2,3]
     diff_weight = [0.4, 0.25, 0.2, 0.15]
     diff = np.random.choice(diff_level, p=diff_weight)
+    waves = random.randint(2, 8)
+    flags = []
     match zone:
         case 0:
             area = SYSTEM["sunrise"]
@@ -74,11 +76,15 @@ def generate_random_level():
             area = SYSTEM["space"]
             icon = SYSTEM["images"]["space_icon"]
             name = "Transcending All"
+            flags = [Flags.PINNACLE, Flags.MONOLITH]
+            has_boss = MONOLITH
+            waves = 1
         case 6:
             area = SYSTEM["creepy"]
             icon = SYSTEM["images"]["creepy_icon"]
             name = "Murderforest of Murderbourgh"
-    level = Level(name, area_lvl, icon, 6000, area, 2, difficulty=diff, boss=has_boss)
+    level = Level(name, area_lvl, icon, 6000, area, waves,\
+                  difficulty=diff, boss=has_boss, flags=flags)
     return level
 
 def reset():
@@ -147,6 +153,7 @@ def load_animations():
     SYSTEM["images"]["mana_jauge"] = Animation("mana.png", 144, 144, animated=False)
     SYSTEM["images"]["life_potion"] = Animation("lifepot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
+    SYSTEM["images"]["monolith"] = Animation("monolith.png", 200, 400, frame_rate=0.1)
     SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
     SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)

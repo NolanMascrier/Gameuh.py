@@ -14,3 +14,5 @@ user_config.json
 *.log
 /tools/*
 data/numerics/__pycache__/__init__.cpython-310.pyc
+data/numerics/__pycache__/__init__.cpython-310.pyc
+*.pyc
