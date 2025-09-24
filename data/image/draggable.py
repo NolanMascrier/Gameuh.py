@@ -42,7 +42,8 @@ class Draggable(Image):
             self._width = contains.icon.width
             self._height = contains.icon.height
             self._image = contains.icon.clone().get_image()
-            self._hover = Hoverable(x, y, None, None, surface=self._image, override=contains.surface)
+            self._hover = Hoverable(x, y, None, None,
+                                    surface=self._image, override=contains.surface)
         self._parent_slot = None
         self._last_slot = None
         self._parent_panel = None
@@ -93,7 +94,7 @@ class Draggable(Image):
                     SYSTEM["dragged"] = self
                     SYSTEM["cooldown"] = 0.5
         elif not mouse_click[0]:
-            if not self._slotted:
+            if not self._slotted and not self._immutable:
                 if self._last_panel is not None:
                     self._last_panel.insert(self)
                 elif self._last_slot is not None:
@@ -166,3 +167,7 @@ class Draggable(Image):
     def immutable(self):
         """Returns whether or not the draggable is immutable."""
         return self._immutable
+
+    @immutable.setter
+    def immutable(self, value):
+        self._immutable = value

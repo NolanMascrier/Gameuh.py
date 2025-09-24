@@ -146,3 +146,4 @@ def generate_spell_list():
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy
     SYSTEM["spells"]["e_kamikaze"] = kamikaze
+    SYSTEM["spells"][None] = None

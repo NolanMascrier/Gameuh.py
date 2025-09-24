@@ -401,7 +401,8 @@ class Spell():
                 f"{round(self._base_damage.coeff * 100, 2)}%",\
                 trad('dmg_effic'), BLACK) if self._base_damage is not None else None,
             "area": self._stats['area'].c_value,
-            "crit_rate": 1 + self._stats['crit_rate'].c_value,
+            "crit_rate": 1 + self._stats['crit_rate'].c_value if\
+                (self._real_damage is not None and not self._real_damage.is_crit) else True,
             "crit_dmg": 1 + self._stats['crit_dmg'].c_value,
             "sequence": sequence,
             "explosion": explosion

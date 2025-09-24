@@ -123,6 +123,7 @@ class Slot():
                 draggable.set_parent(None)
                 SYSTEM["dragged"] = None
                 return True
+            draggable.immutable = self._immutable
             self.insert(draggable)
             return True
         return False

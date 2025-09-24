@@ -94,7 +94,7 @@ def single_slot(spell, superspell = None, decoded_data = None):
     cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
         data["costs"][1] > 0 else None
     crit_c = data["crit_rate"] * SYSTEM["player"].creature.stats["crit_rate"].c_value\
-        if data["crit_rate"] is not None else None
+        if data["crit_rate"] is not True else (1 if data["crit_rate"] is not None else None)
     crit_d = data["crit_dmg"] * SYSTEM["player"].creature.stats["crit_dmg"].c_value\
         if data["crit_dmg"] is not None else None
     area = data["area"] + SYSTEM["player"].creature.stats["area"].c_value\
@@ -244,9 +244,11 @@ def open_spell_screen():
         Text(trad('spells_desc', 'none'), font="item_desc", size=20, default_color=BLACK)
     ]
     SYSTEM["gear_panel"] = SlotPanel(10, 10,\
-        default=SYSTEM["player"].inventory, display_filter=Flags.JEWEL)
-    SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells, immutable=True)
-    SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes, immutable=True)
+        default=SYSTEM["player"].inventory, display_filter=Flags.JEWEL, accept_only=Item)
+    SYSTEM["spell_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=spells, immutable=True,\
+        accept_only=Spell)
+    SYSTEM["dash_panel"] = SlotPanel(SCREEN_WIDTH - 535, 10, default=dashes, immutable=True,\
+        accept_only=Spell)
 
 def unloader():
     """Unloads all spellbook-specific data."""

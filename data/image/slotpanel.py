@@ -29,7 +29,7 @@ class SlotPanel:
         to None.
     """
     def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None,\
-        immutable = False, display_filter = None):
+        immutable = False, display_filter = None, accept_only = None):
         self._x = x
         self._y = y
         self._slot_size = slot_size
@@ -44,6 +44,7 @@ class SlotPanel:
         self._default = default
         self._scroll = 0
         self._immutable = immutable
+        self._accept_only = accept_only
         self._filter = display_filter
         if isinstance(default, Iterable):
             for item in default:
@@ -148,6 +149,9 @@ class SlotPanel:
             return False
         if self.is_hovered():
             pos = self.__get_pos()
+            if self._accept_only is not None:
+                if not isinstance(draggable.contains, self._accept_only):
+                    return False
             if self._immutable != draggable.immutable:
                 SYSTEM["dragged"] = None
                 return False
