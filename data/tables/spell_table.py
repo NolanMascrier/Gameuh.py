@@ -16,8 +16,10 @@ KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
 
 DARKBOLT = Damage(1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
+VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
+VOIDSPEAR = Damage(10, dark=8, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=10, flags=[Flags.MELEE])
 EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
@@ -59,8 +61,12 @@ def generate_spell_list():
         Animation("arc.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["icebolt_proj_img"] =\
         Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
+    SYSTEM["images"]["voidspear_proj_img"] =\
+        Animation("anims/voidspear.png", 24, 9, frame_rate=0.05, loops=False).scale(54, 144)
     SYSTEM["images"]["voidbolt_proj_img"] =\
         Animation("pew.png", 13, 13, frame_rate=0.25)
+    SYSTEM["images"]["voidbolt_proj2_img"] =\
+        Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["fireball_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(76, 128)
     SYSTEM["images"]["fireball_expl_img"] =\
@@ -109,11 +115,16 @@ def generate_spell_list():
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING])
+    voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\
+        cooldown=0, projectiles=3, delay=2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
+        Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN], offset_y=30)
     exult = Spell("exult", exult_icon, "exult_img", EXULT, 0,\
         cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER,\
         Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED])
     voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1,\
         cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
+    voidoltflurry = Spell("voidbolt_boss", voidbolt_icon, "voidbolt_proj2_img", VOIDBOLT_ALT, 0,\
+        cooldown=0.1, projectiles=9, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     arc = Spell("arc", arc_icon, "arc_proj_img", ARC, 3,\
         cooldown=0.35, projectiles=1, chains=3, flags=[Flags.DARK, Flags.SPREAD,\
         Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS])
@@ -146,4 +157,6 @@ def generate_spell_list():
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy
     SYSTEM["spells"]["e_kamikaze"] = kamikaze
+    SYSTEM["spells"]["e_voidflurry"] = voidoltflurry
+    SYSTEM["spells"]["e_voidspear"] = voidspear
     SYSTEM["spells"][None] = None

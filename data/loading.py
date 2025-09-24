@@ -9,7 +9,7 @@ import numpy as np
 
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
-    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, ANIMATION_TICK_TRACKER,\
+    RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
     change_language, UPDATE_TIMER
 
@@ -35,6 +35,7 @@ from data.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
 from data.tables.uniques_table import load_uniques
+from data.tables.enemy_table import VOIDBOSS
 
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
@@ -43,6 +44,7 @@ from data.game.deltatime import DeltaTime
 def generate_random_level():
     """Creates a random level."""
     area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 1)
+    has_boss = VOIDBOSS if random.randint(0, 3) == 0 else None
     zone = random.randint(0, 6)
     diff_level = [0,1,2,3]
     diff_weight = [0.4, 0.25, 0.2, 0.15]
@@ -76,7 +78,7 @@ def generate_random_level():
             area = SYSTEM["creepy"]
             icon = SYSTEM["images"]["creepy_icon"]
             name = "Murderforest of Murderbourgh"
-    level = Level(name, area_lvl, icon, 6000, area, difficulty=diff)
+    level = Level(name, area_lvl, icon, 6000, area, 2, difficulty=diff, boss=has_boss)
     return level
 
 def reset():
@@ -134,7 +136,7 @@ def load_animations():
     """Load the animations."""
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
-    SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.25).scale(300, 256)
+    SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.1).scale(300, 256)
     SYSTEM["images"]["bouncer"] = Animation("bounce.png", 8, 8, frame_rate=0.25).scale(64, 64)
     SYSTEM["images"]["generator"] = Animation("generator.png", 8, 8, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["lazer"] = Animation("lazor.png", 16, 10, frame_rate=0.25).scale(16, 64)
@@ -285,7 +287,8 @@ def load_images():
     SYSTEM["images"]["gold_icon"] = Image("thune.png")
     SYSTEM["images"]["line_break"] = Image("exp.png").scale(32, 128)
     SYSTEM["images"]["mission_map"] = Image("mission.png")
-    SYSTEM["images"]["boss_jauge"] = Image("life_boss.png")
+    SYSTEM["images"]["boss_jauge"] = Image("life_boss.png").scale(100, 1680)
+    SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png").scale(100, 1680)
     SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
     SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
     SYSTEM["images"]["gear_helm"] = Image("ui/gear_helm.png").scale(64, 64)
@@ -298,7 +301,6 @@ def load_images():
     SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
     SYSTEM["images"]["test_armor"] = Image("icons/elementalfury.png").scale(64, 64)
     SYSTEM["images"]["sell_slot"] = Image("ui/gear_helm.png").scale(128, 128)
-    SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png")
     SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
     SYSTEM["images"]["ice_icon"] = Image("icons/ice.png")
     SYSTEM["images"]["space_icon"] = Image("icons/space.png")

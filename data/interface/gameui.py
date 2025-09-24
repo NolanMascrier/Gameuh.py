@@ -3,7 +3,7 @@ exp bar, enemy life, boss life ..."""
 
 import pygame
 from data.image.text import Text
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2, trad
 from data.image.text_generator import make_text
 
 UI_SKILLS_OFFSET = 650
@@ -164,6 +164,22 @@ def draw_skills():
         i += 1
     return data
 
+def draw_boss():
+    """Draws the boss life bar."""
+    if SYSTEM["level"] is None or SYSTEM["level"].boss is None or\
+        SYSTEM["level"].current_wave != SYSTEM["level"].waves:
+        return []
+    data = []
+    life = SYSTEM["level"].boss.stats["life"].current_value /\
+        SYSTEM["level"].boss.stats["life"].c_value
+    w = life * 1680
+    boss = SYSTEM["images"]["boss_jauge"].image.subsurface(0, 0, w, 100)
+    txt = Text(trad('enemies', SYSTEM["level"].boss.name), size=30, font="item_titles_alt")
+    data.append((SYSTEM["images"]["boss_jauge_back"].image, (150, 30)))
+    data.append((boss, (150, 30)))
+    data.append((txt.image, (170, 20)))
+    return data
+
 def draw_ui():
     """Draws the user interface."""
     UPDATE_COUNTER[0] += 1
@@ -177,6 +193,7 @@ def draw_ui():
     to_draw.extend(draw_exp_bar())
     to_draw.extend(draw_skills())
     to_draw.extend(draw_buffs())
+    to_draw.extend(draw_boss())
     SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
     SYSTEM["ui_surface"].blits(to_draw)
     SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0))

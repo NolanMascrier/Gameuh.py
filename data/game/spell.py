@@ -449,6 +449,8 @@ class Spell():
     def spawn_projectile(self, entity, caster, evil = False,\
             x_diff = 0, y_diff = 0, delay = 1, angle = 0, ignore_team = False):
         """Spanws a projectile."""
+        if evil and entity.x > SYSTEM["player"].entity.x:
+            angle += 180
         area = self._stats["area"].c_value + caster.stats["area"].c_value
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
@@ -476,7 +478,6 @@ class Spell():
         """Shoots the spell."""
         mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
         life_cost = caster.get_efficient_value(self._stats["life_cost"].c_value)
-
         if not force:
             if self._cooldown > 0:
                 return False
@@ -490,7 +491,8 @@ class Spell():
         if Flags.PROJECTILE in self.all_flags:
             if Flags.BARRAGE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
-                    self.spawn_projectile(entity, caster, evil, 0, i * 20, i + 1, 0, ignore_team)
+                    self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
+                                          i + 1, 0, ignore_team)
             elif Flags.SPREAD in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)

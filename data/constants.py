@@ -362,6 +362,8 @@ class Flags(str, Enum):
     AIMED_AT_CLOSEST = "aimed_at_closest"
     HARD_TRACKING = "hard_tracking"
     EXPLODES = "explodes"
+    UNNATACH = "unnatached_barrage"
+    WARN = "warning"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"
@@ -376,6 +378,8 @@ class Flags(str, Enum):
     CUTS_PROJECTILE = "cuts_proj"
     COMBO_SPELL = "combo_spell"
     #Flags for ennemies
+    BOSS = "boss"
+    RANDOM_MOVE = "move_randomly"
     SHOOTER = "shooter"
     CHASER = "chaser"
     SUICIDER = "suicider"

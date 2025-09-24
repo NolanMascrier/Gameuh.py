@@ -22,7 +22,7 @@ class Projectile():
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1,\
-                ignore_team = False):
+                ignore_team = False, offset_x = 0, offset_y = 0):
         self._x = x
         self._y = y
         self._speed = speed
@@ -31,6 +31,7 @@ class Projectile():
         self._image = imagefile
         self._area = area
         self._ignore_team = ignore_team
+        self._offset_barrage = (offset_x, offset_y)
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - numpy.atan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
@@ -54,6 +55,7 @@ class Projectile():
         self._evil = evil
         self._bounces = bounces
         self._delay = delay
+        self._initial_delay = delay
         self._explosion = explosion
         hitbox_len = self._width
         hitbox_height = self._height
@@ -126,9 +128,43 @@ class Projectile():
                     SYSTEM["player.y"] - self._target.entity.hitbox.y) * 180 / pi
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
-                if self._caster is not None:
+                if self._caster is not None and Flags.UNNATACH not in self._behaviours:
                     self.x = self._caster.x + self._offset[0]
                     self.y = self._caster.y + self._offset[1]
+                    self._box.move((self._x, self._y))
+                if Flags.WARN in self._behaviours:
+                    progress = 1 - (self._delay / self._initial_delay)  # 0 → 1
+
+                    # alpha (fade in/out)
+                    if progress < 0.3:
+                        alpha = int((progress / 0.3) * 255)   # fade in
+                    elif progress < 0.7:
+                        alpha = 255                           # hold
+                    else:
+                        alpha = int((1 - (progress - 0.7) / 0.3) * 255)  # fade out
+
+                    # length (shrink at the end)
+                    max_len = 2000  # adjust depending on projectile lifetime
+                    if progress < 0.7:
+                        length = max_len
+                    else:
+                        shrink_p = (progress - 0.7) / 0.3     # 0 → 1 in shrink phase
+                        length = int(max_len * (1 - shrink_p))
+                    angle_rad = numpy.radians(self._angle)
+                    start_x, start_y = int(self._x), int(self._y)
+
+                    # end point moves with shrinking length
+                    end_x = int(start_x + numpy.cos(angle_rad) * length)
+                    end_y = int(start_y + numpy.sin(angle_rad) * length)
+
+                    # create a transparent surface
+                    line_surf = pygame.Surface((length, 4), pygame.SRCALPHA)
+                    line_surf.fill((255, 0, 0, alpha))
+
+                    # rotate and blit
+                    rotated = pygame.transform.rotate(line_surf, -self._angle)
+                    rect = rotated.get_rect(center=(start_x, start_y))
+                    SYSTEM["screen"].blit(rotated, rect.topleft)
                 self._delay -= float(0.016)
                 return
         angle = numpy.radians(self._angle)

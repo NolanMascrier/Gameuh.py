@@ -160,6 +160,12 @@
     "area":[
       "Area of effect affects the size of your abilities."
     ],
+    "enemies": {
+      "voidboss": "Norcus the Fake",
+      "voidbomber": "Void Bomber",
+      "voidsniper": "Necromancer",
+      "voidling": "Void Bat"
+    },
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "tree": {
@@ -249,7 +255,8 @@
         "cut_proj": "Can destroy enemy projectiles",
         "trigger": "This spell cannot be used",
         "trigger_on_crit": "This spell is triggered by critical hits",
-        "enemies": "Enemies have"
+        "enemies": "Enemies have",
+        "boss": "Enemy Leader detected"
     },
     "affliction_name":{
         "elemental_fury": "Elemental Fury",

@@ -90,3 +90,28 @@ VOIDBOMBER = {
     "delay": 0,
     "hitbox": None
 }
+
+VOIDBOSS = {
+    "image": "boss_a",
+    "name": "voidboss",
+    "stats": {
+            "life": Ressource(150, "Life"),
+            "mana": Ressource(1, "Mana"),
+            "life_regen": Stat(0, "life_regen"),
+            "mana_regen": Stat(0, "mana_regen"),
+            "str": Stat(10, "Strength"),
+            "dex": Stat(10, "Dexterity"),
+            "int": Stat(10, "Intelligence"),
+            "def": Stat(10, "Endurance"),
+            "light": Stat(-0.5, "Light resistance", 0.9, scaling_value=0.005),
+            "fire_dmg": Stat(2, "Dark damage", scaling_value=0.05),
+            "speed": Stat(1, "speed", scaling_value=0),
+    },
+    "flags": [Flags.BOSS, Flags.RANDOM_MOVE],
+    "cooldown": 0.25,
+    "exp": 15,
+    "gold": 25,
+    "spelllist": [("e_voidflurry", 1), ("e_voidspear", 0.7)],
+    "delay": 0,
+    "hitbox": None
+}

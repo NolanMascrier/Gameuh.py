@@ -7,7 +7,7 @@ import random
 import numpy
 from data.physics.entity import Entity
 from data.creature import Creature
-from data.constants import Flags, POWER_UP_TRACKER, SYSTEM
+from data.constants import Flags, POWER_UP_TRACKER, SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.game.pickup import PickUp
 from data.game.spell import Spell
 from data.image.sprite import Sprite
@@ -180,12 +180,19 @@ class Enemy():
                 self._entity.play("attack")
                 self._attack_delay = 0
                 self._attacking = True
+        if Flags.RANDOM_MOVE in self._behaviours:
+            if self._counter >= self._timer:
+                self.attack()
+                self._destination = [numpy.random.randint(SCREEN_WIDTH - 400, SCREEN_WIDTH),\
+                                     numpy.random.randint(100, SCREEN_HEIGHT - 400)]
+            else:
+                self._entity.move(self._destination)
         if self._counter >= self._timer:
             self._counter -= self._timer
 
     def attack(self):
         """Launches a random attack from the enemy's arsenal."""
-        choice = random.uniform(0, 1)
+        choice = random.uniform(0, sum(weight for _, weight in self._abilities))
         cumulative = 0.0
         for ability, weight in self._abilities:
             cumulative += weight
@@ -199,6 +206,7 @@ class Enemy():
                     ignore = False
                 SYSTEM["spells"][ability].cast(self._creature, self._entity,\
                                                True, self._aim_right, True, ignore)
+                break
         if Flags.SUICIDER in self._behaviours:
             self.creature.stats["life"].value = 0
 

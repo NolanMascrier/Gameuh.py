@@ -101,7 +101,7 @@ class Level():
                     wave_timer = 5000,\
                     background: Animation|Parallaxe|None = None,\
                     waves: int = 5, difficulty = 0,\
-                    flags = None):
+                    flags = None, boss = None):
         self._name = name
         self._area_level = area_lvl
         self._difficulty = difficulty
@@ -118,6 +118,7 @@ class Level():
         self._wave_timer = wave_timer
         self._gold = 0
         self._exp = 0
+        self._boss = boss
         self._loot = []
         self._wave_tracker = []
         self._runes = [
@@ -125,6 +126,7 @@ class Level():
         ]
         self._modifiers = self.generate_modifiers()
         self._t = time.time()
+        self._boss_stat = None
 
     def generate_modifiers(self):
         """Generates a list of modifiers for the level."""
@@ -212,10 +214,23 @@ class Level():
             wave.append(mob)
         self._wave_tracker.append(wave)
 
+    def summon_boss(self, level:int, _):
+        """Summons the boss."""
+        if self._boss is None:
+            return []
+        boss = self.generate_enemy(self._boss, level)
+        wave = [boss]
+        self._boss_stat = boss.creature
+        self._wave_tracker.append(wave)
+        return wave
+
     def load_level(self):
         """Loading function of the level."""
         SYSTEM["game_state"] = LOADING
         tasks = [(self.summon_wave, i, 1) for i in range(self._waves)]
+        if self._boss is not None:
+            self._waves += 1
+            tasks.append((self.summon_boss, 1, 1))
         total = sum(weight for _, _, weight in tasks)
         SYSTEM["progress"] = 0
         progress = 0
@@ -361,6 +376,8 @@ class Level():
         for aff in self._modifiers:
             if aff is not None:
                 text += f"#s#(17){aff.describe()}\n"
+        if self._boss is not None:
+            text += f"#s#(17){trad('meta_words', 'boss')}\n"
         return text
 
     @property
@@ -410,12 +427,21 @@ class Level():
 
     @property
     def current_wave(self):
-        """Returns the level's current wave.."""
+        """Returns the level's current wave."""
         return self._current_wave
 
     @current_wave.setter
     def current_wave(self, value):
         self._current_wave = value
+
+    @property
+    def waves(self):
+        """Returns the level's amount of wave."""
+        return self._waves
+
+    @waves.setter
+    def waves(self, value):
+        self._waves = value
 
     @property
     def gold(self):
@@ -452,3 +478,8 @@ class Level():
     @runes.setter
     def runes(self, value):
         self._runes = value
+
+    @property
+    def boss(self):
+        """Returns the boss' stats."""
+        return self._boss_stat
