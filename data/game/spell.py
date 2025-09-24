@@ -112,6 +112,7 @@ class Spell():
         self._started = False
         self.generate_surface()
         self.update()
+        self._counter = 0
 
     def update(self):
         """Updates the data of the spell."""
@@ -170,6 +171,7 @@ class Spell():
         sfc.blit(title.surface, title_pos)
         sfc.blit(desc.surface, desc_pos)
         self._surface = sfc
+        self._alternate = False
 
     def gain_exp(self, amount: int):
         """Grants the skill experience."""
@@ -500,6 +502,15 @@ class Spell():
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
                         self.spawn_projectile(entity, caster, evil, 0, 0, i + 1, -45 + spread * i)
+            elif Flags.CIRCULAR_BLAST in self.all_flags:
+                if self._stats["projectiles"].c_value == 1:
+                    self.spawn_projectile(entity, caster, evil)
+                else:
+                    self._counter = (self._counter + 5) % 360
+                    spread = 360 / self._stats["projectiles"].c_value
+                    for i in range(0, int(self._stats["projectiles"].c_value)):
+                        self.spawn_projectile(entity, caster, evil,
+                                              0, 0, i + 1, self._counter + -spread * i)
         if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
                 if not isinstance(afflic, Affliction):

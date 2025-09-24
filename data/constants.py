@@ -372,6 +372,7 @@ class Flags(str, Enum):
     DEBUFF = "debuff"
     DASH = "dash"
     AURA = "aura"
+    CIRCULAR_BLAST = "spread_all_around"
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"
     #Flags for slashes

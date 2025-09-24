@@ -23,6 +23,10 @@ class Monolith(Enemy):
         """Phase 0 -
         Both shoots simple abilities.
         """
+        if self._counter <= 0:
+            SYSTEM["spells"]["e_lightshard"].cast(self._creature, self._entity,\
+                                               True, self._aim_right, True)
+            self._counter = 0.2
 
     def tick(self, player):
         """Ticks down the creature."""
@@ -38,9 +42,12 @@ class Monolith(Enemy):
             self._entity.move((1500, 340))
             if self.distance_to_destination() < 500 or self._counter <= -3:
                 self._phase = 0
+                self._counter = 2
                 SYSTEM["level"].boss = self._creature
                 SYSTEM["post_effects"].stop_shaking()
             return
+        if self._phase == 0:
+            self.phase_0()
         self._entity.tick(self)
         self._creature.tick()
         if self._counter <= 0:

@@ -15,6 +15,7 @@ FIREBALL_EXPLOSION = Damage(2, fire=7, flags=[Flags.SPELL])
 KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
 
 DARKBOLT = Damage(1, dark=1, flags=[Flags.SPELL])
+LIGHTSHARD = Damage(1, light=5, flags=[Flags.SPELL])
 VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
@@ -92,6 +93,7 @@ def generate_spell_list():
     SYSTEM["images"]["kamikaze_img"] =\
         Animation("anims/kamikaze.png", 64, 64, frame_rate=0.2, loops=False, plays_once=True,
                 lines=4).scale(256, 256)
+    SYSTEM["images"]["lightshards"] = Animation("anims/lightshard.png", 16, 10, frame_rate=0.1).scale(20, 32)
 
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img", FIREBALL_EXPLOSION)
@@ -128,6 +130,9 @@ def generate_spell_list():
     arc = Spell("arc", arc_icon, "arc_proj_img", ARC, 3,\
         cooldown=0.35, projectiles=1, chains=3, flags=[Flags.DARK, Flags.SPREAD,\
         Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS])
+    lightshard = Spell("lightshard", arc_icon, "lightshards", LIGHTSHARD, 3,\
+        cooldown=0.01, projectiles=64, flags=[Flags.LIGHT, Flags.CIRCULAR_BLAST,\
+        Flags.PROJECTILE])
     elementalfury = Spell("elefury", elefury_icon, None, None, 20,\
         cooldown=60, flags=[Flags.BUFF], buffs=[ELEFURY])
     dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=6,\
@@ -159,4 +164,5 @@ def generate_spell_list():
     SYSTEM["spells"]["e_kamikaze"] = kamikaze
     SYSTEM["spells"]["e_voidflurry"] = voidoltflurry
     SYSTEM["spells"]["e_voidspear"] = voidspear
+    SYSTEM["spells"]["e_lightshard"] = lightshard
     SYSTEM["spells"][None] = None
