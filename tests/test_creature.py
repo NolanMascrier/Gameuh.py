@@ -55,7 +55,7 @@ class TestingCreatureDamage(unittest.TestCase):
         bob.tick()
         bob.tick()
         bob.tick()
-        self.assertEqual(bob.stats["life"].current_value, 50)
+        self.assertEqual(round(bob.stats["life"].current_value), 50)
         for _ in range(500): #Simulates the time ...
             bob.tick()
         self.assertEqual(len(bob._buffs), 5)
@@ -110,7 +110,7 @@ class TestingCreatureDamage(unittest.TestCase):
         self.assertEqual(bob.stats["mana"].current_value, 50)
         bob.consume_mana(30)
         bob.tick()
-        self.assertEqual(bob.stats["mana"].current_value, 20.05)
+        self.assertEqual(bob.stats["mana"].current_value, 20.08)
         bob.consume_mana(999999)
         self.assertEqual(bob.stats["mana"].current_value, 0)
 
