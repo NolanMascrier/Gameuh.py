@@ -368,6 +368,7 @@ class Flags(str, Enum):
     BARRAGE = "barrage"
     SPREAD = "spread"
     CHANNELED = "channeled"
+    RANDOM_POSITION = "spawns_at_random_position"
     BUFF = "buff"
     DEBUFF = "debuff"
     DASH = "dash"
@@ -378,6 +379,7 @@ class Flags(str, Enum):
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
     COMBO_SPELL = "combo_spell"
+    CAN_TICK = "can_tick"
     #Flags for ennemies
     BOSS = "boss"
     RANDOM_MOVE = "move_randomly"

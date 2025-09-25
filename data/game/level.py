@@ -131,7 +131,7 @@ class Level():
 
     def generate_modifiers(self):
         """Generates a list of modifiers for the level."""
-        mods_by_diff = {1: 2, 2: 3, 3: 4, 0: 0}
+        mods_by_diff = {1: 2, 2: 3, 3: 4, 0: 0, 4:6}
         target_mods = mods_by_diff[self._difficulty]
         modifiers = []
         total_risk = 0.0

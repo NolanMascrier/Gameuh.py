@@ -46,17 +46,18 @@ class Parallaxe(Animation):
 
     def draw(self):
         """Draws the parallaxe."""
+        shake, _ = SYSTEM["post_effects"].shake_factor
         x = []
         if self._scroll_left:
             for i in range(len(self._sequence)):
                 self._diff_x[i] = (self._diff_x[i] + self._speeds[i] *\
-                    self._speed_factor) % SCREEN_WIDTH
+                    self._speed_factor + shake) % SCREEN_WIDTH
             for layer, _ in enumerate(self._sequence):
                 x.append(int(- self._diff_x[layer]))
         else:
             for i in range(len(self._sequence)):
                 self._diff_x[i] = (self._diff_x[i] - self._speeds[i] *\
-                    self._speed_factor) % SCREEN_WIDTH
+                    self._speed_factor  + shake) % SCREEN_WIDTH
             for layer, _ in enumerate(self._sequence):
                 x.append(int(- self._diff_x[layer]))
         self._surface.fill((0,0,0,0))

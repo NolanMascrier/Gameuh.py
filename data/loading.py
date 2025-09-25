@@ -79,6 +79,8 @@ def generate_random_level():
             flags = [Flags.PINNACLE, Flags.MONOLITH]
             has_boss = MONOLITH
             waves = 1
+            diff = 4
+            area_lvl = 85
         case 6:
             area = SYSTEM["creepy"]
             icon = SYSTEM["images"]["creepy_icon"]
@@ -387,8 +389,10 @@ def load_others():
     SYSTEM["ui_foreground"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     SYSTEM["layers"] = {
         "pickup": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
+        "warnings": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
         "bullets": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
-        "characters": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        "characters": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
+        "texts": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     }
     load_uniques()
 

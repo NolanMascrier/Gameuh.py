@@ -4,6 +4,7 @@ import pygame
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING
 
 RENDER_LIST = []
+CLEAN = (0, 0, 0, 0)
 
 def render(image, pos):
     """Prepares the image to be rendered at position pos."""
@@ -28,8 +29,8 @@ def render_all():
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:
-        for _, layer in SYSTEM["layers"].items():
-            SYSTEM["windows"].blit(layer, shake)
+        for name in ["pickup", "warnings", "bullets", "characters", "texts"]:
+            SYSTEM["windows"].blit(SYSTEM["layers"][name], shake)
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
     elif SYSTEM["game_state"] in [MENU_INVENTORY]:
         SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], shake)

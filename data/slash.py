@@ -43,6 +43,7 @@ class Slash():
         else:
             self._debuffs = debuffs
         self._ignore_team = ignore_team
+        self._tick_time = 0
 
     def clone(self, entity, origin, area = None, center=False):
         """Returns a deep copy of the slash."""
@@ -63,7 +64,7 @@ class Slash():
 
     def get_image(self):
         """Returns the slash image."""
-        return self._real_image.get_image(self._animation_state)
+        return self._real_image.get_image()
 
     def get_pos(self):
         """Returns the slash's position."""
@@ -78,10 +79,15 @@ class Slash():
 
     def tick(self):
         """Ticks down the slash."""
-        self._real_image.tick(self._animation_state)
+        self._real_image.tick()
         x, y = self.get_pos()
         self._hitbox.move((x, y))
-        if self._animation_state[1]:
+        if Flags.CAN_TICK in self._flags:
+            self._tick_time += 0.016
+            if self._tick_time >= 0.1:
+                self._tick_time = 0
+                self._immune.clear()
+        if self._real_image.finished:
             self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
             for proj in PROJECTILE_GRID.query(self._hitbox):
@@ -222,3 +228,8 @@ class Slash():
     def ignore_team(self) -> bool:
         """Returns wether or not the slash's ignore the evil flag."""
         return self._ignore_team
+
+    @property
+    def warning(self):
+        """Dummy"""
+        return None

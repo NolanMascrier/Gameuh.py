@@ -17,6 +17,7 @@ BLU = (0, 0, 255, 155)
 RED_B = (255, 0, 0, 255)
 GRE_B = (0, 255, 0, 255)
 BLU_B = (0, 0, 255, 255)
+RED_WARNING = [255, 0, 0, 185]
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""
@@ -80,11 +81,13 @@ def draw_game(show_player = True, show_enemies = True,\
         if SYSTEM["options"]["show_hitboxes"]:
             for b in PROJECTILE_TRACKER:
                 draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
-        SYSTEM["layers"]["bullets"].blits([p.warning, (-100, p.y)] for p in PROJECTILE_TRACKER\
-                                          if p.warning is not None)
+        for p in PROJECTILE_TRACKER:
+            if p.warning is not None:
+                pygame.draw.polygon(SYSTEM["layers"]["warnings"],\
+                                    RED_WARNING, p.warning[0])
         SYSTEM["layers"]["bullets"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_text:
-        SYSTEM["layers"]["pickup"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
+        SYSTEM["layers"]["texts"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
 
 def logic_tick():
     """Ticks all there is to tick."""

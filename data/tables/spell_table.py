@@ -21,6 +21,7 @@ VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 VOIDSPEAR = Damage(10, dark=15, flags=[Flags.SPELL])
+LIGHTSPEAR = Damage(10, light=25, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=10, flags=[Flags.MELEE])
 EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
@@ -64,6 +65,8 @@ def generate_spell_list():
         Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     SYSTEM["images"]["voidspear_proj_img"] =\
         Animation("anims/voidspear.png", 24, 9, frame_rate=0.05, loops=False).scale(54, 144)
+    SYSTEM["images"]["lightspear_proj_img"] =\
+        Animation("anims/lightspear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     SYSTEM["images"]["voidbolt_proj_img"] =\
         Animation("pew.png", 13, 13, frame_rate=0.25)
     SYSTEM["images"]["voidbolt_proj2_img"] =\
@@ -93,7 +96,10 @@ def generate_spell_list():
     SYSTEM["images"]["kamikaze_img"] =\
         Animation("anims/kamikaze.png", 64, 64, frame_rate=0.2, loops=False, plays_once=True,
                 lines=4).scale(256, 256)
-    SYSTEM["images"]["lightshards"] = Animation("anims/lightshard.png", 16, 10, frame_rate=0.1).scale(20, 32)
+    SYSTEM["images"]["lightshards"] = Animation("anims/lightshard.png", 16, 10, frame_rate=0.1)\
+        .scale(20, 32)
+    SYSTEM["images"]["eldritchlaser"] = Animation("anims/lazor.png", 116, 10, frame_rate=0.15,\
+        loops=8, plays_once=True, lines=4).scale(720, 1980)
 
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img", FIREBALL_EXPLOSION)
@@ -120,6 +126,10 @@ def generate_spell_list():
     voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\
         cooldown=0, projectiles=3, delay=2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN], offset_y=50)
+    lightspear = Spell("lighstpear", icebolt_icon, "lightspear_proj_img", LIGHTSPEAR, 0,\
+        cooldown=0, projectiles=5, delay=1.2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
+        Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN, Flags.AIMED_AT_PLAYER,\
+        Flags.RANDOM_POSITION, Flags.AIMED_AT_PLAYER], proj_speed=65)
     exult = Spell("exult", exult_icon, "exult_img", EXULT, 0,\
         cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER,\
         Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED])
@@ -147,6 +157,8 @@ def generate_spell_list():
     kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
         cooldown=0, flags=[Flags.FIRE, Flags.MELEE, Flags.DEBUFF, Flags.CUTS_PROJECTILE],\
         debuffs=[BURN])
+    lazoor = Spell("fslash", fury_icon, "eldritchlaser", FURYSLASH, 5, 0,\
+        cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=-1064)
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
@@ -165,4 +177,6 @@ def generate_spell_list():
     SYSTEM["spells"]["e_voidflurry"] = voidoltflurry
     SYSTEM["spells"]["e_voidspear"] = voidspear
     SYSTEM["spells"]["e_lightshard"] = lightshard
+    SYSTEM["spells"]["e_lightspear"] = lightspear
+    SYSTEM["spells"]["e_lazer"] = lazoor
     SYSTEM["spells"][None] = None

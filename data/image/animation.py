@@ -27,8 +27,8 @@ class Animation():
         once the animation is over. Defaults to False.
     """
     def __init__(self, uri: str|Image, frame_x: int, frame_y: int, lines = 1,\
-                frame_rate = 1, frame_max = -1, loops = True, animated = True,\
-                plays_once = False):
+                frame_rate = 1, frame_max = -1, loops: bool|int = True, animated = True,\
+                plays_once = False, frame_loop = None):
         if isinstance(uri, Image):
             self._base_image = uri
         else:
@@ -37,7 +37,8 @@ class Animation():
         self._frame_y = frame_y
         self._frame_rate = frame_rate
         self._frame_max = frame_max
-        self._loops = loops
+        self._loops = loops if isinstance(loops, bool) else False
+        self._max_loop = 0 if isinstance(loops, bool) else loops
         self._lines = lines
         self._sequence = []
         self.__sequencer()
@@ -51,6 +52,7 @@ class Animation():
         self._scaled = (frame_y, frame_x, True)
         self._flipped = (False, False)
         self._rotated = 0
+        self._frame_loop = frame_loop
 
     def __sequencer(self):
         """Automatically cuts the image into frames."""
@@ -82,23 +84,24 @@ class Animation():
         """Advance the sequence."""
         if not self._animated:
             return
-        if caller is not None:
-            caller[0] += self._frame_rate
-            if caller[0] > self._frame_max:
-                if self._loops:
-                    caller[0] = 0
-                else:
-                    if self._play_once:
-                        caller[1] = True
-                    caller[0] = self._frame_max
+        start_frame = self._frame_loop[0] if self._frame_loop is not None else 0
+        end_frame = self._frame_loop[1] if self._frame_loop is not None else self._frame_max
         self._current_frame += self._frame_rate
-        if self._current_frame > self._frame_max:
+
+        if self._current_frame > end_frame:
             if self._loops:
-                self._current_frame = 0
+                self._current_frame = start_frame
             else:
                 if self._play_once:
-                    self._finished = True
-                self._current_frame = self._frame_max
+                    if self._max_loop > 0:
+                        self._current_frame = start_frame
+                        self._max_loop -= 1
+                    else:
+                        self._finished = True
+                        self._current_frame = end_frame
+                else:
+
+                    self._current_frame = end_frame
 
     def rotate(self, deg: float):
         """Rotates the sequence.
@@ -150,9 +153,10 @@ class Animation():
             self._lines,
             self._frame_rate,
             self._frame_max,
-            self._loops,
+            self._loops if self._loops else self._max_loop,
             self._animated,
-            self._play_once
+            self._play_once,
+            self._frame_loop
         ).flip(self._flipped[0], self._flipped[1])\
         .rotate(self._rotated)\
         .scale(self._scaled[0], self._scaled[1], self._scaled[2])
@@ -187,7 +191,7 @@ class Animation():
             int(data["lines"]),
             int(data["frame_rate"]),
             int(data["frame_max"]),
-            bool(data["loops"]),
+            data["loops"],
             bool(data["animated"]),
             bool(data["play_once"])
         )

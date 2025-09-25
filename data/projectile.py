@@ -27,6 +27,13 @@ class Projectile():
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1,\
                 ignore_team = False, offset_x = 0, offset_y = 0):
+        if Flags.RANDOM_POSITION in behaviours:
+            if numpy.random.random() > 0.5: #Horizontal
+                y = int(numpy.random.choice([0, SCREEN_HEIGHT]))
+                x = numpy.random.randint(0, SCREEN_WIDTH + 1)
+            else: #Vertical
+                x = int(numpy.random.choice([0, SCREEN_WIDTH]))
+                y = numpy.random.randint(0, SCREEN_HEIGHT)
         self._x = x
         self._y = y
         self._speed = speed
@@ -127,16 +134,17 @@ class Projectile():
 
     def _distance_to_edge(self):
         """Return how far this projectile can go before leaving the screen."""
-        angle = numpy.radians(self._angle)
-        dx, dy = numpy.cos(angle), numpy.sin(angle)
-        max_dist = 500000
-        x, y = self._x, self._y
-        for dist in range(0, max_dist, 50):
-            test_x = x + dx * dist
-            test_y = y + dy * dist
-            if test_x < 0 or test_x > SCREEN_WIDTH or test_y < 0 or test_y > SCREEN_HEIGHT:
-                return dist
-        return max_dist
+        dx, dy = numpy.cos(numpy.radians(self._angle)), numpy.sin(numpy.deg2rad(self._angle))
+        candidates = []
+        if dx > 0:
+            candidates.append((1920 - self._x) / dx)
+        elif dx < 0:
+            candidates.append((0 - self._x) / dx)
+        if dy > 0:
+            candidates.append((1080 - self._y) / dy)
+        elif dy < 0:
+            candidates.append((0 - self._y) / dy)
+        return min(c for c in candidates if c > 0)
 
     def tick(self):
         """Ticks down the projectile."""
@@ -156,16 +164,28 @@ class Projectile():
                         alpha = int((progress / 0.3) * 185)
                     else:
                         alpha = 185
-                    max_len = self._distance_to_edge() + 30
+                    max_len = self._distance_to_edge()
                     if progress < 0.7:
                         length = max_len
                     else:
                         shrink_p = (progress - 0.7) / 0.3
                         length = int(max_len * (1 - shrink_p))
+                        if length <= 0:
+                            return
+                    angle_rad = numpy.radians(self._angle)
+                    dx, dy = numpy.cos(angle_rad), numpy.sin(angle_rad)
+                    half_h = self._box.height / 2
+                    perp_x, perp_y = -dy * half_h, dx * half_h
+                    start_x, start_y = self._x, self._y
+                    end_x, end_y = start_x + dx * length, start_y + dy * length
                     if length > 0:
-                        line_surf = pygame.Surface((length, self._box.height), pygame.SRCALPHA)
-                        line_surf.fill((255, 0, 0, alpha))
-                        self._warning = pygame.transform.rotate(line_surf, -self._angle)
+                        points = [
+                            (int(start_x + perp_x), int(start_y + perp_y)),
+                            (int(start_x - perp_x), int(start_y - perp_y)),
+                            (int(end_x - perp_x), int(end_y - perp_y)),
+                            (int(end_x + perp_x), int(end_y + perp_y)),
+                        ]
+                        self._warning = (points, alpha)
                     else:
                         self._warning = None
                 self._delay -= float(0.016)
