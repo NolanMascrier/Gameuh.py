@@ -227,7 +227,8 @@ def load(filename = None):
         SYSTEM["player"] = Character.imports(json.loads(read["player"]))
         SYSTEM["tree"] = Node.imports(json.loads(read["tree"]))
         for s in read["spells"]:
-            SYSTEM["spells"][s] = Spell.imports(json.loads(read["spells"][s]))
+            if SYSTEM["spells"][s] is not None:
+                SYSTEM["spells"][s] = Spell.imports(json.loads(read["spells"][s]))
 
 def get_mouse_pos():
     """Updates the mouse position."""

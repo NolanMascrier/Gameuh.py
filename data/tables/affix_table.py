@@ -626,15 +626,15 @@ AFFIXES = {
                                                 Flags.DODGE_RATING]), 0.05, 75, 999),
         ], 1.2),
         "cooldown": ([
-            (Affix("GLOVES_CSPEED_1", 0.05, [Flags.BOON,\
+            (Affix("GLOVES_CSPEED_1", 0.05, [Flags.HEX,\
                                             Flags.CSPEED]), 1, 0, 50),
-            (Affix("GLOVES_CSPEED_2", 0.1, [Flags.BOON,\
+            (Affix("GLOVES_CSPEED_2", 0.1, [Flags.HEX,\
                                             Flags.CSPEED]), 0.8, 0, 70),
-            (Affix("GLOVES_CSPEED_3", 0.15, [Flags.BOON,\
+            (Affix("GLOVES_CSPEED_3", 0.15, [Flags.HEX,\
                                             Flags.CSPEED]), 0.5, 10, 90),
-            (Affix("GLOVES_CSPEED_4", 0.2, [Flags.BOON,\
+            (Affix("GLOVES_CSPEED_4", 0.2, [Flags.HEX,\
                                             Flags.CSPEED]), 0.3, 20, 999),
-            (Affix("GLOVES_CSPEED_5", 0.25, [Flags.BOON,\
+            (Affix("GLOVES_CSPEED_5", 0.25, [Flags.HEX,\
                                             Flags.CSPEED]), 0.2, 30, 999)
         ], 0.9),
         "phys_res": ([
@@ -750,15 +750,15 @@ AFFIXES = {
             (Affix("RINGS_MANA_INCR_5", 0.2, [Flags.BOON, Flags.MANA]), 0.01, 75, 999)
         ], 0.8),
         "cooldown": ([
-            (Affix("RINGS_CSPEED_1", 0.05, [Flags.BOON,\
+            (Affix("RINGS_CSPEED_1", 0.05, [Flags.HEX,\
                                             Flags.CSPEED]), 1, 0, 50),
-            (Affix("RINGS_CSPEED_2", 0.1, [Flags.BOON,\
+            (Affix("RINGS_CSPEED_2", 0.1, [Flags.HEX,\
                                             Flags.CSPEED]), 0.8, 0, 70),
-            (Affix("RINGS_CSPEED_3", 0.15, [Flags.BOON,\
+            (Affix("RINGS_CSPEED_3", 0.15, [Flags.HEX,\
                                             Flags.CSPEED]), 0.5, 10, 90),
-            (Affix("RINGS_CSPEED_4", 0.2, [Flags.BOON,\
+            (Affix("RINGS_CSPEED_4", 0.2, [Flags.HEX,\
                                             Flags.CSPEED]), 0.3, 20, 999),
-            (Affix("RINGS_CSPEED_5", 0.25, [Flags.BOON,\
+            (Affix("RINGS_CSPEED_5", 0.25, [Flags.HEX,\
                                             Flags.CSPEED]), 0.2, 30, 999)
         ], 0.9),
         "precision": ([
@@ -990,15 +990,15 @@ AFFIXES = {
             (Affix("AMULET_MANA_INCR_5", 0.2, [Flags.BOON, Flags.MANA]), 0.01, 75, 999)
         ], 0.8),
         "cooldown": ([
-            (Affix("AMULET_CSPEED_1", 0.05, [Flags.BOON,\
+            (Affix("AMULET_CSPEED_1", 0.05, [Flags.HEX,\
                                             Flags.CSPEED]), 1, 0, 50),
-            (Affix("AMULET_CSPEED_2", 0.1, [Flags.BOON,\
+            (Affix("AMULET_CSPEED_2", 0.1, [Flags.HEX,\
                                             Flags.CSPEED]), 0.8, 0, 70),
-            (Affix("AMULET_CSPEED_3", 0.15, [Flags.BOON,\
+            (Affix("AMULET_CSPEED_3", 0.15, [Flags.HEX,\
                                             Flags.CSPEED]), 0.5, 10, 90),
-            (Affix("AMULET_CSPEED_4", 0.2, [Flags.BOON,\
+            (Affix("AMULET_CSPEED_4", 0.2, [Flags.HEX,\
                                             Flags.CSPEED]), 0.3, 20, 999),
-            (Affix("AMULET_CSPEED_5", 0.25, [Flags.BOON,\
+            (Affix("AMULET_CSPEED_5", 0.25, [Flags.HEX,\
                                             Flags.CSPEED]), 0.2, 30, 999)
         ], 0.9),
         "precision": ([
@@ -1230,15 +1230,15 @@ AFFIXES = {
             (Affix("BELT_MANA_INCR_5", 0.2, [Flags.BOON, Flags.MANA]), 0.01, 75, 999)
         ], 0.8),
         "cooldown": ([
-            (Affix("BELT_CSPEED_1", 0.05, [Flags.BOON,\
+            (Affix("BELT_CSPEED_1", 0.05, [Flags.HEX,\
                                             Flags.CSPEED]), 1, 0, 50),
-            (Affix("BELT_CSPEED_2", 0.1, [Flags.BOON,\
+            (Affix("BELT_CSPEED_2", 0.1, [Flags.HEX,\
                                             Flags.CSPEED]), 0.8, 0, 70),
-            (Affix("BELT_CSPEED_3", 0.15, [Flags.BOON,\
+            (Affix("BELT_CSPEED_3", 0.15, [Flags.HEX,\
                                             Flags.CSPEED]), 0.5, 10, 90),
-            (Affix("BELT_CSPEED_4", 0.2, [Flags.BOON,\
+            (Affix("BELT_CSPEED_4", 0.2, [Flags.HEX,\
                                             Flags.CSPEED]), 0.3, 20, 999),
-            (Affix("BELT_CSPEED_5", 0.25, [Flags.BOON,\
+            (Affix("BELT_CSPEED_5", 0.25, [Flags.HEX,\
                                             Flags.CSPEED]), 0.2, 30, 999)
         ], 0.9),
         "precision": ([

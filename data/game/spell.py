@@ -395,7 +395,8 @@ class Spell():
             "level": str(self._level),
             "damage": self.__damage_describe(SYSTEM["player"].creature),
             "buffs": self.__describe_afflictions(),
-            "cooldown": str(self._stats["cooldown"].get_value()),
+            "cooldown": str(self._stats["cooldown"].get_value() *\
+                            SYSTEM["player"].creature.stats["cast_speed"].c_value),
             "costs": (self._stats["life_cost"].c_value, self._stats["mana_cost"].c_value),
             "projectiles": self._stats["projectiles"].c_value\
                 if Flags.PROJECTILE in self.all_flags else None,

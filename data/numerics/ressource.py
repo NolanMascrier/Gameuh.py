@@ -31,7 +31,7 @@ class Ressource(Stat):
     """
     def __init__(self, val = 100.0, name = "ressource", refresh = None,\
             max_cap = None, min_cap = None, scaling_value:float = 1, mult_scaling = False,\
-            precision = 2):
+            precision = 0):
         super().__init__(val, name, max_cap, min_cap, precision, scaling_value, mult_scaling)
         self._current_value = val
         if refresh is None:
@@ -91,7 +91,7 @@ class Ressource(Stat):
         """Ticks down all the buffs and debuffs, and
         also replenish the ressource.
         """
-        self._current_value += self.get_value() * self._rate.get_value()
+        self._current_value += self._rate.get_value() * 0.016
         for buff in self._buffs:
             self._current_value += buff.value
             if buff.expired:
@@ -138,7 +138,7 @@ class Ressource(Stat):
         name = f"{trad('descripts', self.name)}: "
         name_hover = Hoverable(0, 0, name, trad(self.name))
         refresh = f"{trad('meta_words', 'refresh')}:" +\
-            f"{self.get_value() * self._rate.get_value()}/s"
+            f"{self._rate.get_value()}/s"
         if is_percentage:
             value = f"{round(self.get_value() * 100)}%, {refresh}"
             desc = f"{trad('meta_words', 'base')}: {self._value * 100}%\n" +\

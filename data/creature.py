@@ -39,8 +39,8 @@ class Creature:
         self._exp = 0
         self._exp_to_next = 1000
         self._origin = origin
-        self._life_regen = Stat(0, "life_regen")
-        self._mana_regen = Stat(0.001, "life_regen", precision=4)
+        self._life_regen = Stat(1, "life_regen", precision=0)
+        self._mana_regen = Stat(5, "mana_regen", precision=0)
         self._stats = {
             "life": Ressource(90, "life", self._life_regen),
             "mana": Ressource(40, "mana", self._mana_regen),
@@ -580,7 +580,6 @@ class Creature:
         """Import a statblock and replace current
         stats with the block's."""
         for val in statblock:
-
             if val in self._stats:
                 self.stats[val] = statblock[val].clone()
 

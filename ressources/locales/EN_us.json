@@ -319,7 +319,7 @@
         "item_quant": "Item quantity",
         "item_qual": "Item quality",
         "speed": "Move speed",
-        "cast_speed": "Cooldown efficiency",
+        "cast_speed": "Cooldown",
         "melee_dmg": "Melee damage",
         "spell_dmg": "Spell damage",
         "ranged_dmg": "Ranged damage",
