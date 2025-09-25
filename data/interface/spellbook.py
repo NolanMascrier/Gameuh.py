@@ -93,9 +93,9 @@ def single_slot(spell, superspell = None, decoded_data = None):
         data["costs"][0] > 0 else None
     cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
         data["costs"][1] > 0 else None
-    crit_c = data["crit_rate"] * SYSTEM["player"].creature.stats["crit_rate"].c_value\
+    crit_c = data["crit_rate"] * (1 + SYSTEM["player"].creature.stats["crit_rate"].c_value)\
         if data["crit_rate"] is not True else (1 if data["crit_rate"] is not None else None)
-    crit_d = data["crit_dmg"] * SYSTEM["player"].creature.stats["crit_dmg"].c_value\
+    crit_d = 1 + data["crit_dmg"] * SYSTEM["player"].creature.stats["crit_dmg"].c_value\
         if data["crit_dmg"] is not None else None
     area = data["area"] + SYSTEM["player"].creature.stats["area"].c_value\
         if data["area"] is not None else None

@@ -284,7 +284,8 @@
         "fslash": "Fury Slash",
         "fireball": "Fireball",
         "fireball_explosion": "Fireball's Explosion",
-        "masterstrike": "Masterstrike"
+        "masterstrike": "Masterstrike",
+        "magicmissile": "Magic Missiles"
     },
     "spells_desc": {
         "none": "No spell equipped.",
@@ -299,7 +300,8 @@
         "fslash": "Delivers a powerful melee attack.\nReusing the attack in a short delay\ngreatly increase its damage.",
         "fireball": "Launch a powerful fireball toward the mouse\ndealing medium fire damage.\nOn contact, creates a powerful explosion.",
         "fireball_explosion": "Deals powerful fire damage in the \narea.",
-        "masterstrike": "Deliver a series a quick blows.\nThe third strike is a guaranteed critical hit."
+        "masterstrike": "Deliver a series a quick blows.\nThe third strike is a guaranteed critical hit.",
+        "magicmissile": "Periodically release tracking divine energy bolts.\nThis ability cannot crit, but cannot be dodged."
     },
     "descripts": {
         "life": "Life",

@@ -1,7 +1,10 @@
 """For spells"""
 
 import json
+import numpy
+
 import pygame
+
 from data.image.animation import Image
 from data.projectile import Projectile
 from data.item import Item
@@ -113,6 +116,8 @@ class Spell():
         self.generate_surface()
         self.update()
         self._counter = 0
+        self._releasing = False
+        self._to_release = 0
 
     def update(self):
         """Updates the data of the spell."""
@@ -191,6 +196,16 @@ class Spell():
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
+        if self._releasing:
+            self._counter -= 0.016
+            if self._counter <= 0:
+                self._to_release -= 1
+                self._counter = self._stats["delay"].c_value
+                self.spawn_projectile(caster.entity, caster.creature, False, 0, 0,\
+                                          self._stats["delay"].c_value * 10,\
+                                          numpy.random.randint(0, 361))
+            if self._to_release <= 0:
+                self._releasing = False
         if Flags.COMBO_SPELL in self.all_flags:
             for s in self._sequence:
                 s.tick(caster)
@@ -404,9 +419,9 @@ class Spell():
                 f"{round(self._base_damage.coeff * 100, 2)}%",\
                 trad('dmg_effic'), BLACK) if self._base_damage is not None else None,
             "area": self._stats['area'].c_value,
-            "crit_rate": 1 + self._stats['crit_rate'].c_value if\
+            "crit_rate": self._stats['crit_rate'].c_value if\
                 (self._real_damage is not None and not self._real_damage.is_crit) else True,
-            "crit_dmg": 1 + self._stats['crit_dmg'].c_value,
+            "crit_dmg": self._stats['crit_dmg'].c_value,
             "sequence": sequence,
             "explosion": explosion
         }
@@ -491,6 +506,10 @@ class Spell():
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         caster.consume_mana(self._stats["mana_cost"].c_value)
         caster.stats["life"].current_value -= life_cost
+        if Flags.FLURRY_RELEASE in self.all_flags:
+            self._releasing = True
+            self._to_release = self._stats["projectiles"].c_value
+            self._counter = 0.1
         if Flags.PROJECTILE in self.all_flags:
             if Flags.BARRAGE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):

@@ -355,6 +355,8 @@ class Flags(str, Enum):
     CHAINS = "chains"
     ACCELERATE = "accelerate"
     DELAYED = "delayed"
+    WANDER = "delayed_with_wandering"
+    FLURRY_RELEASE = "released_flurry"
     PIERCING = "piercing"
     TRACK_STRICT = "tracking_strict"
     TRACK_LOOSE = "tracking_loose"

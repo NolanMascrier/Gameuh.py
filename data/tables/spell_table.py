@@ -16,6 +16,8 @@ KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
 
 DARKBOLT = Damage(1, dark=1, flags=[Flags.SPELL])
 LIGHTSHARD = Damage(1, light=5, flags=[Flags.SPELL])
+MAGICMISSILE = Damage(1.25, light=4, flags=[Flags.SPELL], ignore_dodge=True, crit_rate=0,\
+                      crit_mult=0)
 VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
@@ -56,6 +58,7 @@ def generate_spell_list():
     m1_icon = Image("icons/masterstrike_a.png").scale(64, 64)
     m2_icon = Image("icons/masterstrike_b.png").scale(64, 64)
     m3_icon = Image("icons/masterstrike_c.png").scale(64, 64)
+    magicmissile_icon = Image("icons/magicmissile.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
@@ -98,6 +101,8 @@ def generate_spell_list():
                 lines=4).scale(256, 256)
     SYSTEM["images"]["lightshards"] = Animation("anims/lightshard.png", 16, 10, frame_rate=0.1)\
         .scale(20, 32)
+    SYSTEM["images"]["magicmissile"] = Animation("anims/magicmissile.png", 16, 9, frame_rate=0.1)\
+        .scale(18, 32)
     SYSTEM["images"]["eldritchlaser"] = Animation("anims/lazor.png", 116, 10, frame_rate=0.15,\
         loops=8, plays_once=True, lines=4).scale(720, 1980)
 
@@ -143,6 +148,9 @@ def generate_spell_list():
     lightshard = Spell("lightshard", arc_icon, "lightshards", LIGHTSHARD, 3,\
         cooldown=0.01, projectiles=64, flags=[Flags.LIGHT, Flags.CIRCULAR_BLAST,\
         Flags.PROJECTILE])
+    magicmissile = Spell("magicmissile", magicmissile_icon, "magicmissile", MAGICMISSILE, 20,\
+        cooldown=4, projectiles=4, delay=0.2, flags=[Flags.LIGHT, Flags.WANDER,\
+        Flags.PROJECTILE, Flags.HARD_TRACKING, Flags.AIMED_AT_CLOSEST, Flags.FLURRY_RELEASE])
     elementalfury = Spell("elefury", elefury_icon, None, None, 20,\
         cooldown=60, flags=[Flags.BUFF], buffs=[ELEFURY])
     dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=6,\
@@ -170,6 +178,7 @@ def generate_spell_list():
     SYSTEM["spells"]["furyslash"] = furyslash
     SYSTEM["spells"]["masterstrike"] = masterstrike
     SYSTEM["spells"]["fireball"] = fireball
+    SYSTEM["spells"]["magicmissile"] = magicmissile
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

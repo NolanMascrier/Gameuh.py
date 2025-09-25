@@ -56,6 +56,7 @@ class Character():
             "icebolt",
             "masterstrike",
             "exult",
+            "magicmissile",
             "elefury",
             "furyslash",
             "winddash",
@@ -95,7 +96,7 @@ class Character():
         already_ticked = []
         for spell, skill in self._equipped_spells.items():
             if skill is not None and skill not in already_ticked:
-                SYSTEM["spells"][self._equipped_spells[spell]].tick(self._creature)
+                SYSTEM["spells"][self._equipped_spells[spell]].tick(self)
                 already_ticked.append(skill)
         SYSTEM["player.x"] = self.hitbox.center[0]
         SYSTEM["player.y"] = self.hitbox.center[1]

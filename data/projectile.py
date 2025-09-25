@@ -6,7 +6,7 @@ import numpy
 
 import pygame
 
-from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM, PROJECTILE_TRACKER
+from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM, PROJECTILE_TRACKER, ENNEMY_TRACKER
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
@@ -38,6 +38,7 @@ class Projectile():
         self._y = y
         self._speed = speed
         self._angle = angle
+        self._wander_angle = angle
         self._target = None
         self._image = imagefile
         self._area = area
@@ -60,6 +61,8 @@ class Projectile():
         self._real_image = SYSTEM["images"][self._image].clone()\
             .rotate(-self._angle).scale(area, area, False)
         self._width = self._real_image.w
+        self._velocity = pygame.math.Vector2(numpy.cos(angle), numpy.sin(angle)) * speed
+        self._acceleration = pygame.math.Vector2(0, 0)
         self._height = self._real_image.h
         self._origin = origin
         self._damage = damage
@@ -84,6 +87,7 @@ class Projectile():
         if caster is not None:
             self._offset = (self.x - caster.x, self.y - caster.y)
         self._flagged = False
+        self._wandering = True if Flags.WANDER in self._behaviours else False
         self._animation_state = [0, False]
         self._immune = []
         self._bounced = False
@@ -111,6 +115,8 @@ class Projectile():
 
     def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
         """Called when the projectile hits a target."""
+        if self._wandering:
+            return (None, None)
         if target not in self._immune:
             if Flags.CHAINS in self.behaviours:
                 self._immune.clear()
@@ -146,12 +152,55 @@ class Projectile():
             candidates.append((0 - self._y) / dy)
         return min(c for c in candidates if c > 0)
 
+    def move(self):
+        """Handles the movement of the projectile."""
+        if Flags.HARD_TRACKING in self._behaviours:
+            if self._target is None:
+                self._wandering = True
+                self._wander_angle = self._angle
+            elif self._target not in ENNEMY_TRACKER:
+                self._target = SYSTEM["level"].closest_enemy()
+                if self._target is None:
+                    return
+            else:
+                self._angle = 90 - atan2(self._target.entity.hitbox.x - SYSTEM["player.x"],\
+                    self._target.entity.hitbox.y - SYSTEM["player.y"]) * 180 / pi
+        angle = numpy.radians(self._angle)
+        if Flags.ACCELERATE in self._behaviours:
+            self._speed *= 1.1
+        if Flags.WANDER in self._behaviours and self._wandering:
+            self._x = self._x + (self._speed / 3) * numpy.cos(self._wander_angle)
+            self._y = self._y + (self._speed / 3) * numpy.sin(self._wander_angle)
+            self._delay -= 0.016
+            if self._delay <= 0:
+                self._wandering = False
+        elif Flags.WANDER in self._behaviours:
+            position = pygame.math.Vector2((self.x, self.y))
+            desired = pygame.math.Vector2(self._target.hitbox.center) - position
+            distance = desired.length()
+            if distance < 10:
+                self._velocity *= 0.9
+                return
+            desired = desired.normalize() * 10
+            steer = desired - self._velocity
+            if steer.length() > 1:
+                steer = steer.normalize() * 1
+            self._acceleration += steer
+            self._velocity += self._acceleration
+            if self._velocity.length() > 10:
+                self._velocity = self._velocity.normalize() * 10
+            position += self._velocity
+            self._x = position[0]
+            self._y = position[1]
+            self._acceleration *= 0
+        else:
+            self._x = self._x + self._speed * numpy.cos(angle)
+            self._y = self._y + self._speed * numpy.sin(angle)
+        self._box.move((self._x, self._y))
+
     def tick(self):
         """Ticks down the projectile."""
         self._real_image.tick()
-        if Flags.HARD_TRACKING in self._behaviours:
-            self._angle = 90 - atan2(SYSTEM["player.x"] - self._target.entity.hitbox.x,\
-                    SYSTEM["player.y"] - self._target.entity.hitbox.y) * 180 / pi
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:
@@ -190,12 +239,7 @@ class Projectile():
                         self._warning = None
                 self._delay -= float(0.016)
                 return
-        angle = numpy.radians(self._angle)
-        if Flags.ACCELERATE in self._behaviours:
-            self._speed *= 1.1
-        self._x = self._x + self._speed * numpy.cos(angle)
-        self._y = self._y + self._speed * numpy.sin(angle)
-        self._box.move((self._x, self._y))
+        self.move()
         if Flags.CHAINS in self._behaviours and self._bounced and self._chains > 0:
             self._bounced = False
             self._chains -= 1
