@@ -1,7 +1,8 @@
 """Showcase panel, for level endings. Vibecoded because I was feeling lazy that day"""
 
 from collections.abc import Iterable
-import pygame
+
+from data.api.surface import Surface
 
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
@@ -213,12 +214,10 @@ class ShowCase(SlotPanel):
             t_x = self._current_anim["target_x"]
             t_y = self._current_anim["target_y"]
             surf = self._surface_from_item(self._current_anim["item"])
-            if surf is not None and isinstance(surf, pygame.Surface):
-                scaled_size = int(round(self._slot_size * scale))
-                try:
-                    scaled = pygame.transform.smoothscale(surf, (scaled_size, scaled_size))
-                except Exception:
-                    scaled = pygame.transform.scale(surf, (scaled_size, scaled_size))
+            if surf is not None and isinstance(surf, Surface):
+                base = surf.copy()
+                scaled_size = int(self._slot_size * scale)
+                scaled = base.scale((scaled_size, scaled_size))
                 center_x = t_x + self._slot_size // 2
                 center_y = t_y + self._slot_size // 2
                 draw_x = center_x - scaled.get_width() // 2

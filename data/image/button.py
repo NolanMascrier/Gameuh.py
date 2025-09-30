@@ -1,7 +1,8 @@
 """A button is an image that can be clicked, and calls an
 action when doing so."""
 
-import pygame
+from data.api.surface import Surface
+
 from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.text import Text
@@ -12,7 +13,7 @@ class Button():
     """Defines a button. A button is a clickable image with two states (clicked
     and not clicked), and does an action when clicked."""
     def __init__(self, image:Image, pressed:Image = None, action = None, text:str|Image = "",\
-        scrollable_area: Scrollable = None, superimage: pygame.Surface = None):
+        scrollable_area: Scrollable = None, superimage: Surface = None):
         if isinstance(image, str):
             image = SYSTEM["images"][image]
         self._image = image

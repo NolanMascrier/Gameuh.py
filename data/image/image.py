@@ -1,6 +1,7 @@
 """Simple wrapper for image surfaces in Pygame."""
 
 import pygame
+from data.api.surface import Surface
 from data.constants import RESSOURCES
 
 class Image():
@@ -17,7 +18,7 @@ class Image():
             self._uri = None
             self._width = 0
             self._height = 0
-        elif isinstance(uri, pygame.Surface):
+        elif isinstance(uri, Surface):
             self._image = uri.copy()
             self._uri = "unknown.png"
             self._width = self._image.get_width()
@@ -29,11 +30,11 @@ class Image():
             self._height = self._image.get_height()
         else:
             try:
-                self._image = pygame.image.load(f"{RESSOURCES}/{uri}").convert_alpha()
+                self._image = Surface.load(f"{RESSOURCES}/{uri}")
             except FileNotFoundError:
                 print(f"Couldn't find file {uri}. Using default image.")
                 self._uri = "default.png"
-                self._image = pygame.image.load(f"{RESSOURCES}/default.png").convert_alpha()
+                self._image = Surface.load(f"{RESSOURCES}/default.png")
             self._width = self._image.get_width()
             self._height = self._image.get_height()
         self._visible = True
@@ -41,7 +42,7 @@ class Image():
         self._rotated = 0
         self._flipped = (False, False)
 
-    def get_image(self) -> pygame.Surface:
+    def get_image(self) -> Surface:
         """Returns the image."""
         return self.image
 
@@ -51,7 +52,7 @@ class Image():
         Args:
             deg (float): degrees to rotate the image.
         """
-        self._image = pygame.transform.rotate(self._image, deg)
+        self._image.rotate(deg)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         self._rotated = deg
@@ -69,10 +70,9 @@ class Image():
             by the dimensions. Defaults to `True`.
         """
         if absolute:
-            self._image = pygame.transform.scale(self._image, (width, height))
+            self._image.scale((width, height))
         else:
-            self._image = pygame.transform.scale(self._image, (self._width * width,\
-                                                 self._height * height))
+            self._image.scale((self._width * width, self._height * height))
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         self._scaled = (height, width, absolute)
@@ -85,7 +85,7 @@ class Image():
             vertical (bool): Flip the image on the y axis.
             horizontal (bool): Flip the image on the x axis.
         """
-        self._image = pygame.transform.flip(self._image, horizontal, vertical)
+        self._image.flip(horizontal, vertical)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         self._flipped = (vertical, horizontal)
@@ -122,7 +122,7 @@ class Image():
             .scale(self._scaled[0], self._scaled[1], self._scaled[2])
 
     @property
-    def image(self) -> pygame.Surface:
+    def image(self) -> Surface:
         """Returns the image surface."""
         return self._image
 

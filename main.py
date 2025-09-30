@@ -4,6 +4,8 @@ import cProfile
 import pstats
 import random
 
+from data.api.surface import Surface, get_press, get_keys
+
 from data.image.text import Text
 from data.constants import *
 from data.interface.gameui import draw_ui
@@ -92,7 +94,7 @@ def game_loop(keys, time_event):
     if SYSTEM["player"].creature.stats["life"].current_value <= 0:
         SYSTEM["level"].fail_level()
 
-def draw_pause(events):
+def draw_pause(_):
     """Draws the pause menu."""
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
@@ -105,11 +107,8 @@ def draw_pause(events):
     SYSTEM["buttons"]["button_resume"].draw(SYSTEM["windows"])
     SYSTEM["buttons"]["button_abandon"].draw(SYSTEM["windows"])
     SYSTEM["buttons"]["button_quit"].draw(SYSTEM["windows"])
-    for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"]["button_resume"].press()
-            SYSTEM["buttons"]["button_abandon"].press()
-            SYSTEM["buttons"]["button_quit"].press()
+    for b in ["button_resume", "button_abandon", "button_quit"]:
+        SYSTEM["buttons"][b].tick()
 
 def draw_small_card():
     """Draws a small character card."""
@@ -120,7 +119,7 @@ def draw_small_card():
 def draw_menu(events):
     """Draws the main game menu."""
     renders(SYSTEM["city_back"].as_background)
-    sfc = pygame.Surface((2000, 2000), pygame.SRCALPHA)
+    sfc = Surface(width=2000, height=2000)
     sfc.blit(SYSTEM["images"]["mission_map"].image, (0, 0))
     SYSTEM["buttons_e"][0].set(350, 680, SYSTEM["images"]["mission_scroller"]).draw(sfc)
     SYSTEM["buttons_e"][1].set(860, 250, SYSTEM["images"]["mission_scroller"]).draw(sfc)
@@ -140,13 +139,9 @@ def draw_menu(events):
                                                 930).draw(SYSTEM["windows"])
         render(SYSTEM["selected"].icon.image, (x - SYSTEM["selected"].icon.width / 2, 780))
     draw_bottom_bar()
-    for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons_e"][0].press()
-            SYSTEM["buttons_e"][1].press()
-            SYSTEM["buttons_e"][2].press()
-            SYSTEM["buttons_e"][3].press()
-            SYSTEM["buttons"]["button_assault"].press()
+    for b in [0, 1, 2, 3]:
+        SYSTEM["buttons_e"][b].tick()
+    SYSTEM["buttons"]["button_assault"].tick()
 
 def loading():
     """Displays the loading screen."""
@@ -156,7 +151,7 @@ def loading():
     render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
     render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
     width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
-    render(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
+    render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
         , (200, SCREEN_HEIGHT - 111))
     render_all()
     resolution()
@@ -173,7 +168,7 @@ def main_loop():
             continue
         SYSTEM["pop_up"] = None
         get_mouse_pos()
-        SYSTEM["mouse_click"] = pygame.mouse.get_pressed()
+        SYSTEM["mouse_click"] = get_press()
         if SYSTEM["mouse_click"][0] and not SYSTEM["held"]:
             SYSTEM["held"] = True
             SYSTEM["mouse_previous"] = SYSTEM["mouse"]
@@ -188,7 +183,7 @@ def main_loop():
             if event.type == MOUSEWHEEL:
                 SYSTEM["mouse_wheel"][0] = SYSTEM["mouse_wheel"][1]
                 SYSTEM["mouse_wheel"][1] = (event.x, event.y)
-        keys = pygame.key.get_pressed()
+        keys = get_keys()
         SYSTEM["keys"] = keys
         if keys[K_ESCAPE]:
             if SYSTEM["cooldown"] <= 0:
@@ -257,7 +252,7 @@ if __name__ == "__main__":
             render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
             render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
             width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
-            render(SYSTEM["images"]["load_jauge"].image.subsurface(0, 0, width, 30)\
+            render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
                 , (200, SCREEN_HEIGHT - 111))
             render_all()
             resolution()

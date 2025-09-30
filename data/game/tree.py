@@ -2,6 +2,9 @@
 
 import json
 import pygame
+
+from data.api.surface import Surface
+
 from data.constants import SYSTEM, trad
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable
@@ -88,7 +91,7 @@ class Node:
         desc_card = SYSTEM["images"]["item_desc"].duplicate(w, desc.height)
         h = title_card.get_height() + desc_card.get_height() + h + 10
         w = max(title_card.get_width(), desc_card.get_width())
-        sfc = pygame.Surface((w, h), pygame.SRCALPHA)
+        sfc = Surface(w, h)
         sfc.blit(title_card, (0, 0))
         sfc.blit(desc_card, (0, title_card.get_height()))
         h_temp = title_card.get_height() + desc_card.get_height()
@@ -157,7 +160,7 @@ class Node:
             for s in self._skills:
                 SYSTEM["player"].spellbook.remove(s)
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: Surface):
         """Draws the tree."""
         pos_origin = (self._x + SYSTEM["images"][self._icon].width / 2,\
             self._y + SYSTEM["images"][self._icon].height / 2)
@@ -166,8 +169,7 @@ class Node:
                 self._previous.can_be_learned() else (150, 150, 150)
             pos_destin = (self._previous.x + SYSTEM["images"][self._previous.icon].width / 2,\
                 self._previous.y + SYSTEM["images"][self._previous.icon].height / 2)
-            pygame.draw.line(surface, color, pos_origin, \
-                pos_destin, 5)
+            surface.draw_line(color, pos_origin, pos_destin, 5)
         for f in self._connected:
             f.draw(surface)
         self._button.draw(surface)

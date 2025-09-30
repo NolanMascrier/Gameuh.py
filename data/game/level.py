@@ -9,7 +9,7 @@ import random
 
 import numpy as np
 
-import pygame
+from data.api.surface import Surface
 
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
@@ -64,7 +64,7 @@ class DummyItems(Item):
         else:
             self._quantity = Text(f"{quantity - stolen}" if quantity <= 999 else "999+",\
                                   font="item_desc", default_color=RED)
-        self._img = pygame.Surface((64, 64), pygame.SRCALPHA)
+        self._img = Surface(64, 64)
         self._img.blit(self._image.image, (0, 0))
         if quantity > 1:
             self._img.blit(self._quantity.image, (0, 0))
@@ -85,7 +85,7 @@ class DummyItems(Item):
         desc = Text(txt.format(rarity=trad('rarities', self._rarity)), font="item_desc")
         title_card = SYSTEM["images"]["item_desc"]\
                     .duplicate(desc.width, desc.height)
-        sfc = pygame.Surface((title_card.get_width(), title_card.get_height()), pygame.SRCALPHA)
+        sfc = Surface(title_card.get_width(), title_card.get_height())
         title_pos = (title_card.get_width() / 2 - desc.width / 2,
                      title_card.get_height() / 2 - desc.height / 2)
         sfc.blit(title_card, (0, 0))

@@ -1,7 +1,9 @@
 """"Renders the screen."""
 
-import pygame
+from data.api.surface import flip
+
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING
+
 
 RENDER_LIST = []
 CLEAN = (0, 0, 0, 0)
@@ -42,7 +44,8 @@ def resolution():
     if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
         SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
                                (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0))
-    window = pygame.transform.scale(SYSTEM["windows"],\
-            (SYSTEM["options"]["screen_resolution"][0], SYSTEM["options"]["screen_resolution"][1]))
+    window = SYSTEM["windows"].copy()
+    window.scale((SYSTEM["options"]["screen_resolution"][0],\
+                 SYSTEM["options"]["screen_resolution"][1]))
     SYSTEM["real_windows"].blit(window, (0, 0))
-    pygame.display.flip()
+    flip()

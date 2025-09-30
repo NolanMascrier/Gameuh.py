@@ -4,7 +4,9 @@ will section the image in 9 and will repeat those sections
 as needed."""
 
 from functools import lru_cache
-import pygame
+
+from data.api.surface import Surface
+
 from data.image.image import Image
 
 class Tile(Image):
@@ -69,7 +71,7 @@ class Tile(Image):
         h = height // self._tile_height + 1
         return self.create_image(w, h)
 
-    def create_image(self, w = None, h = None) -> pygame.Surface:
+    def create_image(self, w = None, h = None) -> Surface:
         """Generates the surface."""
         if w is None:
             w = self._col
@@ -77,7 +79,7 @@ class Tile(Image):
             h = self._lin
         rw = self._tile_width * w
         rh = self._tile_height * h
-        sfc = pygame.Surface((rw, rh), pygame.SRCALPHA)
+        sfc = Surface(rw, rh)
         for y in range(0, h):
             for x in range(0, w):
                 y_sel = min(1, y) if y < h - 1 else 2

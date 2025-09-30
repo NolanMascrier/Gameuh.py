@@ -3,6 +3,9 @@
 import re
 from functools import lru_cache
 import pygame
+
+from data.api.surface import Surface
+
 from data.constants import RESSOURCES
 from data.interface.render import render
 
@@ -142,7 +145,7 @@ class Text():
             self._width = force_x
         if force_y > 0:
             self._height = force_y
-        self._surface = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+        self._surface = Surface(self._width, self._height)
         y_temp = 0
         for tab in self._surfaces:
             x_temp = 0

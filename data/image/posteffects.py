@@ -1,7 +1,10 @@
 """Handles image post treatment."""
 
-import pygame
 import numpy
+import pygame
+
+from data.api.surface import Surface, flip
+
 from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER
 
 BLACK = (0,0,0)
@@ -23,8 +26,8 @@ class PostEffects():
         self._flash_max = 0
         self._flash_timer = 0
         self._flash_opacity = 0
-        self._flash_surface = pygame.Surface((SYSTEM["options"]["screen_resolution"][0],\
-            SYSTEM["options"]["screen_resolution"][1]), pygame.SRCALPHA)
+        self._flash_surface = Surface(SYSTEM["options"]["screen_resolution"][0],\
+            SYSTEM["options"]["screen_resolution"][1])
 
     def hitstop(self, timer):
         """Sets a hitstop for timer frames."""
@@ -76,8 +79,8 @@ class PostEffects():
         if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
             SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
                                 (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0))
-        window = pygame.transform.scale(SYSTEM["windows"],\
-                (SYSTEM["options"]["screen_resolution"][0],\
+        window = SYSTEM["windows"].copy()
+        window.scale((SYSTEM["options"]["screen_resolution"][0],\
                  SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].fill(BLACK)
         SYSTEM["real_windows"].blit(window, (0, 0))
@@ -86,7 +89,7 @@ class PostEffects():
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)
             self._flash_surface.set_alpha(self._flash_opacity)
             SYSTEM["real_windows"].blit(self._flash_surface, (0, 0))
-        pygame.display.flip()
+        flip()
 
     @property
     def pause(self):

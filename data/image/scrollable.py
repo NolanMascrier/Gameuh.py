@@ -1,7 +1,8 @@
 """A scrollable is a surface that can be moved  around
 by clicking and dragging the mouse."""
 
-import pygame
+from data.api.surface import Surface
+
 from data.constants import SYSTEM
 from data.image.animation import Animation, Image
 from data.interface.render import render
@@ -10,7 +11,7 @@ class Scrollable():
     """Defines a scrollable surface, which contains another that
     can be moved around."""
     def __init__(self, x, y, width, height, padding = 5,\
-        background:Image|Animation = None, contains: pygame.Surface = None):
+        background:Image|Animation = None, contains: Surface = None):
         self._x = x
         self._y = y
         self._width = width
@@ -23,8 +24,7 @@ class Scrollable():
         self._prev_diff_x = 0
         self._prev_diff_y = 0
         self._dragging = False
-        self._subsurface = pygame.Surface((width - padding * 2, height - padding * 2),\
-                                                                    pygame.SRCALPHA)
+        self._subsurface = Surface(width - padding * 2, height - padding * 2)
 
     def mouse_inside(self):
         """Checks whether or not the mouse is inside the scrollable area."""
@@ -108,9 +108,8 @@ class Scrollable():
         """Draws the surface and the contained surface."""
         if self._background is not None:
             render(self._background.get_image(), (self._x, self._y))
-        self._subsurface = pygame.Surface((self._width - self._padding * 2,\
-                                            self._height - self._padding * 2),\
-                                                                    pygame.SRCALPHA)
+        self._subsurface = Surface(self._width - self._padding * 2,\
+                                            self._height - self._padding * 2)
         if self._contains is not None:
             self._subsurface.blit(self._contains, (self._diff_x, self._diff_y))
         render(self._subsurface, (self._x + self._padding, self._y + self._padding))

@@ -9,6 +9,7 @@ from data.image.hoverable import Hoverable
 from data.image.parallaxe import Parallaxe
 from data.constants import RESSOURCES, SYSTEM, TEXT_TRACKER
 from data.loading import load_tiles
+from data.api.surface import Surface
 
 RESSOURCES = "ressources/"
 os.environ["SDL_VIDEODRIVER"] = "dummy"
@@ -27,7 +28,7 @@ class TestingImages(unittest.TestCase):
         self.assertEqual(img.visible, True)
         img.visible = False
         self.assertEqual(img.visible, False)
-        self.assertIsInstance(img.get_image(), pygame.Surface)
+        self.assertIsInstance(img.get_image(), Surface)
 
     def test_image_not_exist(self):
         img = Image("apyr.xvg")
@@ -56,8 +57,8 @@ class TestingImages(unittest.TestCase):
 class TestingText(unittest.TestCase):
     def test_text_basic(self):
         txt = Text("Truc", True, "tiny")
-        self.assertIsInstance(txt.image, pygame.Surface)
-        self.assertIsInstance(txt.surface, pygame.Surface)
+        self.assertIsInstance(txt.image, Surface)
+        self.assertIsInstance(txt.surface, Surface)
         txt.draw(0,0)
         self.assertEqual(txt.get_size(), txt.surface.get_size())
         txt = Text(None, True, "tiny")
@@ -113,7 +114,7 @@ class TestingHoverable(unittest.TestCase):
         hv.set(0, 0).tick().draw()
 
     def test_override(self):
-        sfc = pygame.Surface((100, 100))
+        sfc = Surface(100, 100)
         SYSTEM["images"]["hoverable"].get_image()
         hv = Hoverable(0, 0, "truc", "shit", surface=sfc)
         self.assertEqual(hv.height, 100)

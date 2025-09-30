@@ -3,7 +3,7 @@
 import json
 import numpy
 
-import pygame
+from data.api.surface import Surface
 
 from data.image.animation import Image
 from data.projectile import Projectile
@@ -162,8 +162,8 @@ class Spell():
         title_card = SYSTEM["images"]["ui_rare"]\
                     .duplicate(real_w, title_h)
         affix_card = SYSTEM["images"]["item_desc"].duplicate(real_w, desc.height)
-        sfc = pygame.Surface((title_card.get_width(), title_card.get_height()\
-                                + affix_card.get_height()), pygame.SRCALPHA)
+        sfc = Surface(title_card.get_width(), title_card.get_height()\
+                                + affix_card.get_height())
         icon_pos = (title_card.get_width() / 2 - title_w / 2,\
             title_card.get_height() / 2 - img.get_height() / 2)
         title_pos = (title_card.get_width() / 2 - title_w / 2 + img.get_width() + 3,\

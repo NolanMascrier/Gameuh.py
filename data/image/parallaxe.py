@@ -1,7 +1,8 @@
 """Class for parallaxes. Parallaxes
 are scrolling background images."""
 
-import pygame
+from data.api.surface import Surface
+
 from data.constants import SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.image.animation import Animation
 from data.interface.render import renders
@@ -33,12 +34,12 @@ class Parallaxe(Animation):
         self._diff_x = [0 for _ in range(len(self._sequence))]
         self._speed_factor = speed_factor
         self._background = self._sequence[0].image
-        self._layers = [pygame.Surface((SCREEN_WIDTH * 2, SCREEN_HEIGHT), pygame.SRCALPHA)\
+        self._layers = [Surface(SCREEN_WIDTH * 2, SCREEN_HEIGHT)\
             for _ in range(len(self._sequence))]
         for i in range(len(self._sequence) - 1):
             self._layers[i].blit(self._sequence[i + 1].image, (0, 0))
             self._layers[i].blit(self._sequence[i + 1].image, (SCREEN_WIDTH, 0))
-        self._surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        self._surface = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     def invert(self):
         """Flips the scrolling animation."""
@@ -73,7 +74,7 @@ class Parallaxe(Animation):
         self._background = value
 
     @property
-    def surface(self) -> pygame.Surface:
+    def surface(self) -> Surface:
         """returns the composite surface of the parallaxe."""
         return self._surface
 

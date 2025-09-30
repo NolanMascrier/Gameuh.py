@@ -1,7 +1,7 @@
 """An animation is a sequence of images."""
 
 import json
-import pygame
+from data.api.surface import Surface
 from data.image.image import Image
 
 class Animation():
@@ -74,7 +74,7 @@ class Animation():
         self._finished = False
         self._current_frame = 0
 
-    def get_image(self, caller = None) -> pygame.Surface:
+    def get_image(self, caller = None) -> Surface:
         """Returns the current image of the sequence."""
         if caller is not None:
             return self._sequence[int(caller[0])].image

@@ -7,6 +7,8 @@ import random
 import pygame
 import numpy as np
 
+from data.api.surface import Surface, mouse_position, get_keys
+
 from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, Flags,\
@@ -380,19 +382,19 @@ def load_others():
     """Loads everything else"""
     SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000,\
         contains=SYSTEM["images"]["mission_map"].image)
-    SYSTEM["images"]["tree_surface"] = pygame.Surface((2000, 2000), pygame.SRCALPHA)
+    SYSTEM["images"]["tree_surface"] = Surface(2000, 2000)
     SYSTEM["images"]["tree_scroller"] = Scrollable(10, 10, SCREEN_WIDTH - 110, SCREEN_HEIGHT - 200,\
         contains=SYSTEM["images"]["tree_surface"])
     generate_tree()
-    SYSTEM["ui_surface"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    SYSTEM["ui_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    SYSTEM["ui_foreground"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["ui_surface"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["ui_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["ui_foreground"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["layers"] = {
-        "pickup": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
-        "warnings": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
-        "bullets": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
-        "characters": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA),
-        "texts": pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        "pickup": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
+        "warnings": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
+        "bullets": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
+        "characters": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
+        "texts": Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     }
     load_uniques()
 
@@ -402,7 +404,7 @@ def load_start():
     SYSTEM["cooldown"] = 0
     SYSTEM["looter"] = LootGenerator()
     SYSTEM["rune"] = -1
-    SYSTEM["mouse"] = pygame.mouse.get_pos()
+    SYSTEM["mouse"] = mouse_position()
     #TODO: Put that in scene manager
     levels = []
     SYSTEM["buttons_e"] = []
@@ -449,15 +451,15 @@ def init_game():
     os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
     pygame.init()
     pygame.font.init()
-    SYSTEM["keys"] = pygame.key.get_pressed()
+    SYSTEM["keys"] = get_keys()
     load_options()
     SYSTEM["clock"] = pygame.time.Clock()
     SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["post_effects"] = PostEffects()
-    SYSTEM["windows"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    SYSTEM["gm_background"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-    SYSTEM["gm_parallaxe"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    SYSTEM["windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["gm_parallaxe"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
     SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)

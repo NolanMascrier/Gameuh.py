@@ -1,6 +1,5 @@
 """Handles the general UI operations such as the bottom bar."""
 
-import pygame
 from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
@@ -48,9 +47,10 @@ def draw_bottom_bar():
 
 def draw_hitbox(hitbox: HitBox, color, color_border, layer):
     """Draws the hitbox."""
-    pygame.draw.rect(layer, color, (hitbox.x, hitbox.y, hitbox.width, hitbox.height))
-    pygame.draw.rect(layer, color_border, (hitbox.x, hitbox.y, hitbox.width, hitbox.height), 2)
-    pygame.draw.rect(layer, color_border, (hitbox.x + hitbox.width / 2 - 2,
+    
+    layer.draw_rect(color, (hitbox.x, hitbox.y, hitbox.width, hitbox.height))
+    layer.draw_rect(color_border, (hitbox.x, hitbox.y, hitbox.width, hitbox.height), 2)
+    layer.draw_rect(color_border, (hitbox.x + hitbox.width / 2 - 2,
                     hitbox.y + hitbox.height /2 - 2 , 4, 4), 2)
 
 def draw_game(show_player = True, show_enemies = True,\
@@ -83,8 +83,7 @@ def draw_game(show_player = True, show_enemies = True,\
                 draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
         for p in PROJECTILE_TRACKER:
             if p.warning is not None:
-                pygame.draw.polygon(SYSTEM["layers"]["warnings"],\
-                                    RED_WARNING, p.warning[0])
+                SYSTEM["layers"]["warnings"].draw_polygon(RED_WARNING, p.warning[0])
         SYSTEM["layers"]["bullets"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     if show_text:
         SYSTEM["layers"]["texts"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)

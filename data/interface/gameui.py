@@ -1,7 +1,8 @@
 """File for drawing in game UI, such as the skill bar,
 exp bar, enemy life, boss life ..."""
 
-import pygame
+from data.api.surface import Surface
+
 from data.image.text import Text
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2, trad
 from data.image.text_generator import make_text
@@ -67,7 +68,7 @@ def draw_exp_bar():
     char = SYSTEM["player"]
     exp_len = char.creature.exp / char.creature.exp_to_next * 1434
     exp_len = min(max(exp_len, 0), SYSTEM["images"]["exp_jauge"].width - 1)
-    c = SYSTEM["images"]["exp_jauge"].image.subsurface(0, 0, exp_len, 9)
+    c = SYSTEM["images"]["exp_jauge"].image.subsurface((0, 0, exp_len, 9))
     data.append((c, (243, SCREEN_HEIGHT - 39)))
     return data
 
@@ -149,10 +150,10 @@ def draw_skills():
             cdl = cdc / cdm * 60
             oom = bool(char.creature.get_efficient_value(spell.stats["mana_cost"]\
                 .get_value()) > char.creature.stats["mana"].current_value)
-            s = pygame.Surface((cdl, 60))
+            s = Surface(cdl, 60)
             s.set_alpha(128)
             s.fill((255, 196, 0))
-            s2 = pygame.Surface((60, 60))
+            s2 = Surface(60, 60)
             s2.set_alpha(128 if oom else 0)
             s2.fill((255, 0, 0))
             data.append((spell.icon.get_image(),\
@@ -173,7 +174,7 @@ def draw_boss():
     life = SYSTEM["level"].boss.stats["life"].current_value /\
         SYSTEM["level"].boss.stats["life"].c_value
     w = life * 1680
-    boss = SYSTEM["images"]["boss_jauge"].image.subsurface(0, 0, w, 100)
+    boss = SYSTEM["images"]["boss_jauge"].image.subsurface((0, 0, w, 100))
     txt = Text(trad('enemies', SYSTEM["level"].boss.name), size=30, font="item_titles_alt")
     data.append((SYSTEM["images"]["boss_jauge_back"].image, (150, 30)))
     data.append((boss, (150, 30)))

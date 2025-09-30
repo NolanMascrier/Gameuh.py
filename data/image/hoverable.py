@@ -2,6 +2,9 @@
 the mouse is above it."""
 
 import pygame
+
+from data.api.surface import Surface
+
 from data.constants import SYSTEM, K_LALT
 from data.image.text import Text
 from data.interface.render import render
@@ -9,8 +12,8 @@ from data.interface.render import render
 class Hoverable():
     """Defines an hoverable."""
     def __init__(self, x:int, y:int, text:str, hoverable_text:str, text_color=(255, 255, 255),\
-        surface: pygame.Surface = None, override: pygame.Surface = None,\
-        alternative:pygame.Surface = None, hover_color=(255,255,255), scrollable = None):
+        surface: Surface = None, override: Surface = None,\
+        alternative:Surface = None, hover_color=(255,255,255), scrollable = None):
         self._x = x
         self._y = y
         if text is None:
@@ -48,7 +51,7 @@ class Hoverable():
             w = self._hoverable.width
             h = self._hoverable.height
             surface = SYSTEM["images"]["hoverable"].duplicate(w + 5, h + 5)
-            sfc = pygame.Surface((surface.get_width(), surface.get_height()), pygame.SRCALPHA)
+            sfc = Surface(surface.get_width(), surface.get_height())
             sfc.blit(surface, (0, 0))
             sfc.blit(self._hoverable.surface, (7, 7))
             if SYSTEM["mouse"][0] - w < 0:

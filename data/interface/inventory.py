@@ -182,19 +182,7 @@ def draw_inventory(events):
         render(SYSTEM["rune_display"].image, SYSTEM["mouse"])
     draw_game(False, False, False, False, True)
     logic_tick()
-    for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            SYSTEM["buttons"]["button_rune_0"].press()
-            SYSTEM["buttons"]["button_rune_1"].press()
-            SYSTEM["buttons"]["button_rune_2"].press()
-            SYSTEM["buttons"]["button_rune_3"].press()
-            SYSTEM["buttons"]["button_rune_4"].press()
-            SYSTEM["buttons"]["button_rune_5"].press()
-            SYSTEM["buttons"]["button_rune_6"].press()
-            SYSTEM["buttons"]["button_rune_7"].press()
-            SYSTEM["buttons"]["button_rune_8"].press()
-            SYSTEM["buttons"]["button_rune_9"].press()
-            SYSTEM["buttons"]["button_sort_name"].press()
-            SYSTEM["buttons"]["button_sort_rarity"].press()
-            SYSTEM["buttons"]["button_sort_value"].press()
-            SYSTEM["buttons"]["button_sort_date"].press()
+    for b in ["button_sort_name", "button_sort_rarity", "button_sort_value", "button_sort_date"]:
+        SYSTEM["buttons"][b].tick()
+    for b in range(10):
+        SYSTEM["buttons"][f"button_rune_{b}"].tick()

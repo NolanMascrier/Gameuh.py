@@ -6,6 +6,7 @@ import pygame
 from pygame import *
 from pygame.constants import *
 from data.physics.spatialgrid import SpatialGrid
+from data.api.surface import Surface, mouse_position
 
 
 ROOT = ""
@@ -179,8 +180,10 @@ def reload_options():
     flags = DOUBLEBUF | pygame.SCALED
     if SYSTEM["options"]["fullscreen"]:
         flags |= pygame.FULLSCREEN
-    SYSTEM["real_windows"] = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\
+    disp = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\
         SYSTEM["options"]["screen_resolution"][1]), flags, vsync=SYSTEM["options"]["vsync"])
+    SYSTEM["real_windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["real_windows"].surface = disp
 
 def export_and_reload():
     """Does what is says on the tincan"""
@@ -234,7 +237,7 @@ def get_mouse_pos():
     """Updates the mouse position."""
     x_factor = SCREEN_WIDTH / SYSTEM["options"]["screen_resolution"][0]
     y_factor = SCREEN_HEIGHT / SYSTEM["options"]["screen_resolution"][1]
-    x, y = pygame.mouse.get_pos()
+    x, y = mouse_position()
     x *= x_factor
     y *= y_factor
     SYSTEM["mouse"] = (x, y)

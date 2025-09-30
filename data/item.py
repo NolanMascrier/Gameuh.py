@@ -4,7 +4,9 @@ characters and used."""
 import json
 import time
 import random
-import pygame
+
+from data.api.surface import Surface
+
 from data.constants import Flags, trad, SYSTEM, K_LSHIFT
 from data.image.image import Image
 from data.image.animation import Animation
@@ -193,9 +195,9 @@ class Item():
                     .duplicate(width, 48)
         affix_card = SYSTEM["images"]["item_desc"].duplicate(width, affixes.height +\
                 ((desc.height + 15) if desc is not None else 0))
-        sfc = pygame.Surface((title_card.get_width(), title_card.get_height()\
+        sfc = Surface(width=title_card.get_width(), height=title_card.get_height()\
                 + affix_card.get_height() +\
-                ((desc.height + 20) if desc is not None else 0)), pygame.SRCALPHA)
+                ((desc.height + 20) if desc is not None else 0))
         title_pos = (title_card.get_width() / 2 - title.width / 2,
                      title_card.get_height() / 2 - title.height / 2)
         affix_pos = (affix_card.get_width() / 2 - affixes.width / 2,
@@ -587,12 +589,12 @@ class Item():
         self._level = value
 
     @property
-    def popup(self) -> pygame.Surface:
+    def popup(self) -> Surface:
         """Returns the popup."""
         return self._popup
 
     @property
-    def popup_details(self) -> pygame.Surface:
+    def popup_details(self) -> Surface:
         """Returns the detailed popup."""
         return self._popup_details
 
