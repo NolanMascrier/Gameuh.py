@@ -16,5 +16,6 @@ class TestingDeltaTime(unittest.TestCase):
         time.sleep(1)
         dt.tick()
         self.assertIsNone(dt.peek("short"))
+        dt.stop("test")
         dt.clear()
 
