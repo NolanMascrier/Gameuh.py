@@ -1,5 +1,14 @@
 {
     "files.associations": {
         "nuklear_sdl_gl3.h": "c"
-    }
+    },
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }

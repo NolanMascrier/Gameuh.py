@@ -2,7 +2,7 @@
 world. It has a position, an image and an hitbox."""
 
 import json
-from math import cos, sin
+import numpy
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.physics.hitbox import HitBox
 from data.image.sprite import Sprite
@@ -106,8 +106,8 @@ class Entity():
 
     def dash(self, distance, dash_time = 0.4):
         """dash a certain distance depending on the last input angle."""
-        self._dash_dx = cos(self._angle)
-        self._dash_dy = sin(self._angle)
+        self._dash_dx = numpy.cos(self._angle)
+        self._dash_dy = numpy.sin(self._angle)
         length = (self._dash_dx ** 2 + self._dash_dy ** 2) ** 0.5
         if length != 0:
             self._dash_dx /= length

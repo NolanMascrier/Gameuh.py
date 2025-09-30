@@ -130,6 +130,7 @@ class TestingNumerics(unittest.TestCase):
         d.ignore_block = True
         d.ignore_dodge = True
         self.assertEqual(type(d.describe(c, True, True, True)), str)
+        self.assertEqual(d.mod, 1)
 
     def test_stat(self):
         a = Stat(10, "test", 1000, 0, 2, 1, False)

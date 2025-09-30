@@ -30,11 +30,7 @@ class HitBox():
             return False
         if self.top > other.bottom or self.bottom < other.top:
             return False
-        if self.left < other.right and self.top < other.bottom:
-            return True
-        if self.right < other.left and self.bottom < other.top:
-            return True
-        return False
+        return True
 
     def get_rect(self) -> tuple:
         """Return's the hitbox as a rect tuple."""
