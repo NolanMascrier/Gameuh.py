@@ -4,12 +4,12 @@ import threading
 import re
 import os
 import random
-import pygame
+from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 import numpy as np
 
-from data.api.surface import Surface, mouse_position, get_keys
+from data.api.surface import Surface, mouse_position, get_keys, init_engine
+from data.api.clock import Clock
 
-from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, Flags,\
     PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
@@ -134,13 +134,6 @@ def quit_level():
     SYSTEM["game_state"] = MENU_MAIN
     SYSTEM["level"] = None
     reset()
-
-def load_fonts():
-    """Loads the fonts."""
-    SYSTEM["font_detail"] = pygame.freetype.Font('ressources/dmg.ttf', 30)
-    SYSTEM["font_detail_small"] = pygame.freetype.Font('ressources/dmg.ttf', 30)
-    SYSTEM["font_crit"] = pygame.freetype.Font('ressources/dmg.ttf', 35)
-    SYSTEM["font_crit"].strong = True
 
 def load_animations():
     """Load the animations."""
@@ -425,13 +418,12 @@ def load():
     """Loads everything inside the system.
     Made to be threaded."""
     tasks = [
-        (load_fonts, 1, "fonts"),
         (load_images, 5, "images"),
         (load_icons, 3, "icons"),
-        (load_animations, 2, "animations"),
+        (load_animations, 3, "animations"),
         (load_tiles, 2, "tiles"),
-        (load_parallaxes, 2, "parallaxes"),
-        (generate_spell_list, 4, "spells"),
+        (load_parallaxes, 4, "parallaxes"),
+        (generate_spell_list, 3, "spells"),
         (load_others, 1, "others"),
         (load_buttons, 2, "buttons"),
         (create_character, 1, "player"),
@@ -448,19 +440,16 @@ def load():
 
 def init_game():
     """Loads the basic data for the game."""
-    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
-    pygame.init()
-    pygame.font.init()
+    init_engine()
     SYSTEM["keys"] = get_keys()
     load_options()
-    SYSTEM["clock"] = pygame.time.Clock()
+    SYSTEM["clock"] = Clock()
     SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["post_effects"] = PostEffects()
     SYSTEM["windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["gm_parallaxe"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
-    SYSTEM["font"] = pygame.freetype.Font('ressources/dmg.ttf', 40)
     SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)

@@ -16,3 +16,5 @@ user_config.json
 data/numerics/__pycache__/__init__.cpython-310.pyc
 *.pyc
 .coverage
+.coverage
+.coverage

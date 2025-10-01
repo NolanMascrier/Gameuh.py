@@ -90,5 +90,7 @@ class Widget():
 
     @center.setter
     def center(self, x:float|tuple, y:float = 0):
-        self._x = x if isinstance(x, float) else x[0]
-        self._y = y if isinstance(x, float) else x[1]
+        center_x = x if isinstance(x, float) else x[0]
+        center_y = y if isinstance(x, float) else x[1]
+        self._x = center_x - self._width / 2
+        self._y = center_y - self._height / 2

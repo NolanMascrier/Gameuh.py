@@ -1,6 +1,5 @@
 """Handles the inventory tab of the main menu."""
 
-import pygame
 from data.interface.general import draw_bottom_bar, draw_game, logic_tick, setup_bottom_bar
 from data.constants import SYSTEM, MENU_INVENTORY, trad, TEXT_TRACKER
 from data.image.button import Button

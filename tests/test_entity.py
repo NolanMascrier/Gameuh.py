@@ -1,17 +1,17 @@
 import unittest
 import os
-import pygame
 import numpy as np
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from unittest.mock import Mock, MagicMock, patch
+from data.api.surface import init_engine, set_screen
 from data.image.sprite import Sprite
 from data.constants import SYSTEM
 
 RESSOURCES = "ressources/"
 os.environ["SDL_VIDEODRIVER"] = "dummy"
-pygame.init()
-SYSTEM["windows"] = pygame.display.set_mode((1, 1))
+init_engine()
+SYSTEM["windows"] = set_screen(width=1, height=1)
 SYSTEM["images"]["sprite_image"] = Sprite("necro_old.png", 160, 128, ["idle", "dash", "attack",\
  "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
  [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\

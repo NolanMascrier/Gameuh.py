@@ -1,7 +1,6 @@
 """Handles image post treatment."""
 
 import numpy
-import pygame
 
 from data.api.surface import Surface, flip
 

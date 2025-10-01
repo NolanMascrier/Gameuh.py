@@ -1,6 +1,8 @@
 """A wrapper for pygame's surfaces."""
 
+import os
 import pygame
+from pygame.constants import DOUBLEBUF
 from data.api.widget import Widget
 
 def flip():
@@ -18,6 +20,23 @@ def get_press():
 def get_keys():
     """Wrappre to pygame's key event."""
     return pygame.key.get_pressed()
+
+def get_events():
+    """Wrapper for pygame's events."""
+    return pygame.event.get()
+
+def init_engine():
+    """Inits the base engine."""
+    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
+    pygame.init()
+    pygame.font.init()
+
+def set_screen(is_fullscreen = True, width = 1920, height = 1080, vsync=1):
+    """Sets the primary screen for pygame."""
+    flags = DOUBLEBUF | pygame.SCALED
+    if is_fullscreen:
+        flags |= pygame.FULLSCREEN
+    return pygame.display.set_mode((width, height), flags, vsync=vsync)
 
 class Surface(Widget):
     """Overrides a pygame's surface."""
@@ -171,8 +190,15 @@ class Surface(Widget):
         sub = self._surface.subsurface(rect)
         x, y, w, h = rect
         surf = Surface(x, y, w, h)
-        surf._surface = sub
+        surf.surface = sub
         return surf
+
+    @classmethod
+    def from_existing(cls, existing: pygame.Surface):
+        """Wrap an existing pygame.Surface inside our Surface"""
+        obj = cls(existing.get_width(), existing.get_height())
+        obj._surface = existing
+        return obj
 
     @classmethod
     def load(cls, filename: str) -> "Surface":

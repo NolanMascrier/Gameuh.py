@@ -4,7 +4,7 @@ import cProfile
 import pstats
 import random
 
-from data.api.surface import Surface, get_press, get_keys
+from data.api.surface import Surface, get_press, get_keys, get_events
 
 from data.image.text import Text
 from data.constants import *
@@ -175,7 +175,7 @@ def main_loop():
         if SYSTEM["held"] and not SYSTEM["mouse_click"][0]:
             SYSTEM["held"] = False
         SYSTEM["mouse_wheel"] = [(0, 0), (0, 0)]
-        events = pygame.event.get()
+        events = get_events()
         time_event = SYSTEM["deltatime"].get()
         for event in events:
             if event.type == QUIT:

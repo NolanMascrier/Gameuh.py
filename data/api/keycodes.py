@@ -1,0 +1,57 @@
+"""Constant list for input keys"""
+
+import pygame.constants as cs
+
+K_A       = cs.K_a
+K_B       = cs.K_b
+K_C       = cs.K_c
+K_D       = cs.K_d
+K_E       = cs.K_e
+K_F       = cs.K_f
+K_G       = cs.K_g
+K_H       = cs.K_h
+K_I       = cs.K_i
+K_J       = cs.K_j
+K_K       = cs.K_k
+K_L       = cs.K_l
+K_M       = cs.K_m
+K_N       = cs.K_n
+K_O       = cs.K_o
+K_P       = cs.K_p
+K_Q       = cs.K_q
+K_R       = cs.K_r
+K_S       = cs.K_s
+K_T       = cs.K_t
+K_U       = cs.K_u
+K_V       = cs.K_v
+K_W       = cs.K_w
+K_X       = cs.K_x
+K_Y       = cs.K_y
+K_Z       = cs.K_z
+K_0       = cs.K_0
+K_1       = cs.K_1
+K_2       = cs.K_2
+K_3       = cs.K_3
+K_4       = cs.K_4
+K_5       = cs.K_5
+K_6       = cs.K_6
+K_7       = cs.K_7
+K_8       = cs.K_8
+K_9       = cs.K_9
+K_KP0     = cs.K_KP0
+K_KP1     = cs.K_KP1
+K_KP2     = cs.K_KP2
+K_KP3     = cs.K_KP3
+K_KP4     = cs.K_KP4
+K_KP5     = cs.K_KP5
+K_KP6     = cs.K_KP6
+K_KP7     = cs.K_KP7
+K_KP8     = cs.K_KP8
+K_KP9     = cs.K_KP9
+K_UP      = cs.K_UP
+K_DOWN    = cs.K_DOWN
+K_LEFT    = cs.K_LEFT
+K_RIGHT   = cs.K_RIGHT
+K_ESCAPE  = cs.K_ESCAPE
+K_LSHIFT  = cs.K_LSHIFT
+K_RSHIFT  = cs.K_RSHIFT

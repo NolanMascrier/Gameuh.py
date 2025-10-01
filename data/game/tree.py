@@ -1,7 +1,6 @@
 """For the skill trees."""
 
 import json
-import pygame
 
 from data.api.surface import Surface
 

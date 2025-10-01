@@ -4,14 +4,14 @@ from math import atan2, pi
 import random
 import numpy
 
-import pygame
+from data.api.vec2d import Vec2
 
-from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM, PROJECTILE_TRACKER, ENNEMY_TRACKER
+from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM,\
+    PROJECTILE_TRACKER, ENNEMY_TRACKER
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
-from data.interface.render import render
 
 class DummyEntity():
     """Emulates an entity of the projectile."""
@@ -61,8 +61,8 @@ class Projectile():
         self._real_image = SYSTEM["images"][self._image].clone()\
             .rotate(-self._angle).scale(area, area, False)
         self._width = self._real_image.w
-        self._velocity = pygame.math.Vector2(numpy.cos(angle), numpy.sin(angle)) * speed
-        self._acceleration = pygame.math.Vector2(0, 0)
+        self._velocity = Vec2(numpy.cos(angle), numpy.sin(angle)) * speed
+        self._acceleration = Vec2(0, 0)
         self._height = self._real_image.h
         self._origin = origin
         self._damage = damage
@@ -175,8 +175,8 @@ class Projectile():
             if self._delay <= 0:
                 self._wandering = False
         elif Flags.WANDER in self._behaviours:
-            position = pygame.math.Vector2((self.x, self.y))
-            desired = pygame.math.Vector2(self._target.hitbox.center) - position
+            position = Vec2(self.x, self.y)
+            desired = Vec2(self._target.hitbox.center) - position
             distance = desired.length()
             if distance < 10:
                 self._velocity *= 0.9

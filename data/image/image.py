@@ -1,6 +1,5 @@
 """Simple wrapper for image surfaces in Pygame."""
 
-import pygame
 from data.api.surface import Surface
 from data.constants import RESSOURCES
 

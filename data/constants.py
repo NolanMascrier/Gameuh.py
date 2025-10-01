@@ -2,11 +2,9 @@
 
 from enum import Enum
 import json
-import pygame
-from pygame import *
 from pygame.constants import *
 from data.physics.spatialgrid import SpatialGrid
-from data.api.surface import Surface, mouse_position
+from data.api.surface import Surface, mouse_position, set_screen
 
 
 ROOT = ""
@@ -177,11 +175,8 @@ def export_options():
 
 def reload_options():
     """Reloads the options from the SYSTEM."""
-    flags = DOUBLEBUF | pygame.SCALED
-    if SYSTEM["options"]["fullscreen"]:
-        flags |= pygame.FULLSCREEN
-    disp = pygame.display.set_mode((SYSTEM["options"]["screen_resolution"][0],\
-        SYSTEM["options"]["screen_resolution"][1]), flags, vsync=SYSTEM["options"]["vsync"])
+    disp = set_screen(SYSTEM["options"]["fullscreen"], SCREEN_WIDTH, SCREEN_HEIGHT,\
+                      SYSTEM["options"]["vsync"])
     SYSTEM["real_windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["real_windows"].surface = disp
 

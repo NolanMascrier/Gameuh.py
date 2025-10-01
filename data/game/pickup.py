@@ -3,7 +3,9 @@ It can be added to their inventory, or immediately consumed."""
 
 import random
 import math
-import pygame
+
+from data.api.vec2d import Vec2
+
 from data.physics.hitbox import HitBox
 from data.image.text import Text
 from data.constants import Flags, TEXT_TRACKER, SYSTEM
@@ -23,7 +25,7 @@ class PickUp():
     """Creates a pickup."""
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
                 flags = None, contained = None):
-        self._position = pygame.math.Vector2(x, y)
+        self._position = Vec2(x, y)
         self._value = value
         if flags is None:
             self._flags = []
@@ -32,14 +34,14 @@ class PickUp():
         self._hitbox = HitBox(x, y, w, h)
         self._to_delete = False
         #maths stuff
-        self._acceleration = pygame.math.Vector2(0, 0)
+        self._acceleration = Vec2(0, 0)
         self._max_speed = 5.0 * speed_mod
         self._max_force = 0.2 * speed_mod
         self._arrival_threshold = 10
         self._delay = 30
         angle = random.uniform(0, 2 * math.pi)
         speed = random.uniform(2, 4) * speed_mod
-        self._velocity = pygame.math.Vector2(math.cos(angle), math.sin(angle)) * speed
+        self._velocity = Vec2(math.cos(angle), math.sin(angle)) * speed
         self._contains = contained
 
     def get_image(self):
@@ -82,7 +84,7 @@ class PickUp():
             self._delay -= 1
             self._position += self._velocity
             return
-        desired = pygame.math.Vector2(player.hitbox.center) - self._position
+        desired = Vec2(player.hitbox.center) - self._position
         distance = desired.length()
         if distance < self._arrival_threshold:
             self._velocity *= 0.9

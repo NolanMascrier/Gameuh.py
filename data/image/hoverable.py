@@ -1,8 +1,6 @@
 """An hoverable is a pop up that shows text when
 the mouse is above it."""
 
-import pygame
-
 from data.api.surface import Surface
 
 from data.constants import SYSTEM, K_LALT

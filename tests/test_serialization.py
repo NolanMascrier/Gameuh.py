@@ -1,6 +1,5 @@
 import unittest
 import json
-import pygame
 from data.image.image import Image
 from data.image.animation import Animation
 from data.constants import Flags, change_language, SYSTEM
@@ -16,10 +15,11 @@ from data.creature import Creature
 from data.character import Character
 from data.numerics.damage import Damage
 from data.game.spell import Spell
-from data.game.tree import Node,GENERATE_SURFACES
+from data.game.tree import Node
+from data.api.surface import init_engine, get_keys
 
-pygame.init()
-SYSTEM["keys"] = pygame.key.get_pressed()
+init_engine()
+SYSTEM["keys"] = get_keys()
 change_language("EN_us")
 load()
 

@@ -2,9 +2,9 @@
 
 import re
 from functools import lru_cache
-import pygame
 
 from data.api.surface import Surface
+from data.api.font import Font, STYLE_STRONG, STYLE_OBLIQUE
 
 from data.constants import RESSOURCES
 from data.interface.render import render
@@ -12,9 +12,9 @@ from data.interface.render import render
 MARKER_REGEX = re.compile(r"#([a-z])#\((.*?)\)")
 
 @lru_cache(maxsize=16)
-def open_font(font, size):
+def open_font(font, size) -> Font:
     """Opens up the font file."""
-    return pygame.freetype.Font(font, size)
+    return Font(font, size)
 
 class Text():
     """Reads a text in str form to create a pygame surface
@@ -111,9 +111,9 @@ class Text():
                 style_buff, text_buff = cell
                 flags = 0
                 if style["bold"]:
-                    flags |= pygame.freetype.STYLE_STRONG
+                    flags |= STYLE_STRONG
                 if style["italic"]:
-                    flags |= pygame.freetype.STYLE_OBLIQUE
+                    flags |= STYLE_OBLIQUE
                 font_buff = open_font(f'{RESSOURCES}/fonts/{style_buff["font"]}.ttf',\
                     style_buff["size"])
                 sfc, _ = font_buff.render(\

@@ -2,9 +2,9 @@ from data.item import Item
 from data.constants import Flags
 from data.numerics.damage import Damage
 import unittest
-import pygame
+from data.api.surface import init_engine
 
-pygame.init()
+init_engine()
 
 class TestItems(unittest.TestCase):
     def test_fields(self):
