@@ -1,7 +1,7 @@
 """Class for player characters."""
 
 import json
-from math import atan2
+import numpy
 from data.constants import SCREEN_HEIGHT, SYSTEM, POWER_UP_GRID
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
@@ -146,7 +146,7 @@ class Character():
         """Moves the character by dx, dy."""
         new_x = self._entity.x + dx
         new_y = self._entity.y + dy
-        self._entity.angle = atan2(new_y - self._entity.y,\
+        self._entity.angle = numpy.arctan2(new_y - self._entity.y,\
             new_x - self._entity.x)
         self._entity.displace((new_x, new_y))
 

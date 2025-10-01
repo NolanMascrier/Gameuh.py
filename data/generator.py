@@ -2,7 +2,8 @@ from data.constants import *
 from data.projectile import Projectile
 from data.physics.hitbox import HitBox
 from data.tables.spell_table import VOIDBOLT
-from math import atan2, pi
+from math import pi
+import numpy
 
 class Generator():
     def __init__(self, x, y, dest, delay, power, duration, gen_img, proj_img, frame_max = 4, evil = True, caster = None):
@@ -44,7 +45,7 @@ class Generator():
         else:
             if self._x <= self._destination[0] + 5 and self._x >= self._destination[0] - 5 \
                 and self._y <= self._destination[1] + 5 and self._y >= self._destination[1] - 5:
-                self._angle = 90 - atan2(player.x - self._x,\
+                self._angle = 90 - numpy.arctan2(player.x - self._x,\
                            player.y - self._y) * 180 / pi
                 self._ready = True
             if self._x < self._destination[0]:

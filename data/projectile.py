@@ -1,6 +1,7 @@
 """Projectile are the most common type of attacks."""
 
-from math import atan2, pi
+import numpy
+from math import pi
 import random
 import numpy
 
@@ -43,17 +44,17 @@ class Projectile(HitBox):
         self._ignore_team = ignore_team
         self._offset_barrage = (offset_x, offset_y)
         if Flags.AIMED_AT_PLAYER in behaviours:
-            self._angle = 90 - numpy.atan2(SYSTEM["player.x"] - x,\
+            self._angle = 90 - numpy.arctan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
         if Flags.AIMED_AT_MOUSE in behaviours:
-            self._angle = 90 - numpy.atan2(SYSTEM["mouse"][0] - x,\
+            self._angle = 90 - numpy.arctan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
         if Flags.AIMED_AT_CLOSEST in behaviours:
             closest = SYSTEM["level"].closest_enemy()
             if closest is None:
                 self._angle = 0
             else:
-                self._angle = 90 - numpy.atan2(closest.entity.hitbox.center_x - x,\
+                self._angle = 90 - numpy.arctan2(closest.entity.hitbox.center_x - x,\
                     closest.entity.hitbox.center_y - y) * 180 / pi
                 self._target = closest
         self._real_image = SYSTEM["images"][self._image].clone()\
@@ -159,7 +160,7 @@ class Projectile(HitBox):
                 if self._target is None:
                     return
             else:
-                self._angle = 90 - atan2(self._target.entity.hitbox.x - SYSTEM["player.x"],\
+                self._angle = 90 - numpy.arctan2(self._target.entity.hitbox.x - SYSTEM["player.x"],\
                     self._target.entity.hitbox.y - SYSTEM["player.y"]) * 180 / pi
         angle = numpy.radians(self._angle)
         if Flags.ACCELERATE in self._behaviours:
@@ -243,7 +244,7 @@ class Projectile(HitBox):
             if closest is None:
                 self._flagged = True
             else:
-                self._angle = 90 - atan2(closest.entity.hitbox.center_x - self.center_x,\
+                self._angle = 90 - numpy.arctan2(closest.entity.hitbox.center_x - self.center_x,\
                     closest.entity.hitbox.center_y - self.center_y) * 180 / pi
                 self._target = closest
         elif self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
