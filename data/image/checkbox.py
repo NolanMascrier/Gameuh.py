@@ -1,12 +1,14 @@
 """A checkbox is a box the user can check (duh) which sets the
 given SYSTEM variable to True or False."""
 
+from data.api.widget import Widget
+
 from data.constants import SYSTEM, trad
 from data.image.image import Image
 from data.image.hoverable import Hoverable
 from data.interface.render import render
 
-class Checkbox():
+class Checkbox(Widget):
     """Defines a checkbox.
     
     Args:
@@ -17,26 +19,25 @@ class Checkbox():
         to change.
         """
     def __init__(self, name:str, unchecked: Image, checked: Image, variable):
+        super().__init__()
         self._name = name
-        self._unchecked = unchecked
-        self._checked_image = checked
+        self._image = (unchecked, checked)
         self._variable = variable
         self._checked = SYSTEM["options"][variable]
-        self._x = 0
-        self._y = 0
         self._hover = Hoverable(0, 0, trad('options', name), trad('options_desc', name))
+        self.width = min(self._image[0].width, self._image[1].width)
+        self.height = min(self._image[0].height, self._image[1].height)
 
     def set(self, x, y):
         """Sets the box to the x;y positions."""
-        self._x = x
-        self._y = y
+        super().set(x, y)
         return self
 
     def __is_mouse_over(self):
         """Checks whether or not the mouse is within the box."""
-        if SYSTEM["mouse"][0] < self._x or SYSTEM["mouse"][0] > self._x + self.width:
+        if SYSTEM["mouse"][0] < self.x or SYSTEM["mouse"][0] > self.x + self.width:
             return False
-        if SYSTEM["mouse"][1] < self._y or SYSTEM["mouse"][1] > self._y + self.height:
+        if SYSTEM["mouse"][1] < self.y or SYSTEM["mouse"][1] > self.y + self.height:
             return False
         return True
 
@@ -52,27 +53,17 @@ class Checkbox():
     def draw(self, surface = None):
         """Draws the checkbox."""
         if surface is None or surface == SYSTEM["windows"]:
-            self._hover.set(self._x + self.width,\
-                            self._y + self.height / 2 - self._hover.height / 2)\
+            self._hover.set(self.x + self.width,\
+                            self.y + self.height / 2 - self._hover.height / 2)\
                 .tick().draw()
             if self._checked:
-                render(self._checked_image.image, (self._x, self._y))
+                render(self._image[1].image, (self.x, self.y))
             else:
-                render(self._unchecked.image, (self._x, self._y))
+                render(self._image[0].image, (self.x, self.y))
             return
-        self._hover.set(self._x + self.width, self._y + self.height / 2 - self._hover.height / 2)\
+        self._hover.set(self.x + self.width, self.y + self.height / 2 - self._hover.height / 2)\
             .tick().draw(surface)
         if self._checked:
-            SYSTEM["windows"].blit(self._checked_image.image, (self._x, self._y))
+            SYSTEM["windows"].blit(self._image[1].image, (self.x, self.y))
         else:
-            SYSTEM["windows"].blit(self._unchecked.image, (self._x, self._y))
-
-    @property
-    def width(self):
-        """Returns the button's width."""
-        return min(self._unchecked.width, self._checked_image.width)
-
-    @property
-    def height(self):
-        """Returns the button's height."""
-        return min(self._unchecked.height, self._checked_image.height)
+            SYSTEM["windows"].blit(self._image[0].image, (self.x, self.y))

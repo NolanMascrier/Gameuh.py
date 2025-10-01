@@ -20,7 +20,7 @@ class DummyEntity():
         self.y = y
         self.hitbox = hitbox
 
-class Projectile():
+class Projectile(HitBox):
     """Defines a projectile."""
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
@@ -34,8 +34,6 @@ class Projectile():
             else: #Vertical
                 x = int(numpy.random.choice([0, SCREEN_WIDTH]))
                 y = numpy.random.randint(0, SCREEN_HEIGHT)
-        self._x = x
-        self._y = y
         self._speed = speed
         self._angle = angle
         self._wander_angle = angle
@@ -61,9 +59,10 @@ class Projectile():
         self._real_image = SYSTEM["images"][self._image].clone()\
             .rotate(-self._angle).scale(area, area, False)
         self._width = self._real_image.w
+        self._height = self._real_image.h
+        super().__init__(x, y, self._width, self._height)
         self._velocity = Vec2(numpy.cos(angle), numpy.sin(angle)) * speed
         self._acceleration = Vec2(0, 0)
-        self._height = self._real_image.h
         self._origin = origin
         self._damage = damage
         self._evil = evil
@@ -71,9 +70,6 @@ class Projectile():
         self._delay = delay
         self._initial_delay = delay
         self._explosion = explosion
-        hitbox_len = self._width
-        hitbox_height = self._height
-        self._box = HitBox(x, y, hitbox_len, hitbox_height)
         if behaviours is None or not isinstance(behaviours, list):
             self._behaviours = []
         else:
@@ -103,13 +99,13 @@ class Projectile():
         and can be garbage collected."""
         if self._flagged:
             return True
-        if self._box.y < 0 - self._box.height:
+        if self.y < 0 - self.height:
             return True
-        if self._box.y > SCREEN_HEIGHT + self._box.height:
+        if self.y > SCREEN_HEIGHT + self.height:
             return True
-        if self._box.x < 0 - self._box.width:
+        if self.x < 0 - self.width:
             return True
-        if self._box.x > SCREEN_WIDTH + self._box.width:
+        if self.x > SCREEN_WIDTH + self.width:
             return True
         return False
 
@@ -132,7 +128,7 @@ class Projectile():
                         debuff.damage.origin = self._origin
                     target.afflict(debuff.clone(), True)
             if self._explosion is not None:
-                sl = self._explosion.clone(DummyEntity(self._x, self._y, self._box),\
+                sl = self._explosion.clone(DummyEntity(self.x, self.y, self),\
                     self._origin, self._area, True)
                 PROJECTILE_TRACKER.append(sl)
             return num, crit
@@ -143,16 +139,16 @@ class Projectile():
         dx, dy = numpy.cos(numpy.radians(self._angle)), numpy.sin(numpy.deg2rad(self._angle))
         candidates = []
         if dx > 0:
-            candidates.append((1920 - self._x) / dx)
+            candidates.append((1920 - self.x) / dx)
         elif dx < 0:
-            candidates.append((0 - self._x) / dx)
+            candidates.append((0 - self.x) / dx)
         if dy > 0:
-            candidates.append((1080 - self._y) / dy)
+            candidates.append((1080 - self.y) / dy)
         elif dy < 0:
-            candidates.append((0 - self._y) / dy)
+            candidates.append((0 - self.y) / dy)
         return min(c for c in candidates if c > 0)
 
-    def move(self):
+    def move(self, _ = None):
         """Handles the movement of the projectile."""
         if Flags.HARD_TRACKING in self._behaviours:
             if self._target is None:
@@ -169,8 +165,8 @@ class Projectile():
         if Flags.ACCELERATE in self._behaviours:
             self._speed *= 1.1
         if Flags.WANDER in self._behaviours and self._wandering:
-            self._x = self._x + (self._speed / 3) * numpy.cos(self._wander_angle)
-            self._y = self._y + (self._speed / 3) * numpy.sin(self._wander_angle)
+            self.x = self.x + (self._speed / 3) * numpy.cos(self._wander_angle)
+            self.y = self.y + (self._speed / 3) * numpy.sin(self._wander_angle)
             self._delay -= 0.016
             if self._delay <= 0:
                 self._wandering = False
@@ -190,13 +186,13 @@ class Projectile():
             if self._velocity.length() > 10:
                 self._velocity = self._velocity.normalize() * 10
             position += self._velocity
-            self._x = position[0]
-            self._y = position[1]
+            self.x = position[0]
+            self.y = position[1]
             self._acceleration *= 0
         else:
-            self._x = self._x + self._speed * numpy.cos(angle)
-            self._y = self._y + self._speed * numpy.sin(angle)
-        self._box.move((self._x, self._y))
+            self.x = self.x + self._speed * numpy.cos(angle)
+            self.y = self.y + self._speed * numpy.sin(angle)
+        super().move((self.x, self.y))
 
     def tick(self):
         """Ticks down the projectile."""
@@ -206,7 +202,7 @@ class Projectile():
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:
                     self.x = self._caster.x + self._offset[0]
                     self.y = self._caster.y + self._offset[1]
-                    self._box.move((self._x, self._y))
+                    self.move((self.x, self.y))
                 if Flags.WARN in self._behaviours:
                     progress = 1 - (self._delay / self._initial_delay)
                     if progress < 0.3:
@@ -223,9 +219,9 @@ class Projectile():
                             return
                     angle_rad = numpy.radians(self._angle)
                     dx, dy = numpy.cos(angle_rad), numpy.sin(angle_rad)
-                    half_h = self._box.height / 2
+                    half_h = self.height / 2
                     perp_x, perp_y = -dy * half_h, dx * half_h
-                    start_x, start_y = self._x, self._y
+                    start_x, start_y = self.x, self.y
                     end_x, end_y = start_x + dx * length, start_y + dy * length
                     if length > 0:
                         points = [
@@ -243,12 +239,12 @@ class Projectile():
         if Flags.CHAINS in self._behaviours and self._bounced and self._chains > 0:
             self._bounced = False
             self._chains -= 1
-            closest = SYSTEM["level"].closest_from(self._box, self._target)
+            closest = SYSTEM["level"].closest_from(self, self._target)
             if closest is None:
                 self._flagged = True
             else:
-                self._angle = 90 - atan2(closest.entity.hitbox.center_x - self._box.center_x,\
-                    closest.entity.hitbox.center_y - self._box.center_y) * 180 / pi
+                self._angle = 90 - atan2(closest.entity.hitbox.center_x - self.center_x,\
+                    closest.entity.hitbox.center_y - self.center_y) * 180 / pi
                 self._target = closest
         elif self.can_be_destroyed() and Flags.BOUNCE not in self._behaviours:
             self._flagged = True
@@ -256,19 +252,19 @@ class Projectile():
             self._bounces -= 1
             self._damage.coeff = round(self._damage.coeff * 0.7, 2)
             self._speed *= 1.4
-            if self._x <= 0:
-                self._x += self._width
+            if self.x <= 0:
+                self.x += self._width
                 self._angle = random.randint(45, 135)
-            if self._x >= SCREEN_WIDTH:
-                self._x -= self._width * 2
+            if self.x >= SCREEN_WIDTH:
+                self.x -= self._width * 2
                 self._angle = random.randint(135, 225)
-            if self._y <= 0:
-                self._y += self._height
+            if self.y <= 0:
+                self.y += self._height
                 self._angle = random.randint(-45, 45)
-            if self._y >= SCREEN_HEIGHT:
-                self._y -= self._height * 2
+            if self.y >= SCREEN_HEIGHT:
+                self.y -= self._height * 2
                 self._angle = random.randint(225, 315)
-            self._box.move((self._x, self._y))
+            self.move((self.x, self.y))
         if self._bounces <= 0 and Flags.BOUNCE in self._behaviours:
             self._flagged = True
 
@@ -278,25 +274,7 @@ class Projectile():
 
     def get_pos(self):
         """Returns the projectile's position."""
-        return (self._x, self._y)
-
-    @property
-    def x(self):
-        """Returns the projectile's x value."""
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        self._x = value
-
-    @property
-    def y(self):
-        """Returns the projectile's y value."""
-        return self._y
-
-    @y.setter
-    def y(self, value):
-        self._y = value
+        return (self.x, self.y)
 
     @property
     def speed(self):
@@ -347,7 +325,7 @@ class Projectile():
     @property
     def image(self) -> Animation:
         """Returns the projectile's image."""
-        return SYSTEM["images"][self._image]
+        return self._real_image
 
     @image.setter
     def image(self, value):
@@ -356,7 +334,7 @@ class Projectile():
     @property
     def hitbox(self):
         """Returns the projectile's hitbox."""
-        return self._box
+        return self
 
     @property
     def behaviours(self):
@@ -376,3 +354,8 @@ class Projectile():
     def warning(self) -> bool:
         """Returns the aoe warning surface."""
         return self._warning
+
+    @property
+    def effective(self):
+        """Dummy"""
+        return True

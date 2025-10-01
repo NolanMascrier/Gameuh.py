@@ -26,8 +26,8 @@ class Draggable(Image):
     """
     def __init__(self, uri=None, x = 0, y = 0, contains = None, immutable = False):
         super().__init__(uri)
-        self._x = x
-        self._y = y
+        self.x = x
+        self.y = y
         self._dragging = False
         self._contains = contains
         self._hover = None
@@ -60,22 +60,22 @@ class Draggable(Image):
         if mouse_click[0]:
             if SYSTEM["dragged"] is None or SYSTEM["dragged"] is self:
                 if self._dragging:
-                    self._x = mouse_x
-                    self._y = mouse_y
+                    self.x = mouse_x
+                    self.y = mouse_y
                     self.opacity(180)
-                elif (self._x <= mouse_x <= self._x + self.width and
-                        self._y <= mouse_y <= self._y + self.height):
+                elif (self.x <= mouse_x <= self.x + self.width and
+                        self.y <= mouse_y <= self.y + self.height):
                     if SYSTEM["cooldown"] > 0:
                         return self
                     if SYSTEM["rune"] != -1:
                         self._contains.apply_rune()
-                        self._hover = Hoverable(self._x, self._y, None, None, surface=self._image,\
+                        self._hover = Hoverable(self.x, self.y, None, None, surface=self._image,\
                             override=self._contains.popup,\
                             alternative=self._contains.popup_details)
                         SYSTEM["cooldown"] = 0.1
                         return self
                     if self._immutable:
-                        copy = Draggable(self._uri, self._x, self._y,\
+                        copy = Draggable(self._uri, self.x, self.y,\
                             self._contains, True)
                         copy.dragging = True
                         SYSTEM["dragged"] = copy
@@ -105,15 +105,15 @@ class Draggable(Image):
 
     def set(self, x, y):
         """Sets the draggable position."""
-        self._x = x
-        self._y = y
+        self.x = x
+        self.y = y
         if self._hover is not None:
             self._hover.set(x, y)
         return self
 
     def draw(self):
         """Displays the draggable."""
-        render(self._image, (self._x, self._y))
+        render(self._image, (self.x, self.y))
 
     def get_image(self):
         """Returns the image of the contained item, or the\

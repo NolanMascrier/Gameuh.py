@@ -41,14 +41,14 @@ def check_collisions():
             if proj.hitbox.is_colliding(SYSTEM["player"].entity.hitbox):
                 if proj in SYSTEM["player"].immune:
                     continue
-                if isinstance(proj, Projectile):
+                if isinstance(proj, Projectile) and proj.effective:
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature)
                     if dmg is None or crit is None:
                         continue
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
-                elif isinstance(proj, Slash):
+                elif isinstance(proj, Slash) and proj.effective:
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature)
                     if dmg is None or crit is None:
                         continue
@@ -60,14 +60,14 @@ def check_collisions():
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):
                     if proj in enemy.immune:
                         continue
-                    if isinstance(proj, Projectile):
+                    if isinstance(proj, Projectile) and proj.effective:
                         dmg, crit = proj.on_hit(enemy.creature)
                         if dmg is None or crit is None:
                             continue
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
-                    elif isinstance(proj, Slash):
+                    elif isinstance(proj, Slash) and proj.effective:
                         dmg, crit = proj.on_hit(enemy.creature)
                         if dmg is None or crit is None:
                             continue

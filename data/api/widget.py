@@ -1,6 +1,8 @@
 """A widget is something that can be displayed at the screen. It has
 a x.y position, a width, a height and a center."""
 
+from data.api.vec2d import Vec2
+
 class Widget():
     """Define a widget by its coordinates.
 
@@ -11,48 +13,51 @@ class Widget():
         height (float, optional): height of the widget.
     """
     def __init__(self, x: float = 0, y: float = 0, width: float = 0, height: float = 0):
-        self._x = x
-        self._y = y
+        self._position = Vec2(x, y)
         self._width = width
         self._height = height
+
+    def set(self, x, y):
+        """Sets both coordinates."""
+        self._position = Vec2(x, y)
 
     @property
     def left(self) -> float:
         """Return's the widget's leftmost x."""
-        return self._x
+        return self.x
 
     @property
     def right(self) -> float:
         """Return's the widget's rightmost x."""
-        return self._x + self._width
+        return self.x + self._width
 
     @property
     def top(self) -> float:
         """Return's the widget's top y."""
-        return self._y
+        return self.y
 
     @property
     def bottom(self) -> float:
         """Return's the widget's rightmost y."""
-        return self._y + self._height
+        return self.y + self._height
 
     @property
     def x(self) -> float:
         """Return's the widget x value."""
-        return self._x
+        return self._position.x
 
     @x.setter
     def x(self, value):
-        self._x = value
+        self._position.x = value
 
     @property
     def y(self) -> float:
         """Return's the widget y value."""
-        return self._y
+        return self._position.y
 
     @y.setter
     def y(self, value):
-        self._y = value
+        self._position.y = value
 
     @property
     def width(self) -> float:
@@ -92,5 +97,5 @@ class Widget():
     def center(self, x:float|tuple, y:float = 0):
         center_x = x if isinstance(x, float) else x[0]
         center_y = y if isinstance(x, float) else x[1]
-        self._x = center_x - self._width / 2
-        self._y = center_y - self._height / 2
+        self._position.x = center_x - self._width / 2
+        self._position.y = center_y - self._height / 2

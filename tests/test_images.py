@@ -114,7 +114,7 @@ class TestingHoverable(unittest.TestCase):
         hv.set(0, 0).tick().draw()
 
     def test_override(self):
-        sfc = Surface(100, 100)
+        sfc = Surface(100, 100, 100, 100)
         SYSTEM["images"]["hoverable"].get_image()
         hv = Hoverable(0, 0, "truc", "shit", surface=sfc)
         self.assertEqual(hv.height, 100)

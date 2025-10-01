@@ -1,11 +1,13 @@
 """A dropdown menu is a menu that allows the user to select
 a value from the list."""
 
+from data.api.widget import Widget
+
 from data.constants import SYSTEM, trad
 from data.image.text import Text
 from data.interface.render import render
 
-class DropDownTitle():
+class DropDownTitle(Widget):
     """Subclass for DropDown title, aka the clickable button to open
     the menu.
     
@@ -17,22 +19,21 @@ class DropDownTitle():
     """
     def __init__(self, value: Text, width, height, parent):
         self._value = value
-        self._x = 0
-        self._y = 0
+        super().__init__()
         self._hover = SYSTEM["images"]["dropdown_menu"].duplicate(width, height)
-        self._width = self._hover.get_width()
-        self._height = self._hover.get_height()
+        self.width = self._hover.get_width()
+        self.height = self._hover.get_height()
         self._parent = parent
 
     def is_mouse_over(self):
         """Checks whether or not the mouse is over the element."""
-        if SYSTEM["mouse"][0] < self._x:
+        if SYSTEM["mouse"][0] < self.x:
             return False
-        if SYSTEM["mouse"][0] > self._x + self._width:
+        if SYSTEM["mouse"][0] > self.x + self.width:
             return False
-        if SYSTEM["mouse"][1] < self._y:
+        if SYSTEM["mouse"][1] < self.y:
             return False
-        if SYSTEM["mouse"][1] > self._y + self._height:
+        if SYSTEM["mouse"][1] > self.y + self.height:
             return False
         return True
 
@@ -47,32 +48,21 @@ class DropDownTitle():
 
     def set(self, x, y):
         """Sets the element's x;y positions."""
-        self._x = x
-        self._y = y
+        super().set(x, y)
         return self
 
     def draw(self, surface = None):
         """Draws the element on the surface."""
         if surface is None or surface == SYSTEM["windows"]:
-            render(self._hover, (self._x, self._y))
-            render(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
-                self._y + self._height / 2 - self._value.height / 2))
+            render(self._hover, (self.x, self.y))
+            render(self._value.image, (self.x + self.width / 2 - self._value.width / 2,\
+                self.y + self.height / 2 - self._value.height / 2))
             return
-        surface.blit(self._hover, (self._x, self._y))
-        surface.blit(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
-            self._y + self._height / 2 - self._value.height / 2))
+        surface.blit(self._hover, (self.x, self.y))
+        surface.blit(self._value.image, (self.x + self.width / 2 - self._value.width / 2,\
+            self.y + self.height / 2 - self._value.height / 2))
 
-    @property
-    def width(self):
-        """Returns the element's width."""
-        return self._width
-
-    @property
-    def height(self):
-        """Returns the element's height."""
-        return self._height
-
-class DropDownElement():
+class DropDownElement(Widget):
     """Subclass for DropDown elements.
     
     Args:
@@ -83,25 +73,24 @@ class DropDownElement():
         parent (DropDown): Parented menu.
     """
     def __init__(self, index: int, value: Text, width, height, parent):
+        super().__init__()
         self._index = index
         self._value = value
-        self._x = 0
-        self._y = 0
         self._hover = SYSTEM["images"]["hoverable"].duplicate(width, height)
         self._default = SYSTEM["images"]["dropdown"].duplicate(width, height)
-        self._width = self._hover.get_width()
-        self._height = self._hover.get_height()
+        self.width = self._hover.get_width()
+        self.height = self._hover.get_height()
         self._parent = parent
 
     def is_mouse_over(self):
         """Checks whether or not the mouse is over the element."""
-        if SYSTEM["mouse"][0] < self._x:
+        if SYSTEM["mouse"][0] < self.x:
             return False
-        if SYSTEM["mouse"][0] > self._x + self._width:
+        if SYSTEM["mouse"][0] > self.x + self.width:
             return False
-        if SYSTEM["mouse"][1] < self._y:
+        if SYSTEM["mouse"][1] < self.y:
             return False
-        if SYSTEM["mouse"][1] > self._y + self._height:
+        if SYSTEM["mouse"][1] > self.y + self.height:
             return False
         return True
 
@@ -119,38 +108,27 @@ class DropDownElement():
 
     def set(self, x, y):
         """Sets the element's x;y positions."""
-        self._x = x
-        self._y = y
+        super().set(x, y)
         return self
 
     def draw(self, surface = None):
         """Draws the element on the surface."""
         if surface is None or surface == SYSTEM["windows"]:
             if self.is_mouse_over():
-                render(self._hover, (self._x, self._y))
+                render(self._hover, (self.x, self.y))
             else:
-                render(self._default, (self._x, self._y))
-            render(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
-                self._y + self._height / 2 - self._value.height / 2))
+                render(self._default, (self.x, self.y))
+            render(self._value.image, (self.x + self.width / 2 - self._value.width / 2,\
+                self.y + self.height / 2 - self._value.height / 2))
             return
         if self.is_mouse_over():
-            surface.blit(self._hover, (self._x, self._y))
+            surface.blit(self._hover, (self.x, self.y))
         else:
-            surface.blit(self._default, (self._x, self._y))
-        surface.blit(self._value.image, (self._x + self._width / 2 - self._value.width / 2,\
-            self._y + self._height / 2 - self._value.height / 2))
+            surface.blit(self._default, (self.x, self.y))
+        surface.blit(self._value.image, (self.x + self.width / 2 - self._value.width / 2,\
+            self.y + self.height / 2 - self._value.height / 2))
 
-    @property
-    def width(self):
-        """Returns the element's width."""
-        return self._width
-
-    @property
-    def height(self):
-        """Returns the element's height."""
-        return self._height
-
-class DropDown():
+class DropDown(Widget):
     """Defines a dropdown.
     
     Args:
@@ -162,6 +140,7 @@ class DropDown():
         Defaults to 0.
     """
     def __init__(self, name, values, states, variable, default_index = 0):
+        super().__init__()
         self._name = name
         self._values = []
         self._states = states
@@ -177,31 +156,27 @@ class DropDown():
             width = max(width, t.width)
             max_height = max(max_height, t.height)
             height += t.height
-        self._width = width
-        self._height = height
+        self.width = width
+        self.height = height
         self._max_height = max_height
-        self._x = 0
-        self._y = 0
         self._closed = True
         self._surface = []
         for i, text in enumerate(self._values):
             self._surface.append((DropDownElement(i, text, width, max_height, self),\
-                DropDownTitle(text, self._width, max_height, self)))
+                DropDownTitle(text, self.width, max_height, self)))
 
     def is_mouse_over(self):
         """Checks whether the mouse is within the dropdown."""
         if not self._closed:
             return self._surface[self._index][1].is_mouse_over()
-        else:
-            for elmt, _ in self._surface:
-                if elmt.is_mouse_over():
-                    return True
+        for elmt, _ in self._surface:
+            if elmt.is_mouse_over():
+                return True
         return False
 
     def set(self, x, y):
         """Sets the menu position."""
-        self._x = x
-        self._y = y
+        super().set(x, y)
         i = 1
         for elmt, title in self._surface:
             elmt.set(x, y + i * elmt.height + self._title.height)
@@ -226,13 +201,13 @@ class DropDown():
             for elmt, _ in self._surface:
                 if not self._closed:
                     elmt.draw(surface)
-            render(self._title.image, (self._x, self._y))
+            render(self._title.image, (self.x, self.y))
             return
         self._surface[self._index][1].draw(surface)
         for elmt, _ in self._surface:
             if not self._closed:
                 elmt.draw(surface)
-        surface.blit(self._title.image, (self._x, self._y))
+        surface.blit(self._title.image, (self.x, self.y))
 
     @property
     def index(self):

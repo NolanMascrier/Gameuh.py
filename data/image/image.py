@@ -1,9 +1,10 @@
 """Simple wrapper for image surfaces in Pygame."""
 
-from data.api.surface import Surface
+from data.api.surface import Surface, Widget
+
 from data.constants import RESSOURCES
 
-class Image():
+class Image(Widget):
     """Defines an image. If the URI does not points
     toward and existing image, it'll load up a default image
     instead.
@@ -15,18 +16,18 @@ class Image():
         if uri is None:
             self._image = None
             self._uri = None
-            self._width = 0
-            self._height = 0
+            w = 0
+            h = 0
         elif isinstance(uri, Surface):
             self._image = uri.copy()
             self._uri = "unknown.png"
-            self._width = self._image.get_width()
-            self._height = self._image.get_height()
+            w = self._image.get_width()
+            h = self._image.get_height()
         elif isinstance(uri, Image):
             self._image = uri.clone().image
             self._uri = uri.uri
-            self._width = self._image.get_width()
-            self._height = self._image.get_height()
+            w = self._image.get_width()
+            h = self._image.get_height()
         else:
             try:
                 self._image = Surface.load(f"{RESSOURCES}/{uri}")
@@ -34,10 +35,11 @@ class Image():
                 print(f"Couldn't find file {uri}. Using default image.")
                 self._uri = "default.png"
                 self._image = Surface.load(f"{RESSOURCES}/default.png")
-            self._width = self._image.get_width()
-            self._height = self._image.get_height()
+            w = self._image.get_width()
+            h = self._image.get_height()
+        super().__init__(0, 0, w, h)
         self._visible = True
-        self._scaled = (self._height, self._width, True)
+        self._scaled = (h, w, True)
         self._rotated = 0
         self._flipped = (False, False)
 
@@ -71,7 +73,7 @@ class Image():
         if absolute:
             self._image.scale((width, height))
         else:
-            self._image.scale((self._width * width, self._height * height))
+            self._image.scale((self.width * width, self.height * height))
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         self._scaled = (height, width, absolute)
@@ -130,32 +132,14 @@ class Image():
         self._image = value
 
     @property
-    def width(self):
-        """Returns the image's width."""
-        return self._width
-
-    @property
     def w(self):
         """Returns the image's width."""
-        return self._width
-
-    @width.setter
-    def width(self, value):
-        self._width = value
-
-    @property
-    def height(self):
-        """Returns the image's height."""
-        return self._height
+        return self.width
 
     @property
     def h(self):
         """Returns the image's height."""
-        return self._height
-
-    @height.setter
-    def height(self, value):
-        self._height = value
+        return self.height
 
     @property
     def visible(self) -> bool:

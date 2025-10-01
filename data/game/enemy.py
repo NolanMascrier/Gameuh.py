@@ -5,6 +5,7 @@ They can move toward the player, or fire projectiles."""
 
 import random
 import numpy
+
 from data.physics.entity import Entity
 from data.creature import Creature
 from data.constants import Flags, POWER_UP_TRACKER, SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH

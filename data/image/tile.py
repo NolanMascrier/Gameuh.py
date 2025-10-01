@@ -90,13 +90,3 @@ class Tile(Image):
 
     def get_image(self):
         return self._image
-
-    @property
-    def width(self):
-        """Return's the tile width."""
-        return self._width
-
-    @property
-    def height(self):
-        """Return's the tile height."""
-        return self._height

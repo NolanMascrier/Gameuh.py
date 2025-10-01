@@ -1,6 +1,8 @@
 """A tabs is a widget that creates an array of button that
 will change a state."""
 
+from data.api.widget import Widget
+
 from data.image.button import Button
 from data.constants import SYSTEM
 
@@ -10,7 +12,7 @@ def set_var(variable, state, act = None):
     if act is not None:
         act()
 
-class Tabs:
+class Tabs(Widget):
     """Define a tab.
     
     Args:
@@ -32,8 +34,7 @@ class Tabs:
     def __init__(self, x, y, values, states, variable,\
         image = None, held = None, is_action = False, actions = None,\
         additional_action = None):
-        self._x = x
-        self._y = y
+        super().__init__(x, y, 0, 0)
         if values is None:
             values = []
         self._values = values
@@ -54,25 +55,20 @@ class Tabs:
                 if not is_action else actions[i](),\
                 v))
             self._fake_buttons.append(Button(held, held, None, v))
+        self.width = sum(b.width for b in self._buttons)
 
     def tick(self):
         """Ticks down the buttons"""
         i = 0
         for b in self._buttons:
             if SYSTEM[self._variable] == self._states[i]:
-                self._fake_buttons[i].set(self._x + i * b.image.width, self._y)\
+                self._fake_buttons[i].set(self.x + i * b.image.width, self.y)\
                     .tick().draw()
             else:
-                b.set(self._x + i * b.image.width, self._y).tick().draw()
+                b.set(self.x + i * b.image.width, self.y).tick().draw()
             i += 1
 
     def set(self, x, y):
         """Sets the tab at the x;y position."""
-        self._x = x
-        self._y = y
+        super().set(x, y)
         return self
-
-    @property
-    def width(self):
-        """Returns the total of the button's width."""
-        return sum(b.width for b in self._buttons)

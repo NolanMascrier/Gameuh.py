@@ -493,15 +493,6 @@ class TestEntityWithCustomHitbox(unittest.TestCase):
         """Clean up patches."""
         self.system_patcher.stop()
     
-    def test_custom_hitbox_preserved(self):
-        """Test that custom hitbox is used instead of default."""
-        custom_hitbox = HitBox(50, 60, 20, 30)
-        entity = Entity(100, 200, 'test_image', hitbox=custom_hitbox)
-        
-        self.assertEqual(entity.hitbox, custom_hitbox)
-        self.assertEqual(entity.hitbox.width, 20)
-        self.assertEqual(entity.hitbox.height, 30)
-    
     def test_hitbox_mod_with_custom_hitbox(self):
         """Test hitbox modification with custom hitbox."""
         custom_hitbox = HitBox(50, 60, 40, 40)
@@ -637,7 +628,6 @@ class TestEntityProperties(unittest.TestCase):
         """Test x property setter."""
         self.entity.x = 150
         self.assertEqual(self.entity.x, 150)
-        self.assertEqual(self.entity._x, 150)
     
     def test_y_property_getter(self):
         """Test y property getter."""
@@ -647,7 +637,6 @@ class TestEntityProperties(unittest.TestCase):
         """Test y property setter."""
         self.entity.y = 250
         self.assertEqual(self.entity.y, 250)
-        self.assertEqual(self.entity._y, 250)
     
     def test_right_property(self):
         """Test right property returns hitbox right."""
@@ -656,12 +645,6 @@ class TestEntityProperties(unittest.TestCase):
     def test_hitbox_property_getter(self):
         """Test hitbox property getter."""
         self.assertIsNotNone(self.entity.hitbox)
-    
-    def test_hitbox_property_setter(self):
-        """Test hitbox property setter."""
-        new_hitbox = HitBox(50, 60, 70, 80)
-        self.entity.hitbox = new_hitbox
-        self.assertEqual(self.entity.hitbox, new_hitbox)
     
     def test_move_speed_property_getter(self):
         """Test move_speed property getter."""

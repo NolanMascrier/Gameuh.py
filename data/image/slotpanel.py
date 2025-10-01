@@ -2,12 +2,15 @@
 inventories and such"""
 
 from collections.abc import Iterable
+
+from data.api.widget import Widget
+
 from data.constants import SYSTEM
 from data.image.slot import Slot
 from data.image.draggable import Draggable
 from data.interface.render import render
 
-class SlotPanel:
+class SlotPanel(Widget):
     """Defines a slot pannel, a group of slots.
     
     Ags:
@@ -30,8 +33,7 @@ class SlotPanel:
     """
     def __init__(self, x, y, slot_size=64, padding = 16, default = None, background = None,\
         immutable = False, display_filter = None, accept_only = None):
-        self._x = x
-        self._y = y
+        super().__init__(x, y)
         self._slot_size = slot_size
         if background is None:
             self._background = SYSTEM["images"]["tile_panel_back"]
@@ -55,17 +57,17 @@ class SlotPanel:
     def get_index(self):
         """Returns the index of the latest element."""
         elmts = len(self._slots)
-        col = (elmts % self._columns) * self._slot_size + self._x + self._padding
-        line = (elmts // self._columns) * self._slot_size + self._y + self._padding
+        col = (elmts % self._columns) * self._slot_size + self.x + self._padding
+        line = (elmts // self._columns) * self._slot_size + self.y + self._padding
         return (line, col)
 
     def is_hovered(self):
         """Returns true if the mouse is within the usable boundaries 
         of the panel."""
-        if SYSTEM["mouse"][0] >= self._x + self._padding and\
-            SYSTEM["mouse"][0] <= self._x + self._background.width - self._padding and\
-            SYSTEM["mouse"][1] >= self._y + self._padding and\
-            SYSTEM["mouse"][1] <= self._y + self._background.height - self._padding:
+        if SYSTEM["mouse"][0] >= self.x + self._padding and\
+            SYSTEM["mouse"][0] <= self.x + self._background.width - self._padding and\
+            SYSTEM["mouse"][1] >= self.y + self._padding and\
+            SYSTEM["mouse"][1] <= self.y + self._background.height - self._padding:
             return True
         return False
 
@@ -131,8 +133,8 @@ class SlotPanel:
         lin = 0
         col = 0
         for _ in self._slots:
-            x = self._x + col * self._slot_size
-            y = self._y + lin * self._slot_size
+            x = self.x + col * self._slot_size
+            y = self.y + lin * self._slot_size
             if SYSTEM["mouse"][0] > x and SYSTEM["mouse"][0] < x + self._slot_size and\
                 SYSTEM["mouse"][1] > y and SYSTEM["mouse"][1] < y + self._slot_size:
                 return i
@@ -166,11 +168,11 @@ class SlotPanel:
 
     def draw(self):
         """Draws the component."""
-        render(self._background.get_image(), (self._x, self._y))
+        render(self._background.get_image(), (self.x, self.y))
         diff_x, x = 0, 0
         diff_y, y = 0, 0
-        real_x = self._x + self._padding + x * self._slot_size
-        real_y = self._y + self._padding + y * self._slot_size
+        real_x = self.x + self._padding + x * self._slot_size
+        real_y = self.y + self._padding + y * self._slot_size
         for slot in self._slots:
             if slot.contains is not None and self._filter is not None\
                 and self._filter not in slot.contains.contains.flags:
@@ -183,8 +185,8 @@ class SlotPanel:
                 continue
             if slot.contains is SYSTEM["dragged"]:
                 continue
-            real_x = self._x + self._padding + x * self._slot_size
-            real_y = self._y + self._padding + y * self._slot_size
+            real_x = self.x + self._padding + x * self._slot_size
+            real_y = self.y + self._padding + y * self._slot_size
             if SYSTEM["dragged"] is not None and not self._immutable and\
                 SYSTEM["mouse"][0] > real_x and SYSTEM["mouse"][0] < real_x + self._slot_size and\
                 SYSTEM["mouse"][1] > real_y and SYSTEM["mouse"][1] < real_y + self._slot_size:
@@ -192,8 +194,8 @@ class SlotPanel:
                 if x > self._columns:
                     x = 0
                     y += 1
-                real_x = self._x + self._padding + x * self._slot_size
-                real_y = self._y + self._padding + y * self._slot_size
+                real_x = self.x + self._padding + x * self._slot_size
+                real_y = self.y + self._padding + y * self._slot_size
             if y <= self._lines:
                 slot.draw_alt(SYSTEM["windows"], real_x, real_y)
                 slot.contains.set(real_x, real_y)
@@ -202,8 +204,8 @@ class SlotPanel:
                 x = 0
                 y += 1
         if y <= self._lines:
-            real_x = self._x + self._padding + x * self._slot_size
-            real_y = self._y + self._padding + y * self._slot_size
+            real_x = self.x + self._padding + x * self._slot_size
+            real_y = self.y + self._padding + y * self._slot_size
             if x > self._columns:
                 x = 0
                 y += 1

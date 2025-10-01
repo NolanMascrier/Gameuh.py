@@ -47,7 +47,6 @@ def draw_bottom_bar():
 
 def draw_hitbox(hitbox: HitBox, color, color_border, layer):
     """Draws the hitbox."""
-    
     layer.draw_rect(color, (hitbox.x, hitbox.y, hitbox.width, hitbox.height))
     layer.draw_rect(color_border, (hitbox.x, hitbox.y, hitbox.width, hitbox.height), 2)
     layer.draw_rect(color_border, (hitbox.x + hitbox.width / 2 - 2,
@@ -80,7 +79,8 @@ def draw_game(show_player = True, show_enemies = True,\
     if show_projectiles:
         if SYSTEM["options"]["show_hitboxes"]:
             for b in PROJECTILE_TRACKER:
-                draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
+                if b.effective:
+                    draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
         for p in PROJECTILE_TRACKER:
             if p.warning is not None:
                 SYSTEM["layers"]["warnings"].draw_polygon(RED_WARNING, p.warning[0])

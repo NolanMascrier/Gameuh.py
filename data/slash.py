@@ -11,12 +11,12 @@ from data.projectile import Projectile
 from data.numerics.affliction import Affliction
 from data.constants import PROJECTILE_GRID, Flags, SYSTEM
 
-class Slash():
+class Slash(HitBox):
     """Defines a slash."""
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
                 offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\
-                ignore_team = False):
+                ignore_team = False, effective_frames = None):
         self._caster = caster
         self._origin = origin
         self._image = animation
@@ -25,7 +25,8 @@ class Slash():
         self._evil = evil
         self._area = area
         self._center = center
-        self._hitbox = HitBox(caster.x, caster.y, self._real_image.w,\
+        self._effective_frames = effective_frames
+        super().__init__(caster.x, caster.y, self._real_image.w,\
             self._real_image.h)
         if flags is None or not isinstance(flags, list):
             self._flags = []
@@ -59,7 +60,8 @@ class Slash():
             self._offset[1],
             self._debuffs.copy(),
             self._area if area is None else area,
-            center
+            center,
+            effective_frames=self._effective_frames
         )
 
     def get_image(self):
@@ -69,7 +71,7 @@ class Slash():
     def get_pos(self):
         """Returns the slash's position."""
         x, y = self._caster.hitbox.center
-        cx, cy = self._hitbox.width / 2, self._hitbox.height / 2
+        cx, cy = self.width / 2, self.height / 2
         ox, oy = self._offset
         if self._center:
             dx, dy = self._real_image.width / 2, self._real_image.height / 2
@@ -81,7 +83,7 @@ class Slash():
         """Ticks down the slash."""
         self._real_image.tick()
         x, y = self.get_pos()
-        self._hitbox.move((x, y))
+        super().move((x, y))
         if Flags.CAN_TICK in self._flags:
             self._tick_time += 0.016
             if self._tick_time >= 0.1:
@@ -90,10 +92,10 @@ class Slash():
         if self._real_image.finished:
             self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
-            for proj in PROJECTILE_GRID.query(self._hitbox):
+            for proj in PROJECTILE_GRID.query(self):
                 if not isinstance(proj, Projectile):
                     return
-                if proj.hitbox.is_colliding(self._hitbox) and\
+                if proj.hitbox.is_colliding(self) and\
                     proj.evil is not self._evil:
                     proj.flag()
 
@@ -123,7 +125,8 @@ class Slash():
             "flags": self._flags,
             "offset": self._offset,
             "debuffs": debuffs,
-            "area": self._area
+            "area": self._area,
+            "effective": self._effective_frames
         }
         return json.dumps(data)
 
@@ -140,7 +143,8 @@ class Slash():
             offset_x=int(data["offset"][0]),
             offset_y=int(data["offset"][1]),
             debuffs=[Affliction.imports(json.loads(d)) for d in data["debuffs"]],
-            area=float(data["area"])
+            area=float(data["area"]),
+            effective_frames=data["effective"]
         )
 
     @property
@@ -182,11 +186,7 @@ class Slash():
     @property
     def hitbox(self):
         """Returns the slash's hitbox."""
-        return self._hitbox
-
-    @hitbox.setter
-    def hitbox(self, value):
-        self._hitbox = value
+        return self
 
     @property
     def area(self):
@@ -233,3 +233,11 @@ class Slash():
     def warning(self):
         """Dummy"""
         return None
+
+    @property
+    def effective(self):
+        """Returns whether or not the slash is still in effect, or if it's just the end
+        of its animation."""
+        if self._effective_frames is None:
+            return True
+        return self._real_image.frame < self._effective_frames

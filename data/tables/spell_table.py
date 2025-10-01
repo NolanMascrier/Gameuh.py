@@ -107,14 +107,15 @@ def generate_spell_list():
         loops=8, plays_once=True, lines=4).scale(720, 1980)
 
     fireball_explosion =\
-        Slash(DummyEntity(0,0, None), None, "fireball_expl_img", FIREBALL_EXPLOSION)
+        Slash(DummyEntity(0,0, None), None, "fireball_expl_img",\
+              FIREBALL_EXPLOSION, effective_frames=3)
 
     master_1 = Spell("", m1_icon, "master1_img", MASTER_1, 5, 0,\
-        cooldown=0.5, flags=[Flags.MELEE], offset_x=60)
+        cooldown=0.5, flags=[Flags.MELEE], offset_x=60, effective_frames=8)
     master_2 = Spell("", m2_icon, "master2_img", MASTER_2, 0, 0,\
-        cooldown=0.5, flags=[Flags.MELEE], offset_x=60)
+        cooldown=0.5, flags=[Flags.MELEE], offset_x=60, effective_frames=8)
     master_3 = Spell("", m3_icon, "master3_img", MASTER_3, 0, 0,\
-        cooldown=0.5, flags=[Flags.MELEE], offset_x=60)
+        cooldown=0.5, flags=[Flags.MELEE], offset_x=60, effective_frames=5)
     masterstrike = Spell("masterstrike", m1_icon, "master1_img", MASTER_3, 5, 0,\
         cooldown=3, flags=[Flags.MELEE,Flags.COMBO_SPELL], sequence=[master_1, master_2, master_3])
 
@@ -124,7 +125,7 @@ def generate_spell_list():
         cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 0,\
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
-        Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12)
+        Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING])
@@ -137,7 +138,7 @@ def generate_spell_list():
         Flags.RANDOM_POSITION, Flags.AIMED_AT_PLAYER], proj_speed=65)
     exult = Spell("exult", exult_icon, "exult_img", EXULT, 0,\
         cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER,\
-        Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED])
+        Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED], effective_frames=4)
     voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1,\
         cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     voidoltflurry = Spell("voidbolt_boss", voidbolt_icon, "voidbolt_proj2_img", VOIDBOLT_ALT, 0,\
@@ -164,7 +165,7 @@ def generate_spell_list():
         flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
     kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
         cooldown=0, flags=[Flags.FIRE, Flags.MELEE, Flags.DEBUFF, Flags.CUTS_PROJECTILE],\
-        debuffs=[BURN])
+        debuffs=[BURN], effective_frames=4)
     lazoor = Spell("fslash", fury_icon, "eldritchlaser", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=-1064)
     SYSTEM["spells"]["firebolt"] = firebolt

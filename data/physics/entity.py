@@ -7,7 +7,7 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.physics.hitbox import HitBox
 from data.image.sprite import Sprite
 
-class Entity():
+class Entity(HitBox):
     """Defines an entity.
     
     Args:
@@ -23,23 +23,23 @@ class Entity():
     """
     def __init__(self, x, y, imagefile: str, hitbox:HitBox = None,\
                 move_speed = 1, hitbox_mod = None):
-        self._x = x
-        self._y = y
-        self._x_def = x
-        self._y_def = y
         self._image = imagefile
         if imagefile is None:
             self._real_image = None
+            w = 0
+            h = 0
         else:
-            self._real_image = SYSTEM["images"][self._image].clone()
+            self._real_image = SYSTEM["images"][imagefile].clone()
+            w = self._real_image.w
+            h = self._real_image.h
         if hitbox is not None:
-            self._hitbox = hitbox
-        elif self._real_image is not None:
-            self._hitbox = HitBox(x, y, self._real_image.w, self._real_image.h)
+            super().__init__(hitbox.x, hitbox.y, hitbox.width, hitbox.height)
         else:
-            self._hitbox = None
+            super().__init__(x, y, w, h)
+        self._x_def = x
+        self._y_def = y
         if hitbox_mod is not None:
-            self._hitbox.resize(hitbox_mod, self._real_image.scale_factor)
+            self.resize(hitbox_mod, self._real_image.scale_factor)
         self._move_speed = move_speed
         self._keys = []
         self._flipped = False
@@ -63,22 +63,22 @@ class Entity():
             if self._dash_time <= 0:
                 self._dashing = False
             self._dash_time -= float(0.016)
-            self._x += self._dash_dx
-            self._y += self._dash_dy
-        if self._x < 0 or self._x > SCREEN_WIDTH - SYSTEM["images"][self._image].width or\
-            self._y < 0 or self._y > SCREEN_HEIGHT - SYSTEM["images"][self._image].height:
+            self.x += self._dash_dx
+            self.y += self._dash_dy
+        if self.x < 0 or self.x > SCREEN_WIDTH - SYSTEM["images"][self._image].width or\
+            self.y < 0 or self.y > SCREEN_HEIGHT - SYSTEM["images"][self._image].height:
             self._dashing = False
-        self._x = max(0, min(self._x, SCREEN_WIDTH - SYSTEM["images"][self._image].width))
-        self._y = max(0, min(self._y, SCREEN_HEIGHT - SYSTEM["images"][self._image].height))
-        self._hitbox.move_center(self.center)
+        self.x = max(0, min(self.x, SCREEN_WIDTH - SYSTEM["images"][self._image].width))
+        self.y = max(0, min(self.y, SCREEN_HEIGHT - SYSTEM["images"][self._image].height))
+        self.move_center(self.center)
 
     def reset(self):
         """Resets the entity."""
-        self._x = self._x_def
-        self._y = self._y_def
+        self.x = self._x_def
+        self.y = self._y_def
         self._keys = []
         self._flipped = False
-        self._hitbox.move_center(self.center)
+        self.move_center(self.center)
 
     def get_image(self):
         """Returns the current image."""
@@ -86,15 +86,15 @@ class Entity():
 
     def move(self, pos):
         """Moves the entity toward the x;y position."""
-        if self._x < pos[0]:
-            self._x += self._move_speed * 3
-        if self._x > pos[0]:
-            self._x -= self._move_speed * 3
-        if self._y < pos[1]:
-            self._y += self._move_speed
-        if self._y > pos[1]:
-            self._y -= self._move_speed
-        self._hitbox.move_center(self.center)
+        if self.x < pos[0]:
+            self.x += self._move_speed * 3
+        if self.x > pos[0]:
+            self.x -= self._move_speed * 3
+        if self.y < pos[1]:
+            self.y += self._move_speed
+        if self.y > pos[1]:
+            self.y -= self._move_speed
+        self.move_center(self.center)
 
     def displace(self, pos):
         """Moves the entity toward the x;y position."""
@@ -102,7 +102,6 @@ class Entity():
             return
         self.x = pos[0]
         self.y = pos[1]
-        self._hitbox.move_center(self.center)
 
     def dash(self, distance, dash_time = 0.4):
         """dash a certain distance depending on the last input angle."""
@@ -127,8 +126,8 @@ class Entity():
         data = {
             "type": "entity",
             "image": self._image,
-            "hit_box_w": self._hitbox.width,
-            "hit_box_h": self._hitbox.height,
+            "hit_box_w": self.width,
+            "hit_box_h": self.height,
             "move_speed": self._move_speed
         }
         return json.dumps(data)
@@ -141,7 +140,7 @@ class Entity():
     def detach(self, key, center = False):
         """Detach an animation."""
         if self._sprite:
-            self._real_image.detach(key, self._x, self._y, center)
+            self._real_image.detach(key, self.x, self.y, center)
 
     @staticmethod
     def imports(data):
@@ -152,29 +151,6 @@ class Entity():
             HitBox(10, SCREEN_HEIGHT/2, int(data["hit_box_w"]), int(data["hit_box_h"])),
             float(data["move_speed"])
         )
-
-    @property
-    def x(self):
-        """Returns the entity's x position."""
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        self._x = value
-
-    @property
-    def y(self):
-        """Returns the entity's y position."""
-        return self._y
-
-    @y.setter
-    def y(self, value):
-        self._y = value
-
-    @property
-    def right(self):
-        """Returns the entity right side."""
-        return self.hitbox.right
 
     @property
     def max_frame(self):
@@ -188,11 +164,7 @@ class Entity():
     @property
     def hitbox(self):
         """Returns the entity's hitbox."""
-        return self._hitbox
-
-    @hitbox.setter
-    def hitbox(self, value):
-        self._hitbox = value
+        return self
 
     @property
     def move_speed(self):
@@ -230,10 +202,3 @@ class Entity():
     def angle(self, value):
         if not self._dashing:
             self._angle = value
-
-    @property
-    def center(self):
-        """Returns the entity's center."""
-        x = self._x + SYSTEM["images"][self._image].width / 2
-        y = self._y + SYSTEM["images"][self._image].height / 2
-        return (x, y)

@@ -1,12 +1,15 @@
 """A slot is a component that can hold a draggable."""
 
 from collections.abc import Iterable
+
+from data.api.widget import Widget
+
 from data.constants import SYSTEM
 from data.image.draggable import Draggable
 from data.item import Item
 from data.interface.render import render
 
-class Slot():
+class Slot(Widget):
     """Defines a draggable image, an image that can be
     dragged around and inserted into slots.
     
@@ -48,9 +51,7 @@ class Slot():
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
             self._empty_image = SYSTEM["images"][back_image]
-        self._x = x
-        self._y = y
-        self._size = (self._empty_image.width, self._empty_image.height)
+        super().__init__(x, y, self._empty_image.width, self._empty_image.height)
         self._contains = None
         self._on_slot = on_slot
         self._on_remove = on_remove
@@ -66,7 +67,7 @@ class Slot():
             self._accept_only = None
         if default is not None:
             dr = Draggable(contains=default, immutable=immutable)
-            dr.set(self._x, self._y)
+            dr.set(self.x, self.y)
             dr.set_parent(self)
             self._contains = dr
 
@@ -78,7 +79,7 @@ class Slot():
         old = self._contains
         self._contains = draggable
         draggable.dragging = False
-        draggable.set(self._x, self._y)
+        draggable.set(self.x, self.y)
         draggable.set_parent(self)
         if self._on_slot is not None:
             self._on_slot(draggable.contains, self)
@@ -107,8 +108,8 @@ class Slot():
     def is_hovered(self):
         """Checks whether or not the component is hovered."""
         mx, my = SYSTEM["mouse"]
-        return (self._x <= mx <= self._x + self._size[0] and
-                self._y <= my <= self._y + self._size[1])
+        return (self.x <= mx <= self.x + self.width and
+                self.y <= my <= self.y + self.height)
 
     def try_insert(self, draggable: Draggable):
         """Attempts to insert draggable if it's dropped on the slot."""
@@ -130,8 +131,7 @@ class Slot():
 
     def set(self, x, y):
         """Sets the slot at the x;y position."""
-        self._x = x
-        self._y = y
+        super().set(x, y)
         if self._contains is not None:
             self._contains.set(x, y)
         return self
@@ -146,9 +146,9 @@ class Slot():
 
     def draw(self):
         """Draws the component on screen."""
-        render(self._empty_image.image, (self._x, self._y))
+        render(self._empty_image.image, (self.x, self.y))
         if self._contains is not None:
-            render(self._contains.get_image().image, (self._x, self._y))
+            render(self._contains.get_image().image, (self.x, self.y))
 
     def draw_alt(self, surface, x, y):
         """Draws the component on the surface at specified position."""
@@ -213,40 +213,6 @@ class Slot():
         return self._contains is None
 
     @property
-    def height(self):
-        """Returns the background's height."""
-        return self._empty_image.height
-
-    @property
-    def width(self):
-        """Returns the background's width."""
-        return self._empty_image.width
-
-    @property
     def flag(self):
         """Returns the slot's flag."""
         return self._flag
-
-    @property
-    def left(self):
-        """Returns whether or not the slot is marked for\
-        the left hand ring."""
-        return self._left
-
-    @property
-    def x(self):
-        """Returns the slot x position."""
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        self._x = value
-
-    @property
-    def y(self):
-        """Returns the slot y position."""
-        return self._y
-
-    @y.setter
-    def y(self, value):
-        self._y = value

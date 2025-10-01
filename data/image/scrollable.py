@@ -1,21 +1,18 @@
 """A scrollable is a surface that can be moved  around
 by clicking and dragging the mouse."""
 
-from data.api.surface import Surface
+from data.api.surface import Surface, Widget
 
 from data.constants import SYSTEM
 from data.image.animation import Animation, Image
 from data.interface.render import render
 
-class Scrollable():
+class Scrollable(Widget):
     """Defines a scrollable surface, which contains another that
     can be moved around."""
     def __init__(self, x, y, width, height, padding = 5,\
         background:Image|Animation = None, contains: Surface = None):
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
+        super().__init__(x, y, width, height)
         self._padding = padding
         self._background = background
         self._contains = contains
@@ -28,13 +25,13 @@ class Scrollable():
 
     def mouse_inside(self):
         """Checks whether or not the mouse is inside the scrollable area."""
-        if SYSTEM["mouse"][0] < self._x + self._padding:
+        if SYSTEM["mouse"][0] < self.x + self._padding:
             return False
-        if SYSTEM["mouse"][0] > self._x - self._padding + self._width:
+        if SYSTEM["mouse"][0] > self.x - self._padding + self.width:
             return False
-        if SYSTEM["mouse"][1] < self._y + self._padding:
+        if SYSTEM["mouse"][1] < self.y + self._padding:
             return False
-        if SYSTEM["mouse"][1] > self._y - self._padding + self._height:
+        if SYSTEM["mouse"][1] > self.y - self._padding + self.height:
             return False
         return True
 
@@ -42,19 +39,14 @@ class Scrollable():
         """Converts the x;y position of the contained surface
         into 'real' coordinates (on screen).
         Returns -1; -1 if the coordinates are not on screen."""
-        screen_x = self._x + self._padding + x + self._diff_x
-        screen_y = self._y + self._padding + y + self._diff_y
-
-        # Determine bounds of the visible area
-        view_x1 = self._x + self._padding
-        view_y1 = self._y + self._padding
-        view_x2 = view_x1 + self._width - self._padding * 2
-        view_y2 = view_y1 + self._height - self._padding * 2
-
-        # If the adjusted coordinate is outside the visible area, return -1, -1
+        screen_x = self.x + self._padding + x + self._diff_x
+        screen_y = self.y + self._padding + y + self._diff_y
+        view_x1 = self.x + self._padding
+        view_y1 = self.y + self._padding
+        view_x2 = view_x1 + self.width - self._padding * 2
+        view_y2 = view_y1 + self.height - self._padding * 2
         if not (view_x1 <= screen_x < view_x2 and view_y1 <= screen_y < view_y2):
             return -1, -1
-
         return screen_x, screen_y
 
     def coordinates_rectangle(self, x, y, h, w):
@@ -63,28 +55,21 @@ class Scrollable():
         is within the scrollable area (ie resize the clickable area
         of a button). Returns None if the button is fully unreachable.
         """
-        screen_x = self._x + self._padding + x + self._diff_x
-        screen_y = self._y + self._padding + y + self._diff_y
-
-        view_x1 = self._x + self._padding
-        view_y1 = self._y + self._padding
-        view_x2 = view_x1 + self._width - self._padding * 2
-        view_y2 = view_y1 + self._height - self._padding * 2
-
+        screen_x = self.x + self._padding + x + self._diff_x
+        screen_y = self.y + self._padding + y + self._diff_y
+        view_x1 = self.x + self._padding
+        view_y1 = self.y + self._padding
+        view_x2 = view_x1 + self.width - self._padding * 2
+        view_y2 = view_y1 + self.height - self._padding * 2
         rect_x2 = screen_x + w
         rect_y2 = screen_y + h
-
-        # Fully outside
         if screen_x >= view_x2 or rect_x2 <= view_x1 or \
         screen_y >= view_y2 or rect_y2 <= view_y1:
             return None
-
-        # Clip to viewport
         clipped_x = max(screen_x, view_x1)
         clipped_y = max(screen_y, view_y1)
         clipped_w = min(rect_x2, view_x2) - clipped_x
         clipped_h = min(rect_y2, view_y2) - clipped_y
-
         return clipped_x, clipped_y, clipped_w, clipped_h
 
     def tick(self):
@@ -107,48 +92,12 @@ class Scrollable():
     def draw(self):
         """Draws the surface and the contained surface."""
         if self._background is not None:
-            render(self._background.get_image(), (self._x, self._y))
-        self._subsurface = Surface(self._width - self._padding * 2,\
-                                            self._height - self._padding * 2)
+            render(self._background.get_image(), (self.x, self.y))
+        self._subsurface = Surface(self.width - self._padding * 2,\
+                                            self.height - self._padding * 2)
         if self._contains is not None:
             self._subsurface.blit(self._contains, (self._diff_x, self._diff_y))
-        render(self._subsurface, (self._x + self._padding, self._y + self._padding))
-
-    @property
-    def x(self):
-        """Returns the scrollable's x value."""
-        return self._x
-
-    @x.setter
-    def x(self, value):
-        self._x = value
-
-    @property
-    def y(self):
-        """Returns the scrollable's x value."""
-        return self._y
-
-    @y.setter
-    def y(self, value):
-        self._y = value
-
-    @property
-    def width(self):
-        """Returns the scrollable's width."""
-        return self._width
-
-    @width.setter
-    def width(self, value):
-        self._width = value
-
-    @property
-    def height(self):
-        """Returns the scrollable's height value."""
-        return self._height
-
-    @height.setter
-    def height(self, value):
-        self._height = value
+        render(self._subsurface, (self.x + self._padding, self.y + self._padding))
 
     @property
     def padding(self):

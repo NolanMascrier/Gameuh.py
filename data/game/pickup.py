@@ -5,6 +5,7 @@ import random
 import math
 
 from data.api.vec2d import Vec2
+from data.api.widget import Widget
 
 from data.physics.hitbox import HitBox
 from data.image.text import Text
@@ -21,17 +22,16 @@ COLORS = [
 BLUE = (3, 188, 255)
 GREEN = (0, 143, 0)
 
-class PickUp():
+class PickUp(HitBox):
     """Creates a pickup."""
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
                 flags = None, contained = None):
-        self._position = Vec2(x, y)
+        super().__init__(x, y, w, h)
         self._value = value
         if flags is None:
             self._flags = []
         else:
             self._flags = flags
-        self._hitbox = HitBox(x, y, w, h)
         self._to_delete = False
         #maths stuff
         self._acceleration = Vec2(0, 0)
@@ -78,13 +78,13 @@ class PickUp():
             return SYSTEM["images"][f"rune_{self._value}_mini"].image
         return None
 
-    def move(self, player):
+    def move(self, pos):
         """Gravitates toward the player."""
         if self._delay > 0:
             self._delay -= 1
             self._position += self._velocity
             return
-        desired = Vec2(player.hitbox.center) - self._position
+        desired = Vec2(pos.hitbox.center) - self._position
         distance = desired.length()
         if distance < self._arrival_threshold:
             self._velocity *= 0.9
@@ -141,29 +141,15 @@ class PickUp():
     def tick(self, player):
         """Ticks down the pickup"""
         self.move(player)
-        self._hitbox.move((self.x, self.y))
+        super().move((self.x, self.y))
         SYSTEM["images"]["life_orb"].tick()
         SYSTEM["images"]["mana_orb"].tick()
         SYSTEM["images"]["exp_orb"].tick()
 
     @property
-    def x(self):
-        """Returns the pickup x position"""
-        return self._position[0]
-
-    @property
-    def y(self):
-        """Returns the pickup x position"""
-        return self._position[1]
-
-    @property
     def hitbox(self):
         """Returns the pickup's hitbox."""
-        return self._hitbox
-
-    @hitbox.setter
-    def hitbox(self, value):
-        self._hitbox = value
+        return self
 
     @property
     def flags(self) -> list:

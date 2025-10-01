@@ -53,7 +53,8 @@ class Spell():
                  bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,\
                  explosion = None, sequence = None,\
                  cooldown = 0.1, projectiles = 1, flags = None, buffs = None,\
-                 debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20):
+                 debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,\
+                 effective_frames = None):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -62,6 +63,7 @@ class Spell():
         self._level = 1
         self._exp = 0
         self._exp_to_next = 10000
+        self._effective_frames = effective_frames
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
             "life_cost": Stat(life_cost, "life_cost"),
@@ -214,7 +216,7 @@ class Spell():
             if (self._sequence_step >= len(self._sequence) or self._sequence_timer >= 3)\
                 and self._started:
                 self._cooldown = self._stats["cooldown"].c_value *\
-                    caster.stats["cast_speed"].c_value
+                    caster.creature.stats["cast_speed"].c_value
                 self._sequence_step = 0
                 self._sequence_timer = 0
                 self._started = False
@@ -488,7 +490,7 @@ class Spell():
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
                        aim_right, evil, self._flags, self._offset[0],\
                        self._offset[1], debuffs=self._debuffs, area=area,\
-                        ignore_team=ignore_team)
+                       ignore_team=ignore_team, effective_frames=self._effective_frames)
         PROJECTILE_TRACKER.append(sl)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\
@@ -740,3 +742,4 @@ class Spell():
         fl.extend(self._flags)
         fl.extend(self._gathered_flags)
         return fl
+

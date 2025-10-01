@@ -90,7 +90,7 @@ class Surface(Widget):
 
     def copy(self) -> "Surface":
         """Return a copy of this surface."""
-        s = Surface(self._x, self._y, self._width, self._height)
+        s = Surface(self.x, self.y, self._width, self._height)
         s.surface = self._surface.copy()
         return s
 

@@ -15,12 +15,12 @@ class Vec2:
     @property
     def x(self):
         """Returns the vector's x value."""
-        return self.arr[0]
+        return round(float(self.arr[0]), 4)
 
     @property
     def y(self):
         """Returns the vector's x value."""
-        return self.arr[1]
+        return round(float(self.arr[1]), 4)
 
     @x.setter
     def x(self, v):
