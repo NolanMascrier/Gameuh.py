@@ -1,4 +1,5 @@
 import unittest
+import pygame
 import os
 from data.image.image import Image
 from data.image.text import Text
@@ -8,12 +9,12 @@ from data.image.hoverable import Hoverable
 from data.image.parallaxe import Parallaxe
 from data.constants import RESSOURCES, SYSTEM, TEXT_TRACKER
 from data.loading import load_tiles
-from data.api.surface import Surface, set_screen, init_engine
+from data.api.surface import Surface
 
 RESSOURCES = "ressources/"
 os.environ["SDL_VIDEODRIVER"] = "dummy"
-init_engine()
-SYSTEM["windows"] = set_screen(width=1, height=1)
+pygame.init()
+SYSTEM["windows"] = pygame.display.set_mode((1, 1))
 load_tiles()
 SYSTEM["mouse"] = (0, 0)
 SYSTEM["player.x"] = 0
