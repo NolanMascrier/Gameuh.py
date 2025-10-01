@@ -205,7 +205,10 @@ def save(filename = None):
     with open(filename, "w", encoding="utf-8") as file:
         spells = {}
         for s in SYSTEM["spells"]:
-            spells[s] = SYSTEM["spells"][s].export()
+            if SYSTEM["spells"][s] is not None:
+                spells[s] = SYSTEM["spells"][s].export()
+            else:
+                spells[s] = 'null'
         data = {
             "player": SYSTEM["player"].export(),
             "tree": SYSTEM["tree"].export(),
@@ -225,7 +228,7 @@ def load(filename = None):
         SYSTEM["player"] = Character.imports(json.loads(read["player"]))
         SYSTEM["tree"] = Node.imports(json.loads(read["tree"]))
         for s in read["spells"]:
-            if SYSTEM["spells"][s] is not None:
+            if s != 'null' and SYSTEM["spells"][s] is not None:
                 SYSTEM["spells"][s] = Spell.imports(json.loads(read["spells"][s]))
 
 def get_mouse_pos():
@@ -330,7 +333,7 @@ class Flags(str, Enum):
     BELT = "belts"
     BOOTS = "boots"
     WEAPON = "weapons"
-    OFFHAND = "offhands"
+    OFFHAND = "offhand"
     RELIC = "relics"
     AMULET = "amulets"
     SPEED = "speed"
