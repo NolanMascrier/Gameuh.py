@@ -106,6 +106,13 @@ def generate_spell_list():
     SYSTEM["images"]["eldritchlaser"] = Animation("anims/lazor.png", 116, 10, frame_rate=0.15,\
         loops=8, plays_once=True, lines=4).scale(720, 1980)
 
+    light_strike = Animation("anims/lightningfall.png", 64, 64, frame_rate=0.25,\
+        plays_once=True, loops=False).scale(128, 128)
+    missile_impact = Animation("anims/magicmissile_explosion.png", 64, 72, frame_rate=0.25,\
+        plays_once=True, loops=False)
+    firebolt_impact = Animation("anims/firebolt_impact.png", 64, 64, frame_rate=0.25,\
+        plays_once=True, loops=False)
+
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img",\
               FIREBALL_EXPLOSION, effective_frames=3)
@@ -120,7 +127,8 @@ def generate_spell_list():
         cooldown=3, flags=[Flags.MELEE,Flags.COMBO_SPELL], sequence=[master_1, master_2, master_3])
 
     firebolt = Spell("firebolt", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3,\
-        cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
+        cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE],\
+        anim_on_hit=firebolt_impact)
     firebolt2 = Spell("firebolt2", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3,\
         cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 0,\
@@ -145,13 +153,14 @@ def generate_spell_list():
         cooldown=0.1, projectiles=9, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     arc = Spell("arc", arc_icon, "arc_proj_img", ARC, 3,\
         cooldown=0.35, projectiles=1, chains=3, flags=[Flags.DARK, Flags.SPREAD,\
-        Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS])
+        Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS], anim_on_hit=light_strike)
     lightshard = Spell("lightshard", arc_icon, "lightshards", LIGHTSHARD, 3,\
         cooldown=0.01, projectiles=64, flags=[Flags.LIGHT, Flags.CIRCULAR_BLAST,\
         Flags.PROJECTILE])
     magicmissile = Spell("magicmissile", magicmissile_icon, "magicmissile", MAGICMISSILE, 20,\
         cooldown=4, projectiles=4, delay=0.2, flags=[Flags.LIGHT, Flags.WANDER,\
-        Flags.PROJECTILE, Flags.HARD_TRACKING, Flags.AIMED_AT_CLOSEST, Flags.FLURRY_RELEASE])
+        Flags.PROJECTILE, Flags.HARD_TRACKING, Flags.AIMED_AT_CLOSEST, Flags.FLURRY_RELEASE,
+        Flags.IMPACT_ANIMATION_RANDOM], anim_on_hit=missile_impact)
     elementalfury = Spell("elefury", elefury_icon, None, None, 20,\
         cooldown=60, flags=[Flags.BUFF], buffs=[ELEFURY])
     dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=6,\

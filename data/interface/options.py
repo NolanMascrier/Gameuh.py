@@ -22,8 +22,8 @@ def open_option_screen():
         SYSTEM["images"]["btn_p"], save, "Save")
     SYSTEM["ui"]["button_load"] = Button(SYSTEM["images"]["btn"],\
         SYSTEM["images"]["btn_p"], load, "Load")
-    #Selecteur FPS
-    #Selecteur résolution
+    SYSTEM["ui"]["button_quit"] = Button(SYSTEM["images"]["btn"],\
+        SYSTEM["images"]["btn_p"],lambda: SYSTEM.__setitem__("playing", False), "Quit")
     default_res = 0
     for k in SYSTEM["options"]["resolutions"]:
         if k == SYSTEM["options"]["screen_resolution"]:
@@ -56,6 +56,12 @@ def open_option_screen():
         SYSTEM["images"]["checkbox_ok"], "show_hitboxes")
     SYSTEM["ui"]["box_fps"] = Checkbox("show_fps", SYSTEM["images"]["checkbox"],\
         SYSTEM["images"]["checkbox_ok"], "show_fps")
+    SYSTEM["ui"]["box_bars"] = Checkbox("show_bars", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "show_bars")
+    SYSTEM["ui"]["box_cards"] = Checkbox("show_cards", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "show_cards")
+
+#SYSTEM["playing"]
 
 def unloader():
     """Unloads all option-specific data."""
@@ -63,15 +69,18 @@ def unloader():
 def draw_options(_):
     """Draws the optino tree menu."""
     renders(SYSTEM["city_back"].as_background)
-    SYSTEM["ui"]["button_validate"].set(10, 350).tick().draw()
-    SYSTEM["ui"]["button_cancel"].set(10, 400).tick().draw()
     SYSTEM["ui"]["box_fullscreen"].set(10, 10).tick().draw()
     SYSTEM["ui"]["box_vsync"].set(10, 100).tick().draw()
     SYSTEM["ui"]["box_hitboxes"].set(10, 190).tick().draw()
     SYSTEM["ui"]["box_fps"].set(10, 280).tick().draw()
+    SYSTEM["ui"]["box_cards"].set(10, 370).tick().draw()
+    SYSTEM["ui"]["box_bars"].set(10, 460).tick().draw()
     SYSTEM["ui"]["drop_resolution"].set(450, 10).tick().draw()
     SYSTEM["ui"]["drop_fps"].set(750, 10).tick().draw()
     SYSTEM["ui"]["drop_lang"].set(1050, 10).tick().draw()
-    SYSTEM["ui"]["button_save"].set(10, 650).tick().draw()
-    SYSTEM["ui"]["button_load"].set(10, 700).tick().draw()
+    SYSTEM["ui"]["button_validate"].set(10, 650).tick().draw()
+    SYSTEM["ui"]["button_cancel"].set(10, 700).tick().draw()
+    SYSTEM["ui"]["button_save"].set(10, 850).tick().draw()
+    SYSTEM["ui"]["button_load"].set(10, 900).tick().draw()
+    SYSTEM["ui"]["button_quit"].set(10, 950).tick().draw()
     draw_bottom_bar()

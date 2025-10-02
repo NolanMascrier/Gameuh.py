@@ -72,6 +72,15 @@ def draw_game(show_player = True, show_enemies = True,\
         if SYSTEM["options"]["show_hitboxes"]:
             for b in ENNEMY_TRACKER:
                 draw_hitbox(b.hitbox, RED, RED_B, SYSTEM["layers"]["characters"])
+        if SYSTEM["options"]["show_bars"]:
+            for b in ENNEMY_TRACKER:
+                SYSTEM["layers"]["characters"].blit(SYSTEM["images"]["enemy_jauge_mini_back"]\
+                    .image, (b.entity.center_x - SYSTEM["images"]["enemy_jauge_mini_back"].width / 2, b.y - 25))
+                life = max(b.creature.stats["life"].current_value /\
+                    b.creature.stats["life"].c_value * 100, 0)
+                SYSTEM["layers"]["characters"].blit(SYSTEM["images"]["enemy_jauge_mini"].image\
+                    .subsurface((0,0, life, 20)), (b.entity.center_x - SYSTEM["images"]["enemy_jauge_mini_back"]\
+                                               .width / 2, b.y - 25))
         SYSTEM["layers"]["characters"].blits([b.get_image(), b.get_pos()] for b in ENNEMY_TRACKER)
     if show_animations:
         SYSTEM["layers"]["characters"].blits([p[0].get_image(), (p[1], p[2])]\

@@ -150,6 +150,8 @@ def load_animations():
     SYSTEM["images"]["mana_jauge"] = Animation("mana.png", 144, 144, animated=False)
     SYSTEM["images"]["life_potion"] = Animation("lifepot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
+    SYSTEM["images"]["enemy_card"] = Animation("anims/mob_background.png",\
+                                               96, 64, frame_rate = 0.15).scale(192, 288)
     SYSTEM["images"]["monolith"] = Animation("monolith.png", 200, 400, frame_rate=0.1)
     SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
@@ -299,6 +301,8 @@ def load_images():
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png").scale(100, 1680)
     SYSTEM["images"]["enemy_jauge"] = Image("life_boss.png").scale(50, 300)
     SYSTEM["images"]["enemy_jauge_back"] = Image("life_boss_back.png").scale(50, 300)
+    SYSTEM["images"]["enemy_jauge_mini"] = Image("life_boss.png").scale(20, 100)
+    SYSTEM["images"]["enemy_jauge_mini_back"] = Image("life_boss_back.png").scale(20, 100)
     SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
     SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
     SYSTEM["images"]["gear_helm"] = Image("ui/gear_helm.png").scale(64, 64)

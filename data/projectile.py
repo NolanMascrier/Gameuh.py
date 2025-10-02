@@ -8,7 +8,7 @@ import numpy
 from data.api.vec2d import Vec2
 
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM,\
-    PROJECTILE_TRACKER, ENNEMY_TRACKER
+    PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
@@ -27,7 +27,7 @@ class Projectile(HitBox):
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1,\
-                ignore_team = False, offset_x = 0, offset_y = 0):
+                ignore_team = False, offset_x = 0, offset_y = 0, anim_on_hit = None):
         if Flags.RANDOM_POSITION in behaviours:
             if numpy.random.random() > 0.5: #Horizontal
                 y = int(numpy.random.choice([0, SCREEN_HEIGHT]))
@@ -43,6 +43,7 @@ class Projectile(HitBox):
         self._area = area
         self._ignore_team = ignore_team
         self._offset_barrage = (offset_x, offset_y)
+        self._anim_on_hit = anim_on_hit
         if Flags.AIMED_AT_PLAYER in behaviours:
             self._angle = 90 - numpy.arctan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
@@ -110,7 +111,7 @@ class Projectile(HitBox):
             return True
         return False
 
-    def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
+    def on_hit(self, target: Creature, entity = None) -> tuple[float|None,bool|None]:
         """Called when the projectile hits a target."""
         if self._wandering:
             return (None, None)
@@ -124,6 +125,14 @@ class Projectile(HitBox):
             if self._bounces <= 0 and self._chains <= 0 and Flags.PIERCING not in self._behaviours:
                 self._flagged = True
             if num != "Dodged !":
+                if self._anim_on_hit is not None:
+                    if Flags.IMPACT_ANIMATION_RANDOM in self._behaviours:
+                        x = numpy.random.randint(entity.left, entity.right)
+                        y = numpy.random.randint(entity.top, entity.bottom)
+                    else:
+                        x = entity.center_x - self._anim_on_hit.width / 2
+                        y = entity.center_y - self._anim_on_hit.height / 2
+                    ANIMATION_TRACKER.append((self._anim_on_hit.clone(), x, y))
                 for debuff in self._debuffs:
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
