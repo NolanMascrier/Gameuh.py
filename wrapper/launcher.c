@@ -192,7 +192,28 @@ void run_linux(void)
 }
 
 static void on_launch_clicked(GtkWidget *widget, gpointer data) {
+    char command[512];
     // Replace with your game's executable path
+    #ifndef _WIN32
+        if (!directory_exists(VENV_PATH))
+        {
+            printf("Creating virtual environment...\n");
+            run_or_exit(PYTHON_VENV_CMD, "Failed to create virtual environment.");
+        }
+        else
+        {
+            printf("Virtual environment already exists, skipping creation.\n");
+        }
+        printf("Ensuring pip is available...\n");
+        snprintf(command, sizeof(command), "%s", ENSURE_PIP);
+        run_or_exit(command, "Failed to ensure pip.");
+        printf("Upgrading pip...\n");
+        snprintf(command, sizeof(command), "%s install --upgrade pip", PIP_CMD);
+        run_or_exit(command, "Failed to upgrade pip.");
+        printf("Installing Python dependencies...\n");
+        snprintf(command, sizeof(command), "%s install -r Gameuh.py%crequirements.txt", PIP_CMD, PATH_SEP[0]);
+        run_or_exit(command, "Failed to install Python dependencies.");
+    #endif
     system(LAUNCH_GAME);
 }
 
@@ -205,22 +226,48 @@ static void on_exit_clicked(GtkWidget *widget, gpointer data) {
  * If your game is in a subfolder (like ./game/), use git -C ./game pull.
  */
 static void on_update_clicked(GtkWidget *widget, gpointer data) {
-    int result = system("git -C ./ pull");
     GtkWidget *dialog;
 
-    if (result != 0 && ensure_git_linked() != 0) {
+    if (ensure_git_linked() != 0) {
         dialog = gtk_message_dialog_new(NULL,
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_MESSAGE_ERROR,
             GTK_BUTTONS_CLOSE,
-            "Update failed.\nCheck Git or network connection.");
+            "Failed to link Git repository.\nMake sure Git is installed.");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        return;
+    }
+
+    if (!is_update_available()) {
+        dialog = gtk_message_dialog_new(NULL,
+            GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_MESSAGE_INFO,
+            GTK_BUTTONS_CLOSE,
+            "Game is already up to date.");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        gtk_widget_set_sensitive(update_button, FALSE);
+        return;
+    }
+
+    // Pull the latest changes
+    int result = system("git -C ./ pull");
+
+    if (result != 0) {
+        dialog = gtk_message_dialog_new(NULL,
+            GTK_DIALOG_DESTROY_WITH_PARENT,
+            GTK_MESSAGE_ERROR,
+            GTK_BUTTONS_CLOSE,
+            "Update failed. Check Git or network connection.");
     } else {
         dialog = gtk_message_dialog_new(NULL,
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_MESSAGE_INFO,
             GTK_BUTTONS_CLOSE,
             "Game successfully updated!");
-        gtk_widget_set_sensitive(update_button, FALSE);  // Disable after update
+        gtk_widget_set_sensitive(update_button, FALSE);
+        load_patch_notes(); // reload patch notes if updated
     }
 
     gtk_dialog_run(GTK_DIALOG(dialog));
@@ -256,8 +303,29 @@ void load_patch_notes() {
 }
 
 int main(int argc, char *argv[]) {
-        gtk_init(&argc, &argv);
+    gtk_init(&argc, &argv);
 
+    // Ensure folder exists and Git is set up BEFORE building UI
+    gboolean repo_ready = FALSE;
+
+    if (directory_exists(REPO_DIR)) {
+        if (ensure_git_linked() == 0) {
+            repo_ready = TRUE;
+        }
+    } else {
+        // Try to clone the repository
+        char cmd[512];
+        snprintf(cmd, sizeof(cmd), "%s clone %s %s", GIT_CMD, GITHUB_REPO, REPO_DIR);
+        if (system(cmd) == 0) {
+            printf("Repository cloned.\n");
+            if (ensure_git_linked() == 0)
+                repo_ready = TRUE;
+        } else {
+            fprintf(stderr, "Failed to clone the repo!\n");
+        }
+    }
+
+    // Now build UI...
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Game Launcher");
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
@@ -266,7 +334,6 @@ int main(int argc, char *argv[]) {
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    // Top Buttons
     GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
@@ -283,11 +350,9 @@ int main(int argc, char *argv[]) {
     g_signal_connect(exit_button, "clicked", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    // Patch Notes Label
     GtkWidget *label = gtk_label_new("Patch Notes:");
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 
-    // Scrollable Patch Notes TextView
     GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_vexpand(scrolled, TRUE);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled),
@@ -303,9 +368,16 @@ int main(int argc, char *argv[]) {
     GtkWidget *cpr = gtk_label_new("Game by Nolan Mascrier\nLauncher by Martin Juette\n2024-2025");
     gtk_box_pack_start(GTK_BOX(vbox), cpr, FALSE, FALSE, 5);
 
-    // Initial Setup
-    if (!is_update_available())
+    // Enable or disable buttons based on repo state
+    if (!repo_ready) {
         gtk_widget_set_sensitive(update_button, FALSE);
+        gtk_widget_set_sensitive(launch_button, FALSE);
+    } else {
+        // Enable update button only if update is available
+        if (!is_update_available()) {
+            gtk_widget_set_sensitive(update_button, FALSE);
+        }
+    }
 
     load_patch_notes();
 
@@ -313,15 +385,3 @@ int main(int argc, char *argv[]) {
     gtk_main();
     return 0;
 }
-
-/*
-int main(void)
-{
-    #ifdef _WIN32
-        run_windows();
-    #else
-        run_linux();
-    #endif
-    return (0);
-}
-*/

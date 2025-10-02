@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 BIN = launcher
-CFLAGS += -std=c99 -O2
+CFLAGS += -std=c99 -O2 -lc
 SRC = launcher.c
 OBJ = $(SRC:.c=.o)
 CC = gcc
