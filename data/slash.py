@@ -20,7 +20,8 @@ class Slash(HitBox):
         self._caster = caster
         self._origin = origin
         self._image = animation
-        self._real_image = SYSTEM["images"][self._image].clone().scale(area, area, False)
+        self._real_image = SYSTEM["images"][self._image].clone()\
+            .scale(area, area, False).flip(False, not aim_right)
         self._damage = damage
         self._evil = evil
         self._area = area
@@ -71,19 +72,19 @@ class Slash(HitBox):
     def get_pos(self):
         """Returns the slash's position."""
         x, y = self._caster.hitbox.center
-        cx, cy = self.width / 2, self.height / 2
-        ox, oy = self._offset
+        anim_x, anim_y = self.width / 2, self.height / 2
+        offset_x, offset_y = self._offset[0] * (-1 if self._aim_right else 1),\
+            self._offset[1] * (-1 if self._aim_right else 1)
         if self._center:
-            dx, dy = self._real_image.width / 2, self._real_image.height / 2
+            center_x, center_y = self._real_image.width / 2, self._real_image.height / 2
         else:
-            dx, dy = 0, 0
-        return (x - cx - dx + ox, y - cy - dy + oy)
+            center_x, center_y = 0, 0
+        return (x - anim_x - center_x + offset_x, y - anim_y - center_y + offset_y)
 
     def tick(self):
         """Ticks down the slash."""
         self._real_image.tick()
-        x, y = self.get_pos()
-        super().move((x, y))
+        super().move(self.get_pos())
         if Flags.CAN_TICK in self._flags:
             self._tick_time += 0.016
             if self._tick_time >= 0.1:

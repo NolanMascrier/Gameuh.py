@@ -17,7 +17,7 @@ from data.constants import Flags
 # ]
 
 VOIDLING = {
-    "image": "badguy",
+    "image": "demon",
     "name": "voidling",
     "stats": {
             "life": Ressource(20, "Life"),
@@ -38,7 +38,7 @@ VOIDLING = {
     "gold": 10,
     "spelllist": [("e_charge", 1)],
     "delay": 0,
-    "hitbox": (0.3, 0.5, 100, 10)
+    "hitbox": None
 }
 
 VOIDSNIPER = {
