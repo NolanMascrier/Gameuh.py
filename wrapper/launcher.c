@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <gtk/gtk.h>
 
 #define REPO_DIR "Gameuh.py"
 #define GITHUB_REPO "https://github.com/NolanMascrier/Gameuh.py"
+#define BRANCH "main"
 #ifdef _WIN32
     #define PYTHON_PATH "python-win\\python.exe"
     #define PIP_CMD "python-win\\python.exe -m pip"
@@ -35,6 +37,58 @@ int directory_exists(const char *path)
 {
     struct stat stats;
     return (stat(path, &stats) == 0 && S_ISDIR(stats.st_mode));
+}
+
+int dir_exists(const char *path) {
+    struct stat info;
+    return (stat(path, &info) == 0 && S_ISDIR(info.st_mode));
+}
+
+int file_exists(const char *path) {
+    return access(path, F_OK) == 0;
+}
+
+int setup_git_repo() {
+    char cmd[512];
+
+    // 1. Initialize Git
+    snprintf(cmd, sizeof(cmd), "git -C \"%s\" init", REPO_DIR);
+    if (system(cmd) != 0) return -1;
+
+    // 2. Add remote origin
+    snprintf(cmd, sizeof(cmd), "git -C \"%s\" remote add origin \"%s\"", REPO_DIR, GITHUB_REPO);
+    if (system(cmd) != 0) return -1;
+
+    // 3. Fetch remote content
+    snprintf(cmd, sizeof(cmd), "git -C \"%s\" fetch origin", REPO_DIR);
+    if (system(cmd) != 0) return -1;
+
+    // 4. Reset to remote branch
+    snprintf(cmd, sizeof(cmd), "git -C \"%s\" reset --hard origin/%s", REPO_DIR, BRANCH);
+    if (system(cmd) != 0) return -1;
+
+    // 5. Set upstream tracking
+    snprintf(cmd, sizeof(cmd), "git -C \"%s\" branch --set-upstream-to=origin/%s %s", REPO_DIR, BRANCH, BRANCH);
+    system(cmd); // optional
+
+    return 0;
+}
+
+int ensure_git_linked() {
+    char git_path[256];
+    snprintf(git_path, sizeof(git_path), "%s/.git", REPO_DIR);
+
+    if (!dir_exists(git_path)) {
+        printf("Not a Git repo. Linking to GitHub...\n");
+        if (setup_git_repo() != 0) {
+            fprintf(stderr, "Failed to set up Git repository.\n");
+            return -1;
+        }
+        printf("GitHub linked successfully.\n");
+    } else {
+        printf("Git repo detected.\n");
+    }
+    return 0;
 }
 
 void run_or_exit(const char *cmd, const char *error_message)
@@ -154,7 +208,7 @@ static void on_update_clicked(GtkWidget *widget, gpointer data) {
     int result = system("git -C ./ pull");
     GtkWidget *dialog;
 
-    if (result != 0) {
+    if (result != 0 && ensure_git_linked() != 0) {
         dialog = gtk_message_dialog_new(NULL,
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_MESSAGE_ERROR,
@@ -245,6 +299,9 @@ int main(int argc, char *argv[]) {
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_container_add(GTK_CONTAINER(scrolled), text_view);
+
+    GtkWidget *cpr = gtk_label_new("Game by Nolan Mascrier\nLauncher by Martin Juette\n2024-2025");
+    gtk_box_pack_start(GTK_BOX(vbox), cpr, FALSE, FALSE, 5);
 
     // Initial Setup
     if (!is_update_available())
