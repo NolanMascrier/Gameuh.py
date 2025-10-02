@@ -52,23 +52,23 @@ int setup_git_repo() {
     char cmd[512];
 
     // 1. Initialize Git
-    snprintf(cmd, sizeof(cmd), "git -C \"%s\" init", REPO_DIR);
+    snprintf(cmd, sizeof(cmd), "%s -C \"%s\" init",GIT_CMD, REPO_DIR);
     if (system(cmd) != 0) return -1;
 
     // 2. Add remote origin
-    snprintf(cmd, sizeof(cmd), "git -C \"%s\" remote add origin \"%s\"", REPO_DIR, GITHUB_REPO);
+    snprintf(cmd, sizeof(cmd), "%s -C \"%s\" remote add origin \"%s\"",GIT_CMD, REPO_DIR, GITHUB_REPO);
     if (system(cmd) != 0) return -1;
 
     // 3. Fetch remote content
-    snprintf(cmd, sizeof(cmd), "git -C \"%s\" fetch origin", REPO_DIR);
+    snprintf(cmd, sizeof(cmd), "%s -C \"%s\" fetch origin",GIT_CMD, REPO_DIR);
     if (system(cmd) != 0) return -1;
 
     // 4. Reset to remote branch
-    snprintf(cmd, sizeof(cmd), "git -C \"%s\" reset --hard origin/%s", REPO_DIR, BRANCH);
+    snprintf(cmd, sizeof(cmd), "%s -C \"%s\" reset --hard origin/%s",GIT_CMD, REPO_DIR, BRANCH);
     if (system(cmd) != 0) return -1;
 
     // 5. Set upstream tracking
-    snprintf(cmd, sizeof(cmd), "git -C \"%s\" branch --set-upstream-to=origin/%s %s", REPO_DIR, BRANCH, BRANCH);
+    snprintf(cmd, sizeof(cmd), "%s -C \"%s\" branch --set-upstream-to=origin/%s %s",GIT_CMD, REPO_DIR, BRANCH, BRANCH);
     system(cmd); // optional
 
     return 0;
@@ -300,6 +300,7 @@ static void on_update_clicked(GtkWidget *widget, gpointer data) {
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 }
+
 
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
