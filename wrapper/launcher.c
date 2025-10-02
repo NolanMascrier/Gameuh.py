@@ -221,6 +221,33 @@ static void on_exit_clicked(GtkWidget *widget, gpointer data) {
     gtk_main_quit();
 }
 
+static void load_patch_notes() {
+    const char *url = "https://raw.githubusercontent.com/NolanMascrier/Gameuh.py/refs/heads/main/PATCHNOTE.md";
+    const char *tmp_file = "/tmp/patch_notes.txt";
+
+    char curl_cmd[512];
+    snprintf(curl_cmd, sizeof(curl_cmd),
+             "curl -s -L \"%s\" -o \"%s\"", url, tmp_file);
+    int res = system(curl_cmd);
+    if (res != 0) return;
+
+    FILE *f = fopen(tmp_file, "r");
+    if (!f) return;
+
+    fseek(f, 0, SEEK_END);
+    long len = ftell(f);
+    fseek(f, 0, SEEK_SET);
+
+    char *text = malloc(len + 1);
+    fread(text, 1, len, f);
+    text[len] = '\0';
+    fclose(f);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    gtk_text_buffer_set_text(buffer, text, -1);
+    free(text);
+}
+
 /**
  * git -C ./ pull runs git pull in the current directory.
  * If your game is in a subfolder (like ./game/), use git -C ./game pull.
@@ -272,34 +299,6 @@ static void on_update_clicked(GtkWidget *widget, gpointer data) {
 
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
-}
-
-
-void load_patch_notes() {
-    const char *url = "https://raw.githubusercontent.com/NolanMascrier/Gameuh.py/refs/heads/main/PATCHNOTE.md";
-    const char *tmp_file = "/tmp/patch_notes.txt";
-
-    char curl_cmd[512];
-    snprintf(curl_cmd, sizeof(curl_cmd),
-             "curl -s -L \"%s\" -o \"%s\"", url, tmp_file);
-    int res = system(curl_cmd);
-    if (res != 0) return;
-
-    FILE *f = fopen(tmp_file, "r");
-    if (!f) return;
-
-    fseek(f, 0, SEEK_END);
-    long len = ftell(f);
-    fseek(f, 0, SEEK_SET);
-
-    char *text = malloc(len + 1);
-    fread(text, 1, len, f);
-    text[len] = '\0';
-    fclose(f);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-    gtk_text_buffer_set_text(buffer, text, -1);
-    free(text);
 }
 
 int main(int argc, char *argv[]) {
