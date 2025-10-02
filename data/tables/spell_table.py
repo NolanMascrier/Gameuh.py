@@ -24,7 +24,7 @@ ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 VOIDSPEAR = Damage(10, dark=15, flags=[Flags.SPELL])
 LIGHTSPEAR = Damage(10, light=25, flags=[Flags.SPELL])
-CHARGE = Damage(1.5, phys=10, flags=[Flags.MELEE])
+CHARGE = Damage(1.5, phys=6, fire=4, flags=[Flags.MELEE])
 EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
 

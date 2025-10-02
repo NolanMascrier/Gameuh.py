@@ -168,6 +168,10 @@ def load_animations():
         "attack", "die"], [0.1, 0.1, 0.15, 0.1, 0.1], \
         [4, 4, 4, 8, 6], [True, True, False, False, False],\
         [-1, -1, -1, -1, 1]).scale(2, 2, False)
+    SYSTEM["images"]["soul"] = Sprite("soul.png", 96, 96, ["idle", "dash",\
+        "attack", "die"], [0.1, 0.1, 0.15, 0.1], \
+        [5, 8, 10, 8], [True, True, False, False],\
+        [-1, -1, -1, 1]).scale(2, 2, False).flip(False, True)
 
 def load_tiles():
     """Load the tiles."""
@@ -461,7 +465,7 @@ def init_game():
     SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["gm_parallaxe"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["text_generator"] = TextGenerator()
-    SYSTEM["images"]["load_orb"] = Animation("lifeorb.png", 16, 14, frame_rate=0.1).scale(64, 64)
+    SYSTEM["images"]["load_orb"] = Animation("darkcristal.png", 64, 64, frame_rate=0.25).scale(128, 128)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
     SYSTEM["loading_text"] = None

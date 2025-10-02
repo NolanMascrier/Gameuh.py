@@ -149,7 +149,7 @@ def loading():
     if SYSTEM["loading_text"] is not None:
         render(SYSTEM["loading_text"].surface, (200, SCREEN_HEIGHT - 128))
     SYSTEM["images"]["load_orb"].tick()
-    render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
+    render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 192, SCREEN_HEIGHT - 192))
     render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
     width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
     render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
@@ -251,7 +251,7 @@ if __name__ == "__main__":
                 render(SYSTEM["loading_text"].surface, (200, SCREEN_HEIGHT - 128))
             SYSTEM["windows"].fill((0, 0, 0))
             SYSTEM["images"]["load_orb"].tick()
-            render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 128, SCREEN_HEIGHT - 128))
+            render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 192, SCREEN_HEIGHT - 192))
             render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
             width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
             render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
