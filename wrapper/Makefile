@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 BIN = launcher
-CFLAGS += -std=c99 -O2 -lc
+CFLAGS += -std=c99 -O2 
 SRC = launcher.c
 OBJ = $(SRC:.c=.o)
 CC = gcc
@@ -20,15 +20,17 @@ ifeq ($(OS),Windows_NT)
 	BIN := $(BIN).exe
 	GTK_CFLAGS := $(shell pkg-config --cflags gtk+-3.0)
 	GTK_LIBS := $(shell pkg-config --libs gtk+-3.0)
+	FLAGS = 
 else
 	GTK_CFLAGS := $(shell pkg-config --cflags gtk+-3.0)
 	GTK_LIBS := $(shell pkg-config --libs gtk+-3.0)
+	FLAGS = -lc
 endif
 
 all: $(BIN)
 
 $(BIN): $(SRC)
-	$(CC) $(CFLAGS) $(GTK_CFLAGS) $(SRC) -o $(BIN) $(GTK_LIBS)
+	$(CC) $(CFLAGS) $(GTK_CFLAGS) $(SRC) -o $(BIN) $(GTK_LIBS) $(FLAGS)
 
 clean:
 ifeq ($(OS),Windows_NT)
