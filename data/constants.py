@@ -104,7 +104,9 @@ SYSTEM = {
         "lang_temp": "EN_us",
         "langs": ["EN_us", "FR_fr"],
         "show_hitboxes": False,
-        "show_fps": False
+        "show_fps": False,
+        "show_cards": True,
+        "show_bars": False
     },
     "key_chart": {
       "spell_1": (K_q, None),
@@ -380,6 +382,7 @@ class Flags(str, Enum):
     CIRCULAR_BLAST = "spread_all_around"
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"
+    IMPACT_ANIMATION_RANDOM = "impact_anim_random"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
     COMBO_SPELL = "combo_spell"

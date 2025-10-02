@@ -191,12 +191,17 @@
       "fullscreen": "Fullscreen",
       "vsync": "Vertical Synchronisation",
       "hitboxes": "Show Hitboxes",
-      "show_fps": "Show FPS counter"
+      "show_fps": "Show FPS counter",
+      "show_bars": "Show Enemy HP",
+      "show_cards": "Show Enemy Cards"
     },
     "options_desc": {
       "fullscreen": "Set the game in fullscreen or not.",
       "vsync": "Enable or disable Vertical Synchronisation (Vsync).",
-      "hitboxes": "Show or hide Hitboxes for player, enemies and projectiles."
+      "hitboxes": "Show or hide Hitboxes for player, enemies and projectiles.\n(May impact performance)",
+      "show_fps": "Show or hide the FPS counter at the top left of the screen.",
+      "show_bars": "Show or hide Enemy HP bars above them.\n(May impact performance)",
+      "show_cards": "Show or hide Enemy Cards at the top of the screen.\n(May impact performance)"
     },
     "langs": {
       "EN_us": "English (American)",

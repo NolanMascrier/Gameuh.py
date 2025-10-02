@@ -54,7 +54,7 @@ class Spell():
                  explosion = None, sequence = None,\
                  cooldown = 0.1, projectiles = 1, flags = None, buffs = None,\
                  debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,\
-                 effective_frames = None):
+                 effective_frames = None, anim_on_hit = None):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -92,6 +92,7 @@ class Spell():
         self._modifiers = []
         self._changed = set()
         self._cooldown = 0
+        self._anim_on_hit = anim_on_hit
         if flags is None or not isinstance(flags, list):
             self._flags = []
         else:
@@ -481,7 +482,7 @@ class Spell():
                         chains=self._stats["chains"].c_value, \
                         behaviours=self._flags, caster=entity, debuffs=self._debuffs,
                         explosion=self._explosion, area=area,\
-                        ignore_team=ignore_team)
+                        ignore_team=ignore_team, anim_on_hit=self._anim_on_hit)
         PROJECTILE_TRACKER.append(proj)
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False, ignore_team = False):
@@ -490,7 +491,8 @@ class Spell():
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
                        not aim_right, evil, self._flags, self._offset[0],\
                        self._offset[1], debuffs=self._debuffs, area=area,\
-                       ignore_team=ignore_team, effective_frames=self._effective_frames)
+                       ignore_team=ignore_team, effective_frames=self._effective_frames,\
+                       anim_on_hit=self._anim_on_hit)
         PROJECTILE_TRACKER.append(sl)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\

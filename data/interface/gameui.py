@@ -13,10 +13,13 @@ UI_SKILLS_INPUT_OFFSET = 48
 
 UPDATE_COUNTER = [5]
 
+RED = (150, 0, 0)
+BLACK = (0, 0, 0, 0)
+
 def generate_background():
     """Generates the background surface of the UI. To be called only once when the
     level loads !"""
-    SYSTEM["ui_background"].fill((0,0,0,0))
+    SYSTEM["ui_background"].fill(BLACK)
     char = SYSTEM["player"]
     data = []
     #POTIONS
@@ -176,33 +179,49 @@ def draw_boss():
     w = life * 1680
     boss = SYSTEM["images"]["boss_jauge"].image.subsurface((0, 0, w, 100))
     txt = Text(trad('enemies', SYSTEM["level"].boss.name), size=30, font="item_titles_alt")
+    hp = Text(f'{round(SYSTEM["level"].boss.stats["life"].current_value)}' + \
+              f'/{round(SYSTEM["level"].boss.stats["life"].c_value)}', size=30, font="item_desc")
     data.append((SYSTEM["images"]["boss_jauge_back"].image, (150, 30)))
     data.append((boss, (150, 30)))
     data.append((txt.image, (170, 20)))
+    data.append((hp.image, (170 + 1680 - hp.width, 20)))
     return data
 
-def draw_enemy():
+def draw_enemy_card():
     """Draws the enemy's details."""
-    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"].creature == SYSTEM["level"].boss:
+    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"].creature == SYSTEM["level"].boss\
+        or SYSTEM["options"]["show_cards"] is False:
         return []
     data = []
     enemy = SYSTEM["mouse_target"]
     life = max(enemy.creature.stats["life"].current_value /\
                enemy.creature.stats["life"].c_value * 300, 0)
     img = SYSTEM["images"]["enemy_jauge"].image.subsurface((0, 0, life, 50))
-    txt = Text(trad('enemies', enemy.creature.name), size=23, font="item_desc")
+    txt = Text(trad('enemies', enemy.creature.name), size=23, font="item_desc", default_color=RED)
+    hp = Text(f'{round(enemy.creature.stats["life"].current_value)}' + \
+              f'/{round(enemy.creature.stats["life"].c_value)}', size=23, font="item_desc",\
+                default_color=RED)
     if SYSTEM["level"] is None or SYSTEM["level"].boss is None or\
         SYSTEM["level"].current_wave != SYSTEM["level"].waves:
-        pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 40)
+        pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 80)
+        c_pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 0)
+        name_pos = (SCREEN_WIDTH / 2 - txt.width / 2, 70)
+        hp_pos = (SCREEN_WIDTH / 2 - hp.width / 2, 140)
     else:
-        pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 150)
+        pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 190)
+        c_pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 110)
+        name_pos = (SCREEN_WIDTH / 2 - txt.width / 2, 180)
+        hp_pos = (SCREEN_WIDTH / 2 - hp.width / 2, 250)
+    data.append((SYSTEM["images"]["enemy_card"].image, c_pos))
     data.append((SYSTEM["images"]["enemy_jauge_back"].image, pos))
     data.append((img, pos))
-    data.append((txt.image, (pos[0], pos[1] - 15)))
+    data.append((txt.image, name_pos))
+    data.append((hp.image, hp_pos))
     return data
 
 def draw_ui():
     """Draws the user interface."""
+    SYSTEM["images"]["enemy_card"].tick()
     UPDATE_COUNTER[0] += 1
     if UPDATE_COUNTER[0] < 5:
         return
@@ -214,8 +233,8 @@ def draw_ui():
     to_draw.extend(draw_exp_bar())
     to_draw.extend(draw_skills())
     to_draw.extend(draw_buffs())
+    to_draw.extend(draw_enemy_card())
     to_draw.extend(draw_boss())
-    to_draw.extend(draw_enemy())
     SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
     SYSTEM["ui_surface"].blits(to_draw)
     SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0))

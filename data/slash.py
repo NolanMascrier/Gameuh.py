@@ -9,14 +9,14 @@ from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.projectile import Projectile
 from data.numerics.affliction import Affliction
-from data.constants import PROJECTILE_GRID, Flags, SYSTEM
+from data.constants import PROJECTILE_GRID, Flags, SYSTEM, ANIMATION_TRACKER
 
 class Slash(HitBox):
     """Defines a slash."""
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
                 offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\
-                ignore_team = False, effective_frames = None):
+                ignore_team = False, effective_frames = None, anim_on_hit = None):
         self._caster = caster
         self._origin = origin
         self._image = animation
@@ -26,6 +26,7 @@ class Slash(HitBox):
         self._evil = evil
         self._area = area
         self._center = center
+        self._anim_on_hit = anim_on_hit
         self._effective_frames = effective_frames
         super().__init__(caster.x, caster.y, self._real_image.w,\
             self._real_image.h)
@@ -100,12 +101,14 @@ class Slash(HitBox):
                     proj.evil is not self._evil:
                     proj.flag()
 
-    def on_hit(self, target: Creature) -> tuple[float|None,bool|None]:
+    def on_hit(self, target: Creature, entity = None) -> tuple[float|None,bool|None]:
         """Called when the slash hits a target."""
         if target not in self._immune:
             dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
             if num != "Dodged !":
+                if self._anim_on_hit is not None:
+                    ANIMATION_TRACKER.append((self._anim_on_hit.clone(), self.x, self.y))
                 for debuff in self._debuffs:
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
