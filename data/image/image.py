@@ -86,7 +86,9 @@ class Image(Widget):
             vertical (bool): Flip the image on the y axis.
             horizontal (bool): Flip the image on the x axis.
         """
-        self._image.flip(horizontal, vertical)
+        v = self._flipped[0] != vertical
+        h = self._flipped[1] != horizontal
+        self._image.flip(h, v)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
         self._flipped = (vertical, horizontal)

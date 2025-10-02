@@ -106,16 +106,15 @@ class Character():
         for pickup in POWER_UP_GRID.query(self.hitbox):
             if self.hitbox.is_colliding(pickup.hitbox):
                 pickup.pickup(self)
-        if SYSTEM["mouse"][0] < self.entity.center[0] and not self.entity.flipped:
-            self.entity.flipped = True
-        elif SYSTEM["mouse"][0] > self.entity.center[0] and self.entity.flipped:
-            self.entity.flipped = False
+        desired_flip = SYSTEM["mouse"][0] < self.entity.center_x
+        if desired_flip != self.entity.flipped:
+            self.entity.flip(desired_flip)
 
     def __cast(self, keys):
         """Cast a spell from the corresponding keys."""
         if self._equipped_spells[keys] is not None:
             SYSTEM["spells"][self._equipped_spells[keys]]\
-                .cast(self._creature, self._entity, False, self._entity.flipped)
+                .cast(self._creature, self._entity, False, not self._entity.flipped)
 
     def on_hit(self, value):
         """Called when the creature is hit."""

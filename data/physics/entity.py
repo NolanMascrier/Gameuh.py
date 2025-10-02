@@ -117,9 +117,14 @@ class Entity(HitBox):
         self._dash_time = dash_time
         self._dashing = True
 
-    def flip(self):
+    def flip(self, flips = None):
         """Flips the image."""
-        self._flipped = not self._flipped
+        if flips is None:
+            self._flipped = not self._flipped
+            self._real_image.flip(False, self._flipped)
+        else:
+            self._flipped = flips
+            self._real_image.flip(False, self._flipped)
 
     def export(self) -> str:
         """Serializes the entity as JSON."""
@@ -140,7 +145,7 @@ class Entity(HitBox):
     def detach(self, key, center = False):
         """Detach an animation."""
         if self._sprite:
-            self._real_image.detach(key, self.x, self.y, center)
+            self._real_image.detach(key, self.center_x, self.center_y, center)
 
     @staticmethod
     def imports(data):

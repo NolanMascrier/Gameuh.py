@@ -183,7 +183,7 @@ def draw_boss():
 
 def draw_enemy():
     """Draws the enemy's details."""
-    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"] == SYSTEM["level"].boss:
+    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"].creature == SYSTEM["level"].boss:
         return []
     data = []
     enemy = SYSTEM["mouse_target"]

@@ -488,7 +488,7 @@ class Spell():
         """Spawns a slash."""
         area = self._stats["area"].c_value + caster.stats["area"].c_value
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
-                       aim_right, evil, self._flags, self._offset[0],\
+                       not aim_right, evil, self._flags, self._offset[0],\
                        self._offset[1], debuffs=self._debuffs, area=area,\
                        ignore_team=ignore_team, effective_frames=self._effective_frames)
         PROJECTILE_TRACKER.append(sl)

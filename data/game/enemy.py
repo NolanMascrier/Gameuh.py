@@ -97,8 +97,8 @@ class Enemy():
 
     def distance_to_player(self, player):
         """Returns the distance to the player."""
-        dx = player.x - self.x
-        dy = player.y - self.y
+        dx = player.entity.center_x - self.entity.center_x
+        dy = player.entity.center_y - self.entity.center_y
         return dx*dx + dy*dy
 
     def distance_to_destination(self):
@@ -147,6 +147,7 @@ class Enemy():
         if self._attacking and self._attack_delay >= self._delay:
             self.attack()
             self._attacking = False
+            self._stopped = False
         elif self._attacking:
             self._attack_delay += 0.016
             return
@@ -162,16 +163,13 @@ class Enemy():
             if self._stopped:
                 if self._counter >= self._timer:
                     self._entity.play("attack")
-                    self._stopped = False
                     self._attack_delay = 0
                     self._attacking = True
             else:
-                if not self._entity.flipped and player.x > self.x:
-                    self.entity.flip()
-                    self._aim_right = True
-                if self._entity.flipped and player.x < self.x:
-                    self.entity.flip()
-                    self._aim_right = False
+                desired_flip = player.entity.center_x > self.entity.center_x
+                if desired_flip != self.entity.flipped:
+                    self.entity.flip(desired_flip)
+                    self._aim_right = not desired_flip
                 if self.distance_to_player(player) < 10000:
                     self._stopped = True
                     self._counter = 0
@@ -211,6 +209,7 @@ class Enemy():
                 break
         if Flags.SUICIDER in self._behaviours:
             self.creature.stats["life"].value = 0
+            self._exploded = True
 
     def get_image(self):
         """Returns the entity's image."""

@@ -1,10 +1,11 @@
 """Handles the defeat and the victory screen."""
 
 from data.constants import SYSTEM, GAME_VICTORY, SCREEN_HEIGHT,\
-    SCREEN_WIDTH, TICKER_TIMER, GAME_DEATH, trad
+    SCREEN_WIDTH, TICKER_TIMER, GAME_DEATH, trad, ENNEMY_TRACKER, ANIMATION_TRACKER,\
+    PROJECTILE_TRACKER
 from data.image.showcase import ShowCase
 from data.image.text import Text
-from data.interface.render import render
+from data.interface.render import render, renders
 from data.interface.general import draw_game, logic_tick
 
 BLACK = (0,0,0)
@@ -37,8 +38,11 @@ def draw_end(events):
     for event in events:
         if event.type == TICKER_TIMER:
             logic_tick()
-    SYSTEM["level"].background.draw()
+    SYSTEM["level"].background.draw(True)
     draw_game()
+    renders([b.get_image(), b.get_pos()] for b in ENNEMY_TRACKER)
+    renders([p[0].get_image(), (p[1], p[2])] for p in ANIMATION_TRACKER)
+    renders([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     render(SYSTEM["ui"]["notice"].image, (SYSTEM["ui"]["notice_state"][0],
                                           SYSTEM["ui"]["notice_state"][1]))
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2

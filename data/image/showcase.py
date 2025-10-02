@@ -89,8 +89,12 @@ class ShowCase(SlotPanel):
                 self._scroll = min(self._scroll + 1, max_scroll)
         return self
 
-    def draw(self):
-        render(self._background.get_image(), (self.x, self.y))
+    def draw(self, sfc = None):
+        if sfc is None:
+            rend_wrap = render
+        else:
+            rend_wrap = sfc.blit
+        rend_wrap(self._background.get_image(), (self.x, self.y))
         diff_x = diff_y = 0
         x = y = 0
         for slot in self._slots:
@@ -121,17 +125,17 @@ class ShowCase(SlotPanel):
             if self._current_anim is not None:
                 match self._current_anim["rarity"]:
                     case 1:
-                        render(SYSTEM["images"]["slot_magic"].image, (real_x, real_y))
+                        rend_wrap(SYSTEM["images"]["slot_magic"].image, (real_x, real_y))
                     case 2:
-                        render(SYSTEM["images"]["slot_rare"].image, (real_x, real_y))
+                        rend_wrap(SYSTEM["images"]["slot_rare"].image, (real_x, real_y))
                     case 3:
-                        render(SYSTEM["images"]["slot_exalted"].image, (real_x, real_y))
+                        rend_wrap(SYSTEM["images"]["slot_exalted"].image, (real_x, real_y))
                     case 4:
-                        render(SYSTEM["images"]["slot_unique"].image, (real_x, real_y))
+                        rend_wrap(SYSTEM["images"]["slot_unique"].image, (real_x, real_y))
                     case _:
-                        render(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
+                        rend_wrap(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
             else:
-                render(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
+                rend_wrap(SYSTEM["images"]["slot_empty"].image, (real_x, real_y))
         if self._current_anim is not None:
             progress = max(0.0, min(1.0, self._current_anim["progress"]))
             scale = self._start_scale + (1.0 - self._start_scale) * progress
@@ -147,4 +151,4 @@ class ShowCase(SlotPanel):
                 center_y = real_y + self._slot_size // 2
                 draw_x = center_x - scaled.get_width() // 2
                 draw_y = center_y - scaled.get_height() // 2
-                render(scaled, (draw_x, draw_y))
+                rend_wrap(scaled, (draw_x, draw_y))

@@ -160,7 +160,7 @@ def generate_spell_list():
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF],
         buffs=[FURY], offset_x=60)
     charge = Spell("Charge", fury_icon, "furyslash_alt", CHARGE,
-        flags=[Flags.MELEE], offset_x=60)
+        flags=[Flags.MELEE], offset_x=120)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,
         flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
     kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
