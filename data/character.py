@@ -171,11 +171,8 @@ class Character():
             "up": lambda: self.__set_movement(0, -1),
             "down": lambda: self.__set_movement(0, 1),
         }
-        for k in SYSTEM["key_chart"]:
-            if k == "pause":
-                continue
-            if (SYSTEM["key_chart"][k][0] is not None and keys[SYSTEM["key_chart"][k][0]]) or\
-                (SYSTEM["key_chart"][k][1] is not None and keys[SYSTEM["key_chart"][k][1]]):
+        for k in keys:
+            if k in actions:
                 actions[k]()
         dx = self._input[0] * self._entity.move_speed
         dy = self._input[1] * self._entity.move_speed

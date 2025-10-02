@@ -5,6 +5,7 @@ import pstats
 import random
 
 from data.api.surface import Surface, get_press, get_keys, get_events
+from data.api.keycodes import get_key_event
 
 from data.image.text import Text
 from data.constants import *
@@ -18,7 +19,7 @@ from data.interface.options import draw_options
 from data.interface.general import logic_tick, draw_game
 from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
-from data.interface.render import render_all, render, resolution, renders
+from data.interface.render import render_all, render, renders
 from data.interface.endlevel import draw_end
 from data.projectile import Projectile
 from data.slash import Slash
@@ -36,7 +37,7 @@ def debug_create_items():
 
 def check_collisions():
     """Checks all collisions."""
-    for proj in PROJECTILE_TRACKER.copy():
+    for proj in PROJECTILE_TRACKER:
         if proj.ignore_team or proj.evil: #check for player
             if proj.hitbox.is_colliding(SYSTEM["player"].entity.hitbox):
                 if proj in SYSTEM["player"].immune:
@@ -56,7 +57,7 @@ def check_collisions():
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
         elif proj.ignore_team or not proj.evil: #Check for each enemy
-            for enemy in ENNEMY_TRACKER.copy():
+            for enemy in ENNEMY_TRACKER:
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):
                     if proj in enemy.immune:
                         continue
@@ -154,11 +155,12 @@ def loading():
     render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
         , (200, SCREEN_HEIGHT - 111))
     render_all()
-    resolution()
+    SYSTEM["post_effects"].tick()
 
 def main_loop():
     """Main loop. Temporary"""
     while SYSTEM["playing"]:
+        SYSTEM["mouse_target"] = None
         SYSTEM["deltatime"].tick()
         if SYSTEM["game_state"] == LOADING:
             loading()
@@ -183,9 +185,9 @@ def main_loop():
             if event.type == MOUSEWHEEL:
                 SYSTEM["mouse_wheel"][0] = SYSTEM["mouse_wheel"][1]
                 SYSTEM["mouse_wheel"][1] = (event.x, event.y)
-        keys = get_keys()
+        keys = get_key_event()
         SYSTEM["keys"] = keys
-        if keys[K_ESCAPE]:
+        if "pause" in keys:
             if SYSTEM["cooldown"] <= 0:
                 SYSTEM["cooldown"] = 0.5
                 if SYSTEM["game_state"] == GAME_LEVEL:
@@ -229,7 +231,7 @@ def main_loop():
         if not SYSTEM["mouse_click"][0]:
             SYSTEM["dragged"] = None
         if SYSTEM["mouse_click"][0] and SYSTEM["cooldown"] <= 0:
-            if SYSTEM["rune"] != -1 and not SYSTEM["keys"][K_LSHIFT]:
+            if SYSTEM["rune"] != -1 and not "shift" in SYSTEM["keys"]:
                 SYSTEM["rune"] = -1
                 SYSTEM["rune_display"] = None
                 SYSTEM["cooldown"] = 0.8
@@ -255,7 +257,7 @@ if __name__ == "__main__":
             render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
                 , (200, SCREEN_HEIGHT - 111))
             render_all()
-            resolution()
+            SYSTEM["post_effects"].tick()
         else:
             break
     profiler = cProfile.Profile()

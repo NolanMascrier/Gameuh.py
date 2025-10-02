@@ -140,6 +140,8 @@ class Enemy():
             self._entity.detach("die", True)
             self.explode()
             return
+        if self._entity.is_inside(SYSTEM["mouse"]):
+            SYSTEM["mouse_target"] = self
         self._entity.tick(self)
         self._creature.tick()
         if self._attacking and self._attack_delay >= self._delay:

@@ -36,16 +36,3 @@ def render_all():
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
     elif SYSTEM["game_state"] in [MENU_INVENTORY]:
         SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], shake)
-
-def resolution():
-    """Applies the resolution morph of the screen."""
-    SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
-    SYSTEM["text_generator"].generate_fps()
-    if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
-        SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
-                               (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0))
-    window = SYSTEM["windows"].copy()
-    window.scale((SYSTEM["options"]["screen_resolution"][0],\
-                 SYSTEM["options"]["screen_resolution"][1]))
-    SYSTEM["real_windows"].blit(window, (0, 0))
-    flip()

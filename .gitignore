@@ -12,10 +12,7 @@ ressources/*.png~
 user_config.json
 *.char
 *.log
+.coverage
 /tools/*
 data/numerics/__pycache__/__init__.cpython-310.pyc
 *.pyc
-.coverage
-.coverage
-.coverage
-.coverage

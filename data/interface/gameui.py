@@ -67,7 +67,7 @@ def draw_exp_bar():
     data = []
     char = SYSTEM["player"]
     exp_len = char.creature.exp / char.creature.exp_to_next * 1434
-    exp_len = min(max(exp_len, 0), SYSTEM["images"]["exp_jauge"].width - 1)
+    exp_len = min(max(exp_len, 0), 1433)
     c = SYSTEM["images"]["exp_jauge"].image.subsurface((0, 0, exp_len, 9))
     data.append((c, (243, SCREEN_HEIGHT - 39)))
     return data
@@ -181,6 +181,26 @@ def draw_boss():
     data.append((txt.image, (170, 20)))
     return data
 
+def draw_enemy():
+    """Draws the enemy's details."""
+    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"] == SYSTEM["level"].boss:
+        return []
+    data = []
+    enemy = SYSTEM["mouse_target"]
+    life = max(enemy.creature.stats["life"].current_value /\
+               enemy.creature.stats["life"].c_value * 300, 0)
+    img = SYSTEM["images"]["enemy_jauge"].image.subsurface((0, 0, life, 50))
+    txt = Text(trad('enemies', enemy.creature.name), size=23, font="item_desc")
+    if SYSTEM["level"] is None or SYSTEM["level"].boss is None or\
+        SYSTEM["level"].current_wave != SYSTEM["level"].waves:
+        pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 40)
+    else:
+        pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 150)
+    data.append((SYSTEM["images"]["enemy_jauge_back"].image, pos))
+    data.append((img, pos))
+    data.append((txt.image, (pos[0], pos[1] - 15)))
+    return data
+
 def draw_ui():
     """Draws the user interface."""
     UPDATE_COUNTER[0] += 1
@@ -195,6 +215,7 @@ def draw_ui():
     to_draw.extend(draw_skills())
     to_draw.extend(draw_buffs())
     to_draw.extend(draw_boss())
+    to_draw.extend(draw_enemy())
     SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
     SYSTEM["ui_surface"].blits(to_draw)
     SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0))

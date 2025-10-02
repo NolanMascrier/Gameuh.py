@@ -62,7 +62,7 @@ class Spell():
         self._real_damage = base_damage.clone() if base_damage is not None else None
         self._level = 1
         self._exp = 0
-        self._exp_to_next = 10000
+        self._exp_to_next = 3000
         self._effective_frames = effective_frames
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
@@ -189,7 +189,7 @@ class Spell():
             self._level += 1
             self.update()
             self._exp -= self._exp_to_next
-            self._exp_to_next = round(self._exp_to_next * 1.85)
+            self._exp_to_next = round(self._exp_to_next * 1.68)
             if self._level >= 20:
                 self._exp_to_next = 9999999999
                 break

@@ -290,7 +290,7 @@ class Item():
         elif SYSTEM["rune"] == 9 and self._rarity == 1:
             if self.alteration():
                 SYSTEM["player"].runes[9] -= 1
-        if not SYSTEM["keys"][K_LSHIFT]:
+        if not "shift" in SYSTEM["keys"]:
             SYSTEM["rune"] = -1
             SYSTEM["rune_display"] = None
             SYSTEM["cooldown"] = 0.1

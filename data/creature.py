@@ -407,7 +407,7 @@ class Creature:
                 self._changed.update({"fire", "ice", "elec"})
             elif stat_key == "elemental_damage":
                 self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
-        for d in self._buffs.copy():
+        for d in self._buffs:
             if d == affliction:
                 self._buffs.remove(d)
         for st in self._stats:

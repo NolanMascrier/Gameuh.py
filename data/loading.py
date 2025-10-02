@@ -224,7 +224,7 @@ def load_images():
     """Loads the basic images."""
     SYSTEM["images"]["exp_bar"] = Image("exp.png")
     SYSTEM["images"]["exp_bar2"] = Image("exp_back.png")
-    SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png")
+    SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png").scale(9, 1434)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
@@ -293,6 +293,8 @@ def load_images():
     SYSTEM["images"]["mission_map"] = Image("mission.png")
     SYSTEM["images"]["boss_jauge"] = Image("life_boss.png").scale(100, 1680)
     SYSTEM["images"]["boss_jauge_back"] = Image("life_boss_back.png").scale(100, 1680)
+    SYSTEM["images"]["enemy_jauge"] = Image("life_boss.png").scale(50, 300)
+    SYSTEM["images"]["enemy_jauge_back"] = Image("life_boss_back.png").scale(50, 300)
     SYSTEM["images"]["gear_weapon"] = Image("ui/gear_weapon.png").scale(64, 64)
     SYSTEM["images"]["gear_offhand"] = Image("ui/gear_offhand.png").scale(64, 64)
     SYSTEM["images"]["gear_helm"] = Image("ui/gear_helm.png").scale(64, 64)
@@ -456,6 +458,7 @@ def init_game():
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
     SYSTEM["loading_text"] = None
     SYSTEM["fps_counter"] = None
+    SYSTEM["mouse_target"] = None
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None

@@ -209,8 +209,7 @@ class Level():
         monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
         wave = []
         for _ in range(monsters):
-            #TODO: Actual random choice of monster depending on zone
-            monster = VOIDSNIPER if random.randint(0, 1) == 0 else VOIDSNIPER
+            monster = VOIDBOMBER if random.randint(0, 2) == 0 else VOIDSNIPER
             mob = self.generate_enemy(monster, level)
             wave.append(mob)
         self._wave_tracker.append(wave)

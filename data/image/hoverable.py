@@ -59,7 +59,7 @@ class Hoverable(Widget):
             if SYSTEM["mouse"][0] - w < 0:
                 w += SYSTEM["mouse"][0] - w
         else:
-            if SYSTEM["keys"][K_LALT]:
+            if "alt_popup" in SYSTEM["keys"]:
                 sfc = self._alternative
             else:
                 sfc = self._override
@@ -85,7 +85,7 @@ class Hoverable(Widget):
             if self._override is None:
                 sfc = self._surface
             else:
-                if SYSTEM["keys"][K_LALT]:
+                if "alt_popup" in SYSTEM["keys"]:
                     sfc = self._alternative
                 else:
                     sfc = self._override
