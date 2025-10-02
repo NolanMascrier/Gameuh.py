@@ -16,3 +16,6 @@ user_config.json
 /tools/*
 data/numerics/__pycache__/__init__.cpython-310.pyc
 *.pyc
+wrapper/Gameuh.py/*
+wrapper/Gameuh.py/
+wrapper/launcher

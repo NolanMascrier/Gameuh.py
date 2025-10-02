@@ -31,6 +31,7 @@
 #endif
 
 GtkWidget *update_button;
+GtkWidget *launch_button;
 GtkWidget *text_view;
 
 int directory_exists(const char *path)
@@ -85,6 +86,7 @@ int ensure_git_linked() {
             return -1;
         }
         printf("GitHub linked successfully.\n");
+        gtk_widget_set_sensitive(launch_button, TRUE);
     } else {
         printf("Git repo detected.\n");
     }
@@ -256,17 +258,16 @@ static void on_update_clicked(GtkWidget *widget, gpointer data) {
     GtkWidget *dialog;
 
     if (ensure_git_linked() != 0) {
-        dialog = gtk_message_dialog_new(NULL,
-            GTK_DIALOG_DESTROY_WITH_PARENT,
-            GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_CLOSE,
-            "Failed to link Git repository.\nMake sure Git is installed.");
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
-        return;
+        char cmd[512];
+        snprintf(cmd, sizeof(cmd), "%s clone %s %s", GIT_CMD, GITHUB_REPO, REPO_DIR);
+        if (system(cmd) == 0) {
+            printf("Repository cloned.\n");
+            gtk_widget_set_sensitive(launch_button, TRUE);
+        } else {
+            fprintf(stderr, "Failed to clone the repo!\n");
+        }
     }
-
-    if (!is_update_available()) {
+    else if (!is_update_available()) {
         dialog = gtk_message_dialog_new(NULL,
             GTK_DIALOG_DESTROY_WITH_PARENT,
             GTK_MESSAGE_INFO,
@@ -312,20 +313,8 @@ int main(int argc, char *argv[]) {
         if (ensure_git_linked() == 0) {
             repo_ready = TRUE;
         }
-    } else {
-        // Try to clone the repository
-        char cmd[512];
-        snprintf(cmd, sizeof(cmd), "%s clone %s %s", GIT_CMD, GITHUB_REPO, REPO_DIR);
-        if (system(cmd) == 0) {
-            printf("Repository cloned.\n");
-            if (ensure_git_linked() == 0)
-                repo_ready = TRUE;
-        } else {
-            fprintf(stderr, "Failed to clone the repo!\n");
-        }
     }
 
-    // Now build UI...
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Game Launcher");
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
@@ -337,7 +326,7 @@ int main(int argc, char *argv[]) {
     GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-    GtkWidget *launch_button = gtk_button_new_with_label("Launch");
+    launch_button = gtk_button_new_with_label("Launch");
     update_button = gtk_button_new_with_label("Update");
     GtkWidget *exit_button = gtk_button_new_with_label("Exit");
 
@@ -368,12 +357,10 @@ int main(int argc, char *argv[]) {
     GtkWidget *cpr = gtk_label_new("Game by Nolan Mascrier\nLauncher by Martin Juette\n2024-2025");
     gtk_box_pack_start(GTK_BOX(vbox), cpr, FALSE, FALSE, 5);
 
-    // Enable or disable buttons based on repo state
     if (!repo_ready) {
-        gtk_widget_set_sensitive(update_button, FALSE);
+        gtk_widget_set_sensitive(update_button, TRUE);
         gtk_widget_set_sensitive(launch_button, FALSE);
     } else {
-        // Enable update button only if update is available
         if (!is_update_available()) {
             gtk_widget_set_sensitive(update_button, FALSE);
         }
