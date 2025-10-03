@@ -1,4 +1,4 @@
-name: Build C Wrapper v0.2.0
+name: Build C Wrapper v0.2.0 for Windows
 
 on:
   push:
@@ -10,19 +10,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: windows-latest
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup environment for Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt update
-          sudo apt install -y python3 python3-pip git build-essential
-          sudo apt-get install -y libgtk-3-dev
-          python3 -m pip install --upgrade pip
-          python3 -m pip install -r requirements.txt
 
       - name: Setup MSYS2
         if: matrix.os == 'windows-latest'
@@ -53,24 +44,12 @@ jobs:
           python-win\python.exe -m pip install --upgrade pip
           python-win\python.exe -m pip install -r requirements.txt
 
-      - name: Build on Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          cd wrapper
-          make
-
       - name: Build on Windows
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
           cd wrapper
           make
-
-      - name: Insert version into README (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          cd wrapper
-          sed -i "s/{{VERSION}}/${{ github.ref_name }}/g" README.md
       
       - name: Insert version into README (Windows)
         if: matrix.os == 'windows-latest'
@@ -78,22 +57,15 @@ jobs:
           cd wrapper
           powershell -Command "(Get-Content README.md) -replace '{{VERSION}}', '${{ github.ref_name }}' | Set-Content README.md"
 
-      - name: Package final zip for Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          mkdir -p dist
-          cp wrapper/launcher dist/
-          cp wrapper/README.md dist/
-          cd dist
-          zip -r ../Game-${{ github.ref_name }}-linux.zip .
-          cd ..
-
       - name: Bundle GTK DLLs
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
           mkdir -p dist
-          ntldd -R wrapper/launcher.exe | grep "/mingw64/bin/" | awk '{print $3}' | xargs -I{} cp {} ../dist
+          deps=$(ntldd -R wrapper/launcher.exe | grep "/mingw64/bin/" | awk '{print $3}')
+          if [ -n "$deps" ]; then
+            echo "$deps" | xargs -I{} cp {} ../dist
+          fi
 
       - name: Package final zip for Windows
         if: matrix.os == 'windows-latest'
@@ -103,15 +75,6 @@ jobs:
           xcopy python-win dist\\python-win\\ /E /I /Y
           xcopy git-win dist\\git-win\\ /E /I /Y
           powershell -Command "Compress-Archive -Path dist\\* -DestinationPath Game-${{ github.ref_name }}-windows.zip"
-
-      - name: Upload to GitHub Release (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-          files: Game-${{ github.ref_name }}-linux.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to GitHub Release (Windows)
         if: matrix.os == 'windows-latest'
