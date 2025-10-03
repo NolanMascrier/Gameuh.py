@@ -61,10 +61,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
-          cd dist
-          cp /mingw64/bin/*.dll .
-          cp -r /mingw64/etc .
-          cp -r /mingw64/share .
+          mkdir -p dist
+          cp /mingw64/bin/*.dll dist/
+          cp -r /mingw64/etc dist/
+          cp -r /mingw64/share dist/
 
 
       - name: Package final zip for Windows
