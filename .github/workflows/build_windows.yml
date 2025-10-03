@@ -61,10 +61,16 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
-          mkdir -p dist
-          deps=$(ntldd -R wrapper/launcher.exe | grep "/mingw64/bin/" | awk '{print $3}')
-          if [ -n "$deps" ]; then
-            echo "$deps" | xargs -I{} cp {} ../dist
+          cd wrapper
+          mkdir -p ../dist
+          # Try to collect DLLs; ignore failure if none found
+          ntldd -R launcher.exe 2>/dev/null | grep "/mingw64/bin/" | awk '{print $3}' > dlls.txt || true
+          if [ -s dlls.txt ]; then
+            echo "Copying DLLs:"
+            cat dlls.txt
+            xargs -I{} cp {} ../dist < dlls.txt
+          else
+            echo "No extra DLLs required."
           fi
 
       - name: Package final zip for Windows
