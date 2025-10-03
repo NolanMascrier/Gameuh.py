@@ -34,6 +34,7 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-gtk3
             mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-ntldd
             make
 
       - name: Downloading Python and Git for Windows
