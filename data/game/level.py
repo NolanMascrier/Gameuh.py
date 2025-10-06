@@ -207,6 +207,7 @@ class Level():
         min_monsters = (1 + random.randint(0, 3)) * wave
         max_monsters = (4 + random.randint(0, 3)) * wave
         monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
+        monster = 1
         choice = [VOIDBOMBER, DEMONBAT, NECROMANCER]
         chance = [0.1, 0.4, 0.5]
         wave = []

@@ -1,10 +1,10 @@
 """Handles the general UI operations such as the bottom bar."""
 
-from data.generator import Generator
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
-    PROJECTILE_TRACKER, TEXT_TRACKER, generate_grids, clean_grids, trad,\
+    PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
     ANIMATION_TRACKER
+from data.interface.render import renders, render
 from data.image.tabs import Tabs
 from data.projectile import Projectile
 from data.slash import Slash
@@ -99,7 +99,6 @@ def draw_game(show_player = True, show_enemies = True,\
 
 def logic_tick():
     """Ticks all there is to tick."""
-    generate_grids()
     SYSTEM["player"].tick()
     for bubble in POWER_UP_TRACKER:
         bubble.tick(SYSTEM["player"])
@@ -114,9 +113,6 @@ def logic_tick():
         if p[0].finished:
             ANIMATION_TRACKER.remove(p)
     for p in PROJECTILE_TRACKER:
-        if isinstance(p, Generator):
-            p.tick(SYSTEM["player"])
-            continue
         p.tick()
         if (isinstance(p, Projectile) and p.can_be_destroyed()) or \
             (isinstance(p, Slash) and p.finished):
@@ -128,4 +124,3 @@ def logic_tick():
         txt[2] -= 3
         if txt[3] < 10:
             TEXT_TRACKER.remove(txt)
-    clean_grids()

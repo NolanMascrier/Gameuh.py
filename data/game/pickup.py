@@ -109,7 +109,7 @@ class PickUp(HitBox):
     def generate_item_text(self):
         """Generates the text when picking up an item"""
         rare = self._contains.rarity
-        text = Text(f"#c#{COLORS[rare]}{self._contains.base})")
+        text = Text(f"#c#{COLORS[rare]}{self._contains.base}", font="item_desc")
         TEXT_TRACKER.append([text, self.x, self.y, 255])
 
     def pickup(self, player):
@@ -145,6 +145,8 @@ class PickUp(HitBox):
         SYSTEM["images"]["life_orb"].tick()
         SYSTEM["images"]["mana_orb"].tick()
         SYSTEM["images"]["exp_orb"].tick()
+        if self.is_colliding(SYSTEM["player"].hitbox):
+            self.pickup(player)
 
     @property
     def hitbox(self):

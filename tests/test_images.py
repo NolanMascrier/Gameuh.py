@@ -3,7 +3,7 @@ import pygame
 import os
 from data.image.image import Image
 from data.image.text import Text
-from data.image.text_generator import TextGenerator
+from data.image.textgenerator import TextGenerator
 from data.image.animation import Animation
 from data.image.hoverable import Hoverable
 from data.image.parallaxe import Parallaxe

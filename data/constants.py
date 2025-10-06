@@ -2,8 +2,8 @@
 
 from enum import Enum
 import json
+
 from pygame.constants import *
-from data.physics.spatialgrid import SpatialGrid
 from data.api.surface import Surface, mouse_position, set_screen
 
 
@@ -20,25 +20,6 @@ TEXT_TRACKER = []
 IMAGE_TRACKER = []
 ANIMATION_TRACKER = []
 ANIMATION_TICK_TRACKER = []
-
-PROJECTILE_GRID = SpatialGrid()
-ENNEMY_GRID = SpatialGrid()
-POWER_UP_GRID = SpatialGrid()
-
-def clean_grids():
-    """Cleans up all the grids."""
-    PROJECTILE_GRID.clear()
-    ENNEMY_GRID.clear()
-    POWER_UP_GRID.clear()
-
-def generate_grids():
-    """Fills up the grids."""
-    for p in PROJECTILE_TRACKER:
-        PROJECTILE_GRID.add(p, p.hitbox)
-    for e in ENNEMY_TRACKER:
-        ENNEMY_GRID.add(e, e.hitbox)
-    for p in POWER_UP_TRACKER:
-        POWER_UP_GRID.add(p, p.hitbox)
 
 FIREBALL_IMAGE = "ressources/fire.png"
 UI_JAUGE = "ressources/ui_main.png"

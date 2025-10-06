@@ -2,7 +2,7 @@
 
 import json
 import numpy
-from data.constants import SCREEN_HEIGHT, SYSTEM, POWER_UP_GRID
+from data.constants import SCREEN_HEIGHT, SYSTEM
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
@@ -103,9 +103,6 @@ class Character():
                 already_ticked.append(skill)
         SYSTEM["player.x"] = self.hitbox.center[0]
         SYSTEM["player.y"] = self.hitbox.center[1]
-        for pickup in POWER_UP_GRID.query(self.hitbox):
-            if self.hitbox.is_colliding(pickup.hitbox):
-                pickup.pickup(self)
         desired_flip = SYSTEM["mouse"][0] < self.entity.center_x
         if desired_flip != self.entity.flipped:
             self.entity.flip(desired_flip)

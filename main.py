@@ -4,7 +4,7 @@ import cProfile
 import pstats
 import random
 
-from data.api.surface import Surface, get_press, get_keys, get_events
+from data.api.surface import Surface, get_press, get_events
 from data.api.keycodes import get_key_event
 
 from data.image.text import Text
@@ -49,6 +49,8 @@ def check_collisions():
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
+                    if proj.can_be_destroyed():
+                            continue
                 elif isinstance(proj, Slash) and proj.effective:
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature, SYSTEM["player"].entity)
                     if dmg is None or crit is None:
@@ -56,6 +58,8 @@ def check_collisions():
                     SYSTEM["text_generator"].generate_damage_text(SYSTEM["player"].x,\
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
+                    if proj.finished:
+                            continue
         elif proj.ignore_team or not proj.evil: #Check for each enemy
             for enemy in ENNEMY_TRACKER:
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):
@@ -68,6 +72,8 @@ def check_collisions():
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
+                        if proj.can_be_destroyed():
+                            continue
                     elif isinstance(proj, Slash) and proj.effective:
                         dmg, crit = proj.on_hit(enemy.creature, enemy.entity)
                         if dmg is None or crit is None:
@@ -75,6 +81,8 @@ def check_collisions():
                         SYSTEM["text_generator"].generate_damage_text(enemy.x,\
                                                                     enemy.y,\
                                                                     DAMAGE_COLOR, crit, dmg)
+                        if proj.finished:
+                            continue
 
 def game_loop(keys, time_event):
     """Main game loop."""

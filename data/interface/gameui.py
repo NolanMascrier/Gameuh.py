@@ -5,7 +5,7 @@ from data.api.surface import Surface
 
 from data.image.text import Text
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2, trad
-from data.image.text_generator import make_text
+from data.image.textgenerator import make_text
 
 UI_SKILLS_OFFSET = 650
 UI_SKILLS_PANEL_OFFSET = 2

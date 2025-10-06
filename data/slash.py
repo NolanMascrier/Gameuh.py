@@ -9,7 +9,7 @@ from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.projectile import Projectile
 from data.numerics.affliction import Affliction
-from data.constants import PROJECTILE_GRID, Flags, SYSTEM, ANIMATION_TRACKER
+from data.constants import PROJECTILE_TRACKER, Flags, SYSTEM, ANIMATION_TRACKER
 
 class Slash(HitBox):
     """Defines a slash."""
@@ -94,7 +94,7 @@ class Slash(HitBox):
         if self._real_image.finished:
             self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
-            for proj in PROJECTILE_GRID.query(self):
+            for proj in PROJECTILE_TRACKER:
                 if not isinstance(proj, Projectile):
                     return
                 if proj.hitbox.is_colliding(self) and\

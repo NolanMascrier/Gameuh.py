@@ -9,6 +9,7 @@ import numpy as np
 
 from data.api.surface import Surface, mouse_position, get_keys, init_engine
 from data.api.clock import Clock
+from data.api.logger import Logger
 
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, Flags,\
@@ -20,7 +21,7 @@ from data.image.button import Button
 from data.image.tile import Tile
 from data.image.parallaxe import Parallaxe
 from data.image.scrollable import Scrollable
-from data.image.text_generator import TextGenerator, Text
+from data.image.textgenerator import TextGenerator, Text
 from data.image.slotpanel import SlotPanel
 from data.image.posteffects import PostEffects
 
@@ -471,6 +472,7 @@ def init_game():
     SYSTEM["loading_text"] = None
     SYSTEM["fps_counter"] = None
     SYSTEM["mouse_target"] = None
+    SYSTEM["logger"] = Logger()
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None

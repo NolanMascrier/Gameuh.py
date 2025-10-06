@@ -78,7 +78,7 @@ class PostEffects():
         if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
             SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
                                 (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0))
-        window = SYSTEM["windows"].copy()
+        window = SYSTEM["windows"]
         window.scale((SYSTEM["options"]["screen_resolution"][0],\
                  SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].fill(BLACK)

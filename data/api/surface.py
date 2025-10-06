@@ -2,7 +2,7 @@
 
 import os
 import pygame
-from pygame.constants import DOUBLEBUF
+from pygame.constants import DOUBLEBUF, HWSURFACE
 from data.api.widget import Widget
 
 def flip():
@@ -33,7 +33,7 @@ def init_engine():
 
 def set_screen(is_fullscreen = True, width = 1920, height = 1080, vsync=1):
     """Sets the primary screen for pygame."""
-    flags = DOUBLEBUF | pygame.SCALED
+    flags = DOUBLEBUF | HWSURFACE | pygame.SCALED
     if is_fullscreen:
         flags |= pygame.FULLSCREEN
     return pygame.display.set_mode((width, height), flags, vsync=vsync)

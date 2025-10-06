@@ -1,12 +1,11 @@
 """"Renders the screen."""
 
-from data.api.surface import flip
-
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING
 
 
 RENDER_LIST = []
 CLEAN = (0, 0, 0, 0)
+BLACK_TRANSP = (0, 0, 0, 255)
 
 def render(image, pos):
     """Prepares the image to be rendered at position pos."""
@@ -23,7 +22,7 @@ def renders(lst):
 
 def render_all():
     """Renders the screen."""
-    SYSTEM["windows"].fill((0,0,0, 255))
+    SYSTEM["windows"].fill(BLACK_TRANSP)
     shake = SYSTEM["post_effects"].shake_factor
     if SYSTEM["game_state"] != LOADING:
         SYSTEM["windows"].blit(SYSTEM["gm_background"], shake)
@@ -31,8 +30,7 @@ def render_all():
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:
-        for name in ["pickup", "warnings", "bullets", "characters", "texts"]:
-            SYSTEM["windows"].blit(SYSTEM["layers"][name], shake)
+        SYSTEM["windows"].blits([(layer, shake) for _, layer in SYSTEM["layers"].items()])
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
     elif SYSTEM["game_state"] in [MENU_INVENTORY]:
         SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], shake)
