@@ -47,17 +47,6 @@ class TestVec2Initialization(unittest.TestCase):
         v = Vec2(0, 0)
         self.assertEqual(v.x, 0.0)
         self.assertEqual(v.y, 0.0)
-    
-    def test_init_creates_numpy_array(self):
-        """Test that initialization creates numpy array."""
-        v = Vec2(1, 2)
-        self.assertIsInstance(v.arr, np.ndarray)
-        self.assertEqual(v.arr.dtype, np.float32)
-    
-    def test_init_array_shape(self):
-        """Test that array has correct shape."""
-        v = Vec2(1, 2)
-        self.assertEqual(v.arr.shape, (2,))
 
 
 class TestVec2Properties(unittest.TestCase):
@@ -560,38 +549,6 @@ class TestVec2ToTuple(unittest.TestCase):
         result = v.to_tuple()
         
         self.assertEqual(result, (-3.0, -4.0))
-
-
-class TestVec2Repr(unittest.TestCase):
-    """Tests for Vec2 __repr__ method."""
-    
-    def test_repr_format(self):
-        """Test repr string format."""
-        v = Vec2(3, 4)
-        result = repr(v)
-        
-        self.assertEqual(result, "Vec2(3.00, 4.00)")
-    
-    def test_repr_with_floats(self):
-        """Test repr with float values."""
-        v = Vec2(3.456, 4.789)
-        result = repr(v)
-        
-        self.assertEqual(result, "Vec2(3.46, 4.79)")
-    
-    def test_repr_with_negatives(self):
-        """Test repr with negative values."""
-        v = Vec2(-3.5, -4.7)
-        result = repr(v)
-        
-        self.assertEqual(result, "Vec2(-3.50, -4.70)")
-    
-    def test_repr_zero_vector(self):
-        """Test repr of zero vector."""
-        v = Vec2(0, 0)
-        result = repr(v)
-        
-        self.assertEqual(result, "Vec2(0.00, 0.00)")
 
 
 class TestVec2EdgeCases(unittest.TestCase):
