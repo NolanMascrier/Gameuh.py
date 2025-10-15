@@ -18,6 +18,7 @@
     #define VENV_PATH "Gameuh.py\\venv"
     #define PYTHON_VENV_CMD "python-win\\python.exe -m venv Gameuh.py\\venv"
     #define LAUNCH_GAME "cd Gameuh.py && ..\\python-win\\python.exe main.py"
+    #define GIT_FOLDER "\\.git"
 #else
     #define PYTHON_PATH "python3"
     #define PIP_CMD "Gameuh.py/venv/bin/python3 -m pip"
@@ -28,6 +29,7 @@
     #define VENV_PATH "Gameuh.py/venv"
     #define PYTHON_VENV_CMD "python3 -m venv Gameuh.py/venv"
     #define LAUNCH_GAME "cd Gameuh.py && venv/bin/python3 main.py"
+    #define GIT_FOLDER "/.git"
 #endif
 
 GtkWidget *update_button;
@@ -77,7 +79,7 @@ int setup_git_repo() {
 
 int ensure_git_linked() {
     char git_path[256];
-    snprintf(git_path, sizeof(git_path), "%s/.git", REPO_DIR);
+    snprintf(git_path, sizeof(git_path), "%s%s", REPO_DIR, GIT_FOLDER);
 
     if (!dir_exists(git_path)) {
         printf("Not a Git repo. Linking to GitHub...\n");
@@ -225,7 +227,7 @@ static void on_exit_clicked(GtkWidget *widget, gpointer data) {
 
 static void load_patch_notes() {
     const char *url = "https://raw.githubusercontent.com/NolanMascrier/Gameuh.py/refs/heads/main/PATCHNOTE.md";
-    const char *tmp_file = "/tmp/patch_notes.txt";
+    const char *tmp_file = "patch_notes.txt";
 
     char curl_cmd[512];
     snprintf(curl_cmd, sizeof(curl_cmd),
