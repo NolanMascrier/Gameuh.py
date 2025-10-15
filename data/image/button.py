@@ -87,16 +87,16 @@ class Button(Widget):
                 render(self._superimage, (x_offset, y_offset))
             return
         if self._clicked and self._pressed is not None:
-            surface.blit(self._pressed.image, (self.x, self.y))
+            surface.blit(self._pressed.image, (self.x, self.y), True)
         else:
-            surface.blit(self._image.image, (self.x, self.y))
+            surface.blit(self._image.image, (self.x, self.y), True)
         if self._text is not None:
             y = self.y + self._text.height / 2
-            surface.blit(self._text.image, (self.x, y))
+            surface.blit(self._text.image, (self.x, y), True)
         if self._superimage is not None:
             x_offset = self.x + self._width / 2 - self._superimage.get_width() / 2
             y_offset = self.y + self._height / 2 - self._superimage.get_height() / 2
-            surface.blit(self._superimage, (x_offset, y_offset))
+            surface.blit(self._superimage, (x_offset, y_offset), True)
 
     def get_image(self):
         """Returns the current image."""

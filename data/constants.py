@@ -158,9 +158,11 @@ def export_options():
 
 def reload_options():
     """Reloads the options from the SYSTEM."""
-    disp = set_screen(SYSTEM["options"]["fullscreen"], SCREEN_WIDTH, SCREEN_HEIGHT,\
+    disp = set_screen(SYSTEM["options"]["fullscreen"], SYSTEM["options"]["screen_resolution"][0],\
+                      SYSTEM["options"]["screen_resolution"][1],\
                       SYSTEM["options"]["vsync"])
-    SYSTEM["real_windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["real_windows"] = Surface(SYSTEM["options"]["screen_resolution"][0],\
+                                     SYSTEM["options"]["screen_resolution"][1], is_alpha=False)
     SYSTEM["real_windows"].surface = disp
 
 def export_and_reload():

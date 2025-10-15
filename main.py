@@ -277,5 +277,12 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
     profiler.disable()
+    print("### CUMTIME")
     stats = pstats.Stats(profiler).sort_stats("cumtime")
+    stats.print_stats(25)
+    print("### PERCALL")
+    stats = pstats.Stats(profiler).sort_stats("pcalls")
+    stats.print_stats(25)
+    print("### TOTTIME")
+    stats = pstats.Stats(profiler).sort_stats("tottime")
     stats.print_stats(25)

@@ -235,6 +235,6 @@ def draw_ui():
     to_draw.extend(draw_buffs())
     to_draw.extend(draw_enemy_card())
     to_draw.extend(draw_boss())
-    SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0))
+    SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0), True)
     SYSTEM["ui_surface"].blits(to_draw)
-    SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0))
+    SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0), True)

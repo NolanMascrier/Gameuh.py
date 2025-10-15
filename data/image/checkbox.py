@@ -64,6 +64,6 @@ class Checkbox(Widget):
         self._hover.set(self.x + self.width, self.y + self.height / 2 - self._hover.height / 2)\
             .tick().draw(surface)
         if self._checked:
-            SYSTEM["windows"].blit(self._image[1].image, (self.x, self.y))
+            SYSTEM["windows"].blit(self._image[1].image, (self.x, self.y), True)
         else:
-            SYSTEM["windows"].blit(self._image[0].image, (self.x, self.y))
+            SYSTEM["windows"].blit(self._image[0].image, (self.x, self.y), True)

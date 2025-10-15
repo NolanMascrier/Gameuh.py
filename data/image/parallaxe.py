@@ -37,8 +37,8 @@ class Parallaxe(Animation):
         self._layers = [Surface(SCREEN_WIDTH * 2, SCREEN_HEIGHT)\
             for _ in range(len(self._sequence))]
         for i in range(len(self._sequence) - 1):
-            self._layers[i].blit(self._sequence[i + 1].image, (0, 0))
-            self._layers[i].blit(self._sequence[i + 1].image, (SCREEN_WIDTH, 0))
+            self._layers[i].blit(self._sequence[i + 1].image, (0, 0), True)
+            self._layers[i].blit(self._sequence[i + 1].image, (SCREEN_WIDTH, 0), True)
         self._surface = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     def invert(self):

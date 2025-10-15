@@ -4,7 +4,7 @@ import numpy
 
 from data.api.surface import Surface, flip
 
-from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER
+from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER, SCREEN_HEIGHT
 
 BLACK = (0,0,0)
 
@@ -25,8 +25,8 @@ class PostEffects():
         self._flash_max = 0
         self._flash_timer = 0
         self._flash_opacity = 0
-        self._flash_surface = Surface(SYSTEM["options"]["screen_resolution"][0],\
-            SYSTEM["options"]["screen_resolution"][1])
+        self._flash_surface = Surface(SCREEN_WIDTH,\
+            SCREEN_HEIGHT, is_alpha=False)
 
     def hitstop(self, timer):
         """Sets a hitstop for timer frames."""
@@ -77,12 +77,12 @@ class PostEffects():
         SYSTEM["text_generator"].generate_fps()
         if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
             SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
-                                (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0))
-        window = SYSTEM["windows"]
-        window.scale((SYSTEM["options"]["screen_resolution"][0],\
+                                (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0), True)
+        window = SYSTEM["windows"].copy()
+        window = window.smoothscale(size=(SYSTEM["options"]["screen_resolution"][0],\
                  SYSTEM["options"]["screen_resolution"][1]))
         SYSTEM["real_windows"].fill(BLACK)
-        SYSTEM["real_windows"].blit(window, (0, 0))
+        SYSTEM["real_windows"].blit(window, (0, 0), True)
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)

@@ -65,9 +65,9 @@ class DummyItems(Item):
             self._quantity = Text(f"{quantity - stolen}" if quantity <= 999 else "999+",\
                                   font="item_desc", default_color=RED)
         self._img = Surface(64, 64)
-        self._img.blit(self._image.image, (0, 0))
+        self._img.blit(self._image.image, (0, 0), True)
         if quantity > 1:
-            self._img.blit(self._quantity.image, (0, 0))
+            self._img.blit(self._quantity.image, (0, 0), True)
         self._img = Image(self._img)
         self._image = self._img
 
@@ -88,8 +88,8 @@ class DummyItems(Item):
         sfc = Surface(title_card.get_width(), title_card.get_height())
         title_pos = (title_card.get_width() / 2 - desc.width / 2,
                      title_card.get_height() / 2 - desc.height / 2)
-        sfc.blit(title_card, (0, 0))
-        sfc.blit(desc.surface, title_pos)
+        sfc.blit(title_card, (0, 0), True)
+        sfc.blit(desc.surface, title_pos, True)
         return sfc
 
     def get_image(self):
@@ -206,8 +206,7 @@ class Level():
         """Summons a wave of monsters."""
         min_monsters = (1 + random.randint(0, 3)) * wave
         max_monsters = (4 + random.randint(0, 3)) * wave
-        monsters = max(random.randint(min_monsters, max_monsters + 1), 1)
-        monster = 1
+        monsters = max(random.randint(min_monsters, max_monsters + 1), 1) + 4
         choice = [VOIDBOMBER, DEMONBAT, NECROMANCER]
         chance = [0.1, 0.4, 0.5]
         wave = []

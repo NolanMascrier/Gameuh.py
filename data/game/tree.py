@@ -91,8 +91,8 @@ class Node:
         h = title_card.get_height() + desc_card.get_height() + h + 10
         w = max(title_card.get_width(), desc_card.get_width())
         sfc = Surface(w, h)
-        sfc.blit(title_card, (0, 0))
-        sfc.blit(desc_card, (0, title_card.get_height()))
+        sfc.blit(title_card, (0, 0), True)
+        sfc.blit(desc_card, (0, title_card.get_height()), True)
         h_temp = title_card.get_height() + desc_card.get_height()
         for s in surfaces:
             sfc.blit(s, (w / 2 - s.get_width() / 2, h_temp))
@@ -101,8 +101,8 @@ class Node:
             title_card.get_height() / 2 - title.height / 2)
         desc_pos = (desc_card.get_width() / 2 - desc.width / 2,\
             desc_card.get_height() / 2 - desc.height / 2 + title_card.get_height())
-        sfc.blit(title.surface, title_pos)
-        sfc.blit(desc.surface, desc_pos)
+        sfc.blit(title.surface, title_pos, True)
+        sfc.blit(desc.surface, desc_pos, True)
         self._surface = sfc
 
     def tick(self):
@@ -173,21 +173,21 @@ class Node:
             f.draw(surface)
         self._button.draw(surface)
         if self._learned:
-            surface.blit(SYSTEM["images"]["slot_green"].image, (self._button.x, self._button.y))
+            surface.blit(SYSTEM["images"]["slot_green"].image, (self._button.x, self._button.y), True)
         else:
             match self._rarity:
                 case 1:
                     surface.blit(SYSTEM["images"]["slot_magic"].image,\
-                        (self._button.x, self._button.y))
+                        (self._button.x, self._button.y), True)
                 case 1:
                     surface.blit(SYSTEM["images"]["slot_rare"].image,\
-                        (self._button.x, self._button.y))
+                        (self._button.x, self._button.y), True)
                 case 1:
                     surface.blit(SYSTEM["images"]["slot_exalted"].image,\
-                        (self._button.x, self._button.y))
+                        (self._button.x, self._button.y), True)
                 case _:
                     surface.blit(SYSTEM["images"]["slot_empty"].image,\
-                        (self._button.x, self._button.y))
+                        (self._button.x, self._button.y), True)
 
     def export(self) -> str:
         """Serialize the tree as JSON."""

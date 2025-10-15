@@ -25,8 +25,8 @@ def render_all():
     SYSTEM["windows"].fill(BLACK_TRANSP)
     shake = SYSTEM["post_effects"].shake_factor
     if SYSTEM["game_state"] != LOADING:
-        SYSTEM["windows"].blit(SYSTEM["gm_background"], shake)
-        SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], shake)
+        SYSTEM["windows"].blit(SYSTEM["gm_background"], shake, True)
+        SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], shake, True)
     SYSTEM["windows"].blits(RENDER_LIST)
     RENDER_LIST.clear()
     if SYSTEM["game_state"] == GAME_LEVEL:

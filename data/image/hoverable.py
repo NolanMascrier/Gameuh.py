@@ -54,8 +54,8 @@ class Hoverable(Widget):
             h = self._hoverable.height
             surface = SYSTEM["images"]["hoverable"].duplicate(w + 5, h + 5)
             sfc = Surface(surface.get_width(), surface.get_height())
-            sfc.blit(surface, (0, 0))
-            sfc.blit(self._hoverable.surface, (7, 7))
+            sfc.blit(surface, (0, 0), True)
+            sfc.blit(self._hoverable.surface, (7, 7), True)
             if SYSTEM["mouse"][0] - w < 0:
                 w += SYSTEM["mouse"][0] - w
         else:
@@ -101,4 +101,4 @@ class Hoverable(Widget):
         if surface is None:
             render(self._text.surface, (self.x, self.y))
             return
-        surface.blit(self._text.surface, (self.x, self.y))
+        surface.blit(self._text.surface, (self.x, self.y), True)

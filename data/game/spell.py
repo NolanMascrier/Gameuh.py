@@ -173,11 +173,11 @@ class Spell():
             title_card.get_height() / 2 - title.height / 2)
         desc_pos = (affix_card.get_width() / 2 - desc.width / 2,\
             affix_card.get_height() / 2 - desc.height / 2 + title_card.get_height())
-        sfc.blit(title_card, (0, 0))
-        sfc.blit(affix_card, (0, title_card.get_height()))
-        sfc.blit(img, icon_pos)
-        sfc.blit(title.surface, title_pos)
-        sfc.blit(desc.surface, desc_pos)
+        sfc.blit(title_card, (0, 0), True)
+        sfc.blit(affix_card, (0, title_card.get_height()), True)
+        sfc.blit(img, icon_pos, True)
+        sfc.blit(title.surface, title_pos, True)
+        sfc.blit(desc.surface, desc_pos, True)
         self._surface = sfc
         self._alternate = False
 

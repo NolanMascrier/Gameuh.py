@@ -52,6 +52,7 @@ class Enemy():
     def explode(self):
         """Explodes the creature in loot, life and mana orbs,
         and exp."""
+        self._exploded = True
         loot = SYSTEM["looter"].enemy_drop(self)
         pickups = []
         pickups.extend([(d, "rune") for d in loot["runes"]])
@@ -93,7 +94,6 @@ class Enemy():
                 print("DUPLICATE")
             else:
                 ALREADY.append(l)
-        self._exploded = True
 
     def distance_to_player(self, player):
         """Returns the distance to the player."""

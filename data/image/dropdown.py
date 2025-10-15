@@ -58,9 +58,9 @@ class DropDownTitle(Widget):
             render(self._value.image, (self.x + self.width / 2 - self._value.width / 2,\
                 self.y + self.height / 2 - self._value.height / 2))
             return
-        surface.blit(self._hover, (self.x, self.y))
+        surface.blit(self._hover, (self.x, self.y), True)
         surface.blit(self._value.image, (self.x + self.width / 2 - self._value.width / 2,\
-            self.y + self.height / 2 - self._value.height / 2))
+            self.y + self.height / 2 - self._value.height / 2), True)
 
 class DropDownElement(Widget):
     """Subclass for DropDown elements.

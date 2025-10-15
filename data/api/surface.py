@@ -27,7 +27,7 @@ def get_events():
 
 def init_engine():
     """Inits the base engine."""
-    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
+    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "0"
     pygame.init()
     pygame.font.init()
 
@@ -40,18 +40,23 @@ def set_screen(is_fullscreen = True, width = 1920, height = 1080, vsync=1):
 
 class Surface(Widget):
     """Overrides a pygame's surface."""
-    def __init__(self, width: float = 0, height: float = 0, x: float = 0, y: float = 0):
+    def __init__(self, width: float = 0, height: float = 0, x: float = 0, y: float = 0,\
+                 is_alpha = True):
         super().__init__(x, y, width, height)
-        self._surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        self._surface = pygame.Surface((width, height), pygame.SRCALPHA if is_alpha else 0)
 
     def __getattr__(self, name):
         return getattr(self._surface, name)
 
-    def blit(self, source, dest: tuple[float|float]):
+    def blit(self, source, dest: tuple[float|float], premult = None):
         """Blits another surface to the current surface's."""
+        if premult is None:
+            fl = 0
+        else:
+            fl = pygame.BLEND_PREMULTIPLIED
         if isinstance(source, Surface):
-            return self._surface.blit(source.surface, dest)
-        return self._surface.blit(source, dest)
+            return self._surface.blit(source.surface, dest, special_flags=fl)
+        return self._surface.blit(source, dest, special_flags=fl)
 
     def fill(self, color, rect=None):
         """Fills the surface with a color."""

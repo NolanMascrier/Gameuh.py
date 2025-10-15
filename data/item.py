@@ -202,16 +202,16 @@ class Item():
                      title_card.get_height() / 2 - title.height / 2)
         affix_pos = (affix_card.get_width() / 2 - affixes.width / 2,
                      affix_card.get_height() / 2 - affixes.height / 2)
-        sfc.blit(title_card, (0, 0))
-        sfc.blit(title.surface, title_pos)
+        sfc.blit(title_card, (0, 0), True)
+        sfc.blit(title.surface, title_pos, True)
         if is_details or self._rarity > 0:
-            affix_card.blit(affixes.surface, affix_pos)
-            sfc.blit(affix_card, (0, title_card.get_height()))
+            affix_card.blit(affixes.surface, affix_pos, True)
+            sfc.blit(affix_card, (0, title_card.get_height()), True)
         if desc is not None:
             desc_pos = (title_card.get_width() / 2 - desc.width / 2,
                      affix_pos[1] + title_pos[1] + affixes.height\
                      + title.height + desc.height / 2 + 10)
-            sfc.blit(desc.surface, desc_pos)
+            sfc.blit(desc.surface, desc_pos, True)
         return sfc
 
     def __get_gear_flags(self):

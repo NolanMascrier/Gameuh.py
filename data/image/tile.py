@@ -85,7 +85,7 @@ class Tile(Image):
                 y_sel = min(1, y) if y < h - 1 else 2
                 x_sel = min(1, x) if x < w - 1 else 2
                 sfc.blit(self._tiles[y_sel][x_sel].image,\
-                        (x * self._tile_width, y * self._tile_height))
+                        (x * self._tile_width, y * self._tile_height), True)
         return sfc
 
     def get_image(self):
