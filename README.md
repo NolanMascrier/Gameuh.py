@@ -6,10 +6,10 @@ A python rewrite of my favourite University project, a small incremental dungeon
 
 Instead, it's now a looter bullet hell. Yeah
 # TODO list
-- [x] ~~Adding the jewel system for spells~~ Done !
-- [x] ~~Adding jewels to the loot pools~~ Done !
-- [x] ~~Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...~~ Done !
-- [x] ~~Adding area modifier and level selector~~ Done !
+- [x] Adding the jewel system for spells
+- [x] Adding jewels to the loot pools
+- [x] Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...
+- [x] Adding area modifier and level selector
 - [ ] Adding at least two bosses (Wave boss and unique boss)
 - [ ] Adding more options in the options menu (gamma, color correction, etc)
 - [ ] Real saving system
@@ -21,10 +21,10 @@ Instead, it's now a looter bullet hell. Yeah
 - [ ] General optimisation -> Objective is a stable 50-60 FPS in battle
 
 # Known Bugs
-- [x] ~~After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded~~ FIXED
+- [x] After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded
 - [ ] Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
-- [x] ~~The same item is sometimes added multiple time to the inventory~~ FIXED
-- [x] ~~Items put in the OFFHAND slot will not take effect and crash the game when removed~~ FIXED
+- [x] The same item is sometimes added multiple time to the inventory
+- [x] Items put in the OFFHAND slot will not take effect and crash the game when removed
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
