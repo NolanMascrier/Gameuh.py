@@ -25,7 +25,7 @@ Instead, it's now a looter bullet hell. Yeah
 - [ ] Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
 - [x] ~~The same item is sometimes added multiple time to the inventory~~ FIXED
 - [x] ~~Items put in the OFFHAND slot will not take effect and crash the game when removed~~ FIXED
-- [ ] #1
+- [ ] https://github.com/NolanMascrier/Gameuh.py/issues/1
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
