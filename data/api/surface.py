@@ -85,12 +85,10 @@ class Surface(Widget):
 
     def blits(self, sources):
         """Batch blit multiple surfaces efficiently."""
-        batch = []
-        for src, dest in sources:
-            if isinstance(src, Surface):
-                batch.append((src.surface, dest))
-            else:
-                batch.append((src, dest))
+        batch = [
+            (src.surface if isinstance(src, Surface) else src, dest)
+            for src, dest in sources
+        ]
         return self._surface.blits(batch)
 
     def copy(self) -> "Surface":

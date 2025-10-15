@@ -5,7 +5,6 @@ import random
 import math
 
 from data.api.vec2d import Vec2
-from data.api.widget import Widget
 
 from data.physics.hitbox import HitBox
 from data.image.text import Text
@@ -21,6 +20,66 @@ COLORS = [
 
 BLUE = (3, 188, 255)
 GREEN = (0, 143, 0)
+
+class PickupManager:
+    """Spatial partitioning for pickups to reduce collision checks."""
+    def __init__(self, cell_size=200):
+        self.cell_size = cell_size
+        self.grid = {}
+        self.pickups = []
+    
+    def _get_cell(self, x, y):
+        """Get grid cell for position."""
+        return (int(x // self.cell_size), int(y // self.cell_size))
+    
+    def add_pickup(self, pickup):
+        """Add pickup to spatial grid."""
+        cell = self._get_cell(pickup.x, pickup.y)
+        if cell not in self.grid:
+            self.grid[cell] = []
+        self.grid[cell].append(pickup)
+        self.pickups.append(pickup)
+    
+    def get_nearby_pickups(self, x, y, radius):
+        """Get pickups near a position (much faster than checking all)."""
+        nearby = []
+        cell_x, cell_y = self._get_cell(x, y)
+        
+        # Check adjacent cells
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                cell = (cell_x + dx, cell_y + dy)
+                if cell in self.grid:
+                    nearby.extend(self.grid[cell])
+        
+        return nearby
+    
+    def update_pickup_position(self, pickup, old_x, old_y):
+        """Update pickup position in grid."""
+        old_cell = self._get_cell(old_x, old_y)
+        new_cell = self._get_cell(pickup.x, pickup.y)
+        
+        if old_cell != new_cell:
+            # Remove from old cell
+            if old_cell in self.grid:
+                self.grid[old_cell].remove(pickup)
+                if not self.grid[old_cell]:
+                    del self.grid[old_cell]
+            
+            # Add to new cell
+            if new_cell not in self.grid:
+                self.grid[new_cell] = []
+            self.grid[new_cell].append(pickup)
+    
+    def remove_pickup(self, pickup):
+        """Remove pickup from grid."""
+        cell = self._get_cell(pickup.x, pickup.y)
+        if cell in self.grid and pickup in self.grid[cell]:
+            self.grid[cell].remove(pickup)
+            if not self.grid[cell]:
+                del self.grid[cell]
+        if pickup in self.pickups:
+            self.pickups.remove(pickup)
 
 class PickUp(HitBox):
     """Creates a pickup."""
@@ -82,23 +141,69 @@ class PickUp(HitBox):
         """Gravitates toward the player."""
         if self._delay > 0:
             self._delay -= 1
-            self._position += self._velocity
+            # OPTIMIZATION: In-place vector addition (faster than creating new Vec2)
+            self._position.x += self._velocity.x
+            self._position.y += self._velocity.y
             return
-        desired = Vec2(pos.hitbox.center) - self._position
-        distance = desired.length()
-        if distance < self._arrival_threshold:
-            self._velocity *= 0.9
+        
+        # OPTIMIZATION: Direct attribute access instead of Vec2 creation
+        player_x, player_y = pos.hitbox.center
+        
+        # Calculate distance components
+        dx = player_x - self._position.x
+        dy = player_y - self._position.y
+        
+        # OPTIMIZATION: Fast distance check using squared distance
+        # Avoid sqrt for threshold check (distance^2 vs threshold^2)
+        dist_squared = dx * dx + dy * dy
+        threshold_squared = self._arrival_threshold * self._arrival_threshold
+        
+        if dist_squared < threshold_squared:
+            # Close enough - just slow down
+            self._velocity.x *= 0.9
+            self._velocity.y *= 0.9
             return
-        desired = desired.normalize() * self._max_speed
-        steer = desired - self._velocity
-        if steer.length() > self._max_force:
-            steer = steer.normalize() * self._max_force
-        self._acceleration += steer
-        self._velocity += self._acceleration
-        if self._velocity.length() > self._max_speed:
-            self._velocity = self._velocity.normalize() * self._max_speed
-        self._position += self._velocity
-        self._acceleration *= 0
+        
+        # OPTIMIZATION: Only calculate sqrt when we need normalized direction
+        distance = (dist_squared) ** 0.5  # Faster than math.sqrt
+        
+        # Normalize and scale to max speed
+        inv_dist = self._max_speed / distance  # Single division instead of two
+        desired_x = dx * inv_dist
+        desired_y = dy * inv_dist
+        
+        # Calculate steering force
+        steer_x = desired_x - self._velocity.x
+        steer_y = desired_y - self._velocity.y
+        
+        # OPTIMIZATION: Fast magnitude check without sqrt
+        steer_mag_squared = steer_x * steer_x + steer_y * steer_y
+        max_force_squared = self._max_force * self._max_force
+        
+        if steer_mag_squared > max_force_squared:
+            # Clamp to max force
+            steer_mag = steer_mag_squared ** 0.5
+            inv_steer = self._max_force / steer_mag
+            steer_x *= inv_steer
+            steer_y *= inv_steer
+        
+        # Apply acceleration (in-place)
+        self._velocity.x += steer_x
+        self._velocity.y += steer_y
+        
+        # OPTIMIZATION: Clamp velocity without creating new Vec2
+        vel_mag_squared = self._velocity.x * self._velocity.x + self._velocity.y * self._velocity.y
+        max_speed_squared = self._max_speed * self._max_speed
+        
+        if vel_mag_squared > max_speed_squared:
+            vel_mag = vel_mag_squared ** 0.5
+            inv_vel = self._max_speed / vel_mag
+            self._velocity.x *= inv_vel
+            self._velocity.y *= inv_vel
+        
+        # Update position (in-place)
+        self._position.x += self._velocity.x
+        self._position.y += self._velocity.y
 
     def generate_text(self, color, value):
         """generates a floating text above the pickup."""

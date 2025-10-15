@@ -1,5 +1,7 @@
 """Handles the general UI operations such as the bottom bar."""
 
+from functools import lru_cache
+
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
@@ -52,12 +54,24 @@ def draw_hitbox(hitbox: HitBox, color, color_border, layer):
     layer.draw_rect(color_border, (hitbox.x + hitbox.width / 2 - 2,
                     hitbox.y + hitbox.height /2 - 2 , 4, 4), 2)
 
+@lru_cache(maxsize=64)
+def enemy_life(life):
+    """Returns the enemy life bar (cached)"""
+    return SYSTEM["images"]["enemy_jauge_mini"].image.subsurface((0, 0, life, 20))
+
 def draw_game(show_player = True, show_enemies = True,\
     show_loot = True, show_projectiles = True,\
     show_text = True, show_animations = True):
-    """Draws the main game component."""
-    for _, layer in SYSTEM["layers"].items():
-        layer.fill((0,0,0,0))
+    """Draws the main game component - OPTIMIZED VERSION."""
+    if show_player or show_enemies or show_animations:
+        SYSTEM["layers"]["characters"].fill((0,0,0,0))
+    if show_loot:
+        SYSTEM["layers"]["pickup"].fill((0,0,0,0))
+    if show_projectiles:
+        SYSTEM["layers"]["bullets"].fill((0,0,0,0))
+        SYSTEM["layers"]["warnings"].fill((0,0,0,0))
+    if show_text:
+        SYSTEM["layers"]["texts"].fill((0,0,0,0))
     if show_player:
         if SYSTEM["options"]["show_hitboxes"]:
             draw_hitbox(SYSTEM["player"].entity.hitbox, GRE, GRE_B, SYSTEM["layers"]["characters"])
@@ -67,35 +81,47 @@ def draw_game(show_player = True, show_enemies = True,\
         if SYSTEM["options"]["show_hitboxes"]:
             for b in POWER_UP_TRACKER:
                 draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["pickup"])
-        SYSTEM["layers"]["pickup"].blits([b.get_image(), (b.x, b.y)] for b in POWER_UP_TRACKER)
+        loot_blits = [(b.get_image(), (b.x, b.y)) for b in POWER_UP_TRACKER]
+        if loot_blits:
+            SYSTEM["layers"]["pickup"].blits(loot_blits)
     if show_enemies:
         if SYSTEM["options"]["show_hitboxes"]:
             for b in ENNEMY_TRACKER:
                 draw_hitbox(b.hitbox, RED, RED_B, SYSTEM["layers"]["characters"])
         if SYSTEM["options"]["show_bars"]:
+            enemy_bars = []
             for b in ENNEMY_TRACKER:
-                SYSTEM["layers"]["characters"].blit(SYSTEM["images"]["enemy_jauge_mini_back"]\
-                    .image, (b.entity.center_x - SYSTEM["images"]["enemy_jauge_mini_back"].width / 2, b.y - 25))
+                bar_x = b.entity.center_x - SYSTEM["images"]["enemy_jauge_mini_back"].width / 2
+                bar_y = b.y - 25
+                enemy_bars.append((SYSTEM["images"]["enemy_jauge_mini_back"].image, (bar_x, bar_y)))
                 life = max(b.creature.stats["life"].current_value /\
                     b.creature.stats["life"].c_value * 100, 0)
-                SYSTEM["layers"]["characters"].blit(SYSTEM["images"]["enemy_jauge_mini"].image\
-                    .subsurface((0,0, life, 20)), (b.entity.center_x - SYSTEM["images"]["enemy_jauge_mini_back"]\
-                                               .width / 2, b.y - 25))
-        SYSTEM["layers"]["characters"].blits([b.get_image(), b.get_pos()] for b in ENNEMY_TRACKER)
+                enemy_bars.append((enemy_life(life), (bar_x, bar_y)))
+            if enemy_bars:
+                SYSTEM["layers"]["characters"].blits(enemy_bars)
+        enemy_blits = [(b.get_image(), b.get_pos()) for b in ENNEMY_TRACKER]
+        if enemy_blits:
+            SYSTEM["layers"]["characters"].blits(enemy_blits)
     if show_animations:
-        SYSTEM["layers"]["characters"].blits([p[0].get_image(), (p[1], p[2])]\
-                                             for p in ANIMATION_TRACKER)
+        anim_blits = [(p[0].get_image(), (p[1], p[2])) for p in ANIMATION_TRACKER]
+        if anim_blits:
+            SYSTEM["layers"]["characters"].blits(anim_blits)
     if show_projectiles:
         if SYSTEM["options"]["show_hitboxes"]:
             for b in PROJECTILE_TRACKER:
                 if b.effective:
                     draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
+        # Pre-draw warnings
         for p in PROJECTILE_TRACKER:
             if p.warning is not None:
                 SYSTEM["layers"]["warnings"].draw_polygon(RED_WARNING, p.warning[0])
-        SYSTEM["layers"]["bullets"].blits([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
+        proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER]
+        if proj_blits:
+            SYSTEM["layers"]["bullets"].blits(proj_blits)
     if show_text:
-        SYSTEM["layers"]["texts"].blits([t[0].image, (t[1], t[2])] for t in TEXT_TRACKER)
+        text_blits = [(t[0].image, (t[1], t[2])) for t in TEXT_TRACKER]
+        if text_blits:
+            SYSTEM["layers"]["texts"].blits(text_blits)
 
 def logic_tick():
     """Ticks all there is to tick."""

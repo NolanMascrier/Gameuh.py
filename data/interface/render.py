@@ -9,28 +9,52 @@ BLACK_TRANSP = (0, 0, 0, 255)
 
 def render(image, pos):
     """Prepares the image to be rendered at position pos."""
-    if pos[0] < -image.get_width() or pos[0] > SCREEN_WIDTH + image.get_width():
+    x, y = pos
+    if x < -200 or x > SCREEN_WIDTH + 200:
         return
-    if pos[1] < -image.get_height() or pos[1] > SCREEN_HEIGHT + image.get_height():
+    if y < -200 or y > SCREEN_HEIGHT + 200:
         return
     RENDER_LIST.append((image, pos))
 
 def renders(lst):
     """Prepares a list of tuple (image:pos) to be rendered."""
-    for l in lst:
-        render(l[0], l[1])
+    RENDER_LIST.extend(lst)
 
 def render_all():
-    """Renders the screen."""
-    SYSTEM["windows"].fill(BLACK_TRANSP)
-    shake = SYSTEM["post_effects"].shake_factor
-    if SYSTEM["game_state"] != LOADING:
+    """Renders the screen - OPTIMIZED VERSION."""
+    # OPTIMIZATION: Only clear window if needed
+    # For most game states, the background covers everything
+    game_state = SYSTEM["game_state"]
+    
+    if game_state == LOADING:
+        # Loading screen needs full clear
+        SYSTEM["windows"].fill(BLACK_TRANSP)
+    else:
+        # CRITICAL OPTIMIZATION: Background covers entire screen
+        # No need to clear if we're going to blit over it anyway
+        shake = SYSTEM["post_effects"].shake_factor
+        
+        # Blit backgrounds (these cover the full screen, so no clear needed)
         SYSTEM["windows"].blit(SYSTEM["gm_background"], shake, True)
         SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], shake, True)
-    SYSTEM["windows"].blits(RENDER_LIST)
-    RENDER_LIST.clear()
-    if SYSTEM["game_state"] == GAME_LEVEL:
-        SYSTEM["windows"].blits([(layer, shake) for _, layer in SYSTEM["layers"].items()])
+    
+    # Batch render all queued items
+    if RENDER_LIST:
+        SYSTEM["windows"].blits(RENDER_LIST)
+        RENDER_LIST.clear()
+    
+    # Render game layers
+    if game_state == GAME_LEVEL:
+        shake = SYSTEM["post_effects"].shake_factor
+        
+        # CRITICAL: Use blits for batch rendering layers
+        layer_list = [(layer, shake) for _, layer in SYSTEM["layers"].items()]
+        if layer_list:
+            SYSTEM["windows"].blits(layer_list)
+        
+        # UI surface always last
         SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
-    elif SYSTEM["game_state"] in [MENU_INVENTORY]:
+    
+    elif game_state == MENU_INVENTORY:
+        shake = SYSTEM["post_effects"].shake_factor
         SYSTEM["windows"].blit(SYSTEM["layers"]["pickup"], shake)

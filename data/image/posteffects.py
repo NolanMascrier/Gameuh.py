@@ -27,6 +27,8 @@ class PostEffects():
         self._flash_opacity = 0
         self._flash_surface = Surface(SCREEN_WIDTH,\
             SCREEN_HEIGHT, is_alpha=False)
+        self._scaled_cache = None
+        self._cached_resolution = None
 
     def hitstop(self, timer):
         """Sets a hitstop for timer frames."""
@@ -75,14 +77,23 @@ class PostEffects():
                 self.stop_shaking()
         SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
         SYSTEM["text_generator"].generate_fps()
+        
         if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
             SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
                                 (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0), True)
-        window = SYSTEM["windows"].copy()
-        window = window.smoothscale(size=(SYSTEM["options"]["screen_resolution"][0],\
-                 SYSTEM["options"]["screen_resolution"][1]))
-        SYSTEM["real_windows"].fill(BLACK)
-        SYSTEM["real_windows"].blit(window, (0, 0), True)
+        current_res = SYSTEM["options"]["screen_resolution"]
+        if current_res != (SCREEN_WIDTH, SCREEN_HEIGHT):
+            if self._cached_resolution != current_res or self._scaled_cache is None:
+                self._cached_resolution = current_res
+                if self._scaled_cache is None:
+                    self._scaled_cache = Surface(current_res[0], current_res[1])
+            scaled = SYSTEM["windows"].scale(current_res)
+            SYSTEM["real_windows"].fill(BLACK)
+            SYSTEM["real_windows"].blit(scaled, (0, 0))
+        else:
+            SYSTEM["real_windows"].fill(BLACK)
+            SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0), True)
+        
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)
