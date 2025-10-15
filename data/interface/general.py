@@ -6,10 +6,7 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACK
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
     ANIMATION_TRACKER
-from data.interface.render import renders, render
 from data.image.tabs import Tabs
-from data.projectile import Projectile
-from data.slash import Slash
 from data.physics.hitbox import HitBox
 
 RED = (255, 0, 0, 155)
@@ -111,7 +108,6 @@ def draw_game(show_player = True, show_enemies = True,\
             for b in PROJECTILE_TRACKER:
                 if b.effective:
                     draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
-        # Pre-draw warnings
         for p in PROJECTILE_TRACKER:
             if p.warning is not None:
                 SYSTEM["layers"]["warnings"].draw_polygon(RED_WARNING, p.warning[0])
@@ -126,27 +122,17 @@ def draw_game(show_player = True, show_enemies = True,\
 def logic_tick():
     """Ticks all there is to tick."""
     SYSTEM["player"].tick()
-    for bubble in POWER_UP_TRACKER:
-        bubble.tick(SYSTEM["player"])
-        if bubble.flagged_for_deletion:
-            POWER_UP_TRACKER.remove(bubble)
-    for baddie in ENNEMY_TRACKER:
-        baddie.tick(SYSTEM["player"])
-        if baddie.destroyed:
-            ENNEMY_TRACKER.remove(baddie)
-    for p in ANIMATION_TRACKER:
-        p[0].tick()
-        if p[0].finished:
-            ANIMATION_TRACKER.remove(p)
-    for p in PROJECTILE_TRACKER:
-        p.tick()
-        if (isinstance(p, Projectile) and p.can_be_destroyed()) or \
-            (isinstance(p, Slash) and p.finished):
-            PROJECTILE_TRACKER.remove(p)
+    POWER_UP_TRACKER[:] = [b for b in POWER_UP_TRACKER if b.tick(SYSTEM["player"]) is None and
+                           not b.flagged_for_deletion]
+    ENNEMY_TRACKER[:] = [e for e in ENNEMY_TRACKER 
+                         if e.tick(SYSTEM["player"]) is None and not e.destroyed]
+    ANIMATION_TRACKER[:] = [a for a in ANIMATION_TRACKER if a[0].tick() is None
+                            and not a[0].finished]
+    PROJECTILE_TRACKER[:] = [p for p in PROJECTILE_TRACKER if p.tick() is None and not p.finished]
     for txt in TEXT_TRACKER:
         sfc = txt[0]
         sfc.opacity(txt[3])
         txt[3] -= 5
         txt[2] -= 3
-        if txt[3] < 10:
-            TEXT_TRACKER.remove(txt)
+    TEXT_TRACKER[:] = [txt for txt in TEXT_TRACKER if txt[3] >= 10
+                       and txt[0].opacity(txt[3]) is None]

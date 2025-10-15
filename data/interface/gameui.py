@@ -6,7 +6,7 @@ from functools import lru_cache
 from data.api.surface import Surface
 
 from data.image.text import Text
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2, trad
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2, trad, ENNEMY_TRACKER
 from data.image.textgenerator import make_text
 
 UI_SKILLS_OFFSET = 650
@@ -190,17 +190,18 @@ def draw_skills():
 
 def draw_boss():
     """Draws the boss life bar."""
-    if SYSTEM["level"] is None or SYSTEM["level"].boss is None or\
-        SYSTEM["level"].current_wave != SYSTEM["level"].waves:
+    if SYSTEM["level"] is None or SYSTEM["level"].boss is None or \
+        SYSTEM["level"].current_wave != SYSTEM["level"].waves or \
+        SYSTEM["level"].boss not in ENNEMY_TRACKER:
         return []
     data = []
-    life = SYSTEM["level"].boss.stats["life"].current_value /\
-        SYSTEM["level"].boss.stats["life"].c_value
+    life = SYSTEM["level"].boss.creature.stats["life"].current_value /\
+        SYSTEM["level"].boss.creature.stats["life"].c_value
     w = life * 1680
     boss = SYSTEM["images"]["boss_jauge"].image.subsurface((0, 0, w, 100))
-    txt = Text(trad('enemies', SYSTEM["level"].boss.name), size=30, font="item_titles_alt")
-    hp = Text(f'{round(SYSTEM["level"].boss.stats["life"].current_value)}' + \
-              f'/{round(SYSTEM["level"].boss.stats["life"].c_value)}', size=30, font="item_desc")
+    txt = Text(trad('enemies', SYSTEM["level"].boss.creature.name), size=30, font="item_titles_alt")
+    hp = Text(f'{round(SYSTEM["level"].boss.creature.stats["life"].current_value)}' + \
+              f'/{round(SYSTEM["level"].boss.creature.stats["life"].c_value)}', size=30, font="item_desc")
     data.append((SYSTEM["images"]["boss_jauge_back"].image, (150, 30)))
     data.append((boss, (150, 30)))
     data.append((txt.image, (170, 20)))
@@ -214,7 +215,7 @@ def enemy_life(life):
 
 def draw_enemy_card():
     """Draws the enemy's details."""
-    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"].creature == SYSTEM["level"].boss\
+    if SYSTEM["mouse_target"] is None or SYSTEM["mouse_target"] == SYSTEM["level"].boss\
         or SYSTEM["options"]["show_cards"] is False:
         return []
     data = []

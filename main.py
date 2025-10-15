@@ -92,6 +92,8 @@ def game_loop(keys, time_event):
             SYSTEM["playing"] = False
         if event == WAVE_TIMER:
             SYSTEM["level"].next_wave()
+        if event == WAVE_CHECK:
+            SYSTEM["level"].check_wave()
         if event == TICKER_TIMER:
             logic_tick()
     SYSTEM["level"].background.draw()

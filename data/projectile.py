@@ -369,3 +369,8 @@ class Projectile(HitBox):
     def effective(self):
         """Dummy"""
         return True
+
+    @property
+    def finished(self):
+        """Returns whether or not the projectile is finished."""
+        return self.can_be_destroyed()

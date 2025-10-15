@@ -43,7 +43,6 @@ from data.tables.enemy_table import VOIDBOSS, MONOLITH
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
 from data.game.deltatime import DeltaTime
-from data.game.pickup import PickupManager
 
 def generate_random_level():
     """Creates a random level."""
@@ -54,7 +53,6 @@ def generate_random_level():
     diff_weight = [0.4, 0.25, 0.2, 0.15]
     diff = np.random.choice(diff_level, p=diff_weight)
     waves = random.randint(2, 8)
-    waves = 8
     flags = []
     match zone:
         case 0:
@@ -464,7 +462,6 @@ def init_game():
     SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])
     SYSTEM["post_effects"] = PostEffects()
-    SYSTEM["pickup_manager"] = PickupManager()
     SYSTEM["windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)
     SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)
     SYSTEM["gm_parallaxe"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)

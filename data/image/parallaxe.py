@@ -5,8 +5,9 @@ from data.api.surface import Surface
 
 from data.constants import SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM
 from data.image.animation import Animation
+from data.interface.render import renders
 
-class Parallaxe:
+class Parallaxe(Animation):
     """Defines a parallaxe.
     
     Args:
@@ -21,59 +22,46 @@ class Parallaxe:
         speed_factor(int, optionnal): default scrolling speed. \
         Defaults to 5.
     """
-    def __init__(self, uri: str, frame_x: int, frame_y: int, scroll_left=True,
-                 speeds=None, speed_factor=5):
-        temp_anim = Animation(uri, frame_x, frame_y, animated=False)
-        temp_anim.scale(SCREEN_HEIGHT, SCREEN_WIDTH)
-        self._sequence = temp_anim._sequence
+    def __init__(self, uri: str, frame_x:int, frame_y:int, scroll_left = True,\
+        speeds = None, speed_factor = 5):
+        super().__init__(uri, frame_x, frame_y, animated=False)
+        super().scale(SCREEN_HEIGHT, SCREEN_WIDTH)
         self._scroll_left = scroll_left
         if speeds is None:
             self._speeds = [0 for _ in range(len(self._sequence))]
         else:
             self._speeds = speeds
-        self._diff_x = [0.0 for _ in range(len(self._sequence))]
+        self._diff_x = [0 for _ in range(len(self._sequence))]
         self._speed_factor = speed_factor
         self._background = self._sequence[0].image
-        self._layers = [Surface(SCREEN_WIDTH * 2, SCREEN_HEIGHT)
-                        for _ in range(len(self._sequence))]
+        self._layers = [Surface(SCREEN_WIDTH * 2, SCREEN_HEIGHT)\
+            for _ in range(len(self._sequence))]
         for i in range(len(self._sequence) - 1):
-            layer_img = self._sequence[i + 1].image
-            self._layers[i].blit(layer_img, (0, 0), True)
-            self._layers[i].blit(layer_img, (SCREEN_WIDTH, 0), True)
+            self._layers[i].blit(self._sequence[i + 1].image, (0, 0))
+            self._layers[i].blit(self._sequence[i + 1].image, (SCREEN_WIDTH, 0))
         self._surface = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
-        self._blit_list = [(None, None) for _ in range(len(self._sequence))]
-        self._layer_count = len(self._sequence)
-        self._speed_mults = [speed * self._speed_factor for speed in self._speeds]
 
     def invert(self):
         """Flips the scrolling animation."""
         self._scroll_left = not self._scroll_left
 
-    def draw(self, stops=False):
-        """Draws the parallaxe - HEAVILY OPTIMIZED."""
+    def draw(self, stops = False):
+        """Draws the parallaxe."""
         shake, _ = SYSTEM["post_effects"].shake_factor
+        x = []
         if not stops:
             if self._scroll_left:
-                for i in range(self._layer_count):
-                    self._diff_x[i] += self._speed_mults[i] + shake
-                    if self._diff_x[i] >= SCREEN_WIDTH:
-                        self._diff_x[i] -= SCREEN_WIDTH
+                for i in range(len(self._sequence)):
+                    self._diff_x[i] = (self._diff_x[i] + self._speeds[i] *\
+                        self._speed_factor + shake) % SCREEN_WIDTH
             else:
-                for i in range(self._layer_count):
-                    self._diff_x[i] -= self._speed_mults[i] - shake
-                    if self._diff_x[i] < 0:
-                        self._diff_x[i] += SCREEN_WIDTH
-        for i in range(self._layer_count):
-            self._blit_list[i] = (self._layers[i], (int(-self._diff_x[i]), 0))
-        if self._layer_count > 0:
-            self._surface.blit(self._layers[0], (int(-self._diff_x[0]), 0), True)
-            if self._layer_count > 1:
-                self._surface.blits(self._blit_list[1:])
-
-    def get_render_list(self):
-        """Returns the pre-built blit list for external rendering.
-        This avoids calling renders() in draw()."""
-        return self._blit_list
+                for i in range(len(self._sequence)):
+                    self._diff_x[i] = (self._diff_x[i] - self._speeds[i] *\
+                        self._speed_factor + shake) % SCREEN_WIDTH
+        for layer, _ in enumerate(self._sequence):
+            x.append(int(-self._diff_x[layer]))
+        self._surface.fill((0,0,0,0))
+        renders([self._layers[i], (x[i], 0)] for i in range(len(self._sequence)))
 
     @property
     def background(self):
@@ -95,7 +83,5 @@ class Parallaxe:
 
     @property
     def as_background(self):
-        """Prepares a list to be rendered - CACHED."""
-        if not hasattr(self, '_background_cache'):
-            self._background_cache = [(l.image, (0, 0)) for l in self._sequence]
-        return self._background_cache
+        """Prepares a list to be rendered."""
+        return [(l.image, (0,0)) for l in self._sequence]

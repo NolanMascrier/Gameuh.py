@@ -225,7 +225,7 @@ def get_mouse_pos():
     y *= y_factor
     SYSTEM["mouse"] = (x, y)
 
-def trad(keys, subkey = None):
+def trad(keys, subkey = None) -> str:
     """Returns the translation data for the given key."""
     try:
         if subkey is None:
@@ -238,6 +238,7 @@ def trad(keys, subkey = None):
 WAVE_TIMER = "wave"
 TICKER_TIMER = "ticker"
 UPDATE_TIMER = USEREVENT+6
+WAVE_CHECK = "checkcheckcheck"
 
 class Flags(str, Enum):
     """Flags to use for skills and damage sources."""
@@ -334,6 +335,7 @@ class Flags(str, Enum):
     COOLDOWN = "cooldown"
     PROJECTILES = "projectiles"
     AREA = "area"
+    PACK_SIZE = "pack_size"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"

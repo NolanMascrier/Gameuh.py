@@ -417,7 +417,9 @@
         "amount": "Obtained x",
         "stolen": "Lost",
         "victory": "You have triumphed",
-        "defeat": "You have fallen"
+        "defeat": "You have fallen",
+        "pack_size": "Enemy presence",
+        "waves": "{w} waves"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",

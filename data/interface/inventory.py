@@ -160,7 +160,7 @@ def draw_inventory(events):
     renders(SYSTEM["city_back"].as_background)
     SYSTEM["items_panel"].tick().draw()
     gold = SYSTEM["player"].gold
-    text = Text(str(gold), font="font_detail")
+    text = Text(str(gold), font="item_desc")
     render(SYSTEM["images"]["char_details"].image, (1500, 20))
     render(SYSTEM["images"]["gold_icon"].image, (1520, 40))
     render(text.surface, (1584, 72))
@@ -169,7 +169,7 @@ def draw_inventory(events):
         SYSTEM["buttons"][f"button_rune_{i}"].set(1520, 110 + c * 74).draw(SYSTEM["windows"])
         SYSTEM["images"][f"pop_rune_{i}"].set(1520, 110 + c * 74).tick()
         Text(f"{SYSTEM['player'].runes[i] if SYSTEM['player'].runes[i] < 1000 else '999+'}",\
-            font="font_detail").draw(1584, 132 + c * 74)
+            font="item_desc").draw(1584, 132 + c * 74)
         c += 1
     SYSTEM["buttons"]["button_sort_name"].set(1300, 20).draw(SYSTEM["windows"])
     SYSTEM["buttons"]["button_sort_rarity"].set(1300, 50).draw(SYSTEM["windows"])
@@ -179,7 +179,7 @@ def draw_inventory(events):
     draw_bottom_bar()
     if SYSTEM["rune"] != -1:
         render(SYSTEM["rune_display"].image, SYSTEM["mouse"])
-    draw_game(False, False, False, False, True)
+    draw_game(False, False, False, False, True, True)
     logic_tick()
     for b in ["button_sort_name", "button_sort_rarity", "button_sort_value", "button_sort_date"]:
         SYSTEM["buttons"][b].tick()

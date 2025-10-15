@@ -74,7 +74,7 @@ class Monolith(Enemy):
             if self.distance_to_destination() < 500 or self._counter <= -3:
                 self._phase = 0
                 self._counter = 2
-                SYSTEM["level"].boss = self._creature
+                SYSTEM["level"].boss = self
                 SYSTEM["post_effects"].stop_shaking()
             return
         if self._phase == 0:

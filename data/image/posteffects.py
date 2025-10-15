@@ -77,7 +77,6 @@ class PostEffects():
                 self.stop_shaking()
         SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
         SYSTEM["text_generator"].generate_fps()
-        
         if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
             SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
                                 (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0), True)

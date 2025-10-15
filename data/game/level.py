@@ -14,7 +14,7 @@ from data.api.surface import Surface
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
     trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
-    PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER
+    PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER, WAVE_CHECK
 from data.game.enemy import Enemy
 from data.game.enemy_monolith import Monolith
 from data.physics.entity import Entity
@@ -45,9 +45,26 @@ RUNES = {
     9: "algiz",
 }
 
+DIFFICULTY_SIZES = {
+    0: (0.05, 0, 2),
+    1: (0.8, 0.5, 2),
+    2: (1.1, 0.8, 1.7),
+    3: (1.5, 0.75, 1.85),
+    4: (2, 0.5, 2.1),
+}
+
+MAX_ENTITY_SCREEN = {
+    0: 10,
+    1: 15,
+    2: 20,
+    3: 25,
+    4: 30,
+}
+
 def init_timers():
     """Inits Pygame's timers."""
     SYSTEM["deltatime"].start(WAVE_TIMER, 1500)
+    SYSTEM["deltatime"].start(WAVE_CHECK, 400)
     SYSTEM["deltatime"].start(USEREVENT+1, 2000)
     SYSTEM["deltatime"].start(USEREVENT+2, 100)
     SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
@@ -125,9 +142,12 @@ class Level():
         self._runes = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]
+        self._pack_size = 1
         self._modifiers = self.generate_modifiers()
         self._t = time.time()
         self._boss_stat = None
+        self._can_spawn = True
+        self._ready = []
 
     def generate_modifiers(self):
         """Generates a list of modifiers for the level."""
@@ -172,6 +192,12 @@ class Level():
             modifiers.append(mod)
             mod_value = mod.value
             total_risk += type_risk * mod_value
+        ps = Affix("PACK_SIZE", DIFFICULTY_SIZES[self._difficulty][0] * (total_risk / 10 + 1),
+                   [Flags.BOON, Flags.PACK_SIZE], DIFFICULTY_SIZES[self._difficulty][1],
+                   DIFFICULTY_SIZES[self._difficulty][2]).roll()
+        if ps.value > 0:
+            modifiers.append(ps)
+            self._pack_size = round(ps.value + 1, 2)
         if total_risk > 0:
             iiq = Affix("IIQ_RISK_REWARD", total_risk, [Flags.BOON, Flags.IIQ]).roll()
             iir = Affix("IIR_RISK_REWARD", total_risk / 7, [Flags.BOON, Flags.IIR]).roll()
@@ -204,9 +230,9 @@ class Level():
 
     def summon_wave(self, level:int, wave:int):
         """Summons a wave of monsters."""
-        min_monsters = (1 + random.randint(0, 3)) * wave
-        max_monsters = (4 + random.randint(0, 3)) * wave
-        monsters = max(random.randint(min_monsters, max_monsters + 1), 1) + 4
+        min_monsters = (1 + random.randint(0, 3)) * (wave + 1) 
+        max_monsters = (4 + random.randint(0, 3)) * (wave + 1)
+        monsters = round(max(random.randint(min_monsters, max_monsters + 1), 1) * self._pack_size)
         choice = [VOIDBOMBER, DEMONBAT, NECROMANCER]
         chance = [0.1, 0.4, 0.5]
         wave = []
@@ -222,7 +248,7 @@ class Level():
             return []
         boss = self.generate_enemy(self._boss, level)
         wave = [boss]
-        self._boss_stat = boss.creature
+        self._boss_stat = boss
         self._wave_tracker.append(wave)
         return wave
 
@@ -374,13 +400,24 @@ class Level():
             self.start()
             return
         if self._current_wave >= self._waves:
-            if len(ENNEMY_TRACKER) <= 0:
+            if len(ENNEMY_TRACKER) <= 0 and len(self._ready) <= 0:
                 self.end_level()
             return
-        for e in self._wave_tracker[self._current_wave]:
-            ENNEMY_TRACKER.append(e)
+        self._ready.extend(self._wave_tracker[self._current_wave])
         self._wave_tracker[self._current_wave].clear()
         self._current_wave += 1
+
+    def check_wave(self):
+        """Checks if the wave can be started."""
+        mx = MAX_ENTITY_SCREEN[self._difficulty]
+        i = 0
+        for e in self._ready:
+            if len(ENNEMY_TRACKER) >= mx:
+                self._ready = self._ready[i:]
+                return
+            ENNEMY_TRACKER.append(e)
+            i += 1
+        self._ready = self._ready[i:]
 
     def distance_to_player(self, player, hitbox):
         """Returns the distance from the hitbox to the player."""
@@ -420,6 +457,7 @@ class Level():
         text += f"#s#(20)#c#(180,180,180)Area level: {self._area_level}\n\t\n\t\n"
         text += f"#s#(15){trad('descripts', 'difficulty')}:" +\
                 f"{trad('difficulties', str(self._difficulty))}\n\t\n\t\n"
+        text += f"{trad('descripts', 'waves').format(w=self._waves)}\n\t\n\t\n"
         for aff in self._modifiers:
             if aff is not None:
                 text += f"#s#(17){aff.describe()}\n"
