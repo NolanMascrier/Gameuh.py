@@ -6,25 +6,26 @@ A python rewrite of my favourite University project, a small incremental dungeon
 
 Instead, it's now a looter bullet hell. Yeah
 # TODO list
-* ~~Adding the jewel system for spells~~ Done !
-* ~~Adding jewels to the loot pools~~ Done !
-* ~~Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...~~ Done !
-* ~~Adding area modifier and level selector~~ Done !
-* Adding at least two bosses (Wave boss and unique boss)
-* Adding more options in the options menu (gamma, color correction, etc)
-* Real saving system
-* Adding general content
-* Deciding on a art style and theme (thinking of going for Mechas ?)
-* Sounds and musics ?
-* Lore and story mode ?
-* More game modes (boss rush, rogue like infinite waves, dungeons ?)
-* General optimisation -> Objective is a stable 50-60 FPS in battle
+- [x] ~~Adding the jewel system for spells~~ Done !
+- [x] ~~Adding jewels to the loot pools~~ Done !
+- [x] ~~Rewrite the spellbook page, adding data about cooldown, costs, projectiles ...~~ Done !
+- [x] ~~Adding area modifier and level selector~~ Done !
+- [ ] Adding at least two bosses (Wave boss and unique boss)
+- [ ] Adding more options in the options menu (gamma, color correction, etc)
+- [ ] Real saving system
+- [ ] Adding general content
+- [ ] Deciding on a art style and theme (thinking of going for Mechas ?)
+- [ ] Sounds and musics ?
+- [ ] Lore and story mode ?
+- [ ] More game modes (boss rush, rogue like infinite waves, dungeons ?)
+- [ ] General optimisation -> Objective is a stable 50-60 FPS in battle
 
 # Known Bugs
-* ~~After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded~~ FIXED
-* Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
-* ~~The same item is sometimes added multiple time to the inventory~~ FIXED
-* ~~Items put in the OFFHAND slot will not take effect and crash the game when removed~~ FIXED
+- [x] ~~After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded~~ FIXED
+- [ ] Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
+- [x] ~~The same item is sometimes added multiple time to the inventory~~ FIXED
+- [x] ~~Items put in the OFFHAND slot will not take effect and crash the game when removed~~ FIXED
+- [ ] #1
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.
