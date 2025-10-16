@@ -1,8 +1,8 @@
-"""A pick up is something the player can gather by touching it.
-It can be added to their inventory, or immediately consumed."""
+"""A pick up is something the player can gather by touching it - OPTIMIZED VERSION."""
 
 import random
 import math
+from functools import lru_cache
 
 from data.api.vec2d import Vec2
 
@@ -11,18 +11,24 @@ from data.image.text import Text
 from data.constants import Flags, TEXT_TRACKER, SYSTEM
 
 COLORS = [
-    (128, 128, 128),   # Common - Gray shimmer
-    (0, 128, 255),     # Uncommon - Blue shimmer
-    (255, 215, 0),     # Legendary - Gold shimmer
-    (128, 0, 255),     # Rare - Purple shimmer
-    (255, 140, 0),     # Epic - Orange shimmer
+    (128, 128, 128),
+    (0, 128, 255),
+    (255, 215, 0),
+    (128, 0, 255),
+    (255, 140, 0),
 ]
 
 BLUE = (3, 188, 255)
 GREEN = (0, 143, 0)
 
+@lru_cache(maxsize=256)
+def _fast_sqrt(value):
+    """Cached square root for distance calculations."""
+    result = value ** 0.5
+    return result
+
 class PickUp(HitBox):
-    """Creates a pickup."""
+    """Creates a pickup - OPTIMIZED VERSION."""
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
                 flags = None, contained = None):
         super().__init__(x, y, w, h)
@@ -32,53 +38,56 @@ class PickUp(HitBox):
         else:
             self._flags = flags
         self._to_delete = False
-        #maths stuff
-        self._acceleration = Vec2(0, 0)
         self._max_speed = 5.0 * speed_mod
         self._max_force = 0.2 * speed_mod
         self._arrival_threshold = 10
+        self._arrival_threshold_sq = 100
         self._delay = 30
         angle = random.uniform(0, 2 * math.pi)
         speed = random.uniform(2, 4) * speed_mod
         self._velocity = Vec2(math.cos(angle), math.sin(angle)) * speed
         self._contains = contained
+        self._cached_image = None
 
     def get_image(self):
-        """Returns the pickup image."""
+        """Returns the pickup image - CACHED VERSION."""
+        if self._cached_image is not None:
+            return self._cached_image
         if Flags.LIFE in self._flags:
-            return SYSTEM["images"]["life_orb"].get_image()
-        if Flags.MANA in self._flags:
-            return SYSTEM["images"]["mana_orb"].get_image()
-        if Flags.EXPERIENCE in self._flags:
-            return SYSTEM["images"]["exp_orb"].get_image()
-        if Flags.GOLD in self._flags:
+            self._cached_image = SYSTEM["images"]["life_orb"].get_image()
+        elif Flags.MANA in self._flags:
+            self._cached_image = SYSTEM["images"]["mana_orb"].get_image()
+        elif Flags.EXPERIENCE in self._flags:
+            self._cached_image = SYSTEM["images"]["exp_orb"].get_image()
+        elif Flags.GOLD in self._flags:
             if self._value < 5:
-                return SYSTEM["images"]["mini_moolah"].image
-            if self._value < 20:
-                return SYSTEM["images"]["moolah"].image
-            if self._value < 50:
-                return SYSTEM["images"]["big_moolah"].image
-            if self._value < 100:
-                return SYSTEM["images"]["super_moolah"].image
-            if self._value < 250:
-                return SYSTEM["images"]["mega_moolah"].image
-            if self._value < 500:
-                return SYSTEM["images"]["giga_moolah"].image
-            if self._value < 1000:
-                return SYSTEM["images"]["terra_moolah"].image
-            if self._value < 2500:
-                return SYSTEM["images"]["zeta_moolah"].image
-            if self._value < 5000:
-                return SYSTEM["images"]["supra_moolah"].image
-            return SYSTEM["images"]["maxi_moolah"].image
-        if Flags.ITEM in self._flags:
-            return SYSTEM["images"]["loot_icon"].image
-        if Flags.RUNE in self._flags:
-            return SYSTEM["images"][f"rune_{self._value}_mini"].image
-        return None
+                self._cached_image = SYSTEM["images"]["mini_moolah"].image
+            elif self._value < 20:
+                self._cached_image = SYSTEM["images"]["moolah"].image
+            elif self._value < 50:
+                self._cached_image = SYSTEM["images"]["big_moolah"].image
+            elif self._value < 100:
+                self._cached_image = SYSTEM["images"]["super_moolah"].image
+            elif self._value < 250:
+                self._cached_image = SYSTEM["images"]["mega_moolah"].image
+            elif self._value < 500:
+                self._cached_image = SYSTEM["images"]["giga_moolah"].image
+            elif self._value < 1000:
+                self._cached_image = SYSTEM["images"]["terra_moolah"].image
+            elif self._value < 2500:
+                self._cached_image = SYSTEM["images"]["zeta_moolah"].image
+            elif self._value < 5000:
+                self._cached_image = SYSTEM["images"]["supra_moolah"].image
+            else:
+                self._cached_image = SYSTEM["images"]["maxi_moolah"].image
+        elif Flags.ITEM in self._flags:
+            self._cached_image = SYSTEM["images"]["loot_icon"].image
+        elif Flags.RUNE in self._flags:
+            self._cached_image = SYSTEM["images"][f"rune_{self._value}_mini"].image
+        return self._cached_image
 
     def move(self, pos):
-        """Gravitates toward the player."""
+        """Gravitates toward the player - HIGHLY OPTIMIZED VERSION."""
         if self._delay > 0:
             self._delay -= 1
             self._position.x += self._velocity.x
@@ -88,12 +97,11 @@ class PickUp(HitBox):
         dx = player_x - self._position.x
         dy = player_y - self._position.y
         dist_squared = dx * dx + dy * dy
-        threshold_squared = self._arrival_threshold * self._arrival_threshold
-        if dist_squared < threshold_squared:
+        if dist_squared < self._arrival_threshold_sq:
             self._velocity.x *= 0.9
             self._velocity.y *= 0.9
             return
-        distance = (dist_squared) ** 0.5
+        distance = _fast_sqrt(dist_squared)
         inv_dist = self._max_speed / distance
         desired_x = dx * inv_dist
         desired_y = dy * inv_dist
@@ -102,7 +110,7 @@ class PickUp(HitBox):
         steer_mag_squared = steer_x * steer_x + steer_y * steer_y
         max_force_squared = self._max_force * self._max_force
         if steer_mag_squared > max_force_squared:
-            steer_mag = steer_mag_squared ** 0.5
+            steer_mag = _fast_sqrt(steer_mag_squared)
             inv_steer = self._max_force / steer_mag
             steer_x *= inv_steer
             steer_y *= inv_steer
@@ -111,7 +119,7 @@ class PickUp(HitBox):
         vel_mag_squared = self._velocity.x * self._velocity.x + self._velocity.y * self._velocity.y
         max_speed_squared = self._max_speed * self._max_speed
         if vel_mag_squared > max_speed_squared:
-            vel_mag = vel_mag_squared ** 0.5
+            vel_mag = _fast_sqrt(vel_mag_squared)
             inv_vel = self._max_speed / vel_mag
             self._velocity.x *= inv_vel
             self._velocity.y *= inv_vel
@@ -138,31 +146,34 @@ class PickUp(HitBox):
             value = round(self._value / 100 * player.creature.stats["life"].get_value())
             player.creature.stats["life"].current_value += value
             self.generate_text(GREEN, value)
-        if Flags.MANA in self._flags:
+        elif Flags.MANA in self._flags:
             value = round(self._value / 100 * player.creature.stats["mana"].get_value())
             player.creature.stats["mana"].current_value += value
             self.generate_text(BLUE, value)
-        if Flags.EXPERIENCE in self._flags:
+        elif Flags.EXPERIENCE in self._flags:
             player.creature.grant_experience(self._value)
             SYSTEM["level"].exp += self._value
-        if Flags.GOLD in self._flags:
+        elif Flags.GOLD in self._flags:
             SYSTEM["level"].gold += self._value
-        if Flags.ITEM in self._flags:
+        elif Flags.ITEM in self._flags:
             SYSTEM["player"].inventory.append(self._contains)
             SYSTEM["level"].loot.append(self._contains)
             self.generate_item_text()
-        if Flags.RUNE in self._flags:
+        elif Flags.RUNE in self._flags:
             SYSTEM["player"].runes[self._value] += 1
             SYSTEM["level"].runes[self._value] += 1
         self._to_delete = True
 
     def tick(self, player):
-        """Ticks down the pickup"""
+        """Ticks down the pickup - OPTIMIZED VERSION."""
         self.move(player)
         super().move((self.x, self.y))
-        SYSTEM["images"]["life_orb"].tick()
-        SYSTEM["images"]["mana_orb"].tick()
-        SYSTEM["images"]["exp_orb"].tick()
+        if Flags.LIFE in self._flags:
+            SYSTEM["images"]["life_orb"].tick()
+        elif Flags.MANA in self._flags:
+            SYSTEM["images"]["mana_orb"].tick()
+        elif Flags.EXPERIENCE in self._flags:
+            SYSTEM["images"]["exp_orb"].tick()
         if self.is_colliding(SYSTEM["player"].hitbox):
             self.pickup(player)
 

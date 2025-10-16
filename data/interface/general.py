@@ -1,4 +1,4 @@
-"""Handles the general UI operations such as the bottom bar."""
+"""Handles the general UI operations such as the bottom bar - OPTIMIZED VERSION."""
 
 from functools import lru_cache
 
@@ -61,157 +61,122 @@ def enemy_life(life):
 def draw_game(show_player = True, show_enemies = True,\
     show_loot = True, show_projectiles = True,\
     show_text = True, show_animations = True):
-    """Draws the main game component - OPTIMIZED VERSION."""
+    """Draws the main game component - HIGHLY OPTIMIZED VERSION."""
+    show_hitboxes = SYSTEM["options"]["show_hitboxes"]
+    show_bars = SYSTEM["options"]["show_bars"]
     if show_player or show_enemies or show_animations:
-        SYSTEM["layers"]["characters"].fill((0,0,0,0))
-    
+        chars_layer = SYSTEM["layers"]["characters"]
+        chars_layer.fill((0,0,0,0))
     if show_loot:
-        SYSTEM["layers"]["pickup"].fill((0,0,0,0))
-    
+        pickup_layer = SYSTEM["layers"]["pickup"]
+        pickup_layer.fill((0,0,0,0))
     if show_projectiles:
-        SYSTEM["layers"]["bullets"].fill((0,0,0,0))
-        SYSTEM["layers"]["warnings"].fill((0,0,0,0))
-    
+        bullets_layer = SYSTEM["layers"]["bullets"]
+        warnings_layer = SYSTEM["layers"]["warnings"]
+        bullets_layer.fill((0,0,0,0))
+        warnings_layer.fill((0,0,0,0))
     if show_text:
-        SYSTEM["layers"]["texts"].fill((0,0,0,0))
-    
-    # PLAYER RENDERING
+        texts_layer = SYSTEM["layers"]["texts"]
+        texts_layer.fill((0,0,0,0))
     if show_player:
-        if SYSTEM["options"]["show_hitboxes"]:
-            draw_hitbox(SYSTEM["player"].entity.hitbox, GRE, GRE_B, SYSTEM["layers"]["characters"])
-        SYSTEM["layers"]["characters"].blit(SYSTEM["player"].get_image(),\
-            SYSTEM["player"].get_pos())
-    
-    # LOOT RENDERING - BATCH
+        if show_hitboxes:
+            draw_hitbox(SYSTEM["player"].entity.hitbox, GRE, GRE_B, chars_layer)
+        chars_layer.blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
     if show_loot:
         loot_count = len(POWER_UP_TRACKER)
         if loot_count > 0:
-            if SYSTEM["options"]["show_hitboxes"]:
+            if show_hitboxes:
                 for b in POWER_UP_TRACKER:
-                    draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["pickup"])
-            
-            # CRITICAL: Pre-allocate list with exact size (faster than list comp)
-            loot_blits = []
-            for b in POWER_UP_TRACKER:
-                loot_blits.append((b.get_image(), (b.x, b.y)))
-            
+                    draw_hitbox(b.hitbox, BLU, BLU_B, pickup_layer)
+            loot_blits = [(b.get_image(), (b.x, b.y)) for b in POWER_UP_TRACKER]
             if loot_blits:
-                SYSTEM["layers"]["pickup"].blits(loot_blits)
-    
-    # ENEMY RENDERING - BATCH
+                pickup_layer.blits(loot_blits)
     if show_enemies:
         enemy_count = len(ENNEMY_TRACKER)
         if enemy_count > 0:
-            if SYSTEM["options"]["show_hitboxes"]:
+            if show_hitboxes:
                 for b in ENNEMY_TRACKER:
-                    draw_hitbox(b.hitbox, RED, RED_B, SYSTEM["layers"]["characters"])
-            
-            if SYSTEM["options"]["show_bars"]:
-                # Pre-allocate with estimated size
-                enemy_bars = []
-                for b in ENNEMY_TRACKER:
-                    bar_x = b.entity.center_x - SYSTEM["images"]["enemy_jauge_mini_back"].width / 2
-                    bar_y = b.y - 25
-                    enemy_bars.append((SYSTEM["images"]["enemy_jauge_mini_back"].image, (bar_x, bar_y)))
-                    
-                    life = max(b.creature.stats["life"].current_value /\
-                        b.creature.stats["life"].c_value * 100, 0)
-                    enemy_bars.append((SYSTEM["images"]["enemy_jauge_mini"].image\
-                        .subsurface((0, 0, int(life), 20)), (bar_x, bar_y)))
-                
-                if enemy_bars:
-                    SYSTEM["layers"]["characters"].blits(enemy_bars)
-            
-            # Build enemy blit list
+                    draw_hitbox(b.hitbox, RED, RED_B, chars_layer)
             enemy_blits = []
-            for b in ENNEMY_TRACKER:
-                enemy_blits.append((b.get_image(), b.get_pos()))
-            
+            if show_bars:
+                enemy_jauge_back = SYSTEM["images"]["enemy_jauge_mini_back"].image
+                for b in ENNEMY_TRACKER:
+                    bar_x = b.entity.center_x - 50
+                    bar_y = b.y - 25
+                    enemy_blits.append((enemy_jauge_back, (bar_x, bar_y)))
+                    life_pct = b.creature.stats["life"].current_value / \
+                        b.creature.stats["life"].c_value
+                    life_width = max(int(life_pct * 100), 0)
+                    if life_width > 0:
+                        life_bar = SYSTEM["images"]["enemy_jauge_mini"].image\
+                            .subsurface((0, 0, life_width, 20))
+                        enemy_blits.append((life_bar, (bar_x, bar_y)))
+                    enemy_blits.append((b.get_image(), b.get_pos()))
+            else:
+                for b in ENNEMY_TRACKER:
+                    enemy_blits.append((b.get_image(), b.get_pos()))
             if enemy_blits:
-                SYSTEM["layers"]["characters"].blits(enemy_blits)
-    
-    # ANIMATIONS - BATCH
+                chars_layer.blits(enemy_blits)
     if show_animations:
         anim_count = len(ANIMATION_TRACKER)
         if anim_count > 0:
-            anim_blits = []
-            for p in ANIMATION_TRACKER:
-                anim_blits.append((p[0].get_image(), (p[1], p[2])))
-            
+            anim_blits = [(p[0].get_image(), (p[1], p[2])) for p in ANIMATION_TRACKER]
             if anim_blits:
-                SYSTEM["layers"]["characters"].blits(anim_blits)
-    
-    # PROJECTILES - BATCH
+                chars_layer.blits(anim_blits)
     if show_projectiles:
         proj_count = len(PROJECTILE_TRACKER)
         if proj_count > 0:
-            if SYSTEM["options"]["show_hitboxes"]:
+            if show_hitboxes:
                 for b in PROJECTILE_TRACKER:
                     if b.effective:
-                        draw_hitbox(b.hitbox, BLU, BLU_B, SYSTEM["layers"]["bullets"])
-            
-            # Draw warnings first (can't batch these easily)
+                        draw_hitbox(b.hitbox, BLU, BLU_B, bullets_layer)
             for p in PROJECTILE_TRACKER:
                 if p.warning is not None:
-                    SYSTEM["layers"]["warnings"].draw_polygon(RED_WARNING, p.warning[0])
-            
-            # Batch projectile sprites
-            proj_blits = []
-            for p in PROJECTILE_TRACKER:
-                proj_blits.append((p.get_image(), p.get_pos()))
-            
+                    warnings_layer.draw_polygon(RED_WARNING, p.warning[0])
+            proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER]
             if proj_blits:
-                SYSTEM["layers"]["bullets"].blits(proj_blits)
-    
-    # TEXT - BATCH
+                bullets_layer.blits(proj_blits)
     if show_text:
         text_count = len(TEXT_TRACKER)
         if text_count > 0:
-            text_blits = []
-            for t in TEXT_TRACKER:
-                text_blits.append((t[0].image, (t[1], t[2])))
-            
+            text_blits = [(t[0].image, (t[1], t[2])) for t in TEXT_TRACKER]
             if text_blits:
-                SYSTEM["layers"]["texts"].blits(text_blits)
+                texts_layer.blits(text_blits)
 
 def logic_tick():
-    """Ticks all there is to tick."""
+    """Ticks all there is to tick - OPTIMIZED VERSION."""
     SYSTEM["player"].tick()
-    i = 0
-    while i < len(POWER_UP_TRACKER):
+    i = len(POWER_UP_TRACKER) - 1
+    while i >= 0:
         bubble = POWER_UP_TRACKER[i]
         bubble.tick(SYSTEM["player"])
         if bubble.flagged_for_deletion:
             POWER_UP_TRACKER.pop(i)
-        else:
-            i += 1
-    i = 0
-    while i < len(ENNEMY_TRACKER):
+        i -= 1
+    i = len(ENNEMY_TRACKER) - 1
+    while i >= 0:
         baddie = ENNEMY_TRACKER[i]
         baddie.tick(SYSTEM["player"])
         if baddie.destroyed:
             ENNEMY_TRACKER.pop(i)
-        else:
-            i += 1
-    i = 0
-    while i < len(ANIMATION_TRACKER):
+        i -= 1
+    i = len(ANIMATION_TRACKER) - 1
+    while i >= 0:
         p = ANIMATION_TRACKER[i]
         p[0].tick()
         if p[0].finished:
             ANIMATION_TRACKER.pop(i)
-        else:
-            i += 1
-    i = 0
-    while i < len(PROJECTILE_TRACKER):
+        i -= 1
+    i = len(PROJECTILE_TRACKER) - 1
+    while i >= 0:
         p = PROJECTILE_TRACKER[i]
         p.tick()
         if (isinstance(p, Projectile) and p.can_be_destroyed()) or \
             (isinstance(p, Slash) and p.finished):
             PROJECTILE_TRACKER.pop(i)
-        else:
-            i += 1
-    i = 0
-    while i < len(TEXT_TRACKER):
+        i -= 1
+    i = len(TEXT_TRACKER) - 1
+    while i >= 0:
         txt = TEXT_TRACKER[i]
         sfc = txt[0]
         sfc.opacity(txt[3])
@@ -219,5 +184,4 @@ def logic_tick():
         txt[2] -= 3
         if txt[3] < 10:
             TEXT_TRACKER.pop(i)
-        else:
-            i += 1
+        i -= 1
