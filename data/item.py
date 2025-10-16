@@ -70,7 +70,7 @@ class Item():
             self._implicits = []
         else:
             self._implicits = implicits
-        self._rarity = rarity
+        self._rarity = int(rarity)
         self._sealed = False
         self._level = 0
         self._drop_time = 0

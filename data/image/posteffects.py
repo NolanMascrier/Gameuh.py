@@ -92,7 +92,6 @@ class PostEffects():
         else:
             SYSTEM["real_windows"].fill(BLACK)
             SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0), True)
-        
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)

@@ -8,7 +8,7 @@ init_engine()
 
 class TestItems(unittest.TestCase):
     def test_fields(self):
-        potion = Item("potion", "", 250, 999, 256, None, None)
+        potion = Item("potion", "", 250, 999, 256, None, 0)
         self.assertEqual(potion.name, "potion")
         self.assertEqual(potion.price, 250)
         self.assertEqual(potion.power, 999)
@@ -17,7 +17,7 @@ class TestItems(unittest.TestCase):
         self.assertEqual(potion.affixes, [])
 
     def test_modif(self):
-        potion = Item("potion", 250, 999, 256, None, None)
+        potion = Item("potion", "", 250, 999, 256, None, 0)
         potion.name = "piki piki piman"
         self.assertEqual(potion.name, "piki piki piman")
         potion.price = 252525

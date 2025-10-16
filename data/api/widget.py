@@ -21,6 +21,10 @@ class Widget():
         """Sets both coordinates."""
         self._position = Vec2(x, y)
 
+    def get_rect(self):
+        """Returns the positions as a pygame rect"""
+        return (self.x, self.y, self.width, self.height)
+
     @property
     def left(self) -> float:
         """Return's the widget's leftmost x."""

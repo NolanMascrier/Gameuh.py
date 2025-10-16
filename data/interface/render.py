@@ -23,20 +23,24 @@ def renders(lst):
 def render_all():
     """Renders the screen."""
     game_state = SYSTEM["game_state"]
-    
     if game_state == LOADING:
         SYSTEM["windows"].fill(BLACK_TRANSP)
+        if RENDER_LIST:
+            SYSTEM["windows"].blits(RENDER_LIST)
+            RENDER_LIST.clear()
     else:
         shake = SYSTEM["post_effects"].shake_factor
-        SYSTEM["windows"].blit(SYSTEM["gm_background"], shake, True)
-        SYSTEM["windows"].blit(SYSTEM["gm_parallaxe"], shake, True)
-    if RENDER_LIST:
-        SYSTEM["windows"].blits(RENDER_LIST)
-        RENDER_LIST.clear()
-    if game_state == GAME_LEVEL or game_state == MENU_INVENTORY:
-        shake = SYSTEM["post_effects"].shake_factor
-        layer_list = [(layer, shake) for _, layer in SYSTEM["layers"].items()]
-        if layer_list:
-            SYSTEM["windows"].blits(layer_list)
-        SYSTEM["windows"].blit(SYSTEM["ui_surface"], (0, 0))
-
+        all_blits = []
+        all_blits.append((SYSTEM["gm_background"], shake))
+        all_blits.append((SYSTEM["gm_parallaxe"], shake))
+        if RENDER_LIST:
+            all_blits.extend(RENDER_LIST)
+            RENDER_LIST.clear()
+        if game_state == GAME_LEVEL:
+            for _, layer in SYSTEM["layers"].items():
+                all_blits.append((layer, shake))
+            all_blits.append((SYSTEM["ui_surface"], (0, 0)))
+        elif game_state == MENU_INVENTORY:
+            all_blits.append((SYSTEM["layers"]["pickup"], shake))
+        if all_blits:
+            SYSTEM["windows"].blits(all_blits)
