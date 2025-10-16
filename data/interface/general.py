@@ -48,6 +48,7 @@ def draw_bottom_bar():
 
 def draw_hitbox(hitbox: HitBox, color, color_border, layer):
     """Draws the hitbox."""
+    return
     layer.draw_rect(color, (hitbox.x, hitbox.y, hitbox.width, hitbox.height))
     layer.draw_rect(color_border, (hitbox.x, hitbox.y, hitbox.width, hitbox.height), 2)
     layer.draw_rect(color_border, (hitbox.x + hitbox.width / 2 - 2,
@@ -66,22 +67,22 @@ def draw_game(show_player = True, show_enemies = True,\
     show_bars = SYSTEM["options"]["show_bars"]
     if show_player or show_enemies or show_animations:
         chars_layer = SYSTEM["layers"]["characters"]
-        chars_layer.fill((0,0,0,0))
+        chars_layer.clear()
     if show_loot:
         pickup_layer = SYSTEM["layers"]["pickup"]
-        pickup_layer.fill((0,0,0,0))
+        pickup_layer.clear()
     if show_projectiles:
         bullets_layer = SYSTEM["layers"]["bullets"]
         warnings_layer = SYSTEM["layers"]["warnings"]
-        bullets_layer.fill((0,0,0,0))
-        warnings_layer.fill((0,0,0,0))
+        bullets_layer.clear()
+        warnings_layer.clear()
     if show_text:
         texts_layer = SYSTEM["layers"]["texts"]
-        texts_layer.fill((0,0,0,0))
+        texts_layer.clear()
     if show_player:
         if show_hitboxes:
             draw_hitbox(SYSTEM["player"].entity.hitbox, GRE, GRE_B, chars_layer)
-        chars_layer.blit(SYSTEM["player"].get_image(), SYSTEM["player"].get_pos())
+        chars_layer.append((SYSTEM["player"].get_image(), SYSTEM["player"].get_pos()))
     if show_loot:
         loot_count = len(POWER_UP_TRACKER)
         if loot_count > 0:
@@ -90,7 +91,7 @@ def draw_game(show_player = True, show_enemies = True,\
                     draw_hitbox(b.hitbox, BLU, BLU_B, pickup_layer)
             loot_blits = [(b.get_image(), (b.x, b.y)) for b in POWER_UP_TRACKER]
             if loot_blits:
-                pickup_layer.blits(loot_blits)
+                pickup_layer.extend(loot_blits)
     if show_enemies:
         enemy_count = len(ENNEMY_TRACKER)
         if enemy_count > 0:
@@ -116,13 +117,13 @@ def draw_game(show_player = True, show_enemies = True,\
                 for b in ENNEMY_TRACKER:
                     enemy_blits.append((b.get_image(), b.get_pos()))
             if enemy_blits:
-                chars_layer.blits(enemy_blits)
+                chars_layer.extend(enemy_blits)
     if show_animations:
         anim_count = len(ANIMATION_TRACKER)
         if anim_count > 0:
             anim_blits = [(p[0].get_image(), (p[1], p[2])) for p in ANIMATION_TRACKER]
             if anim_blits:
-                chars_layer.blits(anim_blits)
+                chars_layer.extend(anim_blits)
     if show_projectiles:
         proj_count = len(PROJECTILE_TRACKER)
         if proj_count > 0:
@@ -135,13 +136,13 @@ def draw_game(show_player = True, show_enemies = True,\
                     warnings_layer.draw_polygon(RED_WARNING, p.warning[0])
             proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER]
             if proj_blits:
-                bullets_layer.blits(proj_blits)
+                bullets_layer.extend(proj_blits)
     if show_text:
         text_count = len(TEXT_TRACKER)
         if text_count > 0:
             text_blits = [(t[0].image, (t[1], t[2])) for t in TEXT_TRACKER]
             if text_blits:
-                texts_layer.blits(text_blits)
+                texts_layer.extend(text_blits)
 
 def logic_tick():
     """Ticks all there is to tick - OPTIMIZED VERSION."""

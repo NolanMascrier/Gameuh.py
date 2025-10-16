@@ -40,6 +40,7 @@ class Parallaxe(Animation):
             self._layers[i].blit(self._sequence[i + 1].image, (0, 0))
             self._layers[i].blit(self._sequence[i + 1].image, (SCREEN_WIDTH, 0))
         self._surface = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self._render = []
 
     def invert(self):
         """Flips the scrolling animation."""
@@ -48,7 +49,7 @@ class Parallaxe(Animation):
     def draw(self, stops = False):
         """Draws the parallaxe."""
         shake, _ = SYSTEM["post_effects"].shake_factor
-        x = []
+        self._render.clear()
         if not stops:
             if self._scroll_left:
                 for i in range(len(self._sequence)):
@@ -59,9 +60,8 @@ class Parallaxe(Animation):
                     self._diff_x[i] = (self._diff_x[i] - self._speeds[i] *\
                         self._speed_factor + shake) % SCREEN_WIDTH
         for layer, _ in enumerate(self._sequence):
-            x.append(int(-self._diff_x[layer]))
-        self._surface.fill((0,0,0,0))
-        renders([self._layers[i], (x[i], 0)] for i in range(len(self._sequence)))
+            self._render.append(int(-self._diff_x[layer]))
+        renders([self._layers[i], (self._render[i], 0)] for i in range(len(self._sequence)))
 
     @property
     def background(self):

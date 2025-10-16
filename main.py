@@ -50,7 +50,7 @@ def check_collisions():
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
                     if proj.can_be_destroyed():
-                            continue
+                        continue
                 elif isinstance(proj, Slash) and proj.effective:
                     dmg, crit = proj.on_hit(SYSTEM["player"].creature, SYSTEM["player"].entity)
                     if dmg is None or crit is None:
@@ -59,7 +59,7 @@ def check_collisions():
                                                                   SYSTEM["player"].y,\
                                                                 DAMAGE_COLOR, crit, dmg)
                     if proj.finished:
-                            continue
+                        continue
         elif proj.ignore_team or not proj.evil: #Check for each enemy
             for enemy in ENNEMY_TRACKER:
                 if proj.hitbox.is_colliding(enemy.entity.hitbox):

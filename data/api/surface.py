@@ -27,7 +27,7 @@ def get_events():
 
 def init_engine():
     """Inits the base engine."""
-    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "0"
+    os.environ['PYGAME_BLEND_ALPHA_SDL2'] = "1"
     pygame.init()
     pygame.font.init()
 

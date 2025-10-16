@@ -38,8 +38,8 @@ def render_all():
             RENDER_LIST.clear()
         if game_state == GAME_LEVEL:
             for _, layer in SYSTEM["layers"].items():
-                all_blits.append((layer, shake))
-            all_blits.append((SYSTEM["ui_surface"], (0, 0)))
+                all_blits.extend(layer)
+            #all_blits.append((SYSTEM["ui_surface"], (0, 0)))
         elif game_state == MENU_INVENTORY:
             all_blits.append((SYSTEM["layers"]["pickup"], shake))
         if all_blits:

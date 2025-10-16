@@ -32,7 +32,7 @@ _UI_CACHE = {
 def generate_background():
     """Generates the background surface of the UI. To be called only once when the
     level loads !"""
-    SYSTEM["ui_background"].fill(BLACK)
+    SYSTEM["ui_background"].clear()
     char = SYSTEM["player"]
     data = []
     #POTIONS
@@ -51,12 +51,12 @@ def generate_background():
             (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130)))
         i += 1
     #
-    SYSTEM["ui_background"].blits(data)
+    SYSTEM["ui_background"] = data
 
 def generate_foreground():
     """Generates the foreground of the UI. To be called only once when 
     the level loads !"""
-    SYSTEM["ui_foreground"].fill((0,0,0,0))
+    SYSTEM["ui_foreground"].clear()
     char = SYSTEM["player"]
     data = []
     #POTIONS
@@ -76,7 +76,7 @@ def generate_foreground():
             (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 82)))
         i += 1
     #
-    SYSTEM["ui_foreground"].blits(data)
+    SYSTEM["ui_foreground"] = data
 
 def draw_exp_bar():
     """Draws the EXP bar."""
@@ -260,7 +260,11 @@ def draw_ui():
     to_draw.extend(draw_buffs())
     to_draw.extend(draw_enemy_card())
     to_draw.extend(draw_boss())
-    SYSTEM["ui_surface"].fill((0,0,0,0))
-    SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0), True)
-    SYSTEM["ui_surface"].blits(to_draw)
-    SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0), True)
+    #SYSTEM["ui_surface"].fill((0,0,0,0))
+    SYSTEM["layers"]["ui"].clear()
+    # SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0), True)
+    SYSTEM["layers"]["ui"].extend(SYSTEM["ui_background"])
+    SYSTEM["layers"]["ui"].extend(to_draw)
+    SYSTEM["layers"]["ui"].extend(SYSTEM["ui_foreground"])
+    #SYSTEM["ui_surface"].blits(to_draw)
+    #SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0), True)

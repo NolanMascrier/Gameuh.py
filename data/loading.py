@@ -395,14 +395,15 @@ def load_others():
         contains=SYSTEM["images"]["tree_surface"])
     generate_tree()
     SYSTEM["ui_surface"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
-    SYSTEM["ui_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
-    SYSTEM["ui_foreground"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["ui_background"] = []
+    SYSTEM["ui_foreground"] = []
     SYSTEM["layers"] = {
-        "pickup": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
-        "warnings": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
-        "bullets": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
-        "characters": Surface(SCREEN_WIDTH, SCREEN_HEIGHT),
-        "texts": Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+        "pickup": [],
+        "warnings": [],
+        "bullets": [],
+        "characters": [],
+        "texts": [],
+        "ui": []
     }
     load_uniques()
 
