@@ -27,7 +27,8 @@ class Projectile(HitBox):
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1,\
-                ignore_team = False, offset_x = 0, offset_y = 0, anim_on_hit = None):
+                ignore_team = False, offset_x = 0, offset_y = 0, anim_on_hit = None,
+                anim_speed = 1):
         if Flags.RANDOM_POSITION in behaviours:
             if numpy.random.random() > 0.5: #Horizontal
                 y = int(numpy.random.choice([0, SCREEN_HEIGHT]))
@@ -91,6 +92,7 @@ class Projectile(HitBox):
         self._bounced = False
         self._chains = chains
         self._warning = None
+        self._anim_speed = anim_speed
 
     def get_image(self):
         """Returns the projectile image."""
@@ -206,7 +208,7 @@ class Projectile(HitBox):
 
     def tick(self):
         """Ticks down the projectile."""
-        self._real_image.tick()
+        self._real_image.tick(self._anim_speed)
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:

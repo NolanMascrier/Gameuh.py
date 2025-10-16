@@ -272,7 +272,7 @@
     },
     "affliction_desc":{
         "elemental_fury": "Grants 35% more elemental damage.",
-        "fury": "Grants 15% more physical damage. This effect can stack.",
+        "fury": "Grants 15% more physical damage, 5% reduced cooldown and 5% increased\nMana cost for Furyslash. This effect can stack.",
         "celerity": "Grants 300% increased move speed.",
         "bleed": "Inflicts physical damage every seconds that ignores defenses."
     },

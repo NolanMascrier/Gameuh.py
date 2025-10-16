@@ -335,6 +335,7 @@ class Flags(str, Enum):
     COOLDOWN = "cooldown"
     PROJECTILES = "projectiles"
     AREA = "area"
+    ANIMATION_SPEED = "anim_speed"
     PACK_SIZE = "pack_size"
     #Flags for projectiles
     PROJECTILE = "projectile"

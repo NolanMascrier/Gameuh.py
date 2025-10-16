@@ -16,7 +16,8 @@ class Slash(HitBox):
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
                 offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\
-                ignore_team = False, effective_frames = None, anim_on_hit = None):
+                ignore_team = False, effective_frames = None, anim_on_hit = None,
+                anim_speed = 1):
         self._caster = caster
         self._origin = origin
         self._image = animation
@@ -47,6 +48,7 @@ class Slash(HitBox):
             self._debuffs = debuffs
         self._ignore_team = ignore_team
         self._tick_time = 0
+        self._anim_speed = anim_speed
 
     def clone(self, entity, origin, area = None, center=False):
         """Returns a deep copy of the slash."""
@@ -84,7 +86,7 @@ class Slash(HitBox):
 
     def tick(self):
         """Ticks down the slash."""
-        self._real_image.tick()
+        self._real_image.tick(self._anim_speed)
         super().move(self.get_pos())
         if Flags.CAN_TICK in self._flags:
             self._tick_time += 0.016

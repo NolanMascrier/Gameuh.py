@@ -43,6 +43,10 @@ ELEFURY = Affliction("elemental_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_D
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
 FURY = Affliction("fury", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\
                 stackable=True, refreshable=True)
+FURY_SPEED = Affliction("fury2", 0.05, 1, flags=[Flags.ANIMATION_SPEED, Flags.BLESS],
+                        stackable=True, refreshable=True)
+FURY_COST = Affliction("fury3", 0.05, 1, flags=[Flags.MANA_COST, Flags.COOLDOWN, Flags.HEX],
+                        stackable=True, refreshable=True)
 
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
@@ -82,7 +86,7 @@ def generate_spell_list():
     SYSTEM["images"]["darkbolt_img"] =\
         Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["furyslash_img"] =\
-        Animation("slash.png", 29, 20, frame_rate=0.25, loops=False, plays_once=True).scale(58, 40)
+        Animation("anims/furyslash.png", 64, 60, frame_rate=0.35, loops=False, plays_once=True)
     SYSTEM["images"]["exult_img"] =\
         Animation("exult.png", 64, 64, frame_rate=0.25, loops=False, plays_once=True)\
         .scale(256, 256)
@@ -148,7 +152,7 @@ def generate_spell_list():
         cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER,\
         Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED], effective_frames=4)
     voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1,\
-        cooldown=0.1, projectiles=50, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
+        cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     voidoltflurry = Spell("voidbolt_boss", voidbolt_icon, "voidbolt_proj2_img", VOIDBOLT_ALT, 0,\
         cooldown=0.1, projectiles=9, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     arc = Spell("arc", arc_icon, "arc_proj_img", ARC, 3,\
@@ -167,7 +171,7 @@ def generate_spell_list():
         cooldown=3, flags=[Flags.BUFF, Flags.DASH], buffs=[CELERITY])
     furyslash = Spell("fslash", fury_icon, "furyslash_img", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF],
-        buffs=[FURY], offset_x=60)
+        buffs=[FURY], offset_x=60, alterations=[FURY_COST, FURY_SPEED])
     charge = Spell("Charge", fury_icon, "furyslash_alt", CHARGE,
         flags=[Flags.MELEE], offset_x=120)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,

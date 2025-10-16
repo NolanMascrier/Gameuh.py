@@ -80,14 +80,15 @@ class Animation():
             return self._sequence[int(caller[0])].image
         return self._sequence[int(self._current_frame)].image
 
-    def tick(self, caller = None):
+    def tick(self, frame_modifier = 1):
         """Advance the sequence."""
         if not self._animated:
             return
+        if frame_modifier is None:
+            frame_modifier = 1
         start_frame = self._frame_loop[0] if self._frame_loop is not None else 0
         end_frame = self._frame_loop[1] if self._frame_loop is not None else self._frame_max
-        self._current_frame += self._frame_rate
-
+        self._current_frame += self._frame_rate * frame_modifier
         if self._current_frame > end_frame:
             if self._loops:
                 self._current_frame = start_frame

@@ -2,6 +2,8 @@
 
 from functools import lru_cache
 
+from data.api.surface import Surface
+
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
@@ -46,13 +48,15 @@ def draw_bottom_bar():
     """Draws the bottom bar, quick access to the menus."""
     SYSTEM["ui"]["bottom_bar"].tick()
 
-def draw_hitbox(hitbox: HitBox, color, color_border, layer):
+@lru_cache(maxsize=256)
+def draw_hitbox(hitbox, color, color_border):
     """Draws the hitbox."""
-    return
-    layer.draw_rect(color, (hitbox.x, hitbox.y, hitbox.width, hitbox.height))
-    layer.draw_rect(color_border, (hitbox.x, hitbox.y, hitbox.width, hitbox.height), 2)
-    layer.draw_rect(color_border, (hitbox.x + hitbox.width / 2 - 2,
-                    hitbox.y + hitbox.height /2 - 2 , 4, 4), 2)
+    sfc = Surface(hitbox[2], hitbox[3])
+    sfc.draw_rect(color, (0, 0, hitbox[2], hitbox[3]))
+    sfc.draw_rect(color_border, (0, 0, hitbox[2], hitbox[3]), 2)
+    sfc.draw_rect(color_border, (0 + hitbox[2] / 2 - 2,
+                    0 + hitbox[3] /2 - 2 , 4, 4), 2)
+    return (sfc, (hitbox[0], hitbox[1]))
 
 @lru_cache(maxsize=64)
 def enemy_life(life):
@@ -81,14 +85,14 @@ def draw_game(show_player = True, show_enemies = True,\
         texts_layer.clear()
     if show_player:
         if show_hitboxes:
-            draw_hitbox(SYSTEM["player"].entity.hitbox, GRE, GRE_B, chars_layer)
+            chars_layer.append(draw_hitbox(SYSTEM["player"].entity.hitbox.get_rect(), GRE, GRE_B))
         chars_layer.append((SYSTEM["player"].get_image(), SYSTEM["player"].get_pos()))
     if show_loot:
         loot_count = len(POWER_UP_TRACKER)
         if loot_count > 0:
             if show_hitboxes:
                 for b in POWER_UP_TRACKER:
-                    draw_hitbox(b.hitbox, BLU, BLU_B, pickup_layer)
+                    pickup_layer.append(draw_hitbox(b.hitbox.get_rect(), BLU, BLU_B))
             loot_blits = [(b.get_image(), (b.x, b.y)) for b in POWER_UP_TRACKER]
             if loot_blits:
                 pickup_layer.extend(loot_blits)
@@ -97,7 +101,7 @@ def draw_game(show_player = True, show_enemies = True,\
         if enemy_count > 0:
             if show_hitboxes:
                 for b in ENNEMY_TRACKER:
-                    draw_hitbox(b.hitbox, RED, RED_B, chars_layer)
+                    chars_layer.append(draw_hitbox(b.hitbox.get_rect(), RED, RED_B))
             enemy_blits = []
             if show_bars:
                 enemy_jauge_back = SYSTEM["images"]["enemy_jauge_mini_back"].image
@@ -130,7 +134,7 @@ def draw_game(show_player = True, show_enemies = True,\
             if show_hitboxes:
                 for b in PROJECTILE_TRACKER:
                     if b.effective:
-                        draw_hitbox(b.hitbox, BLU, BLU_B, bullets_layer)
+                        bullets_layer.append(draw_hitbox(b.hitbox.get_rect(), BLU, BLU_B))
             for p in PROJECTILE_TRACKER:
                 if p.warning is not None:
                     warnings_layer.draw_polygon(RED_WARNING, p.warning[0])

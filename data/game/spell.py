@@ -54,7 +54,7 @@ class Spell():
                  explosion = None, sequence = None,\
                  cooldown = 0.1, projectiles = 1, flags = None, buffs = None,\
                  debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,\
-                 effective_frames = None, anim_on_hit = None):
+                 effective_frames = None, anim_on_hit = None, alterations = None):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -64,6 +64,7 @@ class Spell():
         self._exp = 0
         self._exp_to_next = 3000
         self._effective_frames = effective_frames
+        self._afflicts = []
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
             "life_cost": Stat(life_cost, "life_cost"),
@@ -81,6 +82,7 @@ class Spell():
                             "crit_rate", 1, 0),
             "crit_dmg": Stat(base_damage.crit_mult if base_damage is not None else 0,\
                             "crit_dmg"),
+            "anim_speed": Stat(1, "anim_speed")
         }
         self._jewels = {
             0: None,
@@ -105,6 +107,10 @@ class Spell():
             self._debuffs = []
         else:
             self._debuffs = debuffs
+        if alterations is None or not isinstance(alterations, list):
+            self._alterations = []
+        else:
+            self._alterations = alterations
         if sequence is None or not isinstance(sequence, list):
             self._sequence = []
         else:
@@ -199,6 +205,12 @@ class Spell():
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
+        for _, stat in self._stats.items():
+            stat.tick()
+        for buff in self._afflicts:
+            buff.tick()
+            if buff.expired:
+                self._afflicts.remove(buff)
         if self._releasing:
             self._counter -= 0.016
             if self._counter <= 0:
@@ -237,6 +249,14 @@ class Spell():
                     self._modifiers[i] = affliction
                     return
             self._modifiers.append(affliction)
+        if affliction.stackable:
+            self._afflicts.append(affliction)
+        else:
+            for i, existing_aff in enumerate(self._afflicts):
+                if existing_aff.name == affliction.name:
+                    self._afflicts[i] = affliction
+                    return
+            self._afflicts.append(affliction)
 
     def afflict(self, affliction):
         """Afflicts the spell with an affliction from a jewel.
@@ -482,7 +502,8 @@ class Spell():
                         chains=self._stats["chains"].c_value, \
                         behaviours=self._flags, caster=entity, debuffs=self._debuffs,
                         explosion=self._explosion, area=area,\
-                        ignore_team=ignore_team, anim_on_hit=self._anim_on_hit)
+                        ignore_team=ignore_team, anim_on_hit=self._anim_on_hit,
+                        anim_speed=self._stats["anim_speed"].c_value)
         PROJECTILE_TRACKER.append(proj)
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False, ignore_team = False):
@@ -492,7 +513,7 @@ class Spell():
                        not aim_right, evil, self._flags, self._offset[0],\
                        self._offset[1], debuffs=self._debuffs, area=area,\
                        ignore_team=ignore_team, effective_frames=self._effective_frames,\
-                       anim_on_hit=self._anim_on_hit)
+                       anim_on_hit=self._anim_on_hit, anim_speed=self._stats["anim_speed"].c_value)
         PROJECTILE_TRACKER.append(sl)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\
@@ -507,6 +528,9 @@ class Spell():
                 return False
             if caster.stats["life"].current_value < life_cost:
                 return False
+        for b in self._alterations:
+            print(f"AFFLIC {str(b)}")
+            self.afflict(b)
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         caster.consume_mana(self._stats["mana_cost"].c_value)
         caster.stats["life"].current_value -= life_cost
@@ -744,4 +768,3 @@ class Spell():
         fl.extend(self._flags)
         fl.extend(self._gathered_flags)
         return fl
-
