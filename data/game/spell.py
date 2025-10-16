@@ -585,6 +585,7 @@ class Spell():
         stats = {}
         buffs = []
         debuffs = []
+        alterations = []
         sequence = []
         jewels = {}
         for s in self._stats:
@@ -593,6 +594,8 @@ class Spell():
             buffs.append(a.export())
         for a in self._debuffs:
             debuffs.append(a.export())
+        for a in self._alterations:
+            alterations.append(a.export())
         for s in self._sequence:
             sequence.append(s.export())
         for j in self._jewels:
@@ -616,7 +619,8 @@ class Spell():
             "explosion": self._explosion.export() if self._explosion is not None else None,
             "jewels": jewels,
             "exp": self._exp,
-            "exp_next": self._exp_to_next
+            "exp_next": self._exp_to_next,
+            "alterations": alterations
         }
         return json.dumps(data)
 
@@ -627,6 +631,7 @@ class Spell():
         buffs = []
         debuffs = []
         sequence = []
+        alterations = []
         jewels = {}
         for s in data["stats"]:
             val = json.loads(data["stats"][s])
@@ -640,6 +645,8 @@ class Spell():
             buffs.append(Affliction.imports(json.loads(a)))
         for a in data["debuffs"]:
             debuffs.append(Affliction.imports(json.loads(a)))
+        for a in data["alterations"]:
+            alterations.append(Affliction.imports(json.loads(a)))
         for s in data["sequence"]:
             sequence.append(Spell.imports(json.loads(s)))
         for j in data["jewels"]:
@@ -659,7 +666,8 @@ class Spell():
                 if data["explosion"] is not None else None,
             sequence=sequence,
             offset_x=int(data["offset"][0]),
-            offset_y=int(data["offset"][1])
+            offset_y=int(data["offset"][1]),
+            alterations=alterations
         )
         spell.level = int(data["level"])
         spell.exp = int(data["exp"])
