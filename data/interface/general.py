@@ -7,7 +7,7 @@ from data.api.surface import Surface
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
-    ANIMATION_TRACKER
+    ANIMATION_TRACKER, SCREEN_WIDTH
 from data.image.tabs import Tabs
 from data.physics.hitbox import HitBox
 from data.projectile import Projectile
@@ -57,6 +57,10 @@ def draw_hitbox(hitbox, color, color_border):
     sfc.draw_rect(color_border, (0 + hitbox[2] / 2 - 2,
                     0 + hitbox[3] /2 - 2 , 4, 4), 2)
     return (sfc, (hitbox[0], hitbox[1]))
+
+def draw_warning(polygon, color, alpha = 255):
+    """Draws the hitbox."""
+    SYSTEM["warnings"].draw_polygon(color, polygon)
 
 @lru_cache(maxsize=64)
 def enemy_life(life):
@@ -131,13 +135,12 @@ def draw_game(show_player = True, show_enemies = True,\
     if show_projectiles:
         proj_count = len(PROJECTILE_TRACKER)
         if proj_count > 0:
-            if show_hitboxes:
-                for b in PROJECTILE_TRACKER:
+            for p in PROJECTILE_TRACKER:
+                if show_hitboxes:
                     if b.effective:
                         bullets_layer.append(draw_hitbox(b.hitbox.get_rect(), BLU, BLU_B))
-            for p in PROJECTILE_TRACKER:
                 if p.warning is not None:
-                    warnings_layer.draw_polygon(RED_WARNING, p.warning[0])
+                    draw_warning(p.warning[0], RED_WARNING, p.warning[1])
             proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER]
             if proj_blits:
                 bullets_layer.extend(proj_blits)

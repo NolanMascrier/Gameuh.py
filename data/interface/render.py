@@ -5,7 +5,7 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU
 
 RENDER_LIST = []
 CLEAN = (0, 0, 0, 0)
-BLACK_TRANSP = (0, 0, 0, 255)
+BLACK_TRANSP = (0, 0, 0, 0)
 
 def render(image, pos):
     """Prepares the image to be rendered at position pos."""
@@ -37,10 +37,11 @@ def render_all():
             all_blits.extend(RENDER_LIST)
             RENDER_LIST.clear()
         if game_state == GAME_LEVEL:
+            all_blits.append((SYSTEM["warnings"], shake))
             for _, layer in SYSTEM["layers"].items():
                 all_blits.extend(layer)
-            #all_blits.append((SYSTEM["ui_surface"], (0, 0)))
         elif game_state == MENU_INVENTORY:
             all_blits.append((SYSTEM["layers"]["pickup"], shake))
         if all_blits:
             SYSTEM["windows"].blits(all_blits)
+        SYSTEM["warnings"].fill(BLACK_TRANSP)
