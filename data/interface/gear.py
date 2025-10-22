@@ -95,6 +95,12 @@ def open_gear_screen():
     SYSTEM["ui"]["gear_belt"] = Slot(x, y + 174, "gear_belt",\
         equip, unequip, overwrite_gear,\
         Flags.BELT, SYSTEM["player"].creature.gear["belts"])
+    SYSTEM["ui"]["gear_life"] = Slot(x - 128, y + 238, "gear_life",\
+        equip, unequip, overwrite_gear,\
+        Flags.LIFE_POT, SYSTEM["player"].creature.gear["life_pot"])
+    SYSTEM["ui"]["gear_mana"] = Slot(x + 128, y + 238, "gear_mana",\
+        equip, unequip, overwrite_gear,\
+        Flags.LIFE_POT, SYSTEM["player"].creature.gear["mana_pot"])
     SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots",\
         equip, unequip, overwrite_gear,\
         Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
@@ -138,6 +144,8 @@ def draw_gear(_):
     SYSTEM["ui"]["gear_ring2"].tick().draw()
     SYSTEM["ui"]["gear_amulet"].tick().draw()
     SYSTEM["ui"]["gear_relic"].tick().draw()
+    SYSTEM["ui"]["gear_life"].tick().draw()
+    SYSTEM["ui"]["gear_mana"].tick().draw()
     SYSTEM["gear_panel"].tick().draw()
     x = 10
     y = 10

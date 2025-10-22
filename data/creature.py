@@ -130,7 +130,9 @@ class Creature:
             "rings": {
                 "left": None,
                 "right": None
-            }
+            },
+            "life_pot": None,
+            "mana_pot": None
         }
         self._buffs = []
         self._dots = 0

@@ -322,6 +322,8 @@ def load_images():
     SYSTEM["images"]["gear_ring"] = Image("ui/gear_ring.png").scale(64, 64)
     SYSTEM["images"]["gear_amulet"] = Image("ui/gear_amulet.png").scale(64, 64)
     SYSTEM["images"]["gear_relic"] = Image("ui/gear_relic.png").scale(64, 64)
+    SYSTEM["images"]["gear_life"] = Image("ui/gear_life.png").scale(64, 64)
+    SYSTEM["images"]["gear_mana"] = Image("ui/gear_mana.png").scale(64, 64)
     SYSTEM["images"]["test_armor"] = Image("icons/elementalfury.png").scale(64, 64)
     SYSTEM["images"]["sell_slot"] = Image("ui/gear_helm.png").scale(128, 128)
     SYSTEM["images"]["mount_icon"] = Image("icons/mount.png")
@@ -372,7 +374,10 @@ def load_icons():
         "oh": "offhands",
         "wpn": "weapons",
         "rune": "runes",
-        "jewel": "jewels"
+        "jewel": "jewels",
+        "life": "life",
+        "mana": "mana",
+        "shield": "shield"
     }
     SYSTEM["images"]["helmets"] = []
     SYSTEM["images"]["armors"] = []
@@ -386,6 +391,9 @@ def load_icons():
     SYSTEM["images"]["weapons"] = []
     SYSTEM["images"]["runes"] = []
     SYSTEM["images"]["jewels"] = []
+    SYSTEM["images"]["life"] = []
+    SYSTEM["images"]["mana"] = []
+    SYSTEM["images"]["shield"] = []
     pattern = re.compile(r"^(.+?)(\d+)\.png$")
     unsorted = []
     for filename in os.listdir(f"{RESSOURCES}/icons"):

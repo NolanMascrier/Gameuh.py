@@ -268,6 +268,8 @@ class Flags(str, Enum):
     ENERG = "energy"
     LIGHT = "light"
     DARK = "dark"
+    LIFE_POT = "life_potion"
+    MANA_POT = "mana_potion"
     CRIT_CHANCE = "crit_rate"
     CRIT_DAMAGE = "crit_dmg"
     PHYS_FLAT = "phys_flat"
