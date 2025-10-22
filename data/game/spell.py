@@ -150,7 +150,6 @@ class Spell():
         if self._base_damage is None:
             return
         mod = self._stats["damage_mod"].get_value()
-        print(f"Spell is {self.name} with modifier {mod}")
         self._real_damage.mod = mod
         self._real_damage.crit_mult = self._stats["crit_dmg"].c_value
         self._real_damage.crit_rate = self._stats["crit_rate"].c_value
@@ -506,6 +505,14 @@ class Spell():
         if evil and entity.x > SYSTEM["player"].entity.x:
             angle += 180
         area = self._stats["area"].c_value + caster.stats["area"].c_value
+        debuffs = []
+        for d in self._debuffs:
+            dbf = d.clone()
+            dbf.duration *= caster.stats["debuff_len"].c_value
+            dbf.tick_rate *= caster.stats["debuff_rte"].c_value
+            dbf.value *= caster.stats["debuff_pot"].c_value
+            dbf.damage.mod *= caster.stats["debuff_pot"].c_value if dbf.damage is not None else 1
+            debuffs.append(dbf)
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
                         self._real_damage, caster, evil,\
@@ -513,7 +520,7 @@ class Spell():
                         delay=self._stats["delay"].c_value * delay,\
                         bounces=self._stats["bounces"].c_value, \
                         chains=self._stats["chains"].c_value, \
-                        behaviours=self._flags, caster=entity, debuffs=self._debuffs,
+                        behaviours=self._flags, caster=entity, debuffs=debuffs,
                         explosion=self._explosion, area=area,\
                         ignore_team=ignore_team, anim_on_hit=self._anim_on_hit,
                         anim_speed=self._stats["anim_speed"].c_value)
@@ -521,10 +528,18 @@ class Spell():
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False, ignore_team = False):
         """Spawns a slash."""
+        debuffs = []
+        for d in self._debuffs:
+            dbf = d.clone()
+            dbf.duration *= caster.stats["debuff_len"].c_value
+            dbf.tick_rate *= caster.stats["debuff_rte"].c_value
+            dbf.value *= caster.stats["debuff_pot"].c_value
+            dbf.damage.mod *= caster.stats["debuff_pot"].c_value if dbf.damage is not None else 1
+            debuffs.append(dbf)
         area = self._stats["area"].c_value + caster.stats["area"].c_value
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
                        not aim_right, evil, self._flags, self._offset[0],\
-                       self._offset[1], debuffs=self._debuffs, area=area,\
+                       self._offset[1], debuffs=debuffs, area=area,\
                        ignore_team=ignore_team, effective_frames=self._effective_frames,\
                        anim_on_hit=self._anim_on_hit, anim_speed=self._stats["anim_speed"].c_value)
         PROJECTILE_TRACKER.append(sl)
@@ -573,9 +588,13 @@ class Spell():
                                               0, 0, i + 1, self._counter + -spread * i)
         if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
-                if not isinstance(afflic, Affliction):
-                    continue
-                caster.afflict(afflic.clone())
+                aff = afflic.clone()
+                aff.duration *= caster.stats["debuff_len"].c_value
+                aff.tick_rate *= caster.stats["debuff_rte"].c_value
+                aff.value *= caster.stats["debuff_pot"].c_value
+                if aff.damage is not None:
+                    aff.damage.mod *= caster.stats["debuff_pot"].c_value
+                caster.afflict(aff)
         if Flags.DASH in self.all_flags:
             entity.dash(self._stats["distance"].c_value)
         if Flags.MELEE in self.all_flags:

@@ -55,6 +55,7 @@ class Character():
             "arc",
             "icebolt",
             "masterstrike",
+            "rip",
             "exult",
             "magicmissile",
             "elefury",
@@ -106,6 +107,8 @@ class Character():
         desired_flip = SYSTEM["mouse"][0] < self.entity.center_x
         if desired_flip != self.entity.flipped:
             self.entity.flip(desired_flip)
+        if self._creature.stats["life"].current_value <= 0:
+            SYSTEM["level"].fail_level()
 
     def __cast(self, keys):
         """Cast a spell from the corresponding keys."""
@@ -237,6 +240,16 @@ class Character():
     def y(self):
         """Returns the character's y value."""
         return self._entity.y
+
+    @property
+    def right(self):
+        """Returns the character's right value."""
+        return self._entity.right
+
+    @property
+    def bottom(self):
+        """Returns the character's bottom value."""
+        return self._entity.bottom
 
     @property
     def hitbox(self):

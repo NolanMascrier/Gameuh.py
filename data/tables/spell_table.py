@@ -8,6 +8,8 @@ from data.image.animation import Animation, Image
 from data.numerics.affliction import Affliction
 from data.game.spell import Spell
 
+BLOOD_RED = (89, 10, 10)
+
 FIREBOLT = Damage(1.5, fire=2, flags=[Flags.SPELL])
 FIREBALL = Damage(2, fire=5, flags=[Flags.SPELL])
 FIREBALL_EXPLOSION = Damage(2, fire=7, flags=[Flags.SPELL])
@@ -27,16 +29,18 @@ LIGHTSPEAR = Damage(10, light=25, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=6, fire=4, flags=[Flags.MELEE])
 EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
+RIP = Damage(1.1, phys=4, flags=[Flags.MELEE])
 
 MASTER_1 = Damage(1.2, phys=6, flags=[Flags.MELEE])
 MASTER_2 = Damage(1.2, phys=8, flags=[Flags.MELEE])
 MASTER_3 = Damage(1.2, phys=12, flags=[Flags.MELEE], is_crit=True)
 
 BLEED_DMG = Damage(1, pp=0.5, phys=5, ignore_block=True, ignore_dodge=True)
-BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED_DMG)
+BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED_DMG,
+                   dot_color=BLOOD_RED, is_debuff=True, dot_tick=0.5)
 
-BURN_DMG = Damage(2, fire=4, ignore_block=True, ignore_dodge=True)
-BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG)
+BURN_DMG = Damage(0.33, fire=1, ignore_block=True, ignore_dodge=True)
+BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG, dot_tick=0.1)
 
 ELEFURY = Affliction("elemental_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
@@ -63,6 +67,7 @@ def generate_spell_list():
     m2_icon = Image("icons/masterstrike_b.png").scale(64, 64)
     m3_icon = Image("icons/masterstrike_c.png").scale(64, 64)
     magicmissile_icon = Image("icons/magicmissile.png").scale(64, 64)
+    rip_icon = Image("icons/rip.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
@@ -87,6 +92,9 @@ def generate_spell_list():
         Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["furyslash_img"] =\
         Animation("anims/furyslash.png", 64, 60, frame_rate=0.35, loops=False, plays_once=True)
+    SYSTEM["images"]["rip_img"] =\
+        Animation("anims/rip.png", 64, 64, frame_rate=0.35, loops=False, plays_once=True)\
+        .flip(False, True)
     SYSTEM["images"]["exult_img"] =\
         Animation("exult.png", 64, 64, frame_rate=0.25, loops=False, plays_once=True)\
         .scale(256, 256)
@@ -172,6 +180,9 @@ def generate_spell_list():
     furyslash = Spell("fslash", fury_icon, "furyslash_img", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF],
         buffs=[FURY], offset_x=60, alterations=[FURY, FURY_COST, FURY_SPEED])
+    rip = Spell("rip", rip_icon, "rip_img", RIP, 10, 0,\
+        cooldown=0.75, flags=[Flags.MELEE, Flags.DEBUFF],
+        debuffs=[BLEED], offset_x=60)
     charge = Spell("Charge", fury_icon, "furyslash_alt", CHARGE,
         flags=[Flags.MELEE], offset_x=120)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,
@@ -193,6 +204,7 @@ def generate_spell_list():
     SYSTEM["spells"]["masterstrike"] = masterstrike
     SYSTEM["spells"]["fireball"] = fireball
     SYSTEM["spells"]["magicmissile"] = magicmissile
+    SYSTEM["spells"]["rip"] = rip
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

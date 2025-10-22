@@ -264,6 +264,16 @@ class Enemy():
         return self._entity.y
 
     @property
+    def right(self):
+        """Returns the character's right value."""
+        return self._entity.right
+
+    @property
+    def bottom(self):
+        """Returns the character's bottom value."""
+        return self._entity.bottom
+
+    @property
     def destroyed(self) -> bool:
         """Returns whether or not the enemy can be\
         removed."""

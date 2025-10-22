@@ -6,6 +6,8 @@ from data.constants import trad, META_FLAGS, Flags
 from data.image.hoverable import Hoverable
 from data.numerics.damage import Damage
 
+ORANGE = (255, 210, 48)
+
 class Affliction():
     """Defines an affliction. An affliction is a temporary \
     stat modifier.
@@ -24,9 +26,14 @@ class Affliction():
         damage (Damage, optionnal): Damage applied each tick.
         max_stacks (int, optional): Maximum number of stacks should this buff be stackable.\
         Defaults to 10.
+        tick_rate (float, optional): Time in seconds between each tick. Defaults to 0.016.
+        dot_tick (float, optional): Time in seconds between each damage tick. Defaults to 1.
+        dot_color (tuple, optional): Color of the damage text for DOT effects. Defaults to ORANGE.
+        is_debuff (bool, optional): Wether or not the affliction is a debuff. Defaults to False.
     """
-    def __init__(self, name, value, duration = 1, flags: list = None, stackable = False,\
-                 refreshable = False, damage: Damage = None, max_stacks = 10):
+    def __init__(self, name, value, duration = 1, flags: list = None, stackable = False,
+                 refreshable = False, damage: Damage = None, max_stacks = 10, tick_rate = 0.016,
+                 dot_tick = 1, dot_color = ORANGE, is_debuff = False):
         self._name = name
         self._value = value
         self._duration = duration
@@ -40,14 +47,24 @@ class Affliction():
         self._refreshable = refreshable
         self._damage = damage
         self._max_stacks = max_stacks
+        self._tick_rate = tick_rate
+        self._dot_tick = dot_tick
+        self._dot_timer = 0.0
+        self._dot_amount = 0
+        self._dot_color = dot_color
+        self._is_debuff = is_debuff
 
     def tick(self):
         """Ticks down the timer.
         """
+        self._dot_timer += self._tick_rate
+        if self._dot_timer >= self._dot_tick:
+            self._dot_timer -= self._dot_tick
+            self._dot_amount += 1
         if self._duration >= 0:
             self._duration -= 0.016
 
-    def clone(self):
+    def clone(self, is_debuff = False):
         """Returns a copy of the affliction."""
         return Affliction(
             self._name,
@@ -56,12 +73,17 @@ class Affliction():
             self._flags,
             self._stackable,
             self._refreshable,
-            self._damage
+            self._damage.clone() if self._damage is not None else None,
+            self._max_stacks,
+            self._tick_rate,
+            self._dot_tick,
+            self._dot_color,
+            is_debuff
         )
 
     def __str__(self):
-        return f"{self._name} with value {self._value}," +\
-            f" duration {self._duration} and flags {self._flags}\n"
+        return f"{self._name}: value {self._value}," +\
+            f" duration {self._duration}, flags {self._flags}, tick rate {self._tick_rate}\n"
 
     def __eq__(self, other):
         if not isinstance(other, Affliction):
@@ -209,3 +231,46 @@ class Affliction():
     @max_stacks.setter
     def max_stacks(self, value):
         self._max_stacks = value
+
+    @property
+    def tick_rate(self):
+        """Returns the dot's tick rate."""
+        return self._tick_rate
+
+    @tick_rate.setter
+    def tick_rate(self, value):
+        self._tick_rate = value
+
+    @property
+    def dot_tick(self):
+        """Returns the dot's tick amount."""
+        return self._dot_tick
+
+    @dot_tick.setter
+    def dot_tick(self, value):
+        self._dot_tick = value
+
+    @property
+    def dot_amount(self):
+        """Returns the amount of dot ticks that have occured."""
+        dt = self._dot_amount
+        self._dot_amount = 0
+        return dt
+
+    @property
+    def dot_color(self):
+        """Returns the color of the dot effect."""
+        return self._dot_color
+
+    @dot_color.setter
+    def dot_color(self, value):
+        self._dot_color = value
+
+    @property
+    def is_debuff(self):
+        """Returns whether or not the affliction is a debuff."""
+        return self._is_debuff
+
+    @is_debuff.setter
+    def is_debuff(self, value):
+        self._is_debuff = value

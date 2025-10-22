@@ -342,6 +342,7 @@ def load_images():
     SYSTEM["images"]["buff_fury"] = Image("icons/fury.png")
     SYSTEM["images"]["buff_celerity"] = Image("icons/celerity.png")
     SYSTEM["images"]["buff_bleed"] = Image("icons/bleed.png")
+    SYSTEM["images"]["buff_burn"] = Image("icons/burn.png")
     SYSTEM["images"]["gold_icon"] = Image("icons/gold.png")
     SYSTEM["images"]["exp_orb_big"] = Image("icons/exp.png").scale(64, 64)
     SYSTEM["images"]["loss"] = Image("icons/lost.png").scale(64, 64)

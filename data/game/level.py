@@ -230,7 +230,7 @@ class Level():
 
     def summon_wave(self, level:int, wave:int):
         """Summons a wave of monsters."""
-        min_monsters = (1 + random.randint(0, 3)) * (wave + 1) 
+        min_monsters = (1 + random.randint(0, 3)) * (wave + 1)
         max_monsters = (4 + random.randint(0, 3)) * (wave + 1)
         monsters = round(max(random.randint(min_monsters, max_monsters + 1), 1) * self._pack_size)
         choice = [VOIDBOMBER, DEMONBAT, NECROMANCER]

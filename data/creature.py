@@ -80,6 +80,9 @@ class Creature:
             "dodge": Stat(0, "dodge", scaling_value=0, min_cap=0, max_cap=0.95),
             "crit_res": Stat(0, "crit_res", 1, 0, scaling_value=0),
             "debuff_res": Stat(0, "debuff_res", 1, 0, scaling_value=0.005, precision=4),
+            "debuff_len": Stat(1, "debuff_len", scaling_value=0, precision=2, min_cap=0.1),
+            "debuff_rte": Stat(1, "debuff_rte", scaling_value=0, precision=2, min_cap=0.1),
+            "debuff_pot": Stat(1, "debuff_pot", scaling_value=0, precision=2, min_cap=0.1),
 
             "phys": Stat(0, "phys", 0.9, -2, scaling_value=0.005),
             "fire": Stat(0, "fire", 0.9, -2, scaling_value=0.005),
@@ -388,13 +391,13 @@ class Creature:
                     roll = random.uniform(0, 1)
                     if roll <= self._stats["debuff_res"].c_value:
                         continue
-                self.__apply_afflict(a.clone())
+                self.__apply_afflict(a.clone(is_debuff))
         elif isinstance(affliction, Affliction):
             if is_debuff:
                 roll = random.uniform(0, 1)
                 if roll <= self._stats["debuff_res"].c_value:
                     return
-            self.__apply_afflict(affliction.clone())
+            self.__apply_afflict(affliction.clone(is_debuff))
 
     def __remove_afflic(self, affliction: Affliction):
         """Removes an affliction from the character.
@@ -436,20 +439,23 @@ class Creature:
     def tick(self):
         """Ticks down all buffs and debuffs."""
         i = len(self._buffs) - 1
+        for stat in self._stats:
+            self._stats[stat].tick()
         while i >= 0:
             buff = self._buffs[i]
             buff.tick()
             if buff.expired:
                 self._buffs.pop(i)
-            elif self._dots <= 0 and buff.damage is not None:
-                self.damage(buff.damage)
+            elif buff.damage is not None:
+                dt = buff.dot_amount
+                for _ in range(dt):
+                    dmg, crit = self.damage(buff.damage)
+                    if self._origin is not None:
+                        x = random.randint(int(self._origin.x), int(self._origin.right))
+                        y = random.randint(int(self._origin.y), int(self._origin.bottom))
+                        SYSTEM["text_generator"].generate_damage_text(x, y, buff.dot_color,
+                                                                      crit, dmg)
             i -= 1
-        for stat in self._stats:
-            self._stats[stat].tick()
-        if self._dots > 0:
-            self._dots -= 0.016
-        else:
-            self._dots = 1
 
     def on_level_up(self):
         """Grants the creature a level, one ap (up to
