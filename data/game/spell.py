@@ -150,6 +150,7 @@ class Spell():
         if self._base_damage is None:
             return
         mod = self._stats["damage_mod"].get_value()
+        print(f"Spell is {self.name} with modifier {mod}")
         self._real_damage.mod = mod
         self._real_damage.crit_mult = self._stats["crit_dmg"].c_value
         self._real_damage.crit_rate = self._stats["crit_rate"].c_value
@@ -205,6 +206,7 @@ class Spell():
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
+        self.update()
         for _, stat in self._stats.items():
             stat.tick()
         for buff in self._afflicts:
@@ -236,6 +238,22 @@ class Spell():
 
     def __apply_afflict(self, affliction: Affliction):
         """Applies the affliction."""
+        if affliction.stackable:
+            stacks = len([f for f in self._afflicts if f.name == affliction.name])
+            if affliction.refreshable:
+                for i, existing_aff in enumerate(self._buffs):
+                    if existing_aff.name == affliction.name:
+                        existing_aff.duration = affliction.duration
+            if stacks < affliction.max_stacks:
+                self._afflicts.append(affliction)
+            else:
+                return
+        else:
+            for i, existing_aff in enumerate(self._afflicts):
+                if existing_aff.name == affliction.name:
+                    self._afflicts[i] = affliction
+                    return
+            self._afflicts.append(affliction)
         for flag in affliction.flags:
             stat_key = flag.value
             if stat_key in self._stats:
@@ -249,14 +267,6 @@ class Spell():
                     self._modifiers[i] = affliction
                     return
             self._modifiers.append(affliction)
-        if affliction.stackable:
-            self._afflicts.append(affliction)
-        else:
-            for i, existing_aff in enumerate(self._afflicts):
-                if existing_aff.name == affliction.name:
-                    self._afflicts[i] = affliction
-                    return
-            self._afflicts.append(affliction)
 
     def afflict(self, affliction):
         """Afflicts the spell with an affliction from a jewel.
@@ -267,9 +277,9 @@ class Spell():
         """
         if isinstance(affliction, tuple):
             for a in affliction:
-                self.__apply_afflict(a)
+                self.__apply_afflict(a.clone())
         elif isinstance(affliction, Affliction):
-            self.__apply_afflict(affliction)
+            self.__apply_afflict(affliction.clone())
         for step in self._sequence:
             if isinstance(step, Spell):
                 step.afflict(affliction)
@@ -354,6 +364,9 @@ class Spell():
     def reset(self):
         """Resets the spell's data."""
         self._cooldown = 0
+        for stat in self._stats:
+            self._stats[stat].reset()
+        self._afflicts.clear()
 
     def __damage_describe(self, caster):
         """Describes the damage and buffs components."""
@@ -529,7 +542,6 @@ class Spell():
             if caster.stats["life"].current_value < life_cost:
                 return False
         for b in self._alterations:
-            print(f"AFFLIC {str(b)}")
             self.afflict(b)
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
         caster.consume_mana(self._stats["mana_cost"].c_value)

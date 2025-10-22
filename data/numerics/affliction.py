@@ -22,9 +22,11 @@ class Affliction():
         refreshable (bool, optionnal): Wether or not the affliction\
         refreshes on getting a stack. Defaults to `False`.
         damage (Damage, optionnal): Damage applied each tick.
+        max_stacks (int, optional): Maximum number of stacks should this buff be stackable.\
+        Defaults to 10.
     """
     def __init__(self, name, value, duration = 1, flags: list = None, stackable = False,\
-                 refreshable = False, damage: Damage = None):
+                 refreshable = False, damage: Damage = None, max_stacks = 10):
         self._name = name
         self._value = value
         self._duration = duration
@@ -37,6 +39,7 @@ class Affliction():
         self._stackable = stackable
         self._refreshable = refreshable
         self._damage = damage
+        self._max_stacks = max_stacks
 
     def tick(self):
         """Ticks down the timer.
@@ -197,3 +200,12 @@ class Affliction():
             return False
         else:
             return self._duration <= 0
+
+    @property
+    def max_stacks(self):
+        """Returns the maximum amounts of stacks."""
+        return self._max_stacks
+
+    @max_stacks.setter
+    def max_stacks(self, value):
+        self._max_stacks = value

@@ -21,7 +21,7 @@ def renders(lst):
     RENDER_LIST.extend(lst)
 
 def render_all():
-    """Renders the screen."""
+    """Renders the screen - OPTIMIZED."""
     game_state = SYSTEM["game_state"]
     if game_state == LOADING:
         SYSTEM["windows"].fill(BLACK_TRANSP)
@@ -29,19 +29,23 @@ def render_all():
             SYSTEM["windows"].blits(RENDER_LIST)
             RENDER_LIST.clear()
     else:
-        shake = SYSTEM["post_effects"].shake_factor
         all_blits = []
+        shake = SYSTEM["post_effects"].shake_factor
         all_blits.append((SYSTEM["gm_background"], shake))
         all_blits.append((SYSTEM["gm_parallaxe"], shake))
         if RENDER_LIST:
             all_blits.extend(RENDER_LIST)
             RENDER_LIST.clear()
         if game_state == GAME_LEVEL:
+            SYSTEM["images"]["life_orb"].tick()
+            SYSTEM["images"]["mana_orb"].tick()
+            SYSTEM["images"]["exp_orb"].tick()
             all_blits.append((SYSTEM["warnings"], shake))
-            for _, layer in SYSTEM["layers"].items():
+            for layer in SYSTEM["layers"].values():
                 all_blits.extend(layer)
         elif game_state == MENU_INVENTORY:
-            all_blits.append((SYSTEM["layers"]["pickup"], shake))
+            all_blits.extend(SYSTEM["layers"]["pickup"])
         if all_blits:
             SYSTEM["windows"].blits(all_blits)
+    if game_state == GAME_LEVEL:
         SYSTEM["warnings"].fill(BLACK_TRANSP)

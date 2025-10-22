@@ -1,4 +1,4 @@
-"""Handles the general UI operations such as the bottom bar - OPTIMIZED VERSION."""
+"""Handles the general UI operations such as the bottom bar"""
 
 from functools import lru_cache
 
@@ -152,7 +152,7 @@ def draw_game(show_player = True, show_enemies = True,\
                 texts_layer.extend(text_blits)
 
 def logic_tick():
-    """Ticks all there is to tick - OPTIMIZED VERSION."""
+    """Ticks all there is to tick"""
     SYSTEM["player"].tick()
     i = len(POWER_UP_TRACKER) - 1
     while i >= 0:

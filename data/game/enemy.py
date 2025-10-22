@@ -129,6 +129,14 @@ class Enemy():
     def on_heal(self, value):
         """Called when the creature heals."""
 
+    def creature_tick(self):
+        """Ticks the creature."""
+        self._creature.tick()
+
+    def entity_tick(self):
+        """Ticks the entity"""
+        self._entity.tick(self)
+
     def tick(self, player):
         """Ticks down the entity."""
         if self._exploded:
@@ -142,8 +150,8 @@ class Enemy():
             return
         if self._entity.is_inside(SYSTEM["mouse"]):
             SYSTEM["mouse_target"] = self
-        self._entity.tick(self)
-        self._creature.tick()
+        self.entity_tick()
+        self.creature_tick()
         if self._attacking and self._attack_delay >= self._delay:
             self.attack()
             self._attacking = False

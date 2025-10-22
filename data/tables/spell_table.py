@@ -41,11 +41,11 @@ BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG)
 ELEFURY = Affliction("elemental_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
-FURY = Affliction("fury", 0.15, 1, flags=[Flags.BLESS, Flags.MELEE],\
+FURY = Affliction("fury", 0.15, 1, flags=[Flags.DAMAGE_MOD, Flags.BLESS],\
                 stackable=True, refreshable=True)
 FURY_SPEED = Affliction("fury2", 0.05, 1, flags=[Flags.ANIMATION_SPEED, Flags.BLESS],
                         stackable=True, refreshable=True)
-FURY_COST = Affliction("fury3", 0.05, 1, flags=[Flags.MANA_COST, Flags.COOLDOWN, Flags.HEX],
+FURY_COST = Affliction("fury3", 0.025, 1, flags=[Flags.MANA_COST, Flags.COOLDOWN, Flags.HEX],
                         stackable=True, refreshable=True)
 
 def generate_spell_list():
@@ -171,7 +171,7 @@ def generate_spell_list():
         cooldown=3, flags=[Flags.BUFF, Flags.DASH], buffs=[CELERITY])
     furyslash = Spell("fslash", fury_icon, "furyslash_img", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF],
-        buffs=[FURY], offset_x=60, alterations=[FURY_COST, FURY_SPEED])
+        buffs=[FURY], offset_x=60, alterations=[FURY, FURY_COST, FURY_SPEED])
     charge = Spell("Charge", fury_icon, "furyslash_alt", CHARGE,
         flags=[Flags.MELEE], offset_x=120)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,

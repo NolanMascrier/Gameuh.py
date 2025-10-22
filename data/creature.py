@@ -323,6 +323,22 @@ class Creature:
 
     def __apply_afflict(self, affliction: Affliction):
         """Applies the affliction."""
+        if affliction.stackable:
+            stacks = len([f for f in self._buffs if f.name == affliction.name])
+            if affliction.refreshable:
+                for i, existing_aff in enumerate(self._buffs):
+                    if existing_aff.name == affliction.name:
+                        existing_aff.duration = affliction.duration
+            if stacks < affliction.max_stacks:
+                self._buffs.append(affliction)
+            else:
+                return
+        else:
+            for i, existing_aff in enumerate(self._buffs):
+                if existing_aff.name == affliction.name:
+                    self._buffs[i] = affliction
+                    return
+            self._buffs.append(affliction)
         for flag in affliction.flags:
             stat_key = flag.value
             if stat_key in self._stats:
@@ -357,14 +373,6 @@ class Creature:
                 self._stats["ice_dmg"].afflict(affliction)
                 self._stats["elec_dmg"].afflict(affliction)
                 self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
-        if affliction.stackable:
-            self._buffs.append(affliction)
-        else:
-            for i, existing_aff in enumerate(self._buffs):
-                if existing_aff.name == affliction.name:
-                    self._buffs[i] = affliction
-                    return
-            self._buffs.append(affliction)
 
     def afflict(self, affliction, is_debuff: bool = False):
         """Afflicts the creature with an affliction.
@@ -380,13 +388,13 @@ class Creature:
                     roll = random.uniform(0, 1)
                     if roll <= self._stats["debuff_res"].c_value:
                         continue
-                self.__apply_afflict(a)
+                self.__apply_afflict(a.clone())
         elif isinstance(affliction, Affliction):
             if is_debuff:
                 roll = random.uniform(0, 1)
                 if roll <= self._stats["debuff_res"].c_value:
                     return
-            self.__apply_afflict(affliction)
+            self.__apply_afflict(affliction.clone())
 
     def __remove_afflic(self, affliction: Affliction):
         """Removes an affliction from the character.
@@ -427,12 +435,15 @@ class Creature:
 
     def tick(self):
         """Ticks down all buffs and debuffs."""
-        for buff in self._buffs:
+        i = len(self._buffs) - 1
+        while i >= 0:
+            buff = self._buffs[i]
             buff.tick()
             if buff.expired:
-                self._buffs.remove(buff)
+                self._buffs.pop(i)
             elif self._dots <= 0 and buff.damage is not None:
                 self.damage(buff.damage)
+            i -= 1
         for stat in self._stats:
             self._stats[stat].tick()
         if self._dots > 0:

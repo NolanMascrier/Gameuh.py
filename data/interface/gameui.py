@@ -17,6 +17,7 @@ UPDATE_COUNTER = [5]
 
 RED = (150, 0, 0)
 BLACK = (0, 0, 0, 0)
+YELLOW = (255, 196, 0)
 
 _UI_CACHE = {
     'last_life': None,
@@ -175,17 +176,19 @@ def draw_skills():
             cdl = cdc / cdm * 60
             oom = bool(char.creature.get_efficient_value(spell.stats["mana_cost"]\
                 .get_value()) > char.creature.stats["mana"].current_value)
-            s = Surface(int(cdl), 60)
-            s.set_alpha(128)
-            s.fill((255, 196, 0))
-            s2 = Surface(60, 60)
-            s2.set_alpha(128 if oom else 0)
-            s2.fill((255, 0, 0))
             x_pos = UI_SKILLS_OFFSET + 104 * i
             y_pos = SCREEN_HEIGHT - 130
             data.append((spell.icon.get_image(), (x_pos, y_pos)))
-            data.append((s2, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
-            data.append((s, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
+            if oom:
+                s2 = Surface(60, 60)
+                s2.set_alpha(128)
+                s2.fill(RED)
+                data.append((s2, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
+            if cdc > 0:
+                s = Surface(int(cdl), 60)
+                s.set_alpha(128)
+                s.fill(YELLOW)
+                data.append((s, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
     return data
 
 def draw_boss():
@@ -201,7 +204,8 @@ def draw_boss():
     boss = SYSTEM["images"]["boss_jauge"].image.subsurface((0, 0, w, 100))
     txt = Text(trad('enemies', SYSTEM["level"].boss.creature.name), size=30, font="item_titles_alt")
     hp = Text(f'{round(SYSTEM["level"].boss.creature.stats["life"].current_value)}' + \
-              f'/{round(SYSTEM["level"].boss.creature.stats["life"].c_value)}', size=30, font="item_desc")
+              f'/{round(SYSTEM["level"].boss.creature.stats["life"].c_value)}',
+              size=30, font="item_desc")
     data.append((SYSTEM["images"]["boss_jauge_back"].image, (150, 30)))
     data.append((boss, (150, 30)))
     data.append((txt.image, (170, 20)))
@@ -260,11 +264,7 @@ def draw_ui():
     to_draw.extend(draw_buffs())
     to_draw.extend(draw_enemy_card())
     to_draw.extend(draw_boss())
-    #SYSTEM["ui_surface"].fill((0,0,0,0))
     SYSTEM["layers"]["ui"].clear()
-    # SYSTEM["ui_surface"].blit(SYSTEM["ui_background"], (0, 0), True)
     SYSTEM["layers"]["ui"].extend(SYSTEM["ui_background"])
     SYSTEM["layers"]["ui"].extend(to_draw)
     SYSTEM["layers"]["ui"].extend(SYSTEM["ui_foreground"])
-    #SYSTEM["ui_surface"].blits(to_draw)
-    #SYSTEM["ui_surface"].blit(SYSTEM["ui_foreground"], (0, 0), True)

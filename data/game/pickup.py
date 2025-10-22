@@ -1,4 +1,4 @@
-"""A pick up is something the player can gather by touching it - OPTIMIZED VERSION."""
+"""A pick up is something the player can gather by touching it"""
 
 import random
 import math
@@ -28,7 +28,7 @@ def _fast_sqrt(value):
     return result
 
 class PickUp(HitBox):
-    """Creates a pickup - OPTIMIZED VERSION."""
+    """Creates a pickup"""
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
                 flags = None, contained = None):
         super().__init__(x, y, w, h)
@@ -93,15 +93,19 @@ class PickUp(HitBox):
             self._position.x += self._velocity.x
             self._position.y += self._velocity.y
             return
-        player_x, player_y = pos.hitbox.center
-        dx = player_x - self._position.x
-        dy = player_y - self._position.y
+        player_x = pos.hitbox.x + pos.hitbox.width / 2
+        player_y = pos.hitbox.y + pos.hitbox.height / 2
+        dx = player_x - self.x
+        dy = player_y - self.y
         dist_squared = dx * dx + dy * dy
         if dist_squared < self._arrival_threshold_sq:
             self._velocity.x *= 0.9
             self._velocity.y *= 0.9
             return
-        distance = _fast_sqrt(dist_squared)
+        if dist_squared < 1.0:
+            distance = 1.0
+        else:
+            distance = dist_squared ** 0.5
         inv_dist = self._max_speed / distance
         desired_x = dx * inv_dist
         desired_y = dy * inv_dist
@@ -110,7 +114,7 @@ class PickUp(HitBox):
         steer_mag_squared = steer_x * steer_x + steer_y * steer_y
         max_force_squared = self._max_force * self._max_force
         if steer_mag_squared > max_force_squared:
-            steer_mag = _fast_sqrt(steer_mag_squared)
+            steer_mag = steer_mag_squared ** 0.5
             inv_steer = self._max_force / steer_mag
             steer_x *= inv_steer
             steer_y *= inv_steer
@@ -119,7 +123,7 @@ class PickUp(HitBox):
         vel_mag_squared = self._velocity.x * self._velocity.x + self._velocity.y * self._velocity.y
         max_speed_squared = self._max_speed * self._max_speed
         if vel_mag_squared > max_speed_squared:
-            vel_mag = _fast_sqrt(vel_mag_squared)
+            vel_mag = vel_mag_squared ** 0.5
             inv_vel = self._max_speed / vel_mag
             self._velocity.x *= inv_vel
             self._velocity.y *= inv_vel
@@ -165,15 +169,9 @@ class PickUp(HitBox):
         self._to_delete = True
 
     def tick(self, player):
-        """Ticks down the pickup - OPTIMIZED VERSION."""
+        """Ticks down the pickup"""
         self.move(player)
         super().move((self.x, self.y))
-        if Flags.LIFE in self._flags:
-            SYSTEM["images"]["life_orb"].tick()
-        elif Flags.MANA in self._flags:
-            SYSTEM["images"]["mana_orb"].tick()
-        elif Flags.EXPERIENCE in self._flags:
-            SYSTEM["images"]["exp_orb"].tick()
         if self.is_colliding(SYSTEM["player"].hitbox):
             self.pickup(player)
 

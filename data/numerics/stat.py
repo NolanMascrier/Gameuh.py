@@ -67,6 +67,10 @@ class Stat:
                 final_incr += increase.value
         return final_incr
 
+    def __str__(self):
+        return f"{self.name} : ({self.value} + {self.get_flats()}) * (1 + {self.get_increases()})"+\
+               f" * {self.get_multipliers()}"
+
     def get_value(self):
         """Returns the computed final value of the stat.
         
