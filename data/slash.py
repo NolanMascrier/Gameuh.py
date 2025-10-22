@@ -2,6 +2,7 @@
 plays its animation and disappear. It's used for melee attacks or explosions."""
 
 import json
+import numpy
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.projectile import DummyEntity
@@ -17,7 +18,7 @@ class Slash(HitBox):
                 damage:Damage, aim_right = True, evil = False, flags = None,\
                 offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\
                 ignore_team = False, effective_frames = None, anim_on_hit = None,
-                anim_speed = 1):
+                anim_speed = 1, debuff_chance = 1.0):
         self._caster = caster
         self._origin = origin
         self._image = animation
@@ -49,6 +50,7 @@ class Slash(HitBox):
         self._ignore_team = ignore_team
         self._tick_time = 0
         self._anim_speed = anim_speed
+        self._debuff_chance = debuff_chance
 
     def clone(self, entity, origin, area = None, center=False):
         """Returns a deep copy of the slash."""
@@ -103,7 +105,7 @@ class Slash(HitBox):
                     proj.evil is not self._evil:
                     proj.flag()
 
-    def on_hit(self, target: Creature, entity = None) -> tuple[float|None,bool|None]:
+    def on_hit(self, target: Creature, _ = None) -> tuple[float|None,bool|None]:
         """Called when the slash hits a target."""
         if target not in self._immune:
             dmg = self._origin.recalculate_damage(self._damage)
@@ -114,7 +116,7 @@ class Slash(HitBox):
                 for debuff in self._debuffs:
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
-                    target.afflict(debuff.clone(), True)
+                    target.afflict(debuff.clone(), True, self._debuff_chance)
             self._immune.append(target)
             return num, crit
         return (None, None)

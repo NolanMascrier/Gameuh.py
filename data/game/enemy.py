@@ -150,8 +150,16 @@ class Enemy():
             return
         if self._entity.is_inside(SYSTEM["mouse"]):
             SYSTEM["mouse_target"] = self
-        self.entity_tick()
         self.creature_tick()
+        if Flags.CANNOT_ACT in self.creature.gather_flags():
+            self._counter += 0.016
+            self._attacking = False
+            self._stopped = False
+            self._attack_delay = 0
+            if self._counter >= self._timer:
+                self._counter -= self._timer
+            return
+        self.entity_tick()
         if self._attacking and self._attack_delay >= self._delay:
             self.attack()
             self._attacking = False

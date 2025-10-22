@@ -103,11 +103,12 @@ class Affliction():
             return True
         return not self == other
 
-    def describe(self, is_buff = False) -> Hoverable:
+    def describe(self, is_buff = False, debuff_chance = 1) -> Hoverable:
         """Returns a hoverable about the affliction. Used for skills description."""
         name = f"{trad('meta_words', 'buffs' if is_buff else 'debuffs')} " +\
             f"{trad('affliction_name', self._name)} " +\
             f"{trad('meta_words', 'for')} {self._duration} {trad('meta_words', 'seconds')}"
+        name += f"({debuff_chance * 100}%)" if debuff_chance < 1 else ""
         desc = trad('affliction_desc', self._name)
         return Hoverable(0, 0, name, desc, (0,0,0))
 

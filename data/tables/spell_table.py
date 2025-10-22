@@ -31,13 +31,17 @@ EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
 RIP = Damage(1.1, phys=4, flags=[Flags.MELEE])
 
+FREEZE = Affliction("freeze", 0, 1, flags=[Flags.CANNOT_ACT], is_debuff=True)
+
 MASTER_1 = Damage(1.2, phys=6, flags=[Flags.MELEE])
 MASTER_2 = Damage(1.2, phys=8, flags=[Flags.MELEE])
 MASTER_3 = Damage(1.2, phys=12, flags=[Flags.MELEE], is_crit=True)
 
 BLEED_DMG = Damage(1, pp=0.5, phys=5, ignore_block=True, ignore_dodge=True)
-BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED_DMG,
+BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], False, False, BLEED_DMG,
                    dot_color=BLOOD_RED, is_debuff=True, dot_tick=0.5)
+BLEED_E = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED_DMG,
+                   dot_color=BLOOD_RED, is_debuff=True, dot_tick=1)
 
 BURN_DMG = Damage(0.33, fire=1, ignore_block=True, ignore_dodge=True)
 BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG, dot_tick=0.1)
@@ -148,7 +152,7 @@ def generate_spell_list():
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
-        Flags.DELAYED, Flags.PIERCING])
+        Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)
     voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\
         cooldown=0, projectiles=3, delay=2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN], offset_y=50)
@@ -184,14 +188,14 @@ def generate_spell_list():
         cooldown=0.75, flags=[Flags.MELEE, Flags.DEBUFF],
         debuffs=[BLEED], offset_x=60)
     charge = Spell("Charge", fury_icon, "furyslash_alt", CHARGE,
-        flags=[Flags.MELEE], offset_x=120)
+        flags=[Flags.MELEE, Flags.DEBUFF], offset_x=120, debuffs=[BLEED_E], debuff_chance=0.75)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,
         flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
     kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
         cooldown=0, flags=[Flags.FIRE, Flags.MELEE, Flags.DEBUFF, Flags.CUTS_PROJECTILE],\
         debuffs=[BURN], effective_frames=4)
     lazoor = Spell("fslash", fury_icon, "eldritchlaser", FURYSLASH, 5, 0,\
-        cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=-1064)
+        cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=1064)
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt

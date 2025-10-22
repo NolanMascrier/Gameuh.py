@@ -28,7 +28,7 @@ class Projectile(HitBox):
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1,\
                 ignore_team = False, offset_x = 0, offset_y = 0, anim_on_hit = None,
-                anim_speed = 1):
+                anim_speed = 1, debuff_chance = 1.0):
         if Flags.RANDOM_POSITION in behaviours:
             if numpy.random.random() > 0.5: #Horizontal
                 y = int(numpy.random.choice([0, SCREEN_HEIGHT]))
@@ -93,6 +93,7 @@ class Projectile(HitBox):
         self._chains = chains
         self._warning = None
         self._anim_speed = anim_speed
+        self._debuff_chance = debuff_chance
 
     def get_image(self):
         """Returns the projectile image."""
@@ -138,7 +139,7 @@ class Projectile(HitBox):
                 for debuff in self._debuffs:
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
-                    target.afflict(debuff.clone(), True)
+                    target.afflict(debuff.clone(), True, self._debuff_chance)
             if self._explosion is not None:
                 sl = self._explosion.clone(DummyEntity(self.x, self.y, self),\
                     self._origin, self._area, True)

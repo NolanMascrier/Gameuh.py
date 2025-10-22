@@ -144,22 +144,43 @@ def draw_potions():
     data.append((_UI_CACHE['potion_texts'][1].surface, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82)))
     return data
 
+@lru_cache(maxsize=128)
+def build_buff_icon(x, y, buff, duration, stack, big = True):
+    """Builds the icon for the given buff."""
+    data = []
+    data.append((SYSTEM["images"][f"buff_{buff}"].image, (x, y)))
+    w = 32 if big else 16
+    h = 64 if big else 32
+    if duration > 1:
+        dr = round(duration)
+        txt = make_text(f"{dr}s", size=20 if big else 15)
+        data.append((txt.surface,
+                    (x - txt.width / 2 + w, y - txt.height / 2 + h)))
+    else:
+        dr = round(duration, 2)
+        txt = make_text(f"{dr}s", size=20 if big else 15)
+        data.append((txt.surface,
+                    (x - txt.width / 2 + w, y - txt.height / 2 + h)))
+    if stack > 1:
+        txt = make_text(f"x{stack}", size=25 if big else 18)
+        data.append((txt.surface,
+                    (x - txt.width / 2 + w, y - txt.height / 2 + w)))
+    return data
+
 def draw_buffs():
-    """Draws the buff list.
-    TODO: Multiple line supports, maybe backgrounds ?"""
+    """Draws the buff list."""
     data = []
     buffs = SYSTEM["player"].creature.build_debuff_list()
     i = 0
-    x = 64
+    def_x = x = 16
     y = SCREEN_HEIGHT - 96
     for buff, duration in buffs.items():
         if f"buff_{buff}" in SYSTEM["images"]:
-            SYSTEM["images"][f"buff_{buff}"].opacity(duration[0])
-            data.append((SYSTEM["images"][f"buff_{buff}"].image, (x + i * 64, y)))
-            if duration[1] > 1:
-                txt = make_text(f"{duration[1]}", size=30)
-                data.append((txt.surface,
-                            (x + i * 64 - txt.width / 2 + 32, y - txt.height / 2 + 32)))
+            if i >= 3:
+                i = 0
+                y -= 96
+            x = def_x + 32 * i
+            data.extend(build_buff_icon(x, y, buff, duration[0], duration[1]))
             i += 1
     return data
 
@@ -210,6 +231,18 @@ def draw_boss():
     data.append((boss, (150, 30)))
     data.append((txt.image, (170, 20)))
     data.append((hp.image, (170 + 1680 - hp.width, 20)))
+    buffs = SYSTEM["level"].boss.creature.build_debuff_list()
+    i = 0
+    def_x = x = 150
+    y = 100
+    for buff, duration in buffs.items():
+        if f"buff_{buff}" in SYSTEM["images"]:
+            if i >= 10:
+                i = 0
+                y += 96
+            x = def_x + 32 * i
+            data.extend(build_buff_icon(x, y, buff, duration[0], duration[1]))
+            i += 1
     return data
 
 @lru_cache(maxsize=64)
@@ -247,13 +280,25 @@ def draw_enemy_card():
     data.append((img, pos))
     data.append((txt.image, name_pos))
     data.append((hp.image, hp_pos))
+    buffs = enemy.creature.build_debuff_list()
+    i = 0
+    def_x = x = pos[0]
+    y = pos[1] + 40
+    for buff, duration in buffs.items():
+        if f"buff_mini_{buff}" in SYSTEM["images"]:
+            if i >= 5:
+                i = 0
+                y += 96
+            x = def_x + 32 * i
+            data.extend(build_buff_icon(x, y, f"mini_{buff}", duration[0], duration[1], False))
+            i += 1
     return data
 
 def draw_ui():
     """Draws the user interface."""
     SYSTEM["images"]["enemy_card"].tick()
     UPDATE_COUNTER[0] += 1
-    if UPDATE_COUNTER[0] < 5:
+    if UPDATE_COUNTER[0] < 2:
         return
     UPDATE_COUNTER[0] = 0
     to_draw = []

@@ -154,6 +154,10 @@ def load_animations():
     SYSTEM["images"]["enemy_card"] = Animation("anims/mob_background.png",\
                                                96, 64, frame_rate = 0.15).scale(192, 288)
     SYSTEM["images"]["monolith"] = Animation("monolith.png", 200, 400, frame_rate=0.1)
+    SYSTEM["images"]["buffanim_burn"] = Animation("anims/burning.png", 64, 64, frame_rate = 0.25)
+    SYSTEM["images"]["buffanim_bleed"] = Animation("anims/bleeding.png", 100, 100,
+                                                   frame_rate = 0.25, lines=2)
+    SYSTEM["images"]["buffanim_freeze"] = Animation("anims/freezing.png", 64, 64, frame_rate = 0.25)
     SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
     SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
@@ -343,6 +347,13 @@ def load_images():
     SYSTEM["images"]["buff_celerity"] = Image("icons/celerity.png")
     SYSTEM["images"]["buff_bleed"] = Image("icons/bleed.png")
     SYSTEM["images"]["buff_burn"] = Image("icons/burn.png")
+    SYSTEM["images"]["buff_freeze"] = Image("icons/freeze.png")
+    SYSTEM["images"]["buff_mini_elemental_fury"] = Image("icons/elemental_fury.png").scale(32, 32)
+    SYSTEM["images"]["buff_mini_fury"] = Image("icons/fury.png").scale(32, 32)
+    SYSTEM["images"]["buff_mini_celerity"] = Image("icons/celerity.png").scale(32, 32)
+    SYSTEM["images"]["buff_mini_bleed"] = Image("icons/bleed.png").scale(32, 32)
+    SYSTEM["images"]["buff_mini_burn"] = Image("icons/burn.png").scale(32, 32)
+    SYSTEM["images"]["buff_mini_freeze"] = Image("icons/freeze.png").scale(32, 32)
     SYSTEM["images"]["gold_icon"] = Image("icons/gold.png")
     SYSTEM["images"]["exp_orb_big"] = Image("icons/exp.png").scale(64, 64)
     SYSTEM["images"]["loss"] = Image("icons/lost.png").scale(64, 64)

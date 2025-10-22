@@ -49,12 +49,13 @@ class Spell():
         will inflict. Defaults to `[]`.
         debuffs
     """
-    def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,\
-                 bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,\
-                 explosion = None, sequence = None,\
-                 cooldown = 0.1, projectiles = 1, flags = None, buffs = None,\
-                 debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,\
-                 effective_frames = None, anim_on_hit = None, alterations = None):
+    def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,
+                 bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,
+                 explosion = None, sequence = None,
+                 cooldown = 0.1, projectiles = 1, flags = None, buffs = None,
+                 debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,
+                 effective_frames = None, anim_on_hit = None, alterations = None,
+                 debuff_chance = 1.0):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -82,7 +83,8 @@ class Spell():
                             "crit_rate", 1, 0),
             "crit_dmg": Stat(base_damage.crit_mult if base_damage is not None else 0,\
                             "crit_dmg"),
-            "anim_speed": Stat(1, "anim_speed")
+            "anim_speed": Stat(1, "anim_speed"),
+            "debuff_chance": Stat(debuff_chance, "debuff_chance", 10, 0)
         }
         self._jewels = {
             0: None,
@@ -391,13 +393,15 @@ class Spell():
 
     def __describe_afflictions(self):
         """Describe the spell's buff and debuff components."""
+        debuff_chance = self._stats["debuff_chance"].c_value * \
+            SYSTEM["player"].creature.stats["debuff_chance"].c_value
         buffs = []
         if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
                 buffs.append(afflic.describe(True))
         if Flags.DEBUFF in self.all_flags:
             for afflic in self._debuffs:
-                buffs.append(afflic.describe(False))
+                buffs.append(afflic.describe(False, debuff_chance))
         if Flags.CUTS_PROJECTILE in self.all_flags:
             buffs.append(Hoverable(0, 0, trad('meta_words', 'cut_proj'), None, BLACK))
         if Flags.TRIGGER in self.all_flags:
@@ -506,12 +510,15 @@ class Spell():
             angle += 180
         area = self._stats["area"].c_value + caster.stats["area"].c_value
         debuffs = []
+        debuff_chance = self._stats["debuff_chance"].c_value * caster.stats["debuff_chance"].c_value
         for d in self._debuffs:
             dbf = d.clone()
             dbf.duration *= caster.stats["debuff_len"].c_value
             dbf.tick_rate *= caster.stats["debuff_rte"].c_value
             dbf.value *= caster.stats["debuff_pot"].c_value
-            dbf.damage.mod *= caster.stats["debuff_pot"].c_value if dbf.damage is not None else 1
+            if dbf.damage is not None:
+                dbf.damage = caster.recalculate_damage(dbf.damage, True)
+                dbf.damage.mod *= caster.stats["debuff_pot"].c_value
             debuffs.append(dbf)
         proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
                         self._attack_anim,\
@@ -523,25 +530,30 @@ class Spell():
                         behaviours=self._flags, caster=entity, debuffs=debuffs,
                         explosion=self._explosion, area=area,\
                         ignore_team=ignore_team, anim_on_hit=self._anim_on_hit,
-                        anim_speed=self._stats["anim_speed"].c_value)
+                        anim_speed=self._stats["anim_speed"].c_value,
+                        debuff_chance=debuff_chance)
         PROJECTILE_TRACKER.append(proj)
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False, ignore_team = False):
         """Spawns a slash."""
+        debuff_chance = self._stats["debuff_chance"].c_value * caster.stats["debuff_chance"].c_value
         debuffs = []
         for d in self._debuffs:
             dbf = d.clone()
             dbf.duration *= caster.stats["debuff_len"].c_value
             dbf.tick_rate *= caster.stats["debuff_rte"].c_value
             dbf.value *= caster.stats["debuff_pot"].c_value
-            dbf.damage.mod *= caster.stats["debuff_pot"].c_value if dbf.damage is not None else 1
+            if dbf.damage is not None:
+                dbf.damage = caster.recalculate_damage(dbf.damage, True)
+                dbf.damage.mod *= caster.stats["debuff_pot"].c_value
             debuffs.append(dbf)
         area = self._stats["area"].c_value + caster.stats["area"].c_value
         sl = Slash(entity, caster, self._attack_anim, self._real_damage,\
                        not aim_right, evil, self._flags, self._offset[0],\
                        self._offset[1], debuffs=debuffs, area=area,\
                        ignore_team=ignore_team, effective_frames=self._effective_frames,\
-                       anim_on_hit=self._anim_on_hit, anim_speed=self._stats["anim_speed"].c_value)
+                       anim_on_hit=self._anim_on_hit, anim_speed=self._stats["anim_speed"].c_value,
+                       debuff_chance=debuff_chance)
         PROJECTILE_TRACKER.append(sl)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\

@@ -314,6 +314,7 @@ class Flags(str, Enum):
     DEBUFF_RES = "debuff_res"
     DEBUFF_LEN = "debuff_len"
     DEBUFF_RTE = "debuff_rte"
+    DEBUFF_CHANCE = "debuff_chance"
     IIQ = "item_quant"
     IIR = "item_qual"
     HELM = "helms"
@@ -340,6 +341,7 @@ class Flags(str, Enum):
     AREA = "area"
     ANIMATION_SPEED = "anim_speed"
     PACK_SIZE = "pack_size"
+    CANNOT_ACT = "stunned"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"

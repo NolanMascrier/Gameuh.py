@@ -11,3 +11,4 @@ GX310 for UI elements
 SlashDashGameStudios for the ice cave Parallaxe
 frakassets for the flying cristal
 Eddie's workshop for the flying Soul
+Stealthix for the fireballs

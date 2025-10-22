@@ -83,6 +83,7 @@ class Creature:
             "debuff_len": Stat(1, "debuff_len", scaling_value=0, precision=2, min_cap=0.1),
             "debuff_rte": Stat(1, "debuff_rte", scaling_value=0, precision=2, min_cap=0.1),
             "debuff_pot": Stat(1, "debuff_pot", scaling_value=0, precision=2, min_cap=0.1),
+            "debuff_chance": Stat(1, "debuff_chance", 10, 0, scaling_value=0),
 
             "phys": Stat(0, "phys", 0.9, -2, scaling_value=0.005),
             "fire": Stat(0, "fire", 0.9, -2, scaling_value=0.005),
@@ -139,7 +140,7 @@ class Creature:
         self._stats["life"].refill()
         self._stats["mana"].refill()
 
-    def recalculate_damage(self, damage_source: Damage) -> Damage:
+    def recalculate_damage(self, damage_source: Damage, is_dot = False) -> Damage:
         """Takes a raw damage source (ie from a spell) and applies the creature's
         own multipliers to it."""
         crit_roll = random.uniform(0, 1)
@@ -156,13 +157,18 @@ class Creature:
             coeff *= self._stats["ranged_dmg"].get_value()
         if Flags.SPELL in flags:
             coeff *= self._stats["spell_dmg"].get_value()
+        if is_dot:
+            coeff *= self._stats["debuff_pot"].get_value()
         dmg, pen = damage_source.get_damage()
 
         values = {}
         for types in DAMAGE_TYPE:
             type_mult = self._stats[f"{types}_dmg"].c_value
             roll_base = dmg[types] * type_mult
-            roll_added = self._stats[f"{types}_flat"].roll() * type_mult * coeff
+            if is_dot:
+                roll_added = 0
+            else:
+                roll_added = self._stats[f"{types}_flat"].roll() * type_mult * coeff
             full_roll = (roll_base + roll_added) * mod
             values[types] = full_roll
 
@@ -200,7 +206,7 @@ class Creature:
         self.afflict(Affliction("int_to_spell", spell, -1, [Flags.SPELL, Flags.BOON], False))
         self.afflict(Affliction("dex_to_ranged", ranged, -1, [Flags.RANGED, Flags.BOON], False))
 
-    def __gather_flags(self) -> list:
+    def gather_flags(self) -> list:
         """Gathers all flags from all debuffs and buffs. Used to
         do special effects from unique affixes."""
         lst = []
@@ -243,7 +249,7 @@ class Creature:
         Args:
             damage (Damage): Source of damage.
         """
-        unique_flags = self.__gather_flags()
+        unique_flags = self.gather_flags()
         damage = 0
         dmg, pen = damage_source.get_damage()
         mitig = 1 - self.__get_armor_mitigation()
@@ -377,25 +383,33 @@ class Creature:
                 self._stats["elec_dmg"].afflict(affliction)
                 self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
 
-    def afflict(self, affliction, is_debuff: bool = False):
+    def afflict(self, affliction, is_debuff: bool = False, debuff_chance: float = 1.0):
         """Afflicts the creature with an affliction.
         
         Args:
             affliction (Affliction): Affliction to afflict.
             is_debuff (bool, optional): Whether or not the affliction\
             is a debuff, which can be resisted. Defaults to False.
+            debuff_chance (float, optional): Chance to apply the debuff.\
+            Defaults to 1.0.
         """
         if isinstance(affliction, tuple):
             for a in affliction:
                 if is_debuff:
+                    treshold = debuff_chance - self._stats["debuff_res"].get_value()
                     roll = random.uniform(0, 1)
-                    if roll <= self._stats["debuff_res"].c_value:
+                    if treshold <= 0:
+                        continue
+                    if roll > treshold:
                         continue
                 self.__apply_afflict(a.clone(is_debuff))
         elif isinstance(affliction, Affliction):
             if is_debuff:
+                treshold = debuff_chance - self._stats["debuff_res"].get_value()
                 roll = random.uniform(0, 1)
-                if roll <= self._stats["debuff_res"].c_value:
+                if treshold <= 0:
+                    return
+                if roll > treshold:
                     return
             self.__apply_afflict(affliction.clone(is_debuff))
 
@@ -556,7 +570,7 @@ class Creature:
                 if s.name in lst:
                     lst[s.name][1] += 1
                 else:
-                    lst[s.name] = [s.elapsed, 1]
+                    lst[s.name] = [s.elapsed / 100, 1]
         return lst
 
     #Triggers

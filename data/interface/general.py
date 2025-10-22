@@ -68,8 +68,8 @@ def enemy_life(life):
     return SYSTEM["images"]["enemy_jauge_mini"].image.subsurface((0, 0, life, 20))
 
 def draw_game(show_player = True, show_enemies = True,\
-    show_loot = True, show_projectiles = True,\
-    show_text = True, show_animations = True):
+              show_loot = True, show_projectiles = True,\
+              show_text = True, show_animations = True):
     """Draws the main game component - HIGHLY OPTIMIZED VERSION."""
     show_hitboxes = SYSTEM["options"]["show_hitboxes"]
     show_bars = SYSTEM["options"]["show_bars"]
@@ -91,6 +91,13 @@ def draw_game(show_player = True, show_enemies = True,\
         if show_hitboxes:
             chars_layer.append(draw_hitbox(SYSTEM["player"].entity.hitbox.get_rect(), GRE, GRE_B))
         chars_layer.append((SYSTEM["player"].get_image(), SYSTEM["player"].get_pos()))
+        for buff in SYSTEM["player"].creature.buffs:
+            if f"buffanim_{buff.name}" in SYSTEM["images"]:
+                buff_anim = SYSTEM["images"][f"buffanim_{buff.name}"]
+                buff_anim.tick()
+                chars_layer.append((buff_anim.get_image(),\
+                    (SYSTEM["player"].entity.center_x - buff_anim.width // 2,\
+                     SYSTEM["player"].entity.center_y - buff_anim.height // 2)))
     if show_loot:
         loot_count = len(POWER_UP_TRACKER)
         if loot_count > 0:
@@ -121,9 +128,23 @@ def draw_game(show_player = True, show_enemies = True,\
                             .subsurface((0, 0, life_width, 20))
                         enemy_blits.append((life_bar, (bar_x, bar_y)))
                     enemy_blits.append((b.get_image(), b.get_pos()))
+                    for buff in b.creature.buffs:
+                        if f"buffanim_{buff.name}" in SYSTEM["images"]:
+                            buff_anim = SYSTEM["images"][f"buffanim_{buff.name}"]
+                            buff_anim.tick()
+                            enemy_blits.append((buff_anim.get_image(),\
+                                (b.entity.center_x - buff_anim.width // 2,\
+                                b.entity.center_y - buff_anim.height // 2)))
             else:
                 for b in ENNEMY_TRACKER:
                     enemy_blits.append((b.get_image(), b.get_pos()))
+                    for buff in b.creature.buffs:
+                        if f"buffanim_{buff.name}" in SYSTEM["images"]:
+                            buff_anim = SYSTEM["images"][f"buffanim_{buff.name}"]
+                            buff_anim.tick()
+                            enemy_blits.append((buff_anim.get_image(),\
+                                (b.entity.center_x - buff_anim.width // 2,\
+                                b.entity.center_y - buff_anim.height // 2)))
             if enemy_blits:
                 chars_layer.extend(enemy_blits)
     if show_animations:

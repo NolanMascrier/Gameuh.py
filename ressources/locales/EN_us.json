@@ -168,6 +168,9 @@
     "area":[
       "Area of effect affects the size of your abilities."
     ],
+    "debuff_chance": [
+      "Debuff chance is the chance to inflict an affliction on the target."
+    ],
     "enemies": {
       "voidboss": "Norcus the Fake",
       "voidbomber": "Void Bomber",
@@ -276,13 +279,15 @@
         "elemental_fury": "Elemental Fury",
         "fury": "Fury slash",
         "celerity": "Celerity",
-        "bleed": "Bleed"
+        "bleed": "Bleed",
+        "freeze": "Freeze"
     },
     "affliction_desc":{
         "elemental_fury": "Grants 35% more elemental damage.",
         "fury": "Grants 15% more damage, 5% reduced cooldown and 5% increased\nMana cost for Furyslash. This effect can stack up to 10 times.",
         "celerity": "Grants 300% increased move speed.",
-        "bleed": "Inflicts physical damage every seconds that ignores defenses."
+        "bleed": "Inflicts physical damage every seconds that ignores defenses.",
+        "freeze": "Prevents the target from moving or acting."
     },
     "spells_name": {
         "none": "Nothing",
@@ -431,8 +436,8 @@
         "waves": "{w} waves",
         "debuff_res": "Affliction avoidance",
         "debuff_len": "Affliction duration",
-        "debuff_rte": "Affliction speed rate"
-
+        "debuff_rte": "Affliction speed rate",
+        "debuff_chance": "Affliction success rate"
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",
