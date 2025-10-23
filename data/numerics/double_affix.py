@@ -228,3 +228,21 @@ class DoubleAffix():
             if f not in META_FLAGS and f not in GEAR_FLAGS:
                 return f.value
         return None
+
+    @property
+    def bounds_min(self):
+        """Returns the affix's bounds_min."""
+        return self._bounds_min
+
+    @bounds_min.setter
+    def bounds_min(self, value):
+        self._bounds_min = value
+
+    @property
+    def bounds_max(self):
+        """Returns the affix's bounds_max."""
+        return self._bounds_max
+
+    @bounds_max.setter
+    def bounds_max(self, value):
+        self._bounds_max = value

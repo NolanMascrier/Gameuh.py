@@ -233,7 +233,7 @@ def trad(keys, subkey = None) -> str:
         else:
             return SYSTEM["lang"][keys][subkey]
     except KeyError:
-        return ["Unknown text data."]
+        return "[Unknown text data]"
 
 WAVE_TIMER = "wave"
 TICKER_TIMER = "ticker"
@@ -268,8 +268,8 @@ class Flags(str, Enum):
     ENERG = "energy"
     LIGHT = "light"
     DARK = "dark"
-    LIFE_POT = "life_potion"
-    MANA_POT = "mana_potion"
+    LIFE_POT = "life_pot"
+    MANA_POT = "mana_pot"
     CRIT_CHANCE = "crit_rate"
     CRIT_DAMAGE = "crit_dmg"
     PHYS_FLAT = "phys_flat"
@@ -316,6 +316,7 @@ class Flags(str, Enum):
     DEBUFF_RES = "debuff_res"
     DEBUFF_LEN = "debuff_len"
     DEBUFF_RTE = "debuff_rte"
+    DEBUFF_POT = "debuff_pot"
     DEBUFF_CHANCE = "debuff_chance"
     IIQ = "item_quant"
     IIR = "item_qual"
@@ -344,6 +345,12 @@ class Flags(str, Enum):
     ANIMATION_SPEED = "anim_speed"
     PACK_SIZE = "pack_size"
     CANNOT_ACT = "stunned"
+    POT_HEAL_FLAT = "potion_healing_flat"
+    POT_HEAL_RELAT = "potion_healing_relative"
+    POT_HEAL_COUNT = "potion_healing_count"
+    POT_MANA_FLAT = "potion_mana_flat"
+    POT_MANA_RELAT = "potion_mana_relative"
+    POT_MANA_COUNT = "potion_mana_count"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"
@@ -397,8 +404,13 @@ class Flags(str, Enum):
     DESC_FLAT = "description_flat_attribute"
     DESC_PERCENT = "force_percentage_in_desc"
     DESC_UNIQUE = "desc_unique_effect"
+    DESC_NO_SIGN = "desc_no_sign"
+    DESC_HEAL = "desc_heal"
+    DESC_HEAL_FLAT = "desc_heal_flat"
+    DESC_LIFE = "desc_life"
+    DESC_MANA = "desc_mana"
 
-META_FLAGS = [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.DESC_UNIQUE,\
+META_FLAGS = [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.DESC_UNIQUE, Flags.DESC_NO_SIGN,\
                 Flags.BOON, Flags.HEX, Flags.BLESS, Flags.CURSE, Flags.FLAT]
 GEAR_FLAGS = [Flags.HELM, Flags.BOOTS, Flags.ARMOR, Flags.HANDS, Flags.BELT,\
                 Flags.RING, Flags.AMULET, Flags.RELIC, Flags.AMULET]

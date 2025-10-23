@@ -4,18 +4,18 @@ import random
 import numpy
 from data.item import Item
 from data.constants import SYSTEM, Flags
-from data.tables.affix_table import AFFIXES
 from data.tables.implicits_table import IMPLICITS
+from data.tables.affix_table import get_affixes_for_slot
 
 RUNE_WEIGHT = [100, 80, 70, 50, 40, 30, 25, 5, 2, 1]
 RUNES = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
 RUNE_LUCK = [0.9, 0.7, 0.8, 0.85, 1, 1, 1.2, 2, 2.5, 3]
 
-RARITY_WEIGHTS = [100,80,20,3,1]
+RARITY_WEIGHTS = [100, 80, 20, 3, 1]
 RARITIES = [0,1,2,3,4]
 RARITY_LUCK = [0.7, 0.9, 1.85, 3, 3]
 
-LOOT_WEIGHT = [30,50,80,70,8]
+LOOT_WEIGHT = [10, 90, 80, 70, 8]
 LOOT_VALUES = ["item", "gold", "mana", "life", "rune"]
 LOOT_LUCK = [1.8, 1.1, 0.8, 0.7, 1.5]
 
@@ -254,6 +254,55 @@ class LootGenerator():
             (Item("", "Might Jewel", 500, 0, 1, SYSTEM["images"]["jewels"][2],\
                   0, [Flags.JEWEL]), 1)
         ]
+        self._lifepots = [
+            (Item("", "Life Extract", 100, 0, 1, SYSTEM["images"]["life"][0],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count"],
+                  IMPLICITS["life_pot_heal_1_a"], IMPLICITS["life_pot_heal_1_b"]]), 1),
+            (Item("", "Life Flask", 100, 0, 1, SYSTEM["images"]["life"][1],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count"]]), 10),
+            (Item("", "Life Potion", 100, 0, 1, SYSTEM["images"]["life"][2],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count"]]), 15),
+            (Item("", "Large Life Potion", 100, 0, 1, SYSTEM["images"]["life"][3],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count"]]), 25),
+            (Item("", "Life Decoction", 100, 0, 1, SYSTEM["images"]["life"][4],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count_2"]]), 35),
+            (Item("", "Strong Life Decoction", 100, 0, 1, SYSTEM["images"]["life"][5],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count_2"]]), 50),
+            (Item("", "Life Elixir", 100, 0, 1, SYSTEM["images"]["life"][6],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count"]]), 70),
+        ]
+        self._manapots = [
+            (Item("", "Mana Extract", 100, 0, 1, SYSTEM["images"]["mana"][0],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count"],
+                  IMPLICITS["life_pot_mana_1_a"], IMPLICITS["life_pot_mana_1_b"]]), 1),
+            (Item("", "Mana Flask", 100, 0, 1, SYSTEM["images"]["mana"][1],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count"]]), 10),
+            (Item("", "Mana Potion", 100, 0, 1, SYSTEM["images"]["mana"][2],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count"]]), 15),
+            (Item("", "Large Mana Potion", 100, 0, 1, SYSTEM["images"]["mana"][3],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count"]]), 25),
+            (Item("", "Mana Decoction", 100, 0, 1, SYSTEM["images"]["mana"][4],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count_2"]]), 35),
+            (Item("", "Strong Mana Decoction", 100, 0, 1, SYSTEM["images"]["mana"][5],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count_2"]]), 50),
+            (Item("", "Mana Elixir", 100, 0, 1, SYSTEM["images"]["mana"][6],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count"]]), 70),
+        ]
+        self._slot_mapping = {
+            0: Flags.ARMOR,
+            1: Flags.HELM,
+            2: Flags.BOOTS,
+            3: Flags.HANDS,
+            4: Flags.AMULET,
+            5: Flags.RING,
+            6: Flags.RELIC,
+            7: Flags.WEAPON,
+            8: Flags.OFFHAND,
+            9: Flags.BELT,
+            10: Flags.JEWEL,
+            11: Flags.LIFE_POT,
+            12: Flags.MANA_POT
+        }
 
     def pick_weighted(self, items_with_weights):
         """Picks items with the weights"""
@@ -278,51 +327,73 @@ class LootGenerator():
                     break
         return result
 
-    def generate_affixes(self, item_type: str, num_affixes: int,
+    def generate_affixes(self, item_type: int, num_affixes: int,
                          item_level: int, already_exists = None):
         """Generates a list of affixes for the item."""
-        affix_pool = AFFIXES[item_type]
+        slot_flag = self._slot_mapping.get(item_type, Flags.ARMOR)
+        affix_pool = get_affixes_for_slot(slot_flag, item_level)
         existing_keys = set()
         if already_exists is not None:
-            existing_keys = {affix.name for affix in already_exists}
+            existing_keys = {self._extract_affix_id(affix.name) for affix in already_exists}
         candidates = []
         for affix_key, (tiers, affix_weight) in affix_pool.items():
             if affix_key in existing_keys:
                 continue
-            valid_tiers = [
-                (affix, weight)
-                for (affix, weight, min_lvl, max_lvl) in tiers
-                if min_lvl <= item_level <= max_lvl
-            ]
+            valid_tiers = [(affix, weight) for (affix, weight, _, _) in tiers]
             if valid_tiers:
                 candidates.append(((valid_tiers, affix_key), affix_weight))
         if num_affixes > len(candidates):
-            raise ValueError("Not enough unique affixes for this level.")
-        chosen_affix_groups = self.weighted_sample_without_replacement(candidates, num_affixes)
-        result_affixes = [self.pick_weighted(valid_tiers) for valid_tiers, _ in chosen_affix_groups]
+            num_affixes = len(candidates)
+            if num_affixes == 0:
+                return []
+        chosen_affix_groups = self.weighted_sample_without_replacement(
+            candidates, num_affixes)
+        result_affixes = [
+            self.pick_weighted(valid_tiers) 
+            for valid_tiers, _ in chosen_affix_groups
+        ]
         return result_affixes
 
-    def select_base(self, types: list):
+    def _extract_affix_id(self, affix_name: str) -> str:
+        """
+        Extract the base affix identifier from an affix name.
+        E.g., "STR_1" -> "strength", "PHYS_DMG_3" -> "physical_damage_increased"
+        
+        This is a simple heuristic - you may need to adjust based on your naming scheme.
+        """
+        return affix_name[:-1]
+
+    def select_base(self, types: list, is_leveled = False, level = 0):
         """Selects a random base of the type."""
-        max_weight = 0
-        for _, weight in types:
-            max_weight += float(weight)
-        roll = random.uniform(0, max_weight)
-        cress = 0
-        for item, weight in types:
-            cress += float(weight)
-            if cress >= roll:
-                return item
+        if is_leveled:
+            choice = []
+            for item, lvl in types:
+                if lvl <= level:
+                    choice.append(item)
+            return random.choice(choice)
+        else:
+            max_weight = 0
+            for _, weight in types:
+                max_weight += float(weight)
+            roll = random.uniform(0, max_weight)
+            cress = 0
+            for item, weight in types:
+                cress += float(weight)
+                if cress >= roll:
+                    return item
+        return None
 
     def generate_item(self, level, rarity):
         """Generates a random armor."""
-        item_type = numpy.random.randint(0, 11)
+        item_type = numpy.random.randint(0, 13)
+        if item_type == 11 or item_type == 12:
+            rarity = numpy.random.randint(0, 2)
         match rarity:
             case 1:
                 if item_type == 10:
                     affx = 1
                 else:
-                    affx = numpy.random.randint(1, 2)
+                    affx = numpy.random.randint(1, 3)
             case 2:
                 if item_type == 10:
                     affx = 2
@@ -332,44 +403,37 @@ class LootGenerator():
                 if item_type == 10:
                     affx = numpy.random.randint(3, 4)
                 else:
-                    affx = numpy.random.randint(7, 8)
+                    affx = numpy.random.randint(7, 9)
             case _:
                 affx = 0
-
         match item_type:
             case 1:
-                affixes = [a.roll() for a in self.generate_affixes("helms", affx, level)]
                 it = self.select_base(self._helms).copy()
             case 2:
-                affixes = [a.roll() for a in self.generate_affixes("boots", affx, level)]
                 it = self.select_base(self._boots).copy()
             case 3:
-                affixes = [a.roll() for a in self.generate_affixes("gloves", affx, level)]
                 it = self.select_base(self._gloves).copy()
             case 4:
-                affixes = [a.roll() for a in self.generate_affixes("amulets", affx, level)]
                 it = self.select_base(self._amulets).copy()
             case 5:
-                affixes = [a.roll() for a in self.generate_affixes("rings", affx, level)]
                 it = self.select_base(self._rings).copy()
             case 6:
-                affixes = [a.roll() for a in self.generate_affixes("relics", affx, level)]
                 it = self.select_base(self._relics).copy()
             case 7:
-                affixes = [a.roll() for a in self.generate_affixes("weapons", affx, level)]
                 it = self.select_base(self._weapons).copy()
             case 8:
-                affixes = [a.roll() for a in self.generate_affixes("offhands", affx, level)]
                 it = self.select_base(self._offhands).copy()
             case 9:
-                affixes = [a.roll() for a in self.generate_affixes("belts", affx, level)]
                 it = self.select_base(self._belts).copy()
             case 10:
-                affixes = [a.roll() for a in self.generate_affixes("jewels", affx, level)]
                 it = self.select_base(self._jewels).copy()
+            case 11:
+                it = self.select_base(self._lifepots, True, level).copy()
+            case 12:
+                it = self.select_base(self._manapots, True, level).copy()
             case _:
-                affixes = [a.roll() for a in self.generate_affixes("armors", affx, level)]
                 it = self.select_base(self._armors).copy()
+        affixes = [a.roll() for a in self.generate_affixes(item_type, affx, level)]
         implicits = []
         for implicit in it.implicits:
             implicits.append(implicit.roll())

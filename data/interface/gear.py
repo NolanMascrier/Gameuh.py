@@ -10,14 +10,15 @@ from data.interface.render import render, renders
 
 STAT_LIST = {}
 DEFAULT_STATS = ["life", "mana", "int", "str", "dex"]
-DEFENSE_STATS = ["def", "abs_def", "block", "dodge_rating", "crit_res"\
-    "phys", "fire", "ice", "elec", "energy", "light", "dark", "heal_factor",
-    "debuff_res"]
+DEFENSE_STATS = ["def", "abs_def", "block", "dodge_rating", "crit_res",
+    "phys", "fire", "ice", "elec", "energy", "light", "dark", "heal_factor", "debuff_res"]
 OFFENSE_STATS = ["crit_rate", "crit_dmg", "mana_efficiency", "cast_speed",
     "melee_dmg", "spell_dmg", "ranged_dmg", "precision", "phys_dmg", "fire_dmg",
     "ice_dmg", "elec_dmg", "energy_dmg", "light_dmg", "dark_dmg"]
-OTHER_STATS = ["exp_mult", "item_quant", "item_qual", "speed", "proj_quant", "proj_speed",
-    "chains", "area"]
+OTHER_STATS = ["exp_mult", "item_quant", "item_qual", "speed", "proj_quant", "proj_speed"
+    "chains", "area", "debuff_rte", "debuff_len", "debuff_chance", "life_pot",
+    "potion_healing_count", "potion_healing_flat", "potion_healing_relative",
+    "potion_mana_count", "potion_mana_flat", "potion_mana_relative"]
 STATES = ["defenses", "damages", "other"]
 
 def equip(item: Item, slot: Slot):
@@ -100,7 +101,7 @@ def open_gear_screen():
         Flags.LIFE_POT, SYSTEM["player"].creature.gear["life_pot"])
     SYSTEM["ui"]["gear_mana"] = Slot(x + 128, y + 238, "gear_mana",\
         equip, unequip, overwrite_gear,\
-        Flags.LIFE_POT, SYSTEM["player"].creature.gear["mana_pot"])
+        Flags.MANA_POT, SYSTEM["player"].creature.gear["mana_pot"])
     SYSTEM["ui"]["gear_boots"] = Slot(x, y + 238, "gear_boots",\
         equip, unequip, overwrite_gear,\
         Flags.BOOTS, SYSTEM["player"].creature.gear["boots"])
@@ -185,5 +186,5 @@ def draw_gear(_):
                 data.set(x_offset, 20 + y_offset_tab).tick().draw()
                 x_offset += data.width
                 count += 1
-            y_offset_tab += 20
+            y_offset_tab += data.height
     draw_bottom_bar()

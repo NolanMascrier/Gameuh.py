@@ -13,8 +13,9 @@ from data.constants import Flags, SYSTEM, trad, GAME_LEVEL
 from data.item import Item
 from data.image.hoverable import Hoverable
 
-NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",\
-    "proj_quantity", "dodge_rating", "precision", "abs_def"]
+NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",
+    "proj_quantity", "dodge_rating", "precision", "abs_def", "potion_mana_count",
+    "potion_healing_count", "potion_healing_flat", "potion_mana_flat"]
 IGNORE_STAT = ["fire_flat", "fire_pen", "phys_flat", "phys_pen",
     "ice_flat", "ice_pen", "elec_flat", "elec_pen", "energy_flat", "energy_pen"
     "light_flat", "light_pen", "dark_flat", "dark_pen"]
@@ -115,7 +116,15 @@ class Creature:
             "elec_pen": Stat(0, "elec_pen", 2, 0, scaling_value=0.01),
             "energy_pen": Stat(0, "energy_pen", 2, 0, scaling_value=0.01),
             "light_pen": Stat(0, "light_pen", 2, 0, scaling_value=0.01),
-            "dark_pen": Stat(0, "dark_pen", 2, 0, scaling_value=0.01)
+            "dark_pen": Stat(0, "dark_pen", 2, 0, scaling_value=0.01),
+
+            "potion_healing_count": Stat(0, "potion_healing_count", 99, 0, 0),
+            "potion_healing_flat": Stat(0, "potion_healing_flat", None, 0, 0),
+            "potion_healing_relative": Stat(0, "potion_healing_relative", None, 0, 3),
+
+            "potion_mana_count": Stat(0, "potion_mana_count", 99, 0, 0),
+            "potion_mana_flat": Stat(0, "potion_mana_flat", None, 0, 0),
+            "potion_mana_relative": Stat(0, "potion_mana_relative", None, 0, 3),
         }
         self._gear = {
             "helms": None,

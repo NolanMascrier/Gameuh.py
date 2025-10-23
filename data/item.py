@@ -115,7 +115,7 @@ class Item():
             text += f"{affx.describe()}\n"
         return text
 
-    def genrate_name(self):
+    def generate_name(self):
         """Generates a random name."""
         names_data = trad("item_names")
         match self._rarity:
@@ -143,7 +143,7 @@ class Item():
             tier, roll = aff.price_factor
             self._price += tier * roll * 100
         self._price = int(round(self._price))
-        self.genrate_name()
+        self.generate_name()
         self._popup = self.create_popup()
         self._popup_details = self.create_popup(True)
 
@@ -204,7 +204,7 @@ class Item():
                      affix_card.get_height() / 2 - affixes.height / 2)
         sfc.blit(title_card, (0, 0), True)
         sfc.blit(title.surface, title_pos, True)
-        if is_details or self._rarity > 0:
+        if is_details or self._rarity > 0 or len(self._implicits) > 0:
             affix_card.blit(affixes.surface, affix_pos, True)
             sfc.blit(affix_card, (0, title_card.get_height()), True)
         if desc is not None:

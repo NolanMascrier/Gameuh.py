@@ -88,7 +88,19 @@ class Affix():
             value = f"{round(self._value)}%"
         else:
             value = f"{round(self._value * 100)}%"
-        if Flags.BOON in self._flags:
+        if Flags.DESC_NO_SIGN in self._flags:
+            adds = f"{value}"
+        if Flags.POT_MANA_COUNT in self._flags or Flags.POT_HEAL_COUNT in self._flags:
+            return f"{value} {trad('meta_words', 'uses')}"
+        if Flags.DESC_HEAL in self._flags:
+            adds = f"{trad('meta_words', 'desc_heal')} {value} "
+            adds += trad('descripts', 'life') if Flags.DESC_LIFE in self._flags else \
+                    trad('descripts', 'mana')
+        elif Flags.DESC_HEAL_FLAT in self._flags:
+            adds = f"{trad('meta_words', 'desc_heal_flat')} {value} "
+            adds += trad('descripts', 'life') if Flags.DESC_LIFE in self._flags else \
+                    trad('descripts', 'mana')
+        elif Flags.BOON in self._flags:
             adds = f"{value} {trad('meta_words', 'increased')}"
         elif Flags.HEX in self._flags:
             adds = f"{value} {trad('meta_words', 'decreased')} "
@@ -104,9 +116,12 @@ class Affix():
         affx = []
         if Flags.DESC_UNIQUE in self._flags:
             adds = ""
+        if Flags.DESC_HEAL in self._flags or Flags.DESC_HEAL_FLAT in self._flags:
+            return f"{mod}{col}{adds} {trad('meta_words', 'on_use')}"
         for aff in self._flags:
             if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
-                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER]:
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER,
+                Flags.DESC_NO_SIGN]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
         return f"{mod}{col}{adds} {lst}"
@@ -130,7 +145,17 @@ class Affix():
         else:
             value = f"{round(self._value * 100)}%"
             deets = f"({round(self._bounds[0] * 100)}%-{round(self._bounds[1] * 100)}%)"
-        if Flags.BOON in self._flags:
+        if Flags.DESC_NO_SIGN in self._flags:
+            adds = f"{value}"
+        elif Flags.DESC_HEAL in self._flags:
+            adds = f"{trad('meta_words', 'desc_heal')} {value} "
+            adds += trad('descripts', 'life') if Flags.DESC_LIFE in self._flags else \
+                    trad('descripts', 'mana')
+        elif Flags.DESC_HEAL_FLAT in self._flags:
+            adds = f"{trad('meta_words', 'desc_heal_flat')} {value} "
+            adds += trad('descripts', 'life') if Flags.DESC_LIFE in self._flags else \
+                    trad('descripts', 'mana')
+        elif Flags.BOON in self._flags:
             adds = f"{value} {trad('meta_words', 'increased')}"
         elif Flags.HEX in self._flags:
             adds = f"{value} {trad('meta_words', 'decreased')} "
@@ -144,9 +169,12 @@ class Affix():
             else:
                 adds = f"+{value}"
         affx = []
+        if Flags.DESC_HEAL in self._flags or Flags.DESC_HEAL_FLAT in self._flags:
+            return f"{col}{adds} {deets} {trad('meta_words', 'on_use')}"
         for aff in self._flags:
             if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
-                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER]:
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER,
+                Flags.DESC_NO_SIGN]:
                 affx.append(trad("descripts", aff.value))
         lst = ", ".join(affx)
         if Flags.DESC_UNIQUE in self._flags:
@@ -245,3 +273,12 @@ class Affix():
             if f not in META_FLAGS and f not in GEAR_FLAGS:
                 return f.value
         return None
+
+    @property
+    def bounds(self):
+        """Returns the affix's bounds."""
+        return self._bounds
+
+    @bounds.setter
+    def bounds(self, value):
+        self._bounds = value

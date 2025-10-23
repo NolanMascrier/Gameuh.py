@@ -24,6 +24,9 @@ KEY_TYPE = {
     12: "pause"
 }
 
+BLUE = (3, 188, 255)
+GREEN = (0, 143, 0)
+
 class Character():
     """Defines a character. A character is a creature/entity
     specifically made to be used by players."""
@@ -85,7 +88,10 @@ class Character():
         """Resets the character."""
         self._creature.reset()
         self._entity.reset()
-        self._potions = [3, 3]
+        self._potions = [
+            self._creature.stats["potion_healing_count"].c_value,
+            self._creature.stats["potion_mana_count"].c_value
+        ]
         self._cooldown = 0
         for spell in self._equipped_spells:
             if self.equipped_spells[spell] is not None:
@@ -182,21 +188,27 @@ class Character():
 
     def use_life_potion(self):
         """Uses a life potion, which heals for 20% of the user's life."""
-        #TODO: Maybe add stats to them ?
         if self._potions[0] > 0 and self._cooldown <= 0.0:
             self._potions[0]-= 1
             self._cooldown = 0.5
-            self._creature.stats["life"].current_value +=\
-                self._creature.stats["life"].get_value() / 5
+            flat_heal = self._creature.stats["potion_healing_flat"].c_value
+            rel_heal = self._creature.stats["potion_healing_relative"].c_value * \
+                       self._creature.stats["life"].get_value()
+            self._creature.stats["life"].current_value += flat_heal + rel_heal
+            SYSTEM["text_generator"].generate_damage_text(self.x, self.y, GREEN,
+                                                                    False, rel_heal + flat_heal)
 
     def use_mana_potion(self):
         """Uses a mana potion, which heals for 40% of the user's mana."""
-        #TODO: Maybe add stats to them ?
         if self._potions[1] > 0 and self._cooldown <= 0.0:
             self._potions[1]-= 1
             self._cooldown = 0.5
-            self._creature.stats["mana"].current_value +=\
-                self._creature.stats["mana"].get_value() * 0.4
+            flat_heal = self._creature.stats["potion_mana_flat"].c_value
+            rel_heal = self._creature.stats["potion_mana_relative"].c_value * \
+                       self._creature.stats["mana"].get_value()
+            self._creature.stats["mana"].current_value += flat_heal + rel_heal
+            SYSTEM["text_generator"].generate_damage_text(self.x, self.y, BLUE,
+                                                                    False, rel_heal + flat_heal)
 
     def export(self) -> str:
         """Serializes the character as JSON."""

@@ -38,10 +38,7 @@ def generate_background():
     data = []
     #POTIONS
     data.append((SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"]["life_potion"].get_image(), (524, SCREEN_HEIGHT - 130)))
     data.append((SYSTEM["images"]["item_bottom"].image,\
-                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"]["mana_potion"].get_image(),\
                         (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
     #EXP
     data.append((SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60)))
@@ -63,8 +60,14 @@ def generate_foreground():
     #POTIONS
     data.append((SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130)))
     data.append((SYSTEM["images"][K_1].image, (508, SCREEN_HEIGHT - 82)))
+    if SYSTEM["player"].creature.gear["life_pot"] is not None:
+        data.append((SYSTEM["player"].creature.gear["life_pot"].get_image().image,
+                     (524, SCREEN_HEIGHT - 130)))
     data.append((SYSTEM["images"]["item_top"].image,\
                            (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
+    if SYSTEM["player"].creature.gear["mana_pot"] is not None:
+        data.append((SYSTEM["player"].creature.gear["mana_pot"].get_image().image,
+                     (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
     data.append((SYSTEM["images"][K_2].image, (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82)))
     #EXP
     data.append((SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60)))
@@ -137,8 +140,8 @@ def draw_potions():
     char = SYSTEM["player"]
     if _UI_CACHE['last_potion_counts'] != tuple(char.potions):
         _UI_CACHE['last_potion_counts'] = tuple(char.potions)
-        _UI_CACHE['potion_texts'][0] = Text(f"{char.potions[0]}")
-        _UI_CACHE['potion_texts'][1] = Text(f"{char.potions[1]}")
+        _UI_CACHE['potion_texts'][0] = Text(f"{int(char.potions[0])}")
+        _UI_CACHE['potion_texts'][1] = Text(f"{int(char.potions[1])}")
     data = []
     data.append((_UI_CACHE['potion_texts'][0].surface, (572, SCREEN_HEIGHT - 82)))
     data.append((_UI_CACHE['potion_texts'][1].surface, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82)))
