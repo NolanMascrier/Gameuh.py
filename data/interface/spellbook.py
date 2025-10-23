@@ -1,9 +1,11 @@
 """Handles the spellbook tabs of the main menu."""
 
+from data.api.keycodes import K_Q, K_T, K_E, K_R, K_F, K_LSHIFT
+
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_WIDTH,\
     MENU_SPELLBOOK_1, MENU_SPELLBOOK_3, MENU_SPELLBOOK_2, MENU_SPELLBOOK_5,\
-    MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, K_q, K_t, K_e, K_r, K_f, K_LSHIFT, trad
+    MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, trad, RED, BLUE, BLACK
 from data.game.spell import Spell
 from data.item import Item
 from data.image.slotpanel import SlotPanel
@@ -11,10 +13,6 @@ from data.image.slot import Slot
 from data.image.tabs import Tabs
 from data.image.text import Text
 from data.interface.render import render, renders
-
-BLACK = (0,0,0)
-RED = (255, 25, 25)
-BLUE = (25, 25, 255)
 
 PAGES = {
     MENU_SPELLBOOK_1: 0,
@@ -207,11 +205,11 @@ def open_spell_screen():
             else:
                 spells.append(spell)
     images = [
-        SYSTEM["images"][K_q],
-        SYSTEM["images"][K_e],
-        SYSTEM["images"][K_f],
-        SYSTEM["images"][K_t],
-        SYSTEM["images"][K_r],
+        SYSTEM["images"][K_Q],
+        SYSTEM["images"][K_E],
+        SYSTEM["images"][K_F],
+        SYSTEM["images"][K_T],
+        SYSTEM["images"][K_R],
         SYSTEM["images"][K_LSHIFT]
     ]
     x_offset = SCREEN_WIDTH / 2 - 300

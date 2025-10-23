@@ -1,11 +1,9 @@
 """"Renders the screen."""
 
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING
-
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING\
+    , CLEAN, BLACK_TRANSP
 
 RENDER_LIST = []
-CLEAN = (0, 0, 0, 0)
-BLACK_TRANSP = (0, 0, 0, 0)
 
 def render(image, pos):
     """Prepares the image to be rendered at position pos."""

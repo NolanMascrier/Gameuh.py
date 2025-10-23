@@ -5,7 +5,7 @@ import pstats
 import random
 
 from data.api.surface import Surface, get_press, get_events
-from data.api.keycodes import get_key_event
+from data.api.keycodes import get_key_event, MOUSEWHEEL, QUIT
 
 from data.image.text import Text
 from data.constants import *

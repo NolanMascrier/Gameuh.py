@@ -2,11 +2,9 @@
 a name, a value, a duration, flags."""
 
 import json
-from data.constants import trad, META_FLAGS, Flags
+from data.constants import trad, META_FLAGS, Flags, ORANGE
 from data.image.hoverable import Hoverable
 from data.numerics.damage import Damage
-
-ORANGE = (255, 210, 48)
 
 class Affliction():
     """Defines an affliction. An affliction is a temporary \

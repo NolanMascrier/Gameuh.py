@@ -2,14 +2,11 @@
 
 from data.constants import SYSTEM, GAME_VICTORY, SCREEN_HEIGHT,\
     SCREEN_WIDTH, TICKER_TIMER, GAME_DEATH, trad, ENNEMY_TRACKER, ANIMATION_TRACKER,\
-    PROJECTILE_TRACKER
+    PROJECTILE_TRACKER, BLACK_TRANSP
 from data.image.showcase import ShowCase
 from data.image.text import Text
 from data.interface.render import render, renders
 from data.interface.general import draw_game, logic_tick
-
-BLACK = (0,0,0)
-RED = (255,0,0)
 
 def generate_victory():
     """Generates the victory screen."""
@@ -18,7 +15,7 @@ def generate_victory():
     SYSTEM["ui"]["showcase"] = ShowCase(x, y, background=SYSTEM["images"]["tile_panel_small"],\
         default=SYSTEM["level"].loot)
     SYSTEM["ui"]["notice"] = Text(trad('descripts', 'victory'), font="item_titles", size=80,\
-                                  default_color=BLACK)
+                                  default_color=BLACK_TRANSP)
     SYSTEM["ui"]["notice_state"] = (SCREEN_WIDTH / 2 - SYSTEM["ui"]["notice"].width / 2, 200, 100)
     SYSTEM["game_state"] = GAME_VICTORY
 
@@ -29,7 +26,7 @@ def generate_defeat():
     SYSTEM["ui"]["showcase"] = ShowCase(x, y, background=SYSTEM["images"]["tile_panel_small"],\
         default=SYSTEM["level"].loot)
     SYSTEM["ui"]["notice"] = Text(trad('descripts', 'defeat'), font="item_titles", size=80,\
-                                  default_color=BLACK)
+                                  default_color=BLACK_TRANSP)
     SYSTEM["ui"]["notice_state"] = (SCREEN_WIDTH / 2 - SYSTEM["ui"]["notice"].width / 2, 200, 100)
     SYSTEM["game_state"] = GAME_DEATH
 

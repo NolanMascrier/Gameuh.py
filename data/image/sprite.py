@@ -4,6 +4,7 @@ from data.constants import ANIMATION_TRACKER
 from data.image.animation import Image, Animation
 
 class Sprite():
+    """Defines a sprite. A sprite is a list of animations with names."""
     def __init__(self, file, frame_x, frame_y, keys: list, frame_rates, frame_limits, frame_loops,
                  final):
         self._base_image = Image(file)

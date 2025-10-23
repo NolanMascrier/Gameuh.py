@@ -15,11 +15,9 @@ from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
 from data.slash import Slash
 from data.numerics.damage import Damage
-from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, trad
+from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, trad, BLACK
 from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable, Text
-
-BLACK = (0,0,0)
 
 class Spell():
     """Creates a spell. A spell is how creature interact with each other

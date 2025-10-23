@@ -7,18 +7,11 @@ from data.api.surface import Surface
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
-    ANIMATION_TRACKER
+    ANIMATION_TRACKER, RED_TRANSP, RED_PURE, RED_WARNING, GREEN_PURE, GREEN_TRANSP, BLUE_PURE,\
+    BLUE_TRANSP
 from data.image.tabs import Tabs
 from data.projectile import Projectile
 from data.slash import Slash
-
-RED = (255, 0, 0, 155)
-GRE = (0, 255, 0, 155)
-BLU = (0, 0, 255, 155)
-RED_B = (255, 0, 0, 255)
-GRE_B = (0, 255, 0, 255)
-BLU_B = (0, 0, 255, 255)
-RED_WARNING = [255, 0, 0, 185]
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""
@@ -88,7 +81,7 @@ def draw_game(show_player = True, show_enemies = True,\
         texts_layer.clear()
     if show_player:
         if show_hitboxes:
-            chars_layer.append(draw_hitbox(SYSTEM["player"].entity.hitbox.get_rect(), GRE, GRE_B))
+            chars_layer.append(draw_hitbox(SYSTEM["player"].entity.hitbox.get_rect(), GREEN_TRANSP, GREEN_PURE))
         chars_layer.append((SYSTEM["player"].get_image(), SYSTEM["player"].get_pos()))
         for buff in SYSTEM["player"].creature.buffs:
             if f"buffanim_{buff.name}" in SYSTEM["images"]:
@@ -102,7 +95,7 @@ def draw_game(show_player = True, show_enemies = True,\
         if loot_count > 0:
             if show_hitboxes:
                 for b in POWER_UP_TRACKER:
-                    pickup_layer.append(draw_hitbox(b.hitbox.get_rect(), BLU, BLU_B))
+                    pickup_layer.append(draw_hitbox(b.hitbox.get_rect(), BLUE_TRANSP, BLUE_PURE))
             loot_blits = [(b.get_image(), (b.x, b.y)) for b in POWER_UP_TRACKER]
             if loot_blits:
                 pickup_layer.extend(loot_blits)
@@ -111,7 +104,7 @@ def draw_game(show_player = True, show_enemies = True,\
         if enemy_count > 0:
             if show_hitboxes:
                 for b in ENNEMY_TRACKER:
-                    chars_layer.append(draw_hitbox(b.hitbox.get_rect(), RED, RED_B))
+                    chars_layer.append(draw_hitbox(b.hitbox.get_rect(), RED_TRANSP, RED_PURE))
             enemy_blits = []
             if show_bars:
                 enemy_jauge_back = SYSTEM["images"]["enemy_jauge_mini_back"].image
@@ -157,8 +150,9 @@ def draw_game(show_player = True, show_enemies = True,\
         if proj_count > 0:
             for p in PROJECTILE_TRACKER:
                 if show_hitboxes:
-                    if b.effective:
-                        bullets_layer.append(draw_hitbox(b.hitbox.get_rect(), BLU, BLU_B))
+                    if p.effective:
+                        bullets_layer.append(draw_hitbox(p.hitbox.get_rect(),
+                                                         BLUE_TRANSP, BLUE_PURE))
                 if p.warning is not None:
                     draw_warning(p.warning[0], RED_WARNING, p.warning[1])
             proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER]

@@ -4,17 +4,17 @@ import threading
 import re
 import os
 import random
-from pygame.constants import K_q, K_e, K_r, K_f, K_t, K_1, K_2, K_LSHIFT
 import numpy as np
 
 from data.api.surface import Surface, mouse_position, get_keys, init_engine
 from data.api.clock import Clock
 from data.api.logger import Logger
+from data.api.keycodes import K_Q, K_E, K_R, K_F, K_T, K_1, K_2, K_LSHIFT
 
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, Flags,\
-    PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, USEREVENT, TICKER_TIMER, load_options,\
-    change_language, UPDATE_TIMER
+    PROJECTILE_TRACKER, TEXT_TRACKER, WAVE_TIMER, TICKER_TIMER, UPDATE_TIMER
+from data.filesystem import change_language, load_options
 
 from data.image.sprite import Animation, Image, Sprite
 from data.image.button import Button
@@ -115,8 +115,6 @@ def reset():
 def init_timers():
     """Inits Pygame's timers."""
     SYSTEM["deltatime"].start(WAVE_TIMER, 1000)
-    SYSTEM["deltatime"].start(USEREVENT+1, 2000)
-    SYSTEM["deltatime"].start(USEREVENT+2, 100)
     SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
     SYSTEM["deltatime"].start(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
 
@@ -250,11 +248,11 @@ def load_images():
     SYSTEM["images"]["slot_unique"] = Image("ui/item_top_u.png").scale(64, 64)
     SYSTEM["images"]["slot_green"] = Image("ui/item_top_g.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
-    SYSTEM["images"][K_q] = Image("ui/kb_q.png")
-    SYSTEM["images"][K_e] = Image("ui/kb_e.png")
-    SYSTEM["images"][K_f] = Image("ui/kb_f.png")
-    SYSTEM["images"][K_r] = Image("ui/kb_r.png")
-    SYSTEM["images"][K_t] = Image("ui/kb_t.png")
+    SYSTEM["images"][K_Q] = Image("ui/kb_q.png")
+    SYSTEM["images"][K_E] = Image("ui/kb_e.png")
+    SYSTEM["images"][K_F] = Image("ui/kb_f.png")
+    SYSTEM["images"][K_R] = Image("ui/kb_r.png")
+    SYSTEM["images"][K_T] = Image("ui/kb_t.png")
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png")
     SYSTEM["images"][K_1] = Image("ui/kb_1.png")
     SYSTEM["images"][K_2] = Image("ui/kb_2.png")
@@ -477,7 +475,7 @@ def init_game():
     """Loads the basic data for the game."""
     init_engine()
     SYSTEM["keys"] = get_keys()
-    load_options()
+    load_options(True)
     SYSTEM["clock"] = Clock()
     SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])

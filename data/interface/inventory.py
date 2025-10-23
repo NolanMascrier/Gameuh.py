@@ -155,7 +155,7 @@ def unloader():
     SYSTEM["images"]["pop_rune_9"] = None
     SYSTEM["items_panel"] = None
 
-def draw_inventory(events):
+def draw_inventory(_):
     """Draws the inventory windows."""
     renders(SYSTEM["city_back"].as_background)
     SYSTEM["items_panel"].tick().draw()

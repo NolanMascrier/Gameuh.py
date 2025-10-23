@@ -8,7 +8,7 @@ from data.api.vec2d import Vec2
 
 from data.physics.hitbox import HitBox
 from data.image.text import Text
-from data.constants import Flags, TEXT_TRACKER, SYSTEM
+from data.constants import Flags, TEXT_TRACKER, SYSTEM, BLUE_ALT, GREEN_WEAK
 
 COLORS = [
     (128, 128, 128),
@@ -17,9 +17,6 @@ COLORS = [
     (128, 0, 255),
     (255, 140, 0),
 ]
-
-BLUE = (3, 188, 255)
-GREEN = (0, 143, 0)
 
 @lru_cache(maxsize=256)
 def _fast_sqrt(value):
@@ -149,11 +146,11 @@ class PickUp(HitBox):
         if Flags.LIFE in self._flags:
             value = round(self._value / 100 * player.creature.stats["life"].get_value())
             player.creature.stats["life"].current_value += value
-            self.generate_text(GREEN, value)
+            self.generate_text(GREEN_WEAK, value)
         elif Flags.MANA in self._flags:
             value = round(self._value / 100 * player.creature.stats["mana"].get_value())
             player.creature.stats["mana"].current_value += value
-            self.generate_text(BLUE, value)
+            self.generate_text(BLUE_ALT, value)
         elif Flags.EXPERIENCE in self._flags:
             player.creature.grant_experience(self._value)
             SYSTEM["level"].exp += self._value

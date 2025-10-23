@@ -1,11 +1,8 @@
 """A class that allows creation and display of text on the screen."""
 
 from functools import lru_cache
-from data.constants import TEXT_TRACKER, SYSTEM
+from data.constants import TEXT_TRACKER, SYSTEM, WHITE, LEVEL_COLOR
 from data.image.text import Text
-
-LEVEL_COLOR = (252, 161, 3)
-WHITE = (255,255,255)
 
 @lru_cache(maxsize=64)
 def make_text(text, color = WHITE, bold = False, size = 35):

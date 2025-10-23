@@ -13,8 +13,8 @@ from data.api.surface import Surface
 
 from data.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
-    trad, LOADING, GAME_LEVEL, USEREVENT, TICKER_TIMER, UPDATE_TIMER,\
-    PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER, WAVE_CHECK
+    trad, LOADING, GAME_LEVEL, TICKER_TIMER, UPDATE_TIMER,\
+    PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER, WAVE_CHECK, Flags, RED_PURE
 from data.game.enemy import Enemy
 from data.game.enemy_monolith import Monolith
 from data.physics.entity import Entity
@@ -25,12 +25,10 @@ from data.numerics.affix import Affix
 from data.image.text import Text
 from data.item import Item
 from data.tables.area_table import MODIFIERS
-from data.tables.enemy_table import *
+from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER
 from data.interface.endlevel import generate_victory, generate_defeat
 
 RUNE_ORDER = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
-
-RED = (255,0,0)
 
 RUNES = {
     0: "blank",
@@ -65,8 +63,6 @@ def init_timers():
     """Inits Pygame's timers."""
     SYSTEM["deltatime"].start(WAVE_TIMER, 1500)
     SYSTEM["deltatime"].start(WAVE_CHECK, 400)
-    SYSTEM["deltatime"].start(USEREVENT+1, 2000)
-    SYSTEM["deltatime"].start(USEREVENT+2, 100)
     SYSTEM["deltatime"].start(TICKER_TIMER, int(0.016 * 1000))
     SYSTEM["deltatime"].start(UPDATE_TIMER, int(SYSTEM["options"]["fps"]))
 
@@ -80,7 +76,7 @@ class DummyItems(Item):
             self._quantity = Text(f"{quantity}" if quantity <= 999 else "999+", font="item_desc")
         else:
             self._quantity = Text(f"{quantity - stolen}" if quantity <= 999 else "999+",\
-                                  font="item_desc", default_color=RED)
+                                  font="item_desc", default_color=RED_PURE)
         self._img = Surface(64, 64)
         self._img.blit(self._image.image, (0, 0), True)
         if quantity > 1:

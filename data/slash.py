@@ -2,7 +2,7 @@
 plays its animation and disappear. It's used for melee attacks or explosions."""
 
 import json
-import numpy
+
 from data.numerics.damage import Damage
 from data.creature import Creature
 from data.projectile import DummyEntity

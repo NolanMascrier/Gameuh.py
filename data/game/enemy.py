@@ -12,7 +12,6 @@ from data.constants import Flags, POWER_UP_TRACKER, SYSTEM, SCREEN_HEIGHT, SCREE
 from data.game.pickup import PickUp
 from data.game.spell import Spell
 
-DAMAGE_COLOR = (255, 30, 30)
 VALUE_GROUPS = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
 
 ALREADY = []
@@ -107,7 +106,7 @@ class Enemy():
         dy = self._destination[1] - self.y
         return dx*dx + dy*dy
 
-    def on_hit(self, value):
+    def on_hit(self, _):
         """Called when the creature is hit."""
         self._entity.play("hit")
         if Flags.SUICIDER in self._behaviours:

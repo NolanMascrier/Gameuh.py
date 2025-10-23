@@ -1,3 +1,5 @@
+"""Showcase for victory screens."""
+
 from collections.abc import Iterable
 
 from data.api.surface import Surface
@@ -9,6 +11,7 @@ from data.interface.render import render
 from data.constants import SYSTEM
 
 class ShowCase(SlotPanel):
+    """A showcase is a SlotPanel that cannot be interacted with, and animates the items going in."""
     def __init__(self, x, y, slot_size=64, padding=16, default=None,
                  background=None, immutable=True, display_filter=None,
                  anim_speed=0.12, start_scale=2.1):

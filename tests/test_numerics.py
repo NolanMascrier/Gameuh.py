@@ -7,6 +7,9 @@ from data.numerics.double_affix import DoubleAffix
 from data.numerics.rangestat import Stat, RangeStat
 from data.numerics.ressource import Ressource
 import unittest
+from data.filesystem import change_language
+
+change_language('EN_us')
 
 class TestingNumerics(unittest.TestCase):
     def test_affliction(self):

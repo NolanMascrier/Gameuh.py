@@ -1,6 +1,5 @@
 """Projectile are the most common type of attacks."""
 
-import numpy
 from math import pi
 import random
 import numpy

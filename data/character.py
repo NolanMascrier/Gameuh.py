@@ -2,7 +2,7 @@
 
 import json
 import numpy
-from data.constants import SCREEN_HEIGHT, SYSTEM, Flags
+from data.constants import SCREEN_HEIGHT, SYSTEM, Flags, BLUE, GREEN
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.creature import Creature
@@ -23,9 +23,6 @@ KEY_TYPE = {
     11: "right",
     12: "pause"
 }
-
-BLUE = (3, 188, 255)
-GREEN = (0, 143, 0)
 
 class Character():
     """Defines a character. A character is a creature/entity

@@ -1,6 +1,7 @@
 """Handles the options tab rendering."""
 
-from data.constants import SYSTEM, MENU_OPTIONS, export_and_reload, trad, save, load
+from data.constants import SYSTEM, MENU_OPTIONS, trad
+from data.filesystem import export_and_reload, save, load
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.image.checkbox import Checkbox
 from data.image.button import Button

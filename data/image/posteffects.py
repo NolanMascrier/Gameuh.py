@@ -4,9 +4,7 @@ import numpy
 
 from data.api.surface import Surface, flip
 
-from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER, SCREEN_HEIGHT
-
-BLACK = (0,0,0)
+from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER, SCREEN_HEIGHT, BLACK_TRANSP
 
 class PostEffects():
     """Handle whole screen effects."""
@@ -83,10 +81,10 @@ class PostEffects():
                 if self._scaled_cache is None:
                     self._scaled_cache = Surface(current_res[0], current_res[1])
             scaled = SYSTEM["windows"].scale(current_res)
-            SYSTEM["real_windows"].fill(BLACK)
+            SYSTEM["real_windows"].fill(BLACK_TRANSP)
             SYSTEM["real_windows"].blit(scaled, (0, 0))
         else:
-            SYSTEM["real_windows"].fill(BLACK)
+            SYSTEM["real_windows"].fill(BLACK_TRANSP)
             SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0), True)
         if self._flash_timer > 0:
             self._flash_timer -= 1

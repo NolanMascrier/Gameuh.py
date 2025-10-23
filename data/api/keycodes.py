@@ -70,6 +70,8 @@ K_LSHIFT  = cs.K_LSHIFT
 K_RSHIFT  = cs.K_RSHIFT
 K_LALT    = cs.K_LALT
 K_RALT    = cs.K_RALT
+QUIT       = cs.QUIT
+MOUSEWHEEL = cs.MOUSEWHEEL
 
 KEY_EVENT = {
     "spell_1": (K_Q, None),

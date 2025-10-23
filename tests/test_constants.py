@@ -3,6 +3,7 @@ import pygame
 import enum
 from time import sleep
 from data.constants import *
+from data.filesystem import change_language
 
 class TestConstants(unittest.TestCase):
     def test_constants(self):

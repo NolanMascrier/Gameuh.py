@@ -173,7 +173,8 @@ class Node:
             f.draw(surface)
         self._button.draw(surface)
         if self._learned:
-            surface.blit(SYSTEM["images"]["slot_green"].image, (self._button.x, self._button.y), True)
+            surface.blit(SYSTEM["images"]["slot_green"].image,
+                         (self._button.x, self._button.y), True)
         else:
             match self._rarity:
                 case 1:

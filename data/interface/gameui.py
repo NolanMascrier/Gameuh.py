@@ -4,9 +4,11 @@ exp bar, enemy life, boss life ..."""
 from functools import lru_cache
 
 from data.api.surface import Surface
+from data.api.keycodes import KEY_EVENT, K_1, K_2
 
 from data.image.text import Text
-from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, K_1, K_2, trad, ENNEMY_TRACKER
+from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, trad, ENNEMY_TRACKER, \
+    RED_WEAK, YELLOW
 from data.image.textgenerator import make_text
 
 UI_SKILLS_OFFSET = 650
@@ -14,10 +16,6 @@ UI_SKILLS_PANEL_OFFSET = 2
 UI_SKILLS_INPUT_OFFSET = 48
 
 UPDATE_COUNTER = [5]
-
-RED = (150, 0, 0)
-BLACK = (0, 0, 0, 0)
-YELLOW = (255, 196, 0)
 
 _UI_CACHE = {
     'last_life': None,
@@ -76,7 +74,7 @@ def generate_foreground():
     for name, _ in char.equipped_spells.items():
         data.append((SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i,\
             SCREEN_HEIGHT - 130)))
-        data.append((SYSTEM["images"][SYSTEM["key_chart"][name][0]].image,\
+        data.append((SYSTEM["images"][KEY_EVENT[name][0]].image,\
             (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 82)))
         i += 1
     #
@@ -206,7 +204,7 @@ def draw_skills():
             if oom:
                 s2 = Surface(60, 60)
                 s2.set_alpha(128)
-                s2.fill(RED)
+                s2.fill(RED_WEAK)
                 data.append((s2, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
             if cdc > 0:
                 s = Surface(int(cdl), 60)
@@ -263,10 +261,11 @@ def draw_enemy_card():
     life = max(enemy.creature.stats["life"].current_value /\
                enemy.creature.stats["life"].c_value * 300, 0)
     img = enemy_life(round(life))
-    txt = Text(trad('enemies', enemy.creature.name), size=23, font="item_desc", default_color=RED)
+    txt = Text(trad('enemies', enemy.creature.name), size=23,
+               font="item_desc", default_color=RED_WEAK)
     hp = Text(f'{round(enemy.creature.stats["life"].current_value)}' + \
               f'/{round(enemy.creature.stats["life"].c_value)}', size=23, font="item_desc",\
-                default_color=RED)
+                default_color=RED_WEAK)
     if SYSTEM["level"] is None or SYSTEM["level"].boss is None or\
         SYSTEM["level"].current_wave != SYSTEM["level"].waves:
         pos = (SCREEN_WIDTH / 2 - SYSTEM["images"]["enemy_jauge_back"].width / 2, 80)
