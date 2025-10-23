@@ -24,6 +24,8 @@ from data.interface.endlevel import draw_end
 from data.projectile import Projectile
 from data.slash import Slash
 from data.tables.uniques_table import UNIQUES
+from data.item import Item
+from data.tables.implicits_table import IMPLICITS
 
 DAMAGE_COLOR = (255, 30, 30)
 
@@ -34,6 +36,14 @@ def debug_create_items():
         base_loot.append(SYSTEM["looter"].generate_item(5, random.randint(0,3)))
     SYSTEM["player"].inventory.extend(base_loot)
     SYSTEM["player"].inventory.extend([f[0] for f in UNIQUES])
+    man = Item("Old blue potion", "Mana Extract", 100, 0, 1, SYSTEM["images"]["mana"][0],\
+                  0, [Flags.MANA_POT, Flags.GEAR], implicits=[IMPLICITS["mana_pot_count"],
+                  IMPLICITS["life_pot_mana_1_a"]])
+    lif = Item("Old red potion", "Life Extract", 100, 0, 1, SYSTEM["images"]["life"][0],\
+                  0, [Flags.LIFE_POT, Flags.GEAR], implicits=[IMPLICITS["life_pot_count"],
+                  IMPLICITS["life_pot_heal_1_a"]])
+    SYSTEM["player"].creature.equip(Flags.MANA_POT, man)
+    SYSTEM["player"].creature.equip(Flags.LIFE_POT, lif)
 
 def check_collisions():
     """Checks all collisions."""
@@ -127,7 +137,7 @@ def draw_small_card():
     y = 0
     render(SYSTEM["images"]["char_details"].image, (x, y))
 
-def draw_menu(events):
+def draw_menu(_):
     """Draws the main game menu."""
     renders(SYSTEM["city_back"].as_background)
     sfc = Surface(width=2000, height=2000)
@@ -141,10 +151,8 @@ def draw_menu(events):
     draw_small_card()
     if SYSTEM["selected"] is not None and isinstance(SYSTEM["selected"], Level):
         x = SCREEN_WIDTH - SYSTEM["images"]["char_details"].width / 2
-        y = SCREEN_HEIGHT - SYSTEM["images"]["char_details"].height / 2
         name = Text(f'{SYSTEM["selected"].describe()}', True, "item_desc",
                 force_x=SYSTEM["images"]["char_details"].width - 20, line_wrap=True)
-        #TODO: modifiers ...
         render(name.surface, (x - name.width / 2, 25))
         SYSTEM["buttons"]["button_assault"].set(x - SYSTEM["buttons"]["button_assault"].width / 2,\
                                                 930).draw(SYSTEM["windows"])
@@ -161,8 +169,8 @@ def loading():
     SYSTEM["images"]["load_orb"].tick()
     render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 192, SCREEN_HEIGHT - 192))
     render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
-    width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
-    render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\
+    w = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
+    render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, w, 30))\
         , (200, SCREEN_HEIGHT - 111))
     render_all()
     SYSTEM["post_effects"].tick()
@@ -261,7 +269,8 @@ if __name__ == "__main__":
                 render(SYSTEM["loading_text"].surface, (200, SCREEN_HEIGHT - 128))
             SYSTEM["windows"].fill((0, 0, 0))
             SYSTEM["images"]["load_orb"].tick()
-            render(SYSTEM["images"]["load_orb"].get_image(), (SCREEN_WIDTH - 192, SCREEN_HEIGHT - 192))
+            render(SYSTEM["images"]["load_orb"].get_image(),
+                   (SCREEN_WIDTH - 192, SCREEN_HEIGHT - 192))
             render(SYSTEM["images"]["load_back"].image, (200, SCREEN_HEIGHT - 111))
             width = SYSTEM["images"]["load_jauge"].width * (SYSTEM["progress"] / 100)
             render(SYSTEM["images"]["load_jauge"].image.subsurface((0, 0, width, 30))\

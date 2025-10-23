@@ -349,7 +349,7 @@ class LootGenerator():
         chosen_affix_groups = self.weighted_sample_without_replacement(
             candidates, num_affixes)
         result_affixes = [
-            self.pick_weighted(valid_tiers) 
+            self.pick_weighted(valid_tiers)
             for valid_tiers, _ in chosen_affix_groups
         ]
         return result_affixes

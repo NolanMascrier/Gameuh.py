@@ -99,14 +99,14 @@ def draw_life_mana():
     max_mana = char.creature.stats["mana"].get_value()
     current_life = char.creature.stats["life"].current_value
     max_life = char.creature.stats["life"].get_value()
-    if (_UI_CACHE['last_life'] != current_life or 
+    if (_UI_CACHE['last_life'] != current_life or
         _UI_CACHE['last_life_max'] != max_life):
         _UI_CACHE['last_life'] = current_life
         _UI_CACHE['last_life_max'] = max_life
         _UI_CACHE['life_text'] = Text(
             f"#c#(0, 37, 97){round(current_life)}/{max_life}"
         )
-    if (_UI_CACHE['last_mana'] != current_mana or 
+    if (_UI_CACHE['last_mana'] != current_mana or
         _UI_CACHE['last_mana_max'] != max_mana):
         _UI_CACHE['last_mana'] = current_mana
         _UI_CACHE['last_mana_max'] = max_mana

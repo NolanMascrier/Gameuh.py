@@ -7,7 +7,7 @@ import random
 
 from data.api.surface import Surface
 
-from data.constants import Flags, trad, SYSTEM, K_LSHIFT
+from data.constants import Flags, trad, SYSTEM
 from data.image.image import Image
 from data.image.animation import Animation
 from data.image.text import Text
@@ -110,7 +110,8 @@ class Item():
         if len(self._implicits) > 0:
             for affx in self._implicits:
                 text += f"{affx.describe()}\n"
-            text += "_______________\n"
+            if len(self._affixes) > 0:
+                text += "\n"
         for affx in self._affixes:
             text += f"{affx.describe()}\n"
         return text
@@ -154,7 +155,7 @@ class Item():
         if len(self._implicits) > 0:
             for affx in self._implicits:
                 text += f"{affx.describe_details()}\n"
-            text += "_______________\n"
+            text += "\n"
         for affx in self._affixes:
             text += f"{affx.describe_details()}\n"
         return text

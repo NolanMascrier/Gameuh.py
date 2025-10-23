@@ -9,14 +9,6 @@ class TestConstants(unittest.TestCase):
         self.assertIsInstance(SCREEN_WIDTH, int)
         self.assertIsInstance(SCREEN_HEIGHT, int)
         self.assertIsInstance(PROJECTILE_TRACKER, list)
-        self.assertIsInstance(FIREBALL_IMAGE, str)
-        self.assertIsInstance(UI_JAUGE, str)
-        self.assertIsInstance(UI_JAUGE_L, str)
-        self.assertIsInstance(UI_JAUGE_C, str)
-        self.assertIsInstance(UI_JAUGE_M, str)
-        self.assertIsInstance(JAUGE_L, str)
-        self.assertIsInstance(JAUGE_C, str)
-        self.assertIsInstance(JAUGE_M, str)
         self.assertIsNone(FONT)
 
     def test_language(self):

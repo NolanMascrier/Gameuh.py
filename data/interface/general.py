@@ -7,9 +7,8 @@ from data.api.surface import Surface
 from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACKER,\
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
-    ANIMATION_TRACKER, SCREEN_WIDTH
+    ANIMATION_TRACKER
 from data.image.tabs import Tabs
-from data.physics.hitbox import HitBox
 from data.projectile import Projectile
 from data.slash import Slash
 
@@ -58,7 +57,7 @@ def draw_hitbox(hitbox, color, color_border):
                     0 + hitbox[3] /2 - 2 , 4, 4), 2)
     return (sfc, (hitbox[0], hitbox[1]))
 
-def draw_warning(polygon, color, alpha = 255):
+def draw_warning(polygon, color, _ = 255):
     """Draws the hitbox."""
     SYSTEM["warnings"].draw_polygon(color, polygon)
 

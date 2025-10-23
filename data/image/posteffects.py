@@ -25,8 +25,7 @@ class PostEffects():
         self._flash_max = 0
         self._flash_timer = 0
         self._flash_opacity = 0
-        self._flash_surface = Surface(SCREEN_WIDTH,\
-            SCREEN_HEIGHT, is_alpha=False)
+        self._flash_surface = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
         self._scaled_cache = None
         self._cached_resolution = None
 
@@ -77,9 +76,6 @@ class PostEffects():
                 self.stop_shaking()
         SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
         SYSTEM["text_generator"].generate_fps()
-        if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
-            SYSTEM["windows"].blit(SYSTEM["fps_counter"].surface,\
-                                (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0), True)
         current_res = SYSTEM["options"]["screen_resolution"]
         if current_res != (SCREEN_WIDTH, SCREEN_HEIGHT):
             if self._cached_resolution != current_res or self._scaled_cache is None:
@@ -96,7 +92,6 @@ class PostEffects():
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)
             self._flash_surface.set_alpha(self._flash_opacity)
-            SYSTEM["real_windows"].blit(self._flash_surface, (0, 0))
         flip()
 
     @property
@@ -108,3 +103,21 @@ class PostEffects():
     def shake_factor(self):
         """Returns the shake factor."""
         return self._shake_x, self._shake_y
+
+    @property
+    def flash_surface(self):
+        """FLASHDANCE"""
+        return self._flash_surface
+
+    @flash_surface.setter
+    def flash_surface(self, value):
+        self._flash_surface = value
+
+    @property
+    def flash_timer(self):
+        """Returns the flash's timer."""
+        return self._flash_timer
+
+    @flash_timer.setter
+    def flash_timer(self, value):
+        self._flash_timer = value

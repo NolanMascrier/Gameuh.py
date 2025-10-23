@@ -3,7 +3,7 @@ the mouse is above it."""
 
 from data.api.surface import Surface, Widget
 
-from data.constants import SYSTEM, K_LALT
+from data.constants import SYSTEM
 from data.image.text import Text
 from data.interface.render import render
 

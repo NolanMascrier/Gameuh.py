@@ -434,7 +434,6 @@ def load_start():
     SYSTEM["looter"] = LootGenerator()
     SYSTEM["rune"] = -1
     SYSTEM["mouse"] = mouse_position()
-    #TODO: Put that in scene manager
     levels = []
     SYSTEM["buttons_e"] = []
     for _ in range(4):
@@ -488,7 +487,8 @@ def init_game():
     SYSTEM["gm_parallaxe"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["warnings"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["text_generator"] = TextGenerator()
-    SYSTEM["images"]["load_orb"] = Animation("darkcristal.png", 64, 64, frame_rate=0.25).scale(128, 128)
+    SYSTEM["images"]["load_orb"] = Animation("darkcristal.png", 64, 64, frame_rate=0.25)\
+        .scale(128, 128)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)
     SYSTEM["loading_text"] = None

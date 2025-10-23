@@ -6,7 +6,7 @@ from data.numerics.double_affix import DoubleAffix
 
 class AffixDefinition:
     """Defines an affix type with its tiers and applicable gear slots."""  
-    def __init__(self, affix_id: str, tiers: list, base_weight: float, 
+    def __init__(self, affix_id: str, tiers: list, base_weight: float,
                  allowed_slots: list[Flags], value_multipliers: dict = None):
         """
         Args:

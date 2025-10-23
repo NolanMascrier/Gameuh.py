@@ -45,6 +45,11 @@ def render_all():
                 all_blits.extend(layer)
         elif game_state == MENU_INVENTORY:
             all_blits.extend(SYSTEM["layers"]["pickup"])
+        if SYSTEM["post_effects"].flash_timer > 0:
+            all_blits.append((SYSTEM["post_effects"].flash_surface, shake))
+        if SYSTEM["fps_counter"] is not None and SYSTEM["options"]["show_fps"]:
+            all_blits.append((SYSTEM["fps_counter"].surface,\
+                                (SCREEN_WIDTH - SYSTEM["fps_counter"].width, 0)))
         if all_blits:
             SYSTEM["windows"].blits(all_blits)
     if game_state == GAME_LEVEL:

@@ -21,17 +21,6 @@ IMAGE_TRACKER = []
 ANIMATION_TRACKER = []
 ANIMATION_TICK_TRACKER = []
 
-FIREBALL_IMAGE = "ressources/fire.png"
-UI_JAUGE = "ressources/ui_main.png"
-UI_JAUGE_L = "ressources/ui_life.png"
-UI_JAUGE_M = "ressources/ui_mana.png"
-UI_JAUGE_C = "ressources/ui_cd.png"
-JAUGE_L = "ressources/life_jauge.png"
-JAUGE_M = "ressources/mana_jauge.png"
-JAUGE_C = "ressources/cd_jauge.png"
-JAUGE_BOSS_BACK = "ressources/life_boss_back.png"
-JAUGE_BOSS = "ressources/life_boss.png"
-
 FONT = None
 
 LANGUAGE = None
