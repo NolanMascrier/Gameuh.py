@@ -2,7 +2,7 @@ import unittest
 import json
 from data.image.image import Image
 from data.image.animation import Animation
-from data.constants import Flags, change_language, SYSTEM
+from data.constants import Flags, SYSTEM
 from data.loading import load
 from data.numerics.affliction import Affliction
 from data.numerics.affix import Affix
@@ -17,6 +17,7 @@ from data.numerics.damage import Damage
 from data.game.spell import Spell
 from data.game.tree import Node
 from data.api.surface import init_engine, get_keys
+from data.filesystem import change_language
 
 init_engine()
 SYSTEM["keys"] = get_keys()
