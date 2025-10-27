@@ -21,6 +21,9 @@ class Entity(HitBox):
         move_speed (float, optionnal): speed at which the entity\
         moves. Defaults to 1.
     """
+    __slots__ = '_image', '_real_image', "_x_def", "_y_def", "_move_speed", "_keys", "_flipped", \
+                "_angle", "_dash_speed", "_dashing", "_x_dest", "_y_dest", "_dash_dx", "_dash_dy", \
+                "_dash_time", "_sprite"
     def __init__(self, x, y, imagefile: str, hitbox:HitBox = None,\
                 move_speed = 1, hitbox_mod = None):
         self._image = imagefile
@@ -51,7 +54,6 @@ class Entity(HitBox):
         self._dash_dx = 0
         self._dash_dy = 0
         self._dash_time = 0
-        self._animation_state = [0, False]
         self._sprite = isinstance(self._real_image, Sprite)
 
     def tick(self, character, speed_mod = 1):
@@ -103,7 +105,7 @@ class Entity(HitBox):
         self.x = pos[0]
         self.y = pos[1]
 
-    def dash(self, distance, dash_time = 0.4):
+    def dash(self, distance, dash_time = 0.2):
         """dash a certain distance depending on the last input angle."""
         self._dash_dx = numpy.cos(self._angle)
         self._dash_dy = numpy.sin(self._angle)
@@ -156,15 +158,6 @@ class Entity(HitBox):
             HitBox(10, SCREEN_HEIGHT/2, int(data["hit_box_w"]), int(data["hit_box_h"])),
             float(data["move_speed"])
         )
-
-    @property
-    def max_frame(self):
-        """Returns the entity's animation amount of frames."""
-        return self._max_frame
-
-    @max_frame.setter
-    def max_frame(self, value):
-        self._max_frame = value
 
     @property
     def hitbox(self):

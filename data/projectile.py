@@ -22,6 +22,12 @@ class DummyEntity():
 
 class Projectile(HitBox):
     """Defines a projectile."""
+    __slots__ = '_speed', '_angle', '_wander_angle', '_target', '_image', '_area', '_ignore_team', \
+                '_offset_barrage', '_anim_on_hit', '_real_image', '_velocity', '_caster',\
+                '_acceleration', '_origin', '_damage', '_evil', '_bounces', '_delay', \
+                '_initial_delay', '_explosion', '_behaviours', '_debuffs', '_flagged', \
+                '_wandering', '_immune', '_bounced', '_chains', '_warning', '_anim_speed', \
+                '_debuff_chance'
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
@@ -86,7 +92,6 @@ class Projectile(HitBox):
             self._offset = (self.x - caster.x, self.y - caster.y)
         self._flagged = False
         self._wandering = True if Flags.WANDER in self._behaviours else False
-        self._animation_state = [0, False]
         self._immune = []
         self._bounced = False
         self._chains = chains

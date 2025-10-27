@@ -5,6 +5,9 @@ from data.image.animation import Image, Animation
 
 class Sprite():
     """Defines a sprite. A sprite is a list of animations with names."""
+    __slots__ = '_base_image', '_file', '_frame_max', '_frame_x', '_frame_y', '_keys', \
+                '_frame_rates', '_frame_loops', '_lines', '_animations', '_akey', '_final', \
+                '_flagged', '_scaled', '_flipped', '_rotated', '_loop_times'
     def __init__(self, file, frame_x, frame_y, keys: list, frame_rates, frame_limits, frame_loops,
                  final):
         self._base_image = Image(file)

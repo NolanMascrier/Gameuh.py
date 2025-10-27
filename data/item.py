@@ -29,7 +29,7 @@ AFF_RARITY_TABLE = {
 
 class Item():
     """Creates an item.
-    
+
     Args:
         name (str): name of the item.
         base (str): Name of the base of the item.
@@ -45,6 +45,9 @@ class Item():
         affixes (list, optionnal): List of the item's affixes,\
         aka its effects. Defaults to [].
     """
+    __slots__ = '_name', '_base', '_max_held', '_price', '_base_price', '_power', '_image', \
+                '_flags', '_affixes', '_implicits', '_rarity', '_sealed', '_drop_time', '_popup', \
+                '_popup_details', '_level'
     def __init__(self, name:str, base:str, price, power = 0, max_held = 64,\
         image:Image|Animation = None, rarity = 0,\
         flags = None, affixes = None, implicits = None):

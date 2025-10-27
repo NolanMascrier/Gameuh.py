@@ -20,6 +20,7 @@ class Affix():
         level_modifier (bool, optional): Whether or not the affix describes a level modifier.\
         Impacts the describe function. Defaults to `False`.
     """
+    __slots__ = '_name', '_value', '_flags', '_bounds', '_seal', '_level_modifier'
     def __init__(self, name, value, flag, lower_bound:float = 0.8, upper_bound:float = 1.2,\
                 level_modifier = False):
         self._name = name

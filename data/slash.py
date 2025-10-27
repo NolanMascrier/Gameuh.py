@@ -14,6 +14,10 @@ from data.constants import PROJECTILE_TRACKER, Flags, SYSTEM, ANIMATION_TRACKER
 
 class Slash(HitBox):
     """Defines a slash."""
+    __slots__ = '_caster', '_origin', '_image', '_real_image', '_damage', '_evil', '_area', \
+                '_center', '_anim_on_hit', '_effective_frames', '_flags', '_finished', \
+                '_aim_right', '_immune', '_animation_state', '_debuffs', '_ignore_team', \
+                '_tick_time', '_anim_speed', '_debuff_chance'
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
                 offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\

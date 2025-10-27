@@ -24,6 +24,8 @@ class RangeStat():
     mult_scaling (bool, optionnal): Whether or not the stat\
     scales multiplicatively. Defaults to `False` (additive).
     """
+    __slots__ = '_value', '_name', '_precision', '_cap', '_scaling_value', \
+                '_mult_scaling', '_round', '_upper', '_lower'
     def __init__(self, lower = 1, upper = 10, name = "stat",\
             max_cap:float = None, min_cap = None, precision:int = 2,\
             scaling_value:float = 0, mult_scaling = False):

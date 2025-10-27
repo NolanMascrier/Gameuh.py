@@ -694,12 +694,6 @@ class TestEntityProperties(unittest.TestCase):
         expected_x = 100 + 100 / 2
         expected_y = 200 + 80 / 2
         self.assertEqual(self.entity.center, (expected_x, expected_y))
-    
-    def test_max_frame_property_setter(self):
-        """Test max_frame property setter."""
-        self.entity.max_frame = 10
-        self.assertEqual(self.entity.max_frame, 10)
-
 
 class TestEntityMove(unittest.TestCase):
     """Tests for Entity move method."""
@@ -869,7 +863,7 @@ class TestEntityDash(unittest.TestCase):
         """Test dash with default time."""
         self.entity._angle = 0
         self.entity.dash(100)
-        self.assertEqual(self.entity._dash_time, 0.4)
+        self.assertEqual(self.entity._dash_time, 0.2)
     
     def test_dash_calculates_velocity(self):
         """Test that dash calculates velocity correctly."""
@@ -902,7 +896,7 @@ class TestEntityDash(unittest.TestCase):
     def test_dash_normalization(self):
         """Test that dash direction is normalized."""
         self.entity._angle = 1.0
-        self.entity.dash(100)
+        self.entity.dash(50)
         
         # Verify vector is normalized
         length = (self.entity._dash_dx ** 2 + self.entity._dash_dy ** 2) ** 0.5

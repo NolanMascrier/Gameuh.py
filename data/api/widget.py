@@ -12,6 +12,7 @@ class Widget():
         width (float, optional): width of the widget.
         height (float, optional): height of the widget.
     """
+    __slots__ = '_position', '_width', '_height'
     def __init__(self, x: float = 0, y: float = 0, width: float = 0, height: float = 0):
         self._position = Vec2(x, y)
         self._width = width

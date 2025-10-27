@@ -18,14 +18,10 @@ COLORS = [
     (255, 140, 0),
 ]
 
-@lru_cache(maxsize=256)
-def _fast_sqrt(value):
-    """Cached square root for distance calculations."""
-    result = value ** 0.5
-    return result
-
 class PickUp(HitBox):
     """Creates a pickup"""
+    __slots__ = '_value', '_flags', '_to_delete', '_max_speed', '_max_force', '_arrival_threshold',\
+                '_arrival_threshold_sq', '_delay', '_velocity', '_contains', '_cached_image'
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
                 flags = None, contained = None):
         super().__init__(x, y, w, h)

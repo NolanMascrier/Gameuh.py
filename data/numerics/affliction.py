@@ -29,6 +29,9 @@ class Affliction():
         dot_color (tuple, optional): Color of the damage text for DOT effects. Defaults to ORANGE.
         is_debuff (bool, optional): Wether or not the affliction is a debuff. Defaults to False.
     """
+    __slots__ = '_name', '_value', '_duration', '_flags', '_max_duration', '_expire', '_stackable',\
+                '_refreshable', '_damage', '_max_stacks', '_tick_rate', '_dot_tick', '_dot_timer', \
+                '_dot_amount', '_dot_color', '_is_debuff'
     def __init__(self, name, value, duration = 1, flags: list = None, stackable = False,
                  refreshable = False, damage: Damage = None, max_stacks = 10, tick_rate = 0.016,
                  dot_tick = 1, dot_color = ORANGE, is_debuff = False):

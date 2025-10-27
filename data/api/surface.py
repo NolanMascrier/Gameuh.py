@@ -40,6 +40,7 @@ def set_screen(is_fullscreen = True, width = 1920, height = 1080, vsync=1):
 
 class Surface(Widget):
     """Overrides a pygame's surface."""
+    __slots__ = '_surface', "_"
     def __init__(self, width: float = 0, height: float = 0, x: float = 0, y: float = 0,\
                  is_alpha = True):
         super().__init__(x, y, width, height)

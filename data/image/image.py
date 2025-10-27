@@ -11,6 +11,7 @@ class Image(Widget):
     
     Args:
         uri (str): URI pointing to the image in /ressources/"""
+    __slots__= '_uri', '_image', '_visible', '_scaled', '_rotated', '_flipped'
     def __init__(self, uri = None):
         self._uri = uri
         if uri is None:

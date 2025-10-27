@@ -34,6 +34,8 @@ class Creature:
         origin (Character|Enemy): Links to the creature's user.\
         Used for triggers. Default to None.
     """
+    __slots__ = '_name', '_level', '_exp', '_exp_to_next', '_origin', '_life_regen', '_mana_regen',\
+                '_stats', '_gear', '_buffs', '_dots', '_changed', '_ap'
     def __init__(self, name, origin = None):
         self._name = name
         self._level = 1
@@ -843,15 +845,6 @@ class Creature:
     @gear.setter
     def gear(self, value):
         self._gear = value
-
-    @property
-    def abilities(self):
-        """Returns the creature's abilities."""
-        return self._abilities
-
-    @abilities.setter
-    def abilities(self, value):
-        self._abilities = value
 
     @property
     def ap(self):

@@ -81,10 +81,8 @@ class PostEffects():
                 if self._scaled_cache is None:
                     self._scaled_cache = Surface(current_res[0], current_res[1])
             scaled = SYSTEM["windows"].scale(current_res)
-            SYSTEM["real_windows"].fill(BLACK_TRANSP)
             SYSTEM["real_windows"].blit(scaled, (0, 0))
         else:
-            SYSTEM["real_windows"].fill(BLACK_TRANSP)
             SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0), True)
         if self._flash_timer > 0:
             self._flash_timer -= 1

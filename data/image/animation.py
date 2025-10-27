@@ -26,6 +26,9 @@ class Animation():
         once. If set to `True`, the inner boolean finished will be set to `True`\
         once the animation is over. Defaults to False.
     """
+    __slots__= '_base_image', '_frame_x', '_frame_y', '_frame_rate', '_frame_max', '_loops', \
+               '_max_loop', '_lines', '_sequence', '_current_frame', '_animated', '_play_once', \
+               '_finished', '_width', '_height', '_scaled', '_flipped', '_rotated', '_frame_loop'
     def __init__(self, uri: str|Image, frame_x: int, frame_y: int, lines = 1,\
                 frame_rate = 1, frame_max = -1, loops: bool|int = True, animated = True,\
                 plays_once = False, frame_loop = None):

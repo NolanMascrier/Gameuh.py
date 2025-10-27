@@ -69,6 +69,8 @@ class Damage():
         crit_rate (float, optional): Default critical chance of the damage\
         source. Defaults to 5%.
     """
+    __slots__ = '_coeff', '_mod', '_types', '_penetration', '_is_crit', '_crit_mult', '_crit_rate',\
+                '_flags', '_ignore_block', '_ignore_dodge', '_origin', '_bounds'
     def __init__(self, multiplier, phys = 0, fire = 0, ice = 0,\
                 elec = 0, energ = 0, light = 0, dark = 0, pp = 0, fp = 0, \
                 ip = 0, ep = 0, enp = 0, lp = 0, dp = 0, is_crit = False, \

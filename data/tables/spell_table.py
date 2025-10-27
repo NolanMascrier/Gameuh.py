@@ -179,7 +179,7 @@ def generate_spell_list():
         Flags.IMPACT_ANIMATION_RANDOM], anim_on_hit=missile_impact)
     elementalfury = Spell("elefury", elefury_icon, None, None, 20,\
         cooldown=60, flags=[Flags.BUFF], buffs=[ELEFURY])
-    dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=6,\
+    dash_basic = Spell("wdash", heal_icon, None, None, 5, distance=3,\
         cooldown=3, flags=[Flags.BUFF, Flags.DASH], buffs=[CELERITY])
     furyslash = Spell("fslash", fury_icon, "furyslash_img", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.BUFF],

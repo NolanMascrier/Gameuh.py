@@ -12,6 +12,7 @@ from data.interface.render import render
 class Button(Widget):
     """Defines a button. A button is a clickable image with two states (clicked
     and not clicked), and does an action when clicked."""
+    __slots__ = '_image', '_pressed', '_clicked', '_action', '_scrollable', '_superimage', '_text'
     def __init__(self, image:Image, pressed:Image = None, action = None, text:str|Image = "",\
         scrollable_area: Scrollable = None, superimage: Surface = None):
         if isinstance(image, str):

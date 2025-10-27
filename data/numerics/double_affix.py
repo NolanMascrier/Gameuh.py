@@ -18,6 +18,7 @@ class DoubleAffix():
         upper_bound(float, optional): Upper bound multiplier\
         for the random roll. Defaults to 120%.
     """
+    __slots__ = '_name', '_value_min', '_value_max', '_flags', '_bounds_min', '_seal', '_bounds_max'
     def __init__(self, name, value_min, value_max, flag,\
                  lower_bound:float = 0.8, upper_bound:float = 1.2,\
                  lower_bound_max:float = 0.8, upper_bound_min:float = 1.2):

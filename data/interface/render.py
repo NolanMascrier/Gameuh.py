@@ -1,7 +1,7 @@
 """"Renders the screen."""
 
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU_INVENTORY, LOADING\
-    , CLEAN, BLACK_TRANSP
+    , BLACK_TRANSP
 
 RENDER_LIST = []
 

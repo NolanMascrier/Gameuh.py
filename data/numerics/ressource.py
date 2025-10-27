@@ -29,6 +29,7 @@ class Ressource(Stat):
         scales multiplicatively. Defaults to `False` (additive).
 
     """
+    __slots__= '_current_value', '_rate', '_buffs', '_buffs_multi'
     def __init__(self, val = 100.0, name = "ressource", refresh = None,\
             max_cap = None, min_cap = None, scaling_value:float = 1, mult_scaling = False,\
             precision = 0):
