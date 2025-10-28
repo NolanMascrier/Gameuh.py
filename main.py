@@ -1,5 +1,7 @@
 """Game launcher."""
 
+import psutil
+import os
 import cProfile
 import pstats
 import random
@@ -26,6 +28,12 @@ from data.slash import Slash
 from data.tables.uniques_table import UNIQUES
 from data.item import Item
 from data.tables.implicits_table import IMPLICITS
+
+def get_memory_usage():
+    """Get current memory usage in MB."""
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / 1024 / 1024
+    return mem
 
 DAMAGE_COLOR = (255, 30, 30)
 
@@ -178,6 +186,7 @@ def loading():
 def main_loop():
     """Main loop. Temporary"""
     while SYSTEM["playing"]:
+        print(f"Memory: {get_memory_usage():.1f} MB", end='\r')
         SYSTEM["mouse_target"] = None
         SYSTEM["deltatime"].tick()
         if SYSTEM["game_state"] == LOADING:
@@ -288,12 +297,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
     profiler.disable()
-    print("### CUMTIME")
     stats = pstats.Stats(profiler).sort_stats("cumtime")
-    stats.print_stats(25)
-    print("### PERCALL")
-    stats = pstats.Stats(profiler).sort_stats("pcalls")
-    stats.print_stats(25)
-    print("### TOTTIME")
-    stats = pstats.Stats(profiler).sort_stats("tottime")
     stats.print_stats(25)

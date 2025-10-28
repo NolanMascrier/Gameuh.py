@@ -32,7 +32,7 @@ class Entity(HitBox):
             w = 0
             h = 0
         else:
-            self._real_image = SYSTEM["images"][imagefile].clone()
+            self._real_image = SYSTEM["images"][imagefile]
             w = self._real_image.w
             h = self._real_image.h
         if hitbox is not None:

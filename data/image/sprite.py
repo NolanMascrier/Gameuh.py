@@ -66,11 +66,11 @@ class Sprite():
         self._akey = key
         self._animations[key].reset()
 
-    def tick(self, caller = None):
+    def tick(self):
         """Ticks down the sprite."""
         if self._akey not in self._animations:
             return
-        self._animations[self._akey].tick(caller)
+        self._animations[self._akey].tick()
         if self._animations[self._akey].finished:
             if self._loop_times[self._akey] < 0:
                 self.play(self._keys[0])

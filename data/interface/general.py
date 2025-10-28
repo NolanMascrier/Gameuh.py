@@ -1,5 +1,6 @@
 """Handles the general UI operations such as the bottom bar"""
 
+import gc
 from functools import lru_cache
 
 from data.api.surface import Surface
@@ -81,7 +82,8 @@ def draw_game(show_player = True, show_enemies = True,\
         texts_layer.clear()
     if show_player:
         if show_hitboxes:
-            chars_layer.append(draw_hitbox(SYSTEM["player"].entity.hitbox.get_rect(), GREEN_TRANSP, GREEN_PURE))
+            chars_layer.append(draw_hitbox(SYSTEM["player"].entity.hitbox.get_rect(),
+                                           GREEN_TRANSP, GREEN_PURE))
         chars_layer.append((SYSTEM["player"].get_image(), SYSTEM["player"].get_pos()))
         for buff in SYSTEM["player"].creature.buffs:
             if f"buffanim_{buff.name}" in SYSTEM["images"]:
@@ -181,6 +183,7 @@ def logic_tick():
         baddie.tick(SYSTEM["player"])
         if baddie.destroyed:
             ENNEMY_TRACKER.pop(i)
+            baddie.entity.real_image = None
         i -= 1
     i = len(ANIMATION_TRACKER) - 1
     while i >= 0:
@@ -196,6 +199,7 @@ def logic_tick():
         if (isinstance(p, Projectile) and p.can_be_destroyed()) or \
             (isinstance(p, Slash) and p.finished):
             PROJECTILE_TRACKER.pop(i)
+            del p
         i -= 1
     i = len(TEXT_TRACKER) - 1
     while i >= 0:
