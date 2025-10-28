@@ -4,7 +4,7 @@ import numpy
 
 from data.api.surface import Surface, flip
 
-from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER, SCREEN_HEIGHT, BLACK_TRANSP
+from data.constants import SYSTEM, SCREEN_WIDTH, ANIMATION_TICK_TRACKER, SCREEN_HEIGHT
 
 class PostEffects():
     """Handle whole screen effects."""

@@ -2,7 +2,6 @@
 
 import random
 import math
-from functools import lru_cache
 
 from data.api.vec2d import Vec2
 

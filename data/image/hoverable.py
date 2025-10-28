@@ -72,7 +72,7 @@ class Hoverable(Widget):
         elif self._attach is not None:
             txt = self._attach.get_size()
         else:
-            return
+            return False
         if SYSTEM["mouse"][0] >= self.x and SYSTEM["mouse"][0] <= self.x + txt[0] and\
             SYSTEM["mouse"][1] >= self.y and SYSTEM["mouse"][1] <= self.y + txt[1]:
             return True

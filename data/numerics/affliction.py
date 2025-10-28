@@ -222,8 +222,7 @@ class Affliction():
         """"Returns true whether or not the affliction's expired."""
         if not self._expire:
             return False
-        else:
-            return self._duration <= 0
+        return self._duration <= 0
 
     @property
     def max_stacks(self):

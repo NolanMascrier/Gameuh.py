@@ -91,8 +91,7 @@ class AnimationController:
         if isinstance(self._shared_animation, Sprite):
             anim = self._shared_animation.animations[self._current_key]
             return anim.get_image([self._current_frame])
-        else:
-            return self._shared_animation.get_image([self._current_frame])
+        return self._shared_animation.get_image([self._current_frame])
 
     def detach(self, key, x, y, center=False):
         """Detach an animation (for sprites)."""
@@ -101,7 +100,6 @@ class AnimationController:
 
     def flip(self, flipped):
         """Track flip state (don't modify shared data)."""
-        # You could store flip state here if needed per-entity
         self._flipped = flipped
 
     @property

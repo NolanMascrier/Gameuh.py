@@ -5,7 +5,7 @@ from data.api.widget import Widget
 
 class HitBox(Widget):
     """Defines an hitbox."""
-    __slots__ = ('_offset')
+    __slots__ = '_offset', '_'
     def __init__(self, x, y, w, h):
         super().__init__(x, y, w, h)
         self._offset = (0, 0)

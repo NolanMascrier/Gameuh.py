@@ -111,7 +111,7 @@ class SlotPanel(Widget):
             if slot.contains is not None and self._filter is not None\
                 and self._filter not in slot.contains.contains.flags:
                 continue
-            elif slot.contains.dragging:
+            if slot.contains.dragging:
                 self._slots.remove(slot)
             else:
                 slot.contains.tick()
