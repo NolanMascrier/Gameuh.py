@@ -167,14 +167,26 @@ def load_animations():
         "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
         [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
         [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False)
+    SYSTEM["images"]["necromancer_flipped"] = Sprite("necro_old.png", 160, 128, ["idle", "dash", "attack",\
+        "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
+        [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
+        [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False).flip(False, True)
     SYSTEM["images"]["demon"] = Sprite("demon.png", 79, 69, ["idle", "dash", "hit",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1, 0.1], \
         [4, 4, 4, 8, 6], [True, True, False, False, False],\
         [-1, -1, -1, -1, 1]).scale(2, 2, False)
+    SYSTEM["images"]["demon_flipped"] = Sprite("demon.png", 79, 69, ["idle", "dash", "hit",\
+        "attack", "die"], [0.1, 0.1, 0.15, 0.1, 0.1], \
+        [4, 4, 4, 8, 6], [True, True, False, False, False],\
+        [-1, -1, -1, -1, 1]).scale(2, 2, False).flip(False, True)
     SYSTEM["images"]["soul"] = Sprite("soul.png", 96, 96, ["idle", "dash",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1], \
         [5, 8, 10, 8], [True, True, False, False],\
         [-1, -1, -1, 1]).scale(2, 2, False).flip(False, True)
+    SYSTEM["images"]["soul_flipped"] = Sprite("soul.png", 96, 96, ["idle", "dash",\
+        "attack", "die"], [0.1, 0.1, 0.15, 0.1], \
+        [5, 8, 10, 8], [True, True, False, False],\
+        [-1, -1, -1, 1]).scale(2, 2, False).flip(False, True).flip(False, True)
 
 def load_tiles():
     """Load the tiles."""

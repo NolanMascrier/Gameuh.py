@@ -261,3 +261,48 @@ class Animation():
     def scale_factor(self):
         """Returns the factor of the latest scaling."""
         return self._scaled
+
+    @property
+    def animated(self):
+        """Returns whether or not the animation is animated."""
+        return self._animated
+
+    @animated.setter
+    def animated(self, value):
+        self._animated = value
+
+    @property
+    def play_once(self):
+        """Returns whether or not the animation plays only once."""
+        return self._play_once
+
+    @play_once.setter
+    def play_once(self, value):
+        self._play_once = value
+
+    @property
+    def frame_loop(self):
+        """Returns the number of loop left for the animation left."""
+        return self._frame_loop
+
+    @frame_loop.setter
+    def frame_loop(self, value):
+        self._frame_loop = value
+
+    @property
+    def frame_rate(self):
+        """Returns the animation's frame rate."""
+        return self._frame_rate
+
+    @frame_rate.setter
+    def frame_rate(self, value):
+        self._frame_rate = value
+
+    @property
+    def loops(self):
+        """Returns the animation's current loop."""
+        return self._loops
+
+    @loops.setter
+    def loops(self, value):
+        self._loops = value

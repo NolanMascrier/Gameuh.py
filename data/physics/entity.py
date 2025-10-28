@@ -6,6 +6,7 @@ import numpy
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.physics.hitbox import HitBox
 from data.image.sprite import Sprite
+from data.image.controller import AnimationController
 
 class Entity(HitBox):
     """Defines an entity.
@@ -23,7 +24,7 @@ class Entity(HitBox):
     """
     __slots__ = '_image', '_real_image', "_x_def", "_y_def", "_move_speed", "_keys", "_flipped", \
                 "_angle", "_dash_speed", "_dashing", "_x_dest", "_y_dest", "_dash_dx", "_dash_dy", \
-                "_dash_time", "_sprite"
+                "_dash_time", "_sprite", "_animation_controller"
     def __init__(self, x, y, imagefile: str, hitbox:HitBox = None,\
                 move_speed = 1, hitbox_mod = None):
         self._image = imagefile
@@ -33,6 +34,7 @@ class Entity(HitBox):
             h = 0
         else:
             self._real_image = SYSTEM["images"][imagefile]
+            self._animation_controller = AnimationController(self._real_image)
             w = self._real_image.w
             h = self._real_image.h
         if hitbox is not None:
@@ -58,7 +60,7 @@ class Entity(HitBox):
 
     def tick(self, character, speed_mod = 1):
         """Ticks down the entity."""
-        self._real_image.tick()
+        self._animation_controller.tick()
         base_speed = character.creature.stats["speed"].c_value * speed_mod
         self._move_speed = base_speed
         if self._dashing:
@@ -84,7 +86,7 @@ class Entity(HitBox):
 
     def get_image(self):
         """Returns the current image."""
-        return self._real_image.get_image()
+        return self._animation_controller.get_image()
 
     def move(self, pos):
         """Moves the entity toward the x;y position."""
@@ -121,12 +123,18 @@ class Entity(HitBox):
 
     def flip(self, flips = None):
         """Flips the image."""
-        if flips is None:
-            self._flipped = not self._flipped
-            self._real_image.flip(False, self._flipped)
+        if self._animation_controller:
+            if flips is None:
+                self._flipped = not self._flipped
+            else:
+                self._flipped = flips
         else:
-            self._flipped = flips
-            self._real_image.flip(False, self._flipped)
+            if flips is None:
+                self._flipped = not self._flipped
+                self._real_image.flip(False, self._flipped)
+            else:
+                self._flipped = flips
+                self._real_image.flip(False, self._flipped)
 
     def export(self) -> str:
         """Serializes the entity as JSON."""
@@ -141,13 +149,11 @@ class Entity(HitBox):
 
     def play(self, key):
         """Plays an animation."""
-        if self._sprite:
-            self._real_image.play(key)
+        self._animation_controller.play(key)
 
     def detach(self, key, center = False):
         """Detach an animation."""
-        if self._sprite:
-            self._real_image.detach(key, self.center_x, self.center_y, center)
+        self._animation_controller.detach(key, self.center_x, self.center_y, center)
 
     @staticmethod
     def imports(data):

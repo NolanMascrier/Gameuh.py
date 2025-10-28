@@ -22,7 +22,7 @@ Instead, it's now a looter bullet hell. Yeah
 
 # Known Bugs
 - [x] After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded
-- [ ] Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
+- [x] Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
 - [x] The same item is sometimes added multiple time to the inventory
 - [x] Items put in the OFFHAND slot will not take effect and crash the game when removed
 

@@ -20,9 +20,9 @@ class Sprite():
         self._frame_loops = frame_loops
         self._lines = int(self._base_image.height / frame_y)
         self._animations = {}
-        self.__sequencer()
         self._akey = keys[0]
         self._final = final
+        self.__sequencer()
         self._loop_times = {}
         i = 0
         for f in self._animations:
@@ -66,7 +66,7 @@ class Sprite():
         self._akey = key
         self._animations[key].reset()
 
-    def tick(self):
+    def tick(self, _ = None):
         """Ticks down the sprite."""
         if self._akey not in self._animations:
             return
@@ -190,3 +190,30 @@ class Sprite():
     def scale_factor(self):
         """Returns the factor of the latest scaling."""
         return self._scaled
+
+    @property
+    def animations(self):
+        """Returns the list of animations."""
+        return self._animations
+
+    @animations.setter
+    def animations(self, value):
+        self._animations = value
+
+    @property
+    def akey(self):
+        """Returns the current key."""
+        return self._akey
+
+    @akey.setter
+    def akey(self, value):
+        self._akey = value
+
+    @property
+    def loop_times(self):
+        """Returns the amount of loops for each key."""
+        return self._loop_times
+
+    @loop_times.setter
+    def loop_times(self, value):
+        self._loop_times = value
