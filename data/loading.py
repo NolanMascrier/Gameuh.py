@@ -167,7 +167,8 @@ def load_animations():
         "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
         [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
         [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False)
-    SYSTEM["images"]["necromancer_flipped"] = Sprite("necro_old.png", 160, 128, ["idle", "dash", "attack",\
+    SYSTEM["images"]["necromancer_flipped"] = Sprite("necro_old.png", 160, 128,
+        ["idle", "dash", "attack",\
         "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
         [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
         [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False).flip(False, True)

@@ -1,6 +1,5 @@
 """Handles the general UI operations such as the bottom bar"""
 
-import gc
 from functools import lru_cache
 
 from data.api.surface import Surface

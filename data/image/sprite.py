@@ -217,3 +217,12 @@ class Sprite():
     @loop_times.setter
     def loop_times(self, value):
         self._loop_times = value
+
+    @property
+    def keys(self):
+        """Returns the key list."""
+        return self._keys
+
+    @keys.setter
+    def keys(self, value):
+        self._keys = value

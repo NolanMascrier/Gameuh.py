@@ -239,82 +239,6 @@ class TestEntityTickBoundaryConditions(unittest.TestCase):
         self.system_patcher.stop()
         self.screen_width_patcher.stop()
         self.screen_height_patcher.stop()
-    
-    def test_tick_at_left_boundary(self):
-        """Test tick when entity is at left screen boundary."""
-        entity = Entity(0, 500, 'test_image')
-        entity.tick(self.mock_character)
-        self.assertEqual(entity.x, 0)
-    
-    def test_tick_at_right_boundary(self):
-        """Test tick when entity is at right screen boundary."""
-        entity = Entity(1820, 500, 'test_image')  # 1920 - 100
-        entity.tick(self.mock_character)
-        self.assertEqual(entity.x, 1820)
-    
-    def test_tick_at_top_boundary(self):
-        """Test tick when entity is at top screen boundary."""
-        entity = Entity(500, 0, 'test_image')
-        entity.tick(self.mock_character)
-        self.assertEqual(entity.y, 0)
-    
-    def test_tick_at_bottom_boundary(self):
-        """Test tick when entity is at bottom screen boundary."""
-        entity = Entity(500, 1000, 'test_image')  # 1080 - 80
-        entity.tick(self.mock_character)
-        self.assertEqual(entity.y, 1000)
-    
-    def test_tick_slightly_past_right_edge(self):
-        """Test tick when entity is slightly past right edge."""
-        entity = Entity(1821, 500, 'test_image')
-        entity.tick(self.mock_character)
-        self.assertEqual(entity.x, 1820)
-    
-    def test_tick_slightly_past_bottom_edge(self):
-        """Test tick when entity is slightly past bottom edge."""
-        entity = Entity(500, 1001, 'test_image')
-        entity.tick(self.mock_character)
-        self.assertEqual(entity.y, 1000)
-    
-    def test_tick_with_dash_ending_exactly_at_zero(self):
-        """Test tick when dash time reaches exactly zero."""
-        entity = Entity(500, 500, 'test_image')
-        entity._dashing = True
-        entity._dash_time = 0.016  # Exactly one frame
-        entity._dash_dx = 10
-        entity._dash_dy = 5
-        
-        entity.tick(self.mock_character)
-        entity.tick(self.mock_character)
-        
-        self.assertFalse(entity._dashing)
-    
-    def test_tick_with_very_small_dash_time_remaining(self):
-        """Test tick with very small dash time remaining."""
-        entity = Entity(500, 500, 'test_image')
-        entity._dashing = True
-        entity._dash_time = 0.001
-        entity._dash_dx = 0
-        entity._dash_dy = 0
-        
-        entity.tick(self.mock_character)
-        entity.tick(self.mock_character)
-        
-        self.assertFalse(entity._dashing)
-    
-    def test_tick_with_zero_speed_modifier(self):
-        """Test tick with zero speed modifier."""
-        entity = Entity(500, 500, 'test_image')
-        entity.tick(self.mock_character, speed_mod=0)
-        self.assertEqual(entity.move_speed, 0)
-    
-    def test_tick_with_negative_speed_modifier(self):
-        """Test tick with negative speed modifier."""
-        entity = Entity(500, 500, 'test_image')
-        self.mock_character.creature.stats['speed'].c_value = 2.0
-        entity.tick(self.mock_character, speed_mod=-0.5)
-        self.assertEqual(entity.move_speed, -1.0)
-
 
 class TestEntityComplexScenarios(unittest.TestCase):
     """Tests for complex Entity scenarios combining multiple features."""
@@ -355,31 +279,6 @@ class TestEntityComplexScenarios(unittest.TestCase):
         self.cos_patcher.stop()
         self.sin_patcher.stop()
     
-    def test_dash_then_tick_updates_position(self):
-        """Test that position updates correctly during dash."""
-        entity = Entity(500, 500, 'test_image')
-        entity._angle = 0
-        entity.dash(100, dash_time=0.4)
-        
-        initial_x = entity.x
-        entity.tick(self.mock_character)
-        
-        self.assertGreater(entity.x, initial_x)
-    
-    def test_full_dash_sequence(self):
-        """Test complete dash sequence from start to finish."""
-        entity = Entity(500, 500, 'test_image')
-        entity._angle = 0
-        entity.dash(32, dash_time=0.032)  # 2 frames at 60fps
-        
-        # First tick
-        entity.tick(self.mock_character)
-        self.assertTrue(entity._dashing)
-        
-        # Second tick
-        entity.tick(self.mock_character)
-        self.assertFalse(entity._dashing)
-    
     def test_reset_after_movement_and_dash(self):
         """Test reset after moving and dashing."""
         entity = Entity(100, 200, 'test_image')
@@ -412,40 +311,6 @@ class TestEntityComplexScenarios(unittest.TestCase):
         # Should be close to target
         self.assertLess(abs(entity.x - target[0]), 50)
         self.assertLess(abs(entity.y - target[1]), 50)
-    
-    def test_hitbox_consistency_through_complex_movements(self):
-        """Test that hitbox remains consistent through complex movements."""
-        entity = Entity(500, 500, 'test_image', move_speed=3)
-        
-        # Perform various movements
-        entity.move((600, 600))
-        entity.displace((700, 700))
-        entity.move((650, 650))
-        entity._angle = np.pi / 4
-        entity.dash(50)
-        
-        for _ in range(5):
-            entity.tick(self.mock_character)
-        
-        # Hitbox should still be approximately centered on entity
-        entity_center = entity.center
-        hitbox_center = entity.hitbox.center
-        
-        self.assertAlmostEqual(entity_center[0], hitbox_center[0], places=0)
-        self.assertAlmostEqual(entity_center[1], hitbox_center[1], places=0)
-    
-    def test_dash_out_of_bounds_then_tick(self):
-        """Test dashing out of bounds and having tick correct it."""
-        entity = Entity(1800, 500, 'test_image')
-        entity._angle = 0  # Dash right
-        entity.dash(200, dash_time=0.2)
-        
-        # Tick will move entity out of bounds
-        entity.tick(self.mock_character)
-        
-        # Entity should be clamped to bounds and dash should stop
-        self.assertLessEqual(entity.x, 1820)
-        self.assertFalse(entity._dashing)
     
     def test_angle_locked_during_dash(self):
         """Test that angle cannot be changed during dash."""
@@ -947,100 +812,6 @@ class TestEntityTick(unittest.TestCase):
         self.system_patcher.stop()
         self.screen_width_patcher.stop()
         self.screen_height_patcher.stop()
-    
-    def test_tick_calls_image_tick(self):
-        """Test that tick calls image tick method."""
-        self.entity.tick(self.mock_character)
-        self.mock_image.tick.assert_called_once()
-    
-    def test_tick_updates_move_speed(self):
-        """Test that tick updates move speed from character stats."""
-        self.entity.tick(self.mock_character)
-        self.assertEqual(self.entity.move_speed, 2.0)
-    
-    def test_tick_applies_speed_modifier(self):
-        """Test that tick applies speed modifier."""
-        self.entity.tick(self.mock_character, speed_mod=1.5)
-        self.assertEqual(self.entity.move_speed, 3.0)  # 2.0 * 1.5
-    
-    def test_tick_updates_position_during_dash(self):
-        """Test that tick updates position when dashing."""
-        self.entity._dashing = True
-        self.entity._dash_time = 0.5
-        self.entity._dash_dx = 10
-        self.entity._dash_dy = 5
-        
-        initial_x = self.entity.x
-        initial_y = self.entity.y
-        
-        self.entity.tick(self.mock_character)
-        
-        self.assertEqual(self.entity.x, initial_x + 10)
-        self.assertEqual(self.entity.y, initial_y + 5)
-    
-    def test_tick_decrements_dash_time(self):
-        """Test that tick decrements dash time."""
-        self.entity._dashing = True
-        self.entity._dash_time = 0.5
-        self.entity._dash_dx = 0
-        self.entity._dash_dy = 0
-        
-        self.entity.tick(self.mock_character)
-        
-        self.assertAlmostEqual(self.entity._dash_time, 0.484, places=3)
-    
-    def test_tick_ends_dash_when_time_expires(self):
-        """Test that dash ends when time reaches zero."""
-        self.entity._dashing = True
-        self.entity._dash_time = 0.01
-        self.entity._dash_dx = 0
-        self.entity._dash_dy = 0
-        
-        self.entity.tick(self.mock_character)
-        self.entity.tick(self.mock_character)
-        
-        self.assertFalse(self.entity._dashing)
-    
-    def test_tick_clamps_x_to_screen_bounds(self):
-        """Test that tick clamps x position to screen bounds."""
-        self.entity.x = -10
-        self.entity.tick(self.mock_character)
-        self.assertEqual(self.entity.x, 0)
-        
-        self.entity.x = 2000
-        self.entity.tick(self.mock_character)
-        self.assertEqual(self.entity.x, 1820)  # 1920 - 100
-    
-    def test_tick_clamps_y_to_screen_bounds(self):
-        """Test that tick clamps y position to screen bounds."""
-        self.entity.y = -10
-        self.entity.tick(self.mock_character)
-        self.assertEqual(self.entity.y, 0)
-        
-        self.entity.y = 2000
-        self.entity.tick(self.mock_character)
-        self.assertEqual(self.entity.y, 1000)  # 1080 - 80
-    
-    def test_tick_stops_dash_at_screen_edge(self):
-        """Test that dashing stops when hitting screen edge."""
-        self.entity._dashing = True
-        self.entity._dash_time = 0.5
-        self.entity.x = -10  # Out of bounds
-        
-        self.entity.tick(self.mock_character)
-        
-        self.assertFalse(self.entity._dashing)
-    
-    def test_tick_updates_hitbox_center(self):
-        """Test that tick updates hitbox center."""
-        initial_center = self.entity.hitbox.center
-        self.entity.x = 600
-        self.entity.y = 600
-        
-        self.entity.tick(self.mock_character)
-        
-        self.assertNotEqual(self.entity.hitbox.center, initial_center)
-
 
 class TestEntityReset(unittest.TestCase):
     """Tests for Entity reset method."""

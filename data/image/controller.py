@@ -65,7 +65,7 @@ class AnimationController:
             if anim.loops:
                 self._current_frame = start_frame
             elif sprite.loop_times[self._current_key] < 0:
-                self.play(sprite._keys[0])
+                self.play(sprite.keys[0])
             elif sprite.loop_times[self._current_key] > 0:
                 self._current_frame = start_frame
                 sprite.loop_times[self._current_key] -= 1
