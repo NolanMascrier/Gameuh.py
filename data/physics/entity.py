@@ -34,7 +34,9 @@ class Entity(HitBox):
             h = 0
         else:
             self._real_image = SYSTEM["images"][imagefile]
-            self._animation_controller = AnimationController(self._real_image)
+            flipped_key = f"{imagefile}_flipped"
+            flipped_image = SYSTEM["images"].get(flipped_key, None)
+            self._animation_controller = AnimationController(self._real_image, flipped_image)
             w = self._real_image.w
             h = self._real_image.h
         if hitbox is not None:
@@ -126,8 +128,10 @@ class Entity(HitBox):
         if self._animation_controller:
             if flips is None:
                 self._flipped = not self._flipped
+                self._animation_controller.flip(self._flipped)
             else:
                 self._flipped = flips
+                self._animation_controller.flip(self._flipped)
         else:
             if flips is None:
                 self._flipped = not self._flipped

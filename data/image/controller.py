@@ -1,4 +1,4 @@
-"""Blabla"""
+"""Animation controller for sprites and animations."""
 
 from data.image.sprite import Sprite
 
@@ -9,12 +9,13 @@ class AnimationController:
     __slots__ = ('_shared_animation', '_current_frame', '_finished',
                  '_frame_accumulator', '_current_key', '_flipped', '_flip_anim')
 
-    def __init__(self, shared_animation):
+    def __init__(self, shared_animation, flipped_anim = None):
         """
         Args:
             shared_animation: Reference to the shared Animation/Sprite object
         """
         self._shared_animation = shared_animation
+        self._flip_anim = flipped_anim
         self._current_frame = 0.0
         self._finished = False
         self._frame_accumulator = 0.0
@@ -88,15 +89,19 @@ class AnimationController:
 
     def get_image(self):
         """Get current frame image."""
-        if isinstance(self._shared_animation, Sprite):
-            anim = self._shared_animation.animations[self._current_key]
+        anim_to_use = self._flip_anim if self._flipped and self._flip_anim \
+                                      else self._shared_animation
+        if isinstance(anim_to_use, Sprite):
+            anim = anim_to_use.animations[self._current_key]
             return anim.get_image([self._current_frame])
-        return self._shared_animation.get_image([self._current_frame])
+        return anim_to_use.get_image([self._current_frame])
 
     def detach(self, key, x, y, center=False):
         """Detach an animation (for sprites)."""
-        if isinstance(self._shared_animation, Sprite):
-            self._shared_animation.detach(key, x, y, center)
+        anim_to_use = self._flip_anim if self._flipped and self._flip_anim \
+                                      else self._shared_animation
+        if isinstance(anim_to_use, Sprite):
+            anim_to_use.detach(key, x, y, center)
 
     def flip(self, flipped):
         """Track flip state (don't modify shared data)."""
