@@ -352,7 +352,7 @@ class Level():
         generate_victory()
         SYSTEM["deltatime"].stop(WAVE_TIMER)
 
-    def fail_level(self):
+    def fail_level(self, abandon = False):
         """Game over sequence. Removes half the gold gained, 10% of the player's current exp,
         and a random amount of items."""
         self._finished = True
@@ -386,7 +386,7 @@ class Level():
                 self._loot.insert(pos, rune)
                 pos += 1
         SYSTEM["player"].gold += self._gold / 2
-        generate_defeat()
+        generate_defeat(abandon)
         SYSTEM["deltatime"].stop(WAVE_TIMER)
 
     def next_wave(self):

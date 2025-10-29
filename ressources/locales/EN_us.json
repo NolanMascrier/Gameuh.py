@@ -454,6 +454,7 @@
         "stolen": "Lost",
         "victory": "You have triumphed",
         "defeat": "You have fallen",
+        "abandon": "You have fled",
         "pack_size": "Enemy presence",
         "waves": "{w} waves",
         "debuff_res": "Affliction avoidance",

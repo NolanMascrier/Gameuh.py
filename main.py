@@ -223,23 +223,23 @@ def main_loop():
                     SYSTEM["game_state"] = GAME_LEVEL
         if SYSTEM["game_state"] == GAME_LEVEL:
             game_loop(keys, time_event)
-        if SYSTEM["game_state"] == GAME_PAUSE:
+        elif SYSTEM["game_state"] == GAME_PAUSE:
             draw_pause(events)
-        if SYSTEM["game_state"] == GAME_VICTORY:
+        elif SYSTEM["game_state"] == GAME_VICTORY:
             draw_end(events)
-        if SYSTEM["game_state"] == GAME_DEATH:
+        elif SYSTEM["game_state"] == GAME_DEATH:
             draw_end(events)
-        if SYSTEM["game_state"] == MENU_MAIN:
+        elif SYSTEM["game_state"] == MENU_MAIN:
             draw_menu(events)
-        if SYSTEM["game_state"] == MENU_GEAR:
+        elif SYSTEM["game_state"] == MENU_GEAR:
             draw_gear(events)
-        if SYSTEM["game_state"] == MENU_SPELLBOOK:
+        elif SYSTEM["game_state"] == MENU_SPELLBOOK:
             draw_spells(events)
-        if SYSTEM["game_state"] == MENU_INVENTORY:
+        elif SYSTEM["game_state"] == MENU_INVENTORY:
             draw_inventory(events)
-        if SYSTEM["game_state"] == MENU_TREE:
+        elif SYSTEM["game_state"] == MENU_TREE:
             draw_skills(events)
-        if SYSTEM["game_state"] == MENU_OPTIONS:
+        elif SYSTEM["game_state"] == MENU_OPTIONS:
             draw_options(events)
 
         if SYSTEM["pop_up"] is not None:

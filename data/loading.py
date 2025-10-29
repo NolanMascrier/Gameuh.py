@@ -128,6 +128,10 @@ def start_level():
     SYSTEM["level"] = SYSTEM["selected"]
     SYSTEM["level"].init()
 
+def abandon_level():
+    """Abandons the current level."""
+    SYSTEM["level"].fail_level(True)
+
 def quit_level():
     """Quits the current level and resets the player."""
     SYSTEM["game_state"] = MENU_MAIN
@@ -238,7 +242,7 @@ def load_buttons():
                                              "Resume")
     SYSTEM["buttons"]["button_abandon"] = Button(SYSTEM["images"]["btn"],\
                                             SYSTEM["images"]["btn_p"],\
-                                            quit_level, "Abandon mission")
+                                            abandon_level, "Abandon mission")
     SYSTEM["buttons"]["button_continue"] = Button(SYSTEM["images"]["btn"],\
                                             SYSTEM["images"]["btn_p"],\
                                             quit_level, "Return to base")

@@ -26,6 +26,7 @@ class PostEffects():
         self._flash_surface = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
         self._scaled_cache = None
         self._cached_resolution = None
+        self._flash_color = None
 
     def hitstop(self, timer):
         """Sets a hitstop for timer frames."""
@@ -55,8 +56,7 @@ class PostEffects():
         self._flash_timer = duration
         self._flash_max = duration
         self._flash_opacity = 150
-        self._flash_surface.fill(color)
-        self._flash_surface.set_alpha(self._flash_opacity)
+        self._flash_color = list(color)
 
     def tick(self):
         """Applies the effects."""
@@ -87,7 +87,7 @@ class PostEffects():
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)
-            self._flash_surface.set_alpha(self._flash_opacity)
+            SYSTEM["real_windows"].fill(self._flash_color + [self._flash_opacity])
         flip()
 
     @property
