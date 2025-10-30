@@ -107,6 +107,12 @@ class Animation():
 
                     self._current_frame = end_frame
 
+    def opacity(self, opacity:int):
+        """Sets the opacity of the image."""
+        for s in self._sequence:
+            s.opacity(opacity)
+        return self
+
     def rotate(self, deg: float):
         """Rotates the sequence.
         

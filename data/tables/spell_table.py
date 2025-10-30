@@ -76,7 +76,7 @@ def generate_spell_list():
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["arc_proj_img"] =\
-        Animation("arc.png", 64, 64, frame_rate=0.25)
+        Animation("anims/plasma.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["icebolt_proj_img"] =\
         Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
     SYSTEM["images"]["voidspear_proj_img"] =\

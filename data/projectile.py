@@ -137,8 +137,8 @@ class Projectile(HitBox):
                         x = numpy.random.randint(entity.left, entity.right)
                         y = numpy.random.randint(entity.top, entity.bottom)
                     else:
-                        x = entity.center_x - self._anim_on_hit.width / 2
-                        y = entity.center_y - self._anim_on_hit.height / 2
+                        x = self.center_x - self._anim_on_hit.width / 2
+                        y = self.center_y - self._anim_on_hit.height / 2
                     ANIMATION_TRACKER.append((self._anim_on_hit.clone(), x, y))
                 for debuff in self._debuffs:
                     if debuff.damage is not None:

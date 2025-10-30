@@ -281,7 +281,6 @@ class Creature:
             res = self._stats[dmg_type].c_value - pen[dmg_type]
             damage += dmga * (1 - res)
         if damage_source.is_crit:
-            SYSTEM["post_effects"].flash(WHITE, 5)
             damage_source.origin.on_crit()
             crit = damage_source.crit_mult * (1 - self._stats["crit_res"].get_value())
             if crit > 0:
