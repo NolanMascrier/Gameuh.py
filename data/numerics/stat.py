@@ -75,7 +75,6 @@ class Stat:
         return f"{self.name} : ({self.value} + {self.get_flats()}) * (1 + {self.get_increases()})"+\
                f" * {self.get_multipliers()}"
 
-    @lru_cache(64)
     def get_value(self):
         """Returns the computed final value of the stat.
         
@@ -161,7 +160,6 @@ class Stat:
         for incr in self._incr:
             if incr.expired:
                 self._incr.remove(incr)
-        self.get_value.cache_clear()
 
     def scale(self, level:int):
         """Scales the stat to the given level."""
