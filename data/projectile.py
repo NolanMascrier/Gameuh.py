@@ -12,6 +12,7 @@ from data.numerics.damage import Damage
 from data.creature import Creature
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
+from data.image.controller import AnimationController
 
 class DummyEntity():
     """Emulates an entity of the projectile."""
@@ -27,7 +28,7 @@ class Projectile(HitBox):
                 '_acceleration', '_origin', '_damage', '_evil', '_bounces', '_delay', \
                 '_initial_delay', '_explosion', '_behaviours', '_debuffs', '_flagged', \
                 '_wandering', '_immune', '_bounced', '_chains', '_warning', '_anim_speed', \
-                '_debuff_chance'
+                '_debuff_chance', '_animation_controller'
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
@@ -64,8 +65,16 @@ class Projectile(HitBox):
                 self._angle = 90 - numpy.arctan2(closest.entity.hitbox.center_x - x,\
                     closest.entity.hitbox.center_y - y) * 180 / pi
                 self._target = closest
-        self._real_image = SYSTEM["images"][self._image].clone()\
-            .rotate(-self._angle).scale(area, area, False)
+        cached = SYSTEM["trans_cache"].get(imagefile, -self._angle, area, False)
+        if cached is not None:
+            self._real_image = cached
+            self._animation_controller = AnimationController(cached)
+        else:
+            base_image = SYSTEM["images"][imagefile]
+            self._real_image = base_image.clone().rotate(-self._angle).scale(area, area, False)
+            SYSTEM["trans_cache"].put(imagefile, self._real_image, -self._angle, area, False)
+            self._animation_controller = None
+
         self._width = self._real_image.w
         self._height = self._real_image.h
         super().__init__(x, y, self._width, self._height)
@@ -101,6 +110,8 @@ class Projectile(HitBox):
 
     def get_image(self):
         """Returns the projectile image."""
+        if self._animation_controller:
+            return self._animation_controller.get_image()
         return self._real_image.get_image()
 
     def can_be_destroyed(self):
@@ -213,7 +224,10 @@ class Projectile(HitBox):
 
     def tick(self):
         """Ticks down the projectile."""
-        self._real_image.tick(self._anim_speed)
+        if self._animation_controller:
+            self._animation_controller.tick(self._anim_speed)
+        else:
+            self._real_image.tick(self._anim_speed)
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:

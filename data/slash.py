@@ -12,12 +12,14 @@ from data.projectile import Projectile
 from data.numerics.affliction import Affliction
 from data.constants import PROJECTILE_TRACKER, Flags, SYSTEM, ANIMATION_TRACKER
 
+from data.image.controller import AnimationController
+
 class Slash(HitBox):
     """Defines a slash."""
     __slots__ = '_caster', '_origin', '_image', '_real_image', '_damage', '_evil', '_area', \
                 '_center', '_anim_on_hit', '_effective_frames', '_flags', '_finished', \
                 '_aim_right', '_immune', '_animation_state', '_debuffs', '_ignore_team', \
-                '_tick_time', '_anim_speed', '_debuff_chance'
+                '_tick_time', '_anim_speed', '_debuff_chance', '_animation_controller'
     def __init__(self, caster: Entity, origin: Creature, animation: str,\
                 damage:Damage, aim_right = True, evil = False, flags = None,\
                 offset_x = 0, offset_y = 0, debuffs = None, area = 1, center = False,\
@@ -26,8 +28,17 @@ class Slash(HitBox):
         self._caster = caster
         self._origin = origin
         self._image = animation
-        self._real_image = SYSTEM["images"][self._image].clone()\
-            .scale(area, area, False).flip(False, not aim_right)
+
+        cached = SYSTEM["trans_cache"].get(animation, 0, area, not aim_right)
+        if cached is not None:
+            self._real_image = cached
+            self._animation_controller = AnimationController(cached)
+        else:
+            base_image = SYSTEM["images"][animation]
+            self._real_image = base_image.clone().scale(area, area, False)\
+                .flip(False, not aim_right)
+            SYSTEM["trans_cache"].put(animation, self._real_image, 0, area, not aim_right)
+            self._animation_controller = None
         self._damage = damage
         self._evil = evil
         self._area = area
@@ -76,6 +87,8 @@ class Slash(HitBox):
 
     def get_image(self):
         """Returns the slash image."""
+        if self._animation_controller:
+            return self._animation_controller.get_image()
         return self._real_image.get_image()
 
     def get_pos(self):
@@ -92,15 +105,22 @@ class Slash(HitBox):
 
     def tick(self):
         """Ticks down the slash."""
-        self._real_image.tick(self._anim_speed)
+        if self._animation_controller:
+            self._animation_controller.tick(self._anim_speed)
+        else:
+            self._real_image.tick(self._anim_speed)
         super().move(self.get_pos())
         if Flags.CAN_TICK in self._flags:
             self._tick_time += 0.016
             if self._tick_time >= 0.1:
                 self._tick_time = 0
                 self._immune.clear()
-        if self._real_image.finished:
-            self._finished = True
+        if self._animation_controller:
+            if self._animation_controller.finished:
+                    self._finished = True
+        else:
+            if self._real_image.finished:
+                self._finished = True
         if Flags.CUTS_PROJECTILE in self._flags:
             for proj in PROJECTILE_TRACKER:
                 if not isinstance(proj, Projectile):
@@ -252,4 +272,6 @@ class Slash(HitBox):
         of its animation."""
         if self._effective_frames is None:
             return True
+        if self._animation_controller:
+            return self._animation_controller.frame < self._effective_frames
         return self._real_image.frame < self._effective_frames

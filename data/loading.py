@@ -44,6 +44,8 @@ from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
 from data.game.deltatime import DeltaTime
 
+from data.caching.transformation_cache import TransformCache
+
 def generate_random_level():
     """Creates a random level."""
     area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 1)
@@ -509,6 +511,7 @@ def init_game():
     SYSTEM["loading_text"] = None
     SYSTEM["fps_counter"] = None
     SYSTEM["mouse_target"] = None
+    SYSTEM["trans_cache"] = TransformCache()
     SYSTEM["logger"] = Logger()
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
