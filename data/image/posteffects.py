@@ -61,29 +61,36 @@ class PostEffects():
     def tick(self):
         """Applies the effects."""
         for f in ANIMATION_TICK_TRACKER:
-            f.tick()
+            f. tick()
         if self._pause > 0:
             self._pause -= 1
         if self._shaking and self._simple_shaking:
             if self._max_x > 0:
                 self._shake_x = numpy.random.randint(-self._max_x, self._max_x)
             if self._max_y > 0:
-                self._shake_y = numpy.random.randint(-self._max_y, self._max_y)
+                self._shake_y = numpy.random. randint(-self._max_y, self._max_y)
             self._timer -= 1
             if self._timer <= 0:
-                self.stop_shaking()
+                self. stop_shaking()
         SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
         SYSTEM["text_generator"].generate_fps()
         current_res = SYSTEM["options"]["screen_resolution"]
-        if current_res != (SCREEN_WIDTH, SCREEN_HEIGHT):
-            if self._cached_resolution != current_res or self._scaled_cache is None:
-                self._cached_resolution = current_res
-                if self._scaled_cache is None:
-                    self._scaled_cache = Surface(current_res[0], current_res[1])
-            scaled = SYSTEM["windows"].scale(current_res)
-            SYSTEM["real_windows"].blit(scaled, (0, 0))
+        
+        # ONLY scale if resolution has changed
+        if current_res != self._cached_resolution:
+            self._cached_resolution = current_res
+            if current_res != (SCREEN_WIDTH, SCREEN_HEIGHT):
+                # Cache the result so it's only computed once per resolution change
+                self._scaled_cache = SYSTEM["windows"].scale(current_res)
+            else:
+                self._scaled_cache = None
+        
+        # Now just blit the cached result
+        if self._scaled_cache is not None:
+            SYSTEM["real_windows"].blit(self._scaled_cache, (0, 0))
         else:
             SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0), True)
+        
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)

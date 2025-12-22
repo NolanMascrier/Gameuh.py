@@ -214,6 +214,9 @@ class Ressource(Stat):
             return True
         return not self == other
 
+    def __hash__(self):
+        return hash(str(self))
+
     @property
     def current_value(self) -> float:
         """Returns the current value of the ressource, ie the one \

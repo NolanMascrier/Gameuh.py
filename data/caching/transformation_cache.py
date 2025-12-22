@@ -1,5 +1,7 @@
 """For caching projectile transformations"""
 
+from functools import lru_cache
+
 class TransformCache:
     """Caches transformed versions of animations for reuse."""
     def __init__(self):
@@ -7,6 +9,7 @@ class TransformCache:
         self._max_cache_size = 1024
         self._access_count = {}
 
+    @lru_cache(1024)
     def get_key(self, image_name, rotation=0, scale=1.0, flip=False):
         """Generate cache key for transformation."""
         rotation = round(rotation / 5) * 5

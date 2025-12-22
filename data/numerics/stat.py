@@ -5,6 +5,8 @@ Flat increase also exists, but should only be accessed through gear.
 The actual initial value should only be increased through level up, as it's gonna be
 definitive."""
 
+from functools import lru_cache
+
 import json
 from data.numerics.affliction import Affliction
 from data.constants import Flags, trad
@@ -73,6 +75,7 @@ class Stat:
         return f"{self.name} : ({self.value} + {self.get_flats()}) * (1 + {self.get_increases()})"+\
                f" * {self.get_multipliers()}"
 
+    @lru_cache(64)
     def get_value(self):
         """Returns the computed final value of the stat.
         
@@ -158,6 +161,7 @@ class Stat:
         for incr in self._incr:
             if incr.expired:
                 self._incr.remove(incr)
+        self.get_value.cache_clear()
 
     def scale(self, level:int):
         """Scales the stat to the given level."""
@@ -231,6 +235,9 @@ class Stat:
             "flats": [f.export() for f in self._flats]
         }
         return json.dumps(data)
+
+    def __hash__(self):
+        return hash(str(self))
 
     @staticmethod
     def imports(data):

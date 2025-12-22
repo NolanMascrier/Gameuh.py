@@ -16,11 +16,13 @@ from data.character import Character
 from data.numerics.damage import Damage
 from data.game.spell import Spell
 from data.game.tree import Node
+from data.caching.transformation_cache import TransformCache
 from data.api.surface import init_engine, get_keys
 from data.filesystem import change_language
 
 init_engine()
 SYSTEM["keys"] = get_keys()
+SYSTEM["trans_cache"] = TransformCache()
 change_language("EN_us")
 load()
 
