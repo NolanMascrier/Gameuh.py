@@ -6,6 +6,7 @@ Only waves for now."""
 import time
 import threading
 import random
+import pstats
 
 import numpy as np
 
@@ -313,6 +314,8 @@ class Level():
 
     def init(self):
         """Sets up the background of the level."""
+        SYSTEM["profiler"].enable()
+        print("###### LEVEL START #####")
         SYSTEM["gm_background"].fill((0,0,0,0))
         SYSTEM["gm_background"].blit(self._background.background, (0,0))
         ENNEMY_TRACKER.clear()
@@ -335,6 +338,10 @@ class Level():
 
     def end_level(self):
         """End level sequence. Sets the needed flag and creates the dummy items."""
+        SYSTEM["profiler"].disable()
+        stats = pstats.Stats(SYSTEM["profiler"]).sort_stats("cumtime")
+        stats.print_stats(25)
+        print("###### LEVEL END #####")
         for pick in POWER_UP_TRACKER:
             pick.pickup(SYSTEM["player"])
         self._finished = True
@@ -355,6 +362,10 @@ class Level():
     def fail_level(self, abandon = False):
         """Game over sequence. Removes half the gold gained, 10% of the player's current exp,
         and a random amount of items."""
+        SYSTEM["profiler"].disable()
+        stats = pstats.Stats(SYSTEM["profiler"]).sort_stats("cumtime")
+        stats.print_stats(25)
+        print("###### LEVEL END #####")
         self._finished = True
         failure = int(len(self._loot) * np.random.random())
         loss = np.random.choice(len(self._loot), size=failure, replace=False).tolist()

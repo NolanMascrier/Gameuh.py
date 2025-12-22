@@ -157,6 +157,13 @@ class RangeStat():
         return stat
 
     @property
+    def has_modifier(self):
+        """Returns whether or not the stats has active modifiers."""
+        if self._upper.has_modifier or self._lower.has_modifier:
+            return True
+        return False
+
+    @property
     def name(self):
         """Returns the range state's name."""
         return self._name

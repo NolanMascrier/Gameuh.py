@@ -4,6 +4,7 @@ import threading
 import re
 import os
 import random
+import cProfile
 import numpy as np
 
 from data.api.surface import Surface, mouse_position, get_keys, init_engine
@@ -511,6 +512,7 @@ def init_game():
     SYSTEM["loading_text"] = None
     SYSTEM["fps_counter"] = None
     SYSTEM["mouse_target"] = None
+    SYSTEM["profiler"] = cProfile.Profile()
     SYSTEM["trans_cache"] = TransformCache()
     SYSTEM["logger"] = Logger()
     loading_thread = threading.Thread(target=load)

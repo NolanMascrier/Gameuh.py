@@ -288,14 +288,14 @@ if __name__ == "__main__":
             SYSTEM["post_effects"].tick()
         else:
             break
-    profiler = cProfile.Profile()
+    #profiler = cProfile.Profile()
     debug_create_items()
     setup_bottom_bar()
-    profiler.enable()
+    #profiler.enable()
     try:
         main_loop()
     except KeyboardInterrupt:
         pass
-    profiler.disable()
-    stats = pstats.Stats(profiler).sort_stats("cumtime")
-    stats.print_stats(25)
+    #profiler.disable()
+    #stats = pstats.Stats(profiler).sort_stats("cumtime")
+    #stats.print_stats(25)

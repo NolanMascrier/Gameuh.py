@@ -89,19 +89,21 @@ class Ressource(Stat):
             self._current_value = 0
 
     def tick(self):
-        """Ticks down all the buffs and debuffs, and
-        also replenish the ressource.
-        """
-        self._current_value += self._rate.get_value() * 0.016
+        """Ticks down all the buffs and debuffs, and also replenish the ressource."""
+        self._current_value += self._rate. get_value() * 0.016
+        new_buffs = []
         for buff in self._buffs:
             self._current_value += buff.value
-            if buff.expired:
-                self._buffs.remove(buff)
+            if not buff.expired:
+                new_buffs. append(buff)
+        self._buffs = new_buffs
+        new_buffs_multi = []
         for buff in self._buffs_multi:
             self._current_value += buff.value * self._current_value
-            if buff.expired:
-                self._buffs_multi.remove(buff)
-        if self._current_value > self.get_value():
+            if not buff. expired:
+                new_buffs_multi.append(buff)
+        self._buffs_multi = new_buffs_multi
+        if self._current_value > self. get_value():
             self._current_value = self.get_value()
         elif self._current_value < 0:
             self._current_value = 0
@@ -216,6 +218,15 @@ class Ressource(Stat):
 
     def __hash__(self):
         return hash(str(self))
+
+    @property
+    def has_modifier(self):
+        """Returns whether or not the stats has active modifiers."""
+        if super().has_modifier:
+            return True
+        if self._buffs or self._buffs_multi:
+            return True
+        return False
 
     @property
     def current_value(self) -> float:

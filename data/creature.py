@@ -466,7 +466,9 @@ class Creature:
         """Ticks down all buffs and debuffs."""
         i = len(self._buffs) - 1
         for stat in self._stats:
-            self._stats[stat].tick()
+            stat_obj = self._stats[stat]
+            if stat_obj.has_modifier:
+                stat_obj.tick()
         while i >= 0:
             buff = self._buffs[i]
             buff.tick()

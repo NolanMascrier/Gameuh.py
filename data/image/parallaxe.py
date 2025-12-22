@@ -61,7 +61,8 @@ class Parallaxe(Animation):
                         self._speed_factor + shake) % SCREEN_WIDTH
         for layer, _ in enumerate(self._sequence):
             self._render.append(int(-self._diff_x[layer]))
-        renders([self._layers[i], (self._render[i], 0)] for i in range(len(self._sequence)))
+        layer_blits = [(self._layers[i], (self._render[i], 0)) for i in range(len(self._sequence))]
+        renders(layer_blits)
 
     @property
     def background(self):

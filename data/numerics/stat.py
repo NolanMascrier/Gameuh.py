@@ -237,7 +237,7 @@ class Stat:
         return json.dumps(data)
 
     def __hash__(self):
-        return hash(str(self))
+        return hash(f"{self._name}")
 
     @staticmethod
     def imports(data):
@@ -272,6 +272,13 @@ class Stat:
         if not isinstance(other, Stat):
             return True
         return not self == other
+
+    @property
+    def has_modifier(self):
+        """Returns whether or not the stats has active modifiers."""
+        if self._flats or self._incr or self._mults:
+            return True
+        return False
 
     @property
     def value(self) -> float:
