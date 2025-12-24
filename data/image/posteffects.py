@@ -74,23 +74,13 @@ class PostEffects():
                 self. stop_shaking()
         SYSTEM["clock"].tick(SYSTEM["options"]["fps"])
         SYSTEM["text_generator"].generate_fps()
-        current_res = SYSTEM["options"]["screen_resolution"]
-        
-        # ONLY scale if resolution has changed
-        if current_res != self._cached_resolution:
-            self._cached_resolution = current_res
-            if current_res != (SCREEN_WIDTH, SCREEN_HEIGHT):
-                # Cache the result so it's only computed once per resolution change
-                self._scaled_cache = SYSTEM["windows"].scale(current_res)
-            else:
-                self._scaled_cache = None
-        
-        # Now just blit the cached result
-        if self._scaled_cache is not None:
-            SYSTEM["real_windows"].blit(self._scaled_cache, (0, 0))
+        current_res = SYSTEM["real_windows"].get_size()
+        expected_res = (SCREEN_WIDTH, SCREEN_HEIGHT)
+        if current_res != expected_res:
+            scaled = SYSTEM["windows"].scale(expected_res)
+            SYSTEM["real_windows"]. blit(scaled, (0, 0))
         else:
-            SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0), True)
-        
+            SYSTEM["real_windows"].blit(SYSTEM["windows"], (0, 0))
         if self._flash_timer > 0:
             self._flash_timer -= 1
             self._flash_opacity = int(self._flash_timer / self._flash_max * 255)

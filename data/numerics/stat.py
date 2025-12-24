@@ -274,9 +274,7 @@ class Stat:
     @property
     def has_modifier(self):
         """Returns whether or not the stats has active modifiers."""
-        if self._flats or self._incr or self._mults:
-            return True
-        return False
+        return bool(self._flats or self._incr or self._mults)
 
     @property
     def value(self) -> float:
