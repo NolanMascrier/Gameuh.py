@@ -10,8 +10,8 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACK
     ANIMATION_TRACKER, RED_TRANSP, RED_PURE, RED_WARNING, GREEN_PURE, GREEN_TRANSP, BLUE_PURE,\
     BLUE_TRANSP
 from data.image.tabs import Tabs
-from data.projectile import Projectile
-from data.slash import Slash
+from data.game.projectile import Projectile
+from data.game.slash import Slash
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""
@@ -156,7 +156,7 @@ def draw_game(show_player = True, show_enemies = True,\
                                                          BLUE_TRANSP, BLUE_PURE))
                 if p.warning is not None:
                     draw_warning(p.warning[0], RED_WARNING, p.warning[1])
-            proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER]
+            proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER if hasattr(p, 'get_image')]
             if proj_blits:
                 bullets_layer.extend(proj_blits)
     if show_text:

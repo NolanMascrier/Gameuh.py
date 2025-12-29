@@ -9,7 +9,7 @@ from data.api.vec2d import Vec2
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM,\
     PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER
 from data.numerics.damage import Damage
-from data.creature import Creature
+from data.game.creature import Creature
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation
 from data.image.controller import AnimationController
@@ -20,6 +20,75 @@ class DummyEntity():
         self.x = x
         self.y = y
         self.hitbox = hitbox
+        self.center = hitbox.center if hitbox is not None else [x, y]
+
+class ArcProjectile:
+    """Special projectile for arc/lightning effects."""
+    __slots__ = ('_start', '_end', '_damage', '_origin', '_evil', '_chains_left',
+                 '_target', '_delay', '_finished', '_debuffs', '_particle_config',
+                 '_debuff_chance', 'center_x', 'center_y', 'center', 'ignore_team', 'hitbox')
+    def __init__(self, x1, y1, target, damage, origin, chains=0,
+                 debuffs=None, particle_config=None, debuff_chance=1.0):
+        self._start = Vec2(x1, y1)
+        self._end = Vec2(target.entity.hitbox.center_x, target.entity.hitbox.center_y)
+        self._damage = damage
+        self._origin = origin
+        self._evil = False
+        self._chains_left = chains
+        self._target = target
+        self._delay = 0.1
+        self._finished = False
+        self._debuffs = debuffs or []
+        self._particle_config = particle_config
+        self._debuff_chance = debuff_chance
+        self.center_x, self.center_y = self._start
+        self.center = self._start
+        self.ignore_team = False
+        self.hitbox = HitBox(x1, y1, 1, 1)
+
+    def get_pos(self):
+        """a"""
+        return self._start
+
+    def tick(self):
+        """Update arc projectile."""
+        self._delay -= 0.016
+        if SYSTEM["particle_emitter"] and SYSTEM["particle_emitter"].enabled and \
+            self._particle_config:
+            config = self._particle_config
+            SYSTEM["particle_emitter"].emit_line(
+                self._start.x, self._start.y,
+                self._end.x, self._end.y,
+                particle_count=config.get('count', 30),
+                color=config.get('color', [(100, 200, 255), (200, 230, 255)]),
+                size_range=config.get('size_range', (2, 5)),
+                life_range=config.get('life_range', (0.1, 0.2)),
+                fade=config.get('fade', True)
+            )
+        if self._delay <= 0 and not self._finished:
+            dmg = self._origin.recalculate_damage(self._damage)
+            num, crit = self._target.creature.damage(dmg)
+            for debuff in self._debuffs:
+                if debuff.damage is not None:
+                    debuff.damage.origin = self._origin
+                self._target.afflict(debuff.clone(), True, self._debuff_chance)
+            self._finished = True
+
+    @property
+    def finished(self):
+        return self._finished
+
+    @property
+    def can_be_destroyed(self):
+        return self._finished
+
+    @property
+    def warning(self):
+        return None
+
+    @property
+    def evil(self):
+        return self._evil
 
 class Projectile(HitBox):
     """Defines a projectile."""
@@ -28,13 +97,14 @@ class Projectile(HitBox):
                 '_acceleration', '_origin', '_damage', '_evil', '_bounces', '_delay', \
                 '_initial_delay', '_explosion', '_behaviours', '_debuffs', '_flagged', \
                 '_wandering', '_immune', '_bounced', '_chains', '_warning', '_anim_speed', \
-                '_debuff_chance', '_animation_controller'
+                '_debuff_chance', '_animation_controller', '_particle_trail', '_particle_impact', \
+                '_particle_timer', '_particle_interval'
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
                 behaviours = None, debuffs = None, explosion = None, area = 1,\
                 ignore_team = False, offset_x = 0, offset_y = 0, anim_on_hit = None,
-                anim_speed = 1, debuff_chance = 1.0):
+                anim_speed = 1, debuff_chance = 1.0, trail = None, impact = None):
         if Flags.RANDOM_POSITION in behaviours:
             if numpy.random.random() > 0.5: #Horizontal
                 y = int(numpy.random.choice([0, SCREEN_HEIGHT]))
@@ -74,7 +144,10 @@ class Projectile(HitBox):
             self._real_image = base_image.clone().rotate(-self._angle).scale(area, area, False)
             SYSTEM["trans_cache"].put(imagefile, self._real_image, -self._angle, area, False)
             self._animation_controller = None
-
+        self._particle_trail = trail
+        self._particle_impact = impact
+        self._particle_timer = 0
+        self._particle_interval = 0.05
         self._width = self._real_image.w
         self._height = self._real_image.h
         super().__init__(x, y, self._width, self._height)
@@ -134,6 +207,19 @@ class Projectile(HitBox):
         if self._wandering:
             return (None, None)
         if target not in self._immune:
+            if self._particle_impact and SYSTEM["particle_emitter"].enabled:
+                config = self._particle_impact
+                SYSTEM["particle_emitter"].emit(
+                    self.center_x, self.center_y,
+                    count=config.get('count', 20),
+                    vel_range=config.get('vel_range', (2, 8)),
+                    color=config.get('color', (255, 150, 0)),
+                    size_range=config.get('size_range', (1, 4)),
+                    life_range=config.get('life_range', (0.3, 0.8)),
+                    spread_angle=config.get('spread_angle', 360),
+                    fade=config.get('fade', True),
+                    gravity=config.get('gravity', 0.2)
+                )
             if Flags.CHAINS in self.behaviours:
                 self._immune.clear()
             dmg = self._origin.recalculate_damage(self._damage)
@@ -228,6 +314,22 @@ class Projectile(HitBox):
             self._animation_controller.tick(self._anim_speed)
         else:
             self._real_image.tick(self._anim_speed)
+        if self._particle_trail and SYSTEM["particle_emitter"].enabled:
+            self._particle_timer += 0.016
+            if self._particle_timer >= self._particle_interval:
+                self._particle_timer = 0
+                config = self._particle_trail
+                SYSTEM["particle_emitter"].emit(
+                    self.center_x, self.center_y,
+                    count=config.get('count', 2),
+                    vel_range=config.get('vel_range', (-1, 1)),
+                    color=config.get('color', (255, 100, 0)),
+                    size_range=config.get('size_range', (1, 3)),
+                    life_range=config.get('life_range', (0.2, 0.5)),
+                    spread_angle=config.get('spread_angle', 360),
+                    fade=config.get('fade', True),
+                    gravity=config.get('gravity', 0)
+                )
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:

@@ -1,9 +1,9 @@
-from data.creature import Creature
+from data.game.creature import Creature
 from data.numerics.damage import Damage
 from data.numerics.affliction import Affliction
 from data.constants import Flags
 from data.numerics.affix import Affix
-from data.item import Item
+from data.game.item import Item
 import unittest
 
 def print_gear(c: Creature):

@@ -10,7 +10,7 @@ from data.numerics.stat import Stat
 from data.numerics.affliction import Affliction
 from data.numerics.damage import Damage
 from data.constants import Flags, SYSTEM, trad, GAME_LEVEL
-from data.item import Item
+from data.game.item import Item
 from data.image.hoverable import Hoverable
 
 NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",

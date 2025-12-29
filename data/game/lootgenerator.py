@@ -2,7 +2,7 @@
 
 import random
 import numpy
-from data.item import Item
+from data.game.item import Item
 from data.constants import SYSTEM, Flags
 from data.tables.implicits_table import IMPLICITS
 from data.tables.affix_table import get_affixes_for_slot

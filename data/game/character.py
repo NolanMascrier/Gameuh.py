@@ -5,8 +5,8 @@ import numpy
 from data.constants import SCREEN_HEIGHT, SYSTEM, Flags, BLUE, GREEN
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
-from data.creature import Creature
-from data.item import Item
+from data.game.creature import Creature
+from data.game.item import Item
 
 KEY_TYPE = {
     0: "spell_1",

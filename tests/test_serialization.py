@@ -10,9 +10,9 @@ from data.numerics.double_affix import DoubleAffix
 from data.numerics.stat import Stat
 from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
-from data.item import Item
-from data.creature import Creature
-from data.character import Character
+from data.game.item import Item
+from data.game.creature import Creature
+from data.game.character import Character
 from data.numerics.damage import Damage
 from data.game.spell import Spell
 from data.game.tree import Node

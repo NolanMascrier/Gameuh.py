@@ -7,7 +7,7 @@ from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_
     MENU_SPELLBOOK_1, MENU_SPELLBOOK_3, MENU_SPELLBOOK_2, MENU_SPELLBOOK_5,\
     MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, trad, RED, BLUE, BLACK
 from data.game.spell import Spell
-from data.item import Item
+from data.game.item import Item
 from data.image.slotpanel import SlotPanel
 from data.image.slot import Slot
 from data.image.tabs import Tabs

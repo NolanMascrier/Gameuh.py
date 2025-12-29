@@ -34,7 +34,7 @@ from data.interface.inventory import open_inventory
 from data.interface.options import open_option_screen
 from data.interface.gameui import generate_foreground, generate_background
 
-from data.character import Character
+from data.game.character import Character
 
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
@@ -46,6 +46,8 @@ from data.game.lootgenerator import LootGenerator
 from data.game.deltatime import DeltaTime
 
 from data.caching.transformation_cache import TransformCache
+
+from data.physics.particle import ParticleEmitter
 
 def generate_random_level():
     """Creates a random level."""
@@ -504,6 +506,7 @@ def init_game():
     SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)
     SYSTEM["gm_parallaxe"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["warnings"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+    SYSTEM["particles"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["text_generator"] = TextGenerator()
     SYSTEM["images"]["load_orb"] = Animation("darkcristal.png", 64, 64, frame_rate=0.25)\
         .scale(128, 128)
@@ -515,6 +518,7 @@ def init_game():
     SYSTEM["profiler"] = cProfile.Profile()
     SYSTEM["trans_cache"] = TransformCache()
     SYSTEM["logger"] = Logger()
+    SYSTEM["particle_emitter"] = ParticleEmitter(max_particles=2000)
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None

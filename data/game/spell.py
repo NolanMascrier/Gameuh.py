@@ -6,14 +6,14 @@ import numpy
 from data.api.surface import Surface
 
 from data.image.animation import Image
-from data.projectile import Projectile
-from data.item import Item
-from data.creature import Creature
+from data.game.projectile import Projectile
+from data.game.item import Item
+from data.game.creature import Creature
 from data.physics.entity import Entity
 from data.numerics.stat import Stat
 from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
-from data.slash import Slash
+from data.game.slash import Slash
 from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, trad, BLACK
 from data.numerics.affliction import Affliction
@@ -53,7 +53,7 @@ class Spell():
                  cooldown = 0.1, projectiles = 1, flags = None, buffs = None,
                  debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,
                  effective_frames = None, anim_on_hit = None, alterations = None,
-                 debuff_chance = 1.0):
+                 debuff_chance = 1.0, trail = None, impact = None):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -127,6 +127,8 @@ class Spell():
         self._counter = 0
         self._releasing = False
         self._to_release = 0
+        self._trail = trail
+        self._impact = impact
 
     def update(self):
         """Updates the data of the spell."""
@@ -529,7 +531,8 @@ class Spell():
                         explosion=self._explosion, area=area,\
                         ignore_team=ignore_team, anim_on_hit=self._anim_on_hit,
                         anim_speed=self._stats["anim_speed"].c_value,
-                        debuff_chance=debuff_chance)
+                        debuff_chance=debuff_chance,
+                        trail=self._trail, impact=self._impact)
         PROJECTILE_TRACKER.append(proj)
 
     def spawn_slash(self, entity, caster, evil = False, aim_right = False, ignore_team = False):

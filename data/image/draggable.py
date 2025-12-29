@@ -1,7 +1,7 @@
 """A draggable is a component that can be dragged
 around by the mouse."""
 
-from data.item import Item
+from data.game.item import Item
 from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.hoverable import Hoverable

@@ -1,6 +1,6 @@
 """Tables of unique items."""
 
-from data.item import Item
+from data.game.item import Item
 from data.constants import SYSTEM, Flags
 from data.numerics.affix import Affix
 

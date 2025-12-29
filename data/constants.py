@@ -97,7 +97,8 @@ SYSTEM = {
         "show_hitboxes": False,
         "show_fps": False,
         "show_cards": True,
-        "show_bars": False
+        "show_bars": False,
+        "particles_enabled": True
     },
     "lang": set(),
     "game_state": None,
@@ -278,6 +279,7 @@ class Flags(str, Enum):
     EXPLODES = "explodes"
     UNNATACH = "unnatached_barrage"
     WARN = "warning"
+    ARC_PARTICLE = "arc_particles"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"

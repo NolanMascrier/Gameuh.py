@@ -5,7 +5,7 @@ import json
 from data.api.surface import set_screen, Surface
 
 from data.constants import SYSTEM, RESSOURCES
-from data.character import Character
+from data.game.character import Character
 from data.game.tree import Node
 from data.game.spell import Spell
 
@@ -71,9 +71,10 @@ def export_options():
 def reload_options():
     """Reloads the options from the SYSTEM."""
     if SYSTEM["options"]["changed"]:
-        disp = set_screen(SYSTEM["options"]["fullscreen"], SYSTEM["options"]["screen_resolution"][0],\
-                        SYSTEM["options"]["screen_resolution"][1],\
-                        SYSTEM["options"]["vsync"])
+        disp = set_screen(SYSTEM["options"]["fullscreen"],
+                          SYSTEM["options"]["screen_resolution"][0],
+                          SYSTEM["options"]["screen_resolution"][1],
+                          SYSTEM["options"]["vsync"])
         SYSTEM["real_windows"] = Surface(SYSTEM["options"]["screen_resolution"][0],\
                                         SYSTEM["options"]["screen_resolution"][1], is_alpha=False)
         SYSTEM["real_windows"].surface = disp

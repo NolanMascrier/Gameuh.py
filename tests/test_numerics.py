@@ -1,4 +1,4 @@
-from data.creature import Creature
+from data.game.creature import Creature
 from data.numerics.damage import Damage
 from data.numerics.affliction import Affliction
 from data.constants import Flags

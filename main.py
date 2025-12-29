@@ -1,8 +1,6 @@
 """Game launcher."""
 
 import os
-import cProfile
-import pstats
 import random
 import psutil
 
@@ -23,10 +21,10 @@ from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
 from data.interface.render import render_all, render, renders
 from data.interface.endlevel import draw_end
-from data.projectile import Projectile
-from data.slash import Slash
+from data.game.projectile import Projectile
+from data.game.slash import Slash
 from data.tables.uniques_table import UNIQUES
-from data.item import Item
+from data.game.item import Item
 from data.tables.implicits_table import IMPLICITS
 
 def get_memory_usage():
@@ -189,6 +187,7 @@ def main_loop():
         print(f"Memory: {get_memory_usage():.1f} MB", end='\r')
         SYSTEM["mouse_target"] = None
         SYSTEM["deltatime"].tick()
+        SYSTEM["particle_emitter"].tick()
         if SYSTEM["game_state"] == LOADING:
             loading()
             continue

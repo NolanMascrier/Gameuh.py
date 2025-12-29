@@ -4,7 +4,7 @@ from data.interface.general import draw_bottom_bar, draw_game, logic_tick, setup
 from data.constants import SYSTEM, MENU_INVENTORY, trad, TEXT_TRACKER
 from data.image.button import Button
 from data.image.slotpanel import SlotPanel
-from data.item import Item
+from data.game.item import Item
 from data.image.text import Text
 from data.image.hoverable import Hoverable
 from data.image.slot import Slot

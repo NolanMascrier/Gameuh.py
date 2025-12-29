@@ -3,7 +3,7 @@
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.constants import SYSTEM, MENU_GEAR, Flags, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.image.slotpanel import SlotPanel
-from data.item import Item
+from data.game.item import Item
 from data.image.slot import Slot
 from data.image.tabs import Tabs
 from data.interface.render import render, renders

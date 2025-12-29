@@ -6,7 +6,7 @@ from data.api.widget import Widget
 
 from data.constants import SYSTEM
 from data.image.draggable import Draggable
-from data.item import Item
+from data.game.item import Item
 from data.interface.render import render
 
 class Slot(Widget):

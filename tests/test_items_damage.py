@@ -1,4 +1,4 @@
-from data.item import Item
+from data.game.item import Item
 from data.constants import Flags
 from data.numerics.damage import Damage
 import unittest

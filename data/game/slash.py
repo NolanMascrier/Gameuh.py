@@ -4,11 +4,11 @@ plays its animation and disappear. It's used for melee attacks or explosions."""
 import json
 
 from data.numerics.damage import Damage
-from data.creature import Creature
-from data.projectile import DummyEntity
+from data.game.creature import Creature
+from data.game.projectile import DummyEntity
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
-from data.projectile import Projectile
+from data.game.projectile import Projectile
 from data.numerics.affliction import Affliction
 from data.constants import PROJECTILE_TRACKER, Flags, SYSTEM, ANIMATION_TRACKER
 
@@ -117,7 +117,7 @@ class Slash(HitBox):
                 self._immune.clear()
         if self._animation_controller:
             if self._animation_controller.finished:
-                    self._finished = True
+                self._finished = True
         else:
             if self._real_image.finished:
                 self._finished = True

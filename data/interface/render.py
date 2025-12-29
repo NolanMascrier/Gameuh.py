@@ -34,11 +34,17 @@ def render_all():
             all_blits.extend(RENDER_LIST)
             RENDER_LIST.clear()
         if game_state == GAME_LEVEL:
+            SYSTEM["particles"].fill(BLACK_TRANSP)
             SYSTEM["images"]["life_orb"].tick()
             SYSTEM["images"]["mana_orb"].tick()
             SYSTEM["images"]["exp_orb"].tick()
             all_blits.append((SYSTEM["warnings"], shake))
-            for layer in SYSTEM["layers"].values():
+            for name, layer in SYSTEM["layers"].items():
+                if name == "ui":
+                    if SYSTEM["particle_emitter"] and SYSTEM["options"]["particles_enabled"]:
+                        SYSTEM["particle_emitter"].enabled = SYSTEM["options"]["particles_enabled"]
+                        SYSTEM["particle_emitter"].draw(SYSTEM["particles"])
+                        all_blits.append((SYSTEM["particles"], (0, 0)))
                 all_blits.extend(layer)
         elif game_state == MENU_INVENTORY:
             all_blits.extend(SYSTEM["layers"]["pickup"])

@@ -12,7 +12,7 @@ import numpy as np
 
 from data.api.surface import Surface
 
-from data.creature import Creature
+from data.game.creature import Creature
 from data.constants import ENNEMY_TRACKER, SCREEN_WIDTH, SCREEN_HEIGHT, WAVE_TIMER, SYSTEM,\
     trad, LOADING, GAME_LEVEL, TICKER_TIMER, UPDATE_TIMER,\
     PROJECTILE_TRACKER, POWER_UP_TRACKER, ANIMATION_TRACKER, WAVE_CHECK, Flags, RED_PURE
@@ -24,7 +24,7 @@ from data.image.animation import Animation, Image
 from data.image.parallaxe import Parallaxe
 from data.numerics.affix import Affix
 from data.image.text import Text
-from data.item import Item
+from data.game.item import Item
 from data.tables.area_table import MODIFIERS
 from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER
 from data.interface.endlevel import generate_victory, generate_defeat
