@@ -29,10 +29,11 @@ class Ressource(Stat):
         scales multiplicatively. Defaults to `False` (additive).
 
     """
-    __slots__= '_current_value', '_rate', '_buffs', '_buffs_multi'
+    __slots__= '_current_value', '_rate', '_buffs', '_buffs_multi', \
+               '_reservation', '_reservation_efficiency'
     def __init__(self, val = 100.0, name = "ressource", refresh = None,\
             max_cap = None, min_cap = None, scaling_value:float = 1, mult_scaling = False,\
-            precision = 0):
+            precision = 0, reservation = None, reservation_effi = None):
         super().__init__(val, name, max_cap, min_cap, precision, scaling_value, mult_scaling)
         self._current_value = val
         if refresh is None:
@@ -41,6 +42,20 @@ class Ressource(Stat):
             self._rate = Stat(refresh, "refresh")
         else:
             self._rate = refresh
+
+        if reservation is None:
+            self._reservation = Stat(0, "reservation", 1, 0, 4)
+        elif isinstance(reservation, (float, int)):
+            self._reservation = Stat(reservation, "reservation", 1, 0, 4)
+        else:
+            self._reservation = reservation
+
+        if reservation_effi is None:
+            self._reservation_efficiency = Stat(0, "reservation_effi", None, -0.95)
+        elif isinstance(reservation_effi, (float, int)):
+            self._reservation_efficiency = Stat(reservation_effi, "reservation_effi", None, -0.95)
+        else:
+            self._reservation_efficiency = reservation_effi
         self._buffs = []
         self._buffs_multi = []
 
@@ -70,9 +85,35 @@ class Ressource(Stat):
             if afflic == affliction:
                 self._buffs_multi.remove(afflic)
 
+    def get_free_ressource(self):
+        """Returns the maximum possible value of the ressource including reservation."""
+        maxi = self.get_value()
+        reservation = maxi * self._reservation.get_value()
+        if reservation <= 0:
+            return maxi
+        efficiency = 1 + self._reservation_efficiency.get_value()
+        if efficiency <= 0:
+            return 0
+        return maxi - reservation / efficiency
+
+    def get_reserved_ressource(self):
+        """Returns the amount of ressource reserved."""
+        return self.get_value() - self.get_free_ressource()
+
+    def get_reserved_prop(self):
+        """Returns the percentage of ressource reserved."""
+        return round(self.get_reserved_ressource() / self.get_value() * 100, 2)
+
     def refill(self):
         """Restores the ressource to its maximum value."""
-        self._current_value = self.get_value()
+        self._current_value = self.get_free_ressource()
+
+    def clamp(self):
+        """Clamps the current value between 0 and the free maximum."""
+        if self._current_value > self.get_free_ressource():
+            self._current_value = self.get_free_ressource()
+        elif self._current_value < 0:
+            self._current_value = 0
 
     def modify(self, value: float):
         """Increments or decrements the value of the 
@@ -83,10 +124,7 @@ class Ressource(Stat):
             value (float): Value of the increment.
         """
         self._current_value += value
-        if self._current_value > self.get_value():
-            self._current_value = self.get_value()
-        elif self._current_value < 0:
-            self._current_value = 0
+        self.clamp()
 
     def tick(self):
         """Ticks down all the buffs and debuffs, and also replenish the ressource."""
@@ -103,10 +141,7 @@ class Ressource(Stat):
             if not buff. expired:
                 new_buffs_multi.append(buff)
         self._buffs_multi = new_buffs_multi
-        if self._current_value > self. get_value():
-            self._current_value = self.get_value()
-        elif self._current_value < 0:
-            self._current_value = 0
+        self.clamp()
 
     def gather_afflictions(self) -> list:
         """Gather all buffs and debuffs as a list. \

@@ -379,6 +379,13 @@ def load_images():
     SYSTEM["images"]["gold_icon"] = Image("icons/gold.png")
     SYSTEM["images"]["exp_orb_big"] = Image("icons/exp.png").scale(64, 64)
     SYSTEM["images"]["loss"] = Image("icons/lost.png").scale(64, 64)
+    SYSTEM["images"]["ui_orb_top"] = Image("ui/orb_empty.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_top_a"] = Image("ui/orb_empty_alt.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_life"] = Image("ui/orb_life.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_life_e"] = Image("ui/orb_life_e.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_mana"] = Image("ui/orb_mana.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_mana_e"] = Image("ui/orb_mana_e.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_reserv"] = Image("ui/orb_reserved.png").scale(128, 128)
 
 def load_icons():
     """Loads the icons."""

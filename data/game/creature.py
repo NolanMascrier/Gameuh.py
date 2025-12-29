@@ -35,21 +35,32 @@ class Creature:
         Used for triggers. Default to None.
     """
     __slots__ = '_name', '_level', '_exp', '_exp_to_next', '_origin', '_life_regen', '_mana_regen',\
-                '_stats', '_gear', '_buffs', '_dots', '_changed', '_ap'
+                '_stats', '_gear', '_buffs', '_dots', '_changed', '_ap', '_life_reservation', \
+                '_mana_reservation', "_life_efficacy", '_mana_efficacy'
     def __init__(self, name, origin = None):
         self._name = name
         self._level = 1
         self._exp = 0
         self._exp_to_next = 1000
         self._origin = origin
+        self._life_reservation = Stat(0, "life_reservation", 1, 0, 4)
+        self._mana_reservation = Stat(0, "mana_reservation", 1, 0, 4)
+        self._life_efficacy = Stat(0, "life_reservation_effi", None, -1)
+        self._mana_efficacy = Stat(0, "mana_reservation_effi", None, -1)
         self._life_regen = Stat(1, "life_regen", precision=0)
         self._mana_regen = Stat(5, "mana_regen", precision=0)
         self._stats = {
-            "life": Ressource(90, "life", self._life_regen),
-            "mana": Ressource(40, "mana", self._mana_regen),
+            "life": Ressource(90, "life", self._life_regen, reservation=self._life_reservation,
+                              reservation_effi=self._life_efficacy),
+            "mana": Ressource(40, "mana", self._mana_regen, reservation=self._mana_reservation,
+                              reservation_effi=self._mana_efficacy),
 
             "life_regen": self._life_regen,
             "mana_regen": self._mana_regen,
+            "life_reservation": self._life_reservation,
+            "mana_reservation": self._mana_reservation,
+            "life_reservation_effi": self._life_efficacy,
+            "mana_reservation_effi": self._mana_efficacy,
 
             "str": Stat(10, "str"),
             "dex": Stat(10, "dex"),

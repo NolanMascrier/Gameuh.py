@@ -46,6 +46,10 @@ def generate_background():
         data.append((SYSTEM["images"]["skill_bottom"].image,\
             (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130)))
         i += 1
+    #LIFE AND MANA
+    data.append((SYSTEM["images"]["ui_orb_life_e"].image, (384, SCREEN_HEIGHT - 192)))
+    data.append((SYSTEM["images"]["ui_orb_mana_e"].image,
+                 (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192)))
     #
     SYSTEM["ui_background"] = data
 
@@ -77,6 +81,9 @@ def generate_foreground():
         data.append((SYSTEM["images"][KEY_EVENT[name][0]].image,\
             (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 82)))
         i += 1
+    #LIFE AND MANA
+    data.append((SYSTEM["images"]["ui_orb_top_a"].image, (384, SCREEN_HEIGHT - 192)))
+    data.append((SYSTEM["images"]["ui_orb_top"].image, (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192)))
     #
     SYSTEM["ui_foreground"] = data
 
@@ -92,45 +99,31 @@ def draw_exp_bar():
 
 def draw_life_mana():
     """Draws the life and mana orbs."""
-    char = SYSTEM["player"]
-    current_mana = char.creature.stats["mana"].current_value
-    max_mana = char.creature.stats["mana"].get_value()
-    current_life = char.creature.stats["life"].current_value
-    max_life = char.creature.stats["life"].get_value()
-    if (_UI_CACHE['last_life'] != current_life or
-        _UI_CACHE['last_life_max'] != max_life):
-        _UI_CACHE['last_life'] = current_life
-        _UI_CACHE['last_life_max'] = max_life
-        _UI_CACHE['life_text'] = Text(
-            f"#c#(0, 37, 97){round(current_life)}/{max_life}"
-        )
-    if (_UI_CACHE['last_mana'] != current_mana or
-        _UI_CACHE['last_mana_max'] != max_mana):
-        _UI_CACHE['last_mana'] = current_mana
-        _UI_CACHE['last_mana_max'] = max_mana
-        _UI_CACHE['mana_text'] = Text(
-            f"#c#(97, 0, 0){round(current_mana)}/{max_mana}"
-        )
     data = []
-    mana_frame = 8 - int(current_mana / max_mana * 8)
-    life_frame = 8 - int(current_life / max_life * 8)
-    SYSTEM["images"]["life_jauge"].frame = life_frame
-    SYSTEM["images"]["mana_jauge"].frame = mana_frame
-    data.append((SYSTEM["images"]["life_jauge"].get_image(), (380, SCREEN_HEIGHT - 200)))
-    data.append((SYSTEM["images"]["mana_jauge"].get_image(),
-                 (SCREEN_WIDTH - 524, SCREEN_HEIGHT - 200)))
-    life_buff = _UI_CACHE['life_text']
-    mana_buff = _UI_CACHE['mana_text']
-    life_size_img = SYSTEM["images"]["life_jauge"].get_image().get_size()
-    mana_size_img = SYSTEM["images"]["mana_jauge"].get_image().get_size()
-    life_size = life_buff.get_size()
-    mana_size = mana_buff.get_size()
-    life_center = (380 + life_size_img[0] / 2 - life_size[0] / 2,
-                   SCREEN_HEIGHT - 200 + life_size_img[1] / 2 - life_size[1] / 2)
-    mana_center = (SCREEN_WIDTH - 524 + mana_size_img[0] / 2 - mana_size[0] / 2,
-                   SCREEN_HEIGHT - 200 + mana_size_img[1] / 2 - mana_size[1] / 2)
-    data.append((life_buff.surface, life_center))
-    data.append((mana_buff.surface, mana_center))
+    char = SYSTEM["player"].creature.stats
+
+    max_mana = char["mana"].get_value()
+    current_mana = max(min(char["mana"].current_value, max_mana), 0)
+    reserved_mana = char["mana"].get_reserved_prop()
+    mana_dh = round((current_mana / max_mana) * 128)
+    mana_dy = 128 - mana_dh
+    mana_r_dh = 128 - round((reserved_mana / max_mana) * 128)
+    mana_orb = SYSTEM["images"]["ui_orb_mana"].extracts(0, mana_dy, 128, mana_dh)
+    mana_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 128, 128 - mana_r_dh)
+
+    max_life = char["life"].get_value()
+    current_life = max(min(char["life"].current_value, max_life), 0)
+    reserved_life = char["life"].get_reserved_prop()
+    life_dh = round((current_life / max_life) * 128)
+    life_dy = 128 - life_dh
+    life_r_dh = 128 - round((reserved_life / max_life) * 128)
+    life_orb = SYSTEM["images"]["ui_orb_life"].extracts(0, life_dy, 128, life_dh)
+    life_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 128, 128 - life_r_dh)
+
+    data.append((life_orb.image, (384, SCREEN_HEIGHT - 192 + life_dy)))
+    data.append((life_res.image, (384, SCREEN_HEIGHT - 192)))
+    data.append((mana_orb.image, (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192 + mana_dy)))
+    data.append((mana_res.image, (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192)))
     return data
 
 def draw_potions():
