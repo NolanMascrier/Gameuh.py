@@ -165,7 +165,7 @@ class Slash(HitBox):
     @staticmethod
     def imports(data):
         """Reads JSON data and returns a slash."""
-        dt = DummyEntity(0,0,0)
+        dt = DummyEntity(0,0, None)
         return Slash(
             dt,
             None,

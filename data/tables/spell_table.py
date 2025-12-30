@@ -48,7 +48,7 @@ BLEED_E = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], True, False, BLEED
 BURN_DMG = Damage(0.33, fire=1, ignore_block=True, ignore_dodge=True)
 BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG, dot_tick=0.1)
 
-ELEFURY = Affliction("elemental_fury", 0.35, 5, flags=[Flags.BLESS, Flags.FIRE_DMG,\
+ELEFURY = Affliction("elemental_fury", 0.35, 15, flags=[Flags.BLESS, Flags.FIRE_DMG,\
                                         Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
 FURY = Affliction("fury", 0.15, 1, flags=[Flags.DAMAGE_MOD, Flags.BLESS],\

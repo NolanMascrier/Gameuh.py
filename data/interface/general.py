@@ -156,7 +156,8 @@ def draw_game(show_player = True, show_enemies = True,\
                                                          BLUE_TRANSP, BLUE_PURE))
                 if p.warning is not None:
                     draw_warning(p.warning[0], RED_WARNING, p.warning[1])
-            proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER if hasattr(p, 'get_image')]
+            proj_blits = [(p.get_image(), p.get_pos()) for p in PROJECTILE_TRACKER if \
+                          hasattr(p, 'get_image')]
             if proj_blits:
                 bullets_layer.extend(proj_blits)
     if show_text:

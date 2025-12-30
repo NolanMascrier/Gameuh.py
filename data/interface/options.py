@@ -61,8 +61,14 @@ def open_option_screen():
         SYSTEM["images"]["checkbox_ok"], "show_bars")
     SYSTEM["ui"]["box_cards"] = Checkbox("show_cards", SYSTEM["images"]["checkbox"],\
         SYSTEM["images"]["checkbox_ok"], "show_cards")
-
-#SYSTEM["playing"]
+    SYSTEM["ui"]["box_particles"] = Checkbox("particles_enabled", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "particles_enabled")
+    SYSTEM["ui"]["box_hp"] = Checkbox("display_hp", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "display_hp")
+    SYSTEM["ui"]["box_exp"] = Checkbox("display_exp", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "display_exp")
+    SYSTEM["ui"]["box_cd"] = Checkbox("display_cd", SYSTEM["images"]["checkbox"],\
+        SYSTEM["images"]["checkbox_ok"], "display_cd")
 
 def unloader():
     """Unloads all option-specific data."""
@@ -76,12 +82,16 @@ def draw_options(_):
     SYSTEM["ui"]["box_fps"].set(10, 280).tick().draw()
     SYSTEM["ui"]["box_cards"].set(10, 370).tick().draw()
     SYSTEM["ui"]["box_bars"].set(10, 460).tick().draw()
+    SYSTEM["ui"]["box_particles"].set(10, 550).tick().draw()
+    SYSTEM["ui"]["box_hp"].set(10, 640).tick().draw()
+    SYSTEM["ui"]["box_exp"].set(10, 730).tick().draw()
+    SYSTEM["ui"]["box_cd"].set(10, 820).tick().draw()
     SYSTEM["ui"]["drop_resolution"].set(450, 10).tick().draw()
     SYSTEM["ui"]["drop_fps"].set(750, 10).tick().draw()
     SYSTEM["ui"]["drop_lang"].set(1050, 10).tick().draw()
-    SYSTEM["ui"]["button_validate"].set(10, 650).tick().draw()
-    SYSTEM["ui"]["button_cancel"].set(10, 700).tick().draw()
-    SYSTEM["ui"]["button_save"].set(10, 850).tick().draw()
-    SYSTEM["ui"]["button_load"].set(10, 900).tick().draw()
-    SYSTEM["ui"]["button_quit"].set(10, 950).tick().draw()
+    SYSTEM["ui"]["button_validate"].set(10, 900).tick().draw()
+    SYSTEM["ui"]["button_cancel"].set(10, 950).tick().draw()
+    SYSTEM["ui"]["button_save"].set(300, 850).tick().draw()
+    SYSTEM["ui"]["button_load"].set(300, 900).tick().draw()
+    SYSTEM["ui"]["button_quit"].set(300, 950).tick().draw()
     draw_bottom_bar()

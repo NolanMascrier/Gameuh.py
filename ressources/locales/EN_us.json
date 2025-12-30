@@ -216,7 +216,11 @@
       "hitboxes": "Show Hitboxes",
       "show_fps": "Show FPS counter",
       "show_bars": "Show Enemy HP",
-      "show_cards": "Show Enemy Cards"
+      "show_cards": "Show Enemy Cards",
+      "particles_enabled": "Enable Particles",
+      "display_hp": "Display Life and Mana",
+      "display_exp": "Display Experience",
+      "display_cd": "Display Cooldowns"
     },
     "options_desc": {
       "fullscreen": "Set the game in fullscreen or not.",
@@ -224,7 +228,11 @@
       "hitboxes": "Show or hide Hitboxes for player, enemies and projectiles.\n(May impact performance)",
       "show_fps": "Show or hide the FPS counter at the top left of the screen.",
       "show_bars": "Show or hide Enemy HP bars above them.\n(May impact performance)",
-      "show_cards": "Show or hide Enemy Cards at the top of the screen.\n(May impact performance)"
+      "show_cards": "Show or hide Enemy Cards at the top of the screen.\n(May impact performance)",
+      "particles_enabled": "Enable particle effects.\n(May impact performance)",
+      "display_hp": "Display the numerical values of life and mana inside their orbs.",
+      "display_exp": "Display the numerical value of experience inside its jauge.",
+      "display_cd": "Display the numerical values of the cooldowns."
     },
     "langs": {
       "EN_us": "English (American)",
@@ -295,7 +303,8 @@
         "potion_mana_flat": "Recovery",
         "potion_healing_relative": "Additional recovery",
         "potion_mana_relative": "Additional recovery",
-        "uses": "uses"
+        "uses": "uses",
+        "reserved": "Reserved"
     },
     "affliction_name":{
         "elemental_fury": "Elemental Fury",

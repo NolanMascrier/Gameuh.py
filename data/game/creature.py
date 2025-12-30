@@ -595,7 +595,7 @@ class Creature:
                 if s.name in lst:
                     lst[s.name][1] += 1
                 else:
-                    lst[s.name] = [s.elapsed / 100, 1]
+                    lst[s.name] = [s.elapsed / 100, 1, s.duration]
         return lst
 
     #Triggers
@@ -664,6 +664,10 @@ class Creature:
                     s = sub_s
                 elmt = s[:s.find('_')]
                 name = Hoverable(0, 0, trad('descripts', f"{elmt}_tab"), trad(elmt))
+                if f"{elmt}_flat" not in self._stats or \
+                    f"{elmt}_dmg" not in self._stats or \
+                    f"{elmt}_pen" not in self._stats:
+                    continue
                 flat, flat_value = self._stats[f"{elmt}_flat"].describe(False, True)
                 dmg, dmg_value = self._stats[f"{elmt}_dmg"].describe(True, True)
                 pen, pen_value = self._stats[f"{elmt}_pen"].describe(False, True)

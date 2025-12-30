@@ -388,7 +388,7 @@ class Level():
         ]
         for i in RUNE_ORDER:
             if self._runes[i] > 0:
-                runes_loss[i] = np.random.randint(0, self._runes[i] + 1)
+                runes_loss[i] = int(np.random.randint(0, self._runes[i] + 1))
                 SYSTEM["player"].runes[i] -= runes_loss[i]
                 if runes_loss[i] == self._runes[i]:
                     rune = DummyItems("stolen_rune", SYSTEM["images"]["loss"])

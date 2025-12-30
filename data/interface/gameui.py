@@ -8,10 +8,10 @@ from data.api.keycodes import KEY_EVENT, K_1, K_2
 
 from data.image.text import Text
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, trad, ENNEMY_TRACKER, \
-    RED_WEAK, YELLOW
+    RED_WEAK, YELLOW, ORANGE
 from data.image.textgenerator import make_text
 
-UI_SKILLS_OFFSET = 400
+UI_SKILLS_OFFSET = 408
 UI_SKILLS_PANEL_OFFSET = 0
 UI_SKILLS_INPUT_OFFSET = 16
 
@@ -28,7 +28,32 @@ _UI_CACHE = {
     'last_potion_counts': (None, None),
     'life_text': None,
     'mana_text': None,
-    'potion_texts': [None, None]
+    'potion_texts': [None, None],
+    'exp_text': None,
+    'exp': None,
+    'skills': {
+        "spell_L": [None, None, None, None],
+        "spell_R": [None, None, None, None],
+        "spell_M": [None, None, None, None],
+        "spell_1": [None, None, None, None],
+        "spell_2": [None, None, None, None],
+        "spell_3": [None, None, None, None],
+        "spell_4": [None, None, None, None],
+        "spell_5": [None, None, None, None],
+        "spell_6": [None, None, None, None],
+        "spell_7": [None, None, None, None],
+        "dash": [None, None, None, None]
+    },
+    "red_square": None,
+    "yel_square": None,
+    "orb_hp": None,
+    "orb_mp": None,
+    "orb_hp_img": None,
+    "orb_mp_img": None,
+    "hp_res": None,
+    "hp_res_orb": None,
+    "mp_res": None,
+    "mp_res_orb": None,
 }
 
 def generate_background():
@@ -109,42 +134,97 @@ def draw_life_mana():
 
     max_mana = char["mana"].get_value()
     current_mana = max(min(char["mana"].current_value, max_mana), 0)
-    reserved_mana = char["mana"].get_reserved_prop()
+    reserved_mana = char["mana"].get_reserved_ressource()
     mana_dh = round((current_mana / max_mana) * 198)
     mana_dy = 198 - mana_dh
     mana_r_dh = 198 - round((reserved_mana / max_mana) * 198)
-    mana_orb = SYSTEM["images"]["ui_orb_mana"].extracts(0, mana_dy, 198, mana_dh)
-    mana_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 198, 198 - mana_r_dh)
+    if _UI_CACHE["orb_mp"] != mana_dh:
+        _UI_CACHE["orb_mp"] = mana_dh
+        _UI_CACHE["orb_mp_img"] = SYSTEM["images"]["ui_orb_mana"].extracts(0, mana_dy, 198, mana_dh)
+    if _UI_CACHE["mp_res"] != mana_r_dh:
+        _UI_CACHE["mp_res"] = mana_r_dh
+        _UI_CACHE["mp_res_orb"] = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 198,
+                                                                             198 - mana_r_dh)
 
     max_life = char["life"].get_value()
     current_life = max(min(char["life"].current_value, max_life), 0)
-    reserved_life = char["life"].get_reserved_prop()
+    reserved_life = char["life"].get_reserved_ressource()
     life_dh = round((current_life / max_life) * 198)
     life_dy = 198 - life_dh
     life_r_dh = 198 - round((reserved_life / max_life) * 198)
-    life_orb = SYSTEM["images"]["ui_orb_life"].extracts(0, life_dy, 198, life_dh)
-    life_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 198, 198 - life_r_dh)
+    if _UI_CACHE["orb_hp"] != life_dh:
+        _UI_CACHE["orb_hp"] = life_dh
+        _UI_CACHE["orb_hp_img"] = SYSTEM["images"]["ui_orb_life"].extracts(0, life_dy, 198, life_dh)
+    if _UI_CACHE["hp_res"] != life_r_dh:
+        _UI_CACHE["hp_res"] = life_r_dh
+        _UI_CACHE["hp_res_orb"] = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 198,
+                                                                             198 - life_r_dh)
 
-    data.append((life_orb.image, (90, SCREEN_HEIGHT - 201 + life_dy)))
-    data.append((life_res.image, (90, SCREEN_HEIGHT - 201)))
-    data.append((mana_orb.image, (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201 + mana_dy)))
-    data.append((mana_res.image, (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201)))
+    data.append((_UI_CACHE["orb_hp_img"].image, (90, SCREEN_HEIGHT - 201 + life_dy)))
+    data.append((_UI_CACHE["hp_res_orb"].image, (90, SCREEN_HEIGHT - 201)))
+    data.append((_UI_CACHE["orb_mp_img"].image, (SCREEN_WIDTH - 288,
+                                                 SCREEN_HEIGHT - 201 + mana_dy)))
+    data.append((_UI_CACHE["mp_res_orb"].image, (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201)))
     return data
 
-def draw_potions():
-    """Draw the potions icons and use count."""
+def draw_text():
+    """Draw the texts of the UI (life, mana, potion counts, exp).
+    Cooldowns are handled by the skills."""
     char = SYSTEM["player"]
     if _UI_CACHE['last_potion_counts'] != tuple(char.potions):
         _UI_CACHE['last_potion_counts'] = tuple(char.potions)
         _UI_CACHE['potion_texts'][0] = Text(f"{int(char.potions[0])}", size=30, font="item_desc")
         _UI_CACHE['potion_texts'][1] = Text(f"{int(char.potions[1])}", size=30, font="item_desc")
     data = []
-    life_off = _UI_CACHE['potion_texts'][0].width // 2
+    life_off = _UI_CACHE['potion_texts'][0].width // 2 + 16
     mana_off = _UI_CACHE['potion_texts'][1].width // 2
     data.append((_UI_CACHE['potion_texts'][0].surface,
-                 (POTION_OFFSET - life_off, SCREEN_HEIGHT - 42)))
+                 (POTION_OFFSET + life_off, SCREEN_HEIGHT - 42)))
     data.append((_UI_CACHE['potion_texts'][1].surface,
                  (POTION_OFFSET_REV + 32 - mana_off, SCREEN_HEIGHT - 42)))
+    if SYSTEM["options"]["display_hp"]:
+        rsc = char.creature.stats
+        if _UI_CACHE["last_life"] != rsc["life"].current_value:
+            _UI_CACHE["last_life"] = rsc["life"]
+            if rsc["life"].get_reserved_ressource() > 0:
+                _UI_CACHE["life_text"] = Text(f"{int(rsc['life'].current_value)}/" +
+                                          f"#s#(15){int(rsc['life'].get_value())}\n" +
+                                          f"{trad('meta_words', 'reserved')}:" +
+                                          f" {int(rsc['life'].get_reserved_ressource())}",
+                                          size=20, font="item_desc", centered=True)
+            else:
+                _UI_CACHE["life_text"] = Text(f"{int(rsc['life'].current_value)}/" +
+                                          f"{int(rsc['life'].get_value())}",
+                                          size=20, font="item_desc")
+        if _UI_CACHE["last_mana"] != rsc["mana"].current_value:
+            _UI_CACHE["last_mana"] = rsc["mana"]
+            if rsc["mana"].get_reserved_ressource() > 0:
+                _UI_CACHE["mana_text"] = Text(f"{int(rsc['mana'].current_value)}/" +
+                                          f"{int(rsc['mana'].get_value())}\n" +
+                                          f"#s#(15){trad('meta_words', 'reserved')}:" +
+                                          f" {int(rsc['mana'].get_reserved_ressource())}",
+                                          size=20, font="item_desc", centered=True)
+            else:
+                _UI_CACHE["mana_text"] = Text(f"{int(rsc['mana'].current_value)}/" +
+                                          f"{int(rsc['mana'].get_value())}",
+                                          size=20, font="item_desc")
+        life_offset_x = 90 + SYSTEM["images"]["ui_orb_life"].width // 2 - \
+            _UI_CACHE["life_text"].width // 2
+        mana_offset_x = SCREEN_WIDTH - 288 + SYSTEM["images"]["ui_orb_mana"].width // 2 - \
+            _UI_CACHE["mana_text"].width // 2
+        offset_y = SCREEN_HEIGHT - 198 + SYSTEM["images"]["ui_orb_life"].height // 2 - \
+            _UI_CACHE["life_text"].height // 2
+        data.append((_UI_CACHE["life_text"].surface, (life_offset_x, offset_y)))
+        data.append((_UI_CACHE["mana_text"].surface, (mana_offset_x, offset_y)))
+    if SYSTEM["options"]["display_exp"]:
+        exp = f"{char.creature.exp}/{char.creature.exp_to_next}"
+        if exp != _UI_CACHE["exp"]:
+            _UI_CACHE["exp"] = exp
+            _UI_CACHE["exp_text"] = Text(exp, font="item_desc", size=20)
+        dx = 264 + SYSTEM["images"]["exp_bar"].width // 2 - _UI_CACHE["exp_text"].width // 2
+        dy = SCREEN_HEIGHT - 180 + SYSTEM["images"]["exp_bar"].height // 2 + \
+            _UI_CACHE["exp_text"].height // 2
+        data.append((_UI_CACHE["exp_text"].surface, (dx, dy)))
     return data
 
 @lru_cache(maxsize=128)
@@ -175,44 +255,61 @@ def draw_buffs():
     data = []
     buffs = SYSTEM["player"].creature.build_debuff_list()
     i = 0
-    def_x = x = 16
-    y = SCREEN_HEIGHT - 96
+    def_x = x = 320
+    y = SCREEN_HEIGHT - 224
     for buff, duration in buffs.items():
         if f"buff_{buff}" in SYSTEM["images"]:
-            if i >= 3:
+            if i >= 15:
                 i = 0
                 y -= 96
-            x = def_x + 32 * i
-            data.extend(build_buff_icon(x, y, buff, duration[0], duration[1]))
+            x = def_x + 64 * i
+            data.extend(build_buff_icon(x, y, buff, duration[2], duration[1]))
             i += 1
     return data
 
 def draw_skills():
     """Draws the skill bar."""
+    if _UI_CACHE["red_square"] is None:
+        _UI_CACHE["red_square"] = Surface(60, 60)
+        _UI_CACHE["red_square"].set_alpha(128)
+        _UI_CACHE["red_square"].fill(RED_WEAK)
+    if _UI_CACHE["yel_square"] is None:
+        _UI_CACHE["yel_square"] = Surface(60, 60)
+        _UI_CACHE["yel_square"].set_alpha(128)
+        _UI_CACHE["yel_square"].fill(YELLOW)
     data = []
     char = SYSTEM["player"]
     skill_items = list(char.equipped_spells.items())
-    for i, (_, skill) in enumerate(skill_items):
+    for i, (slot, skill) in enumerate(skill_items):
         spell = SYSTEM["spells"][skill]
         if spell is not None:
             cdc = spell.cooldown
             cdm = spell.stats["cooldown"].get_value()
-            cdl = cdc / cdm * 60
+            cdl = int(cdc / cdm * 60)
             oom = bool(char.creature.get_efficient_value(spell.stats["mana_cost"]\
                 .get_value()) > char.creature.stats["mana"].current_value)
             x_pos = UI_SKILLS_OFFSET + 104 * i
             y_pos = SCREEN_HEIGHT - 100
             data.append((spell.icon.get_image(), (x_pos, y_pos)))
             if oom:
-                s2 = Surface(60, 60)
-                s2.set_alpha(128)
-                s2.fill(RED_WEAK)
-                data.append((s2, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
+                data.append((_UI_CACHE["red_square"], (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
             if cdc > 0:
-                s = Surface(int(cdl), 60)
-                s.set_alpha(128)
-                s.fill(YELLOW)
-                data.append((s, (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
+                if _UI_CACHE["skills"][slot][0] != cdl:
+                    _UI_CACHE["skills"][slot][0] = cdl
+                    _UI_CACHE["skills"][slot][1] = _UI_CACHE["yel_square"].subsurface((0, 0,
+                                                                                       cdl, 60))
+                data.append((_UI_CACHE["skills"][slot][1],
+                             (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
+                if SYSTEM["options"]["display_cd"]:
+                    if _UI_CACHE["skills"][slot][2] != cdc:
+                        _UI_CACHE["skills"][slot][2] = cdc
+                        _UI_CACHE["skills"][slot][3] = Text(str(round(cdc, 1)) if cdc < 1
+                                                            else str(int(round(cdc))),
+                                                            font="item_desc", size=20,
+                                                            default_color=ORANGE)
+                dx = x_pos + 35 - _UI_CACHE["skills"][slot][3].width // 2
+                dy = y_pos + 30 - _UI_CACHE["skills"][slot][3].height // 2
+                data.append((_UI_CACHE["skills"][slot][3].surface, (dx, dy)))
     return data
 
 def draw_boss():
@@ -260,8 +357,8 @@ def draw_enemy_card():
         return []
     data = []
     enemy = SYSTEM["mouse_target"]
-    life = max(enemy.creature.stats["life"].current_value /\
-               enemy.creature.stats["life"].c_value * 300, 0)
+    life = min(max(enemy.creature.stats["life"].current_value /\
+               enemy.creature.stats["life"].c_value * 300, 0), 300)
     img = enemy_life(round(life))
     txt = Text(trad('enemies', enemy.creature.name), size=23,
                font="item_desc", default_color=RED_WEAK)
@@ -316,4 +413,4 @@ def draw_ui():
     SYSTEM["layers"]["ui"].extend(SYSTEM["ui_background"])
     SYSTEM["layers"]["ui"].extend(to_draw)
     SYSTEM["layers"]["ui"].extend(SYSTEM["ui_foreground"])
-    SYSTEM["layers"]["ui"].extend(draw_potions())
+    SYSTEM["layers"]["ui"].extend(draw_text())

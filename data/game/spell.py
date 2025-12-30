@@ -664,7 +664,9 @@ class Spell():
             "jewels": jewels,
             "exp": self._exp,
             "exp_next": self._exp_to_next,
-            "alterations": alterations
+            "alterations": alterations,
+            "trail": self._trail,
+            "impact": self._impact
         }
         return json.dumps(data)
 
@@ -711,7 +713,9 @@ class Spell():
             sequence=sequence,
             offset_x=int(data["offset"][0]),
             offset_y=int(data["offset"][1]),
-            alterations=alterations
+            alterations=alterations,
+            trail=data["trail"],
+            impact=data["impact"]
         )
         spell.level = int(data["level"])
         spell.exp = int(data["exp"])

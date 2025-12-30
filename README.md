@@ -18,13 +18,16 @@ Instead, it's now a looter bullet hell. Yeah
 - [ ] Sounds and musics ?
 - [ ] Lore and story mode ?
 - [ ] More game modes (boss rush, rogue like infinite waves, dungeons ?)
-- [ ] General optimisation -> Objective is a stable 50-60 FPS in battle
+- [ ] General optimisation -> Objective is a stable 50-60 FPS in battle (currently unstable 50-60)
 
 # Known Bugs
 - [x] After dragging a spell to a spellslot, it cannot be removed (it can be overwritten though) until the page is reloaded
 - [x] Random SEGFAULT when launching a level (Origin of the error unknown, reoccurs randomly)
 - [x] The same item is sometimes added multiple time to the inventory
 - [x] Items put in the OFFHAND slot will not take effect and crash the game when removed
+- [ ] MINOR: The spell equiped to RMB is automatically launched at the start of a level
+- [x] Saving is broken AGAIN
+- [x] And so is loading
 
 # Launching the game
 You can clone the repo and compile it yourself, either by compiling and launching the launcher in `wrapper/`, or simply calling python from your own system or a virtual env.

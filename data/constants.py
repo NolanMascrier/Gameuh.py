@@ -98,7 +98,10 @@ SYSTEM = {
         "show_fps": False,
         "show_cards": True,
         "show_bars": False,
-        "particles_enabled": True
+        "particles_enabled": True,
+        "display_hp": True,
+        "display_exp": False,
+        "display_cd": True,
     },
     "lang": set(),
     "game_state": None,

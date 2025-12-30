@@ -469,7 +469,8 @@ class LootGenerator():
             choice = numpy.random.choice(LOOT_VALUES, p=[d / loot_sum for d in adjusted_loot])
             match choice:
                 case "item":
-                    roll = numpy.random.choice(RARITIES, p=[d / rare_sum for d in adjusted_rare])
+                    roll = int(numpy.random.choice(RARITIES,
+                                                   p=[d / rare_sum for d in adjusted_rare]))
                     level = round(enemy.creature.level * (0.7 + numpy.random.rand()))
                     loot["items"].add(self.generate_item(level, roll))
                 case "mana":

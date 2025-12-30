@@ -611,7 +611,7 @@ class Item():
     @property
     def stamp(self):
         """Stamps the item's drop time"""
-        self._drop_time = time.gmtime()
+        self._drop_time = time.time()
         return self
 
     @property
