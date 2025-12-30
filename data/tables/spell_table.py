@@ -164,7 +164,8 @@ def generate_spell_list():
         cooldown=0.25, projectiles=3, flags=[Flags.PHYS, Flags.SPREAD, Flags.MELEE, Flags.TRIGGER,\
         Flags.TRIGGER_ON_CRIT, Flags.DEBUFF], debuffs=[BLEED], effective_frames=4)
     voidolt = Spell("voidbolt", voidbolt_icon, "voidbolt_proj_img", VOIDBOLT, 1,\
-        cooldown=0.1, projectiles=25, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
+        cooldown=0.1, projectiles=5, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE],
+        trail=PARTICLE_CONFIGS["voidbolt_trail"])
     voidoltflurry = Spell("voidbolt_boss", voidbolt_icon, "voidbolt_proj2_img", VOIDBOLT_ALT, 0,\
         cooldown=0.1, projectiles=9, flags=[Flags.DARK, Flags.SPREAD, Flags.PROJECTILE])
     arc = Spell("arc", arc_icon, "arc_proj_img", ARC, 3,\

@@ -40,11 +40,16 @@ class Character():
         self._base_speed = speed
         self._potions = [3, 3]
         self._equipped_spells = {
-            "spell_1": "firebolt",
+            "spell_L": "firebolt",
+            "spell_R": None,
+            "spell_M": None,
+            "spell_1": "voidbolt",
             "spell_2": "arc",
             "spell_3": "icebolt",
             "spell_4": "elefury",
             "spell_5": "furyslash",
+            "spell_6": None,
+            "spell_7": None,
             "dash": "winddash"
         }
         self._immune = []
@@ -160,11 +165,16 @@ class Character():
     def action(self, keys):
         """Acts depending on the input."""
         actions = {
+            "spell_L": lambda: self.__cast("spell_L"),
+            "spell_R": lambda: self.__cast("spell_R"),
+            "spell_M": lambda: self.__cast("spell_M"),
             "spell_1": lambda: self.__cast("spell_1"),
             "spell_2": lambda: self.__cast("spell_2"),
             "spell_3": lambda: self.__cast("spell_3"),
             "spell_4": lambda: self.__cast("spell_4"),
             "spell_5": lambda: self.__cast("spell_5"),
+            "spell_6": lambda: self.__cast("spell_6"),
+            "spell_7": lambda: self.__cast("spell_7"),
             "dash": lambda: self.__cast("dash"),
             "potion_life": self.use_life_potion,
             "potion_mana": self.use_mana_potion,
@@ -185,6 +195,9 @@ class Character():
 
     def use_life_potion(self):
         """Uses a life potion, which heals for 20% of the user's life."""
+        if self._creature.stats["life"].current_value >= \
+            self._creature.stats["life"].get_free_ressource():
+            return
         if self._potions[0] > 0 and self._cooldown <= 0.0:
             self._potions[0]-= 1
             self._cooldown = 0.5
@@ -197,6 +210,9 @@ class Character():
 
     def use_mana_potion(self):
         """Uses a mana potion, which heals for 40% of the user's mana."""
+        if self._creature.stats["mana"].current_value >= \
+            self._creature.stats["mana"].get_free_ressource():
+            return
         if self._potions[1] > 0 and self._cooldown <= 0.0:
             self._potions[1]-= 1
             self._cooldown = 0.5

@@ -11,6 +11,16 @@ PARTICLE_CONFIGS = {
         'fade': True,
         'gravity': 0
     },
+    'voidbolt_trail': {
+        'count': 12,
+        'vel_range': (-1.5, 1.5),
+        'color': [(32, 5, 115), (84, 17, 171), (134, 56, 186)],
+        'size_range': (1, 3),
+        'life_range': (0.1, 0.4),
+        'spread_angle': 360,
+        'fade': True,
+        'gravity': 0
+    },
     'firebolt_impact': {
         'count': 40,
         'vel_range': (3, 10),

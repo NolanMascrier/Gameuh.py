@@ -311,6 +311,7 @@ class Level():
         SYSTEM["game_state"] = GAME_LEVEL
         init_timers()
         SYSTEM["deltatime"].clear()
+        SYSTEM["keys"].clear()
 
     def init(self):
         """Sets up the background of the level."""

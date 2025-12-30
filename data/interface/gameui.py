@@ -11,9 +11,12 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, trad, ENNEMY_TRA
     RED_WEAK, YELLOW
 from data.image.textgenerator import make_text
 
-UI_SKILLS_OFFSET = 650
-UI_SKILLS_PANEL_OFFSET = 2
-UI_SKILLS_INPUT_OFFSET = 48
+UI_SKILLS_OFFSET = 400
+UI_SKILLS_PANEL_OFFSET = 0
+UI_SKILLS_INPUT_OFFSET = 16
+
+POTION_OFFSET = UI_SKILLS_OFFSET - 64 - 32
+POTION_OFFSET_REV = SCREEN_WIDTH - POTION_OFFSET - 64
 
 UPDATE_COUNTER = [5]
 
@@ -34,22 +37,23 @@ def generate_background():
     SYSTEM["ui_background"].clear()
     char = SYSTEM["player"]
     data = []
+    #BACKGROUND
+    data.append((SYSTEM["images"]["ui_background"].image,
+                 (0, SCREEN_HEIGHT - SYSTEM["images"]["ui_background"].height)))
     #POTIONS
-    data.append((SYSTEM["images"]["item_bottom"].image, (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"]["item_bottom"].image,\
-                        (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    #EXP
-    data.append((SYSTEM["images"]["exp_bar2"].image, (210, SCREEN_HEIGHT - 60)))
+    data.append((SYSTEM["images"]["skill_bottom"].image, (POTION_OFFSET, SCREEN_HEIGHT - 100)))
+    data.append((SYSTEM["images"]["skill_bottom"].image,\
+                        (POTION_OFFSET_REV, SCREEN_HEIGHT - 100)))
     #SKILLS
     i = 0
     for _ in char.equipped_spells:
         data.append((SYSTEM["images"]["skill_bottom"].image,\
-            (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 130)))
+            (UI_SKILLS_OFFSET + 104 * i, SCREEN_HEIGHT - 100)))
         i += 1
     #LIFE AND MANA
-    data.append((SYSTEM["images"]["ui_orb_life_e"].image, (384, SCREEN_HEIGHT - 192)))
+    data.append((SYSTEM["images"]["ui_orb_life_e"].image, (90, SCREEN_HEIGHT - 201)))
     data.append((SYSTEM["images"]["ui_orb_mana_e"].image,
-                 (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192)))
+                 (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201)))
     #
     SYSTEM["ui_background"] = data
 
@@ -60,30 +64,31 @@ def generate_foreground():
     char = SYSTEM["player"]
     data = []
     #POTIONS
-    data.append((SYSTEM["images"]["item_top"].image, (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"][K_1].image, (508, SCREEN_HEIGHT - 82)))
+    data.append((SYSTEM["images"]["skill_top"].image, (POTION_OFFSET, SCREEN_HEIGHT - 100)))
     if SYSTEM["player"].creature.gear["life_pot"] is not None:
         data.append((SYSTEM["player"].creature.gear["life_pot"].get_image().image,
-                     (524, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"]["item_top"].image,\
-                           (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
+                     (POTION_OFFSET, SCREEN_HEIGHT - 100)))
+    data.append((SYSTEM["images"][K_1].image, (POTION_OFFSET + 48, SCREEN_HEIGHT - 42)))
+
+    data.append((SYSTEM["images"]["skill_top"].image,\
+                           (POTION_OFFSET_REV, SCREEN_HEIGHT - 100)))
     if SYSTEM["player"].creature.gear["mana_pot"] is not None:
         data.append((SYSTEM["player"].creature.gear["mana_pot"].get_image().image,
-                     (SCREEN_WIDTH - 588, SCREEN_HEIGHT - 130)))
-    data.append((SYSTEM["images"][K_2].image, (SCREEN_WIDTH - 540, SCREEN_HEIGHT - 82)))
-    #EXP
-    data.append((SYSTEM["images"]["exp_bar"].image, (210, SCREEN_HEIGHT - 60)))
+                     (POTION_OFFSET_REV, SCREEN_HEIGHT - 100)))
+    data.append((SYSTEM["images"][K_2].image, (POTION_OFFSET_REV - 16, SCREEN_HEIGHT - 42)))
     #SKILLS
     i = 0
     for name, _ in char.equipped_spells.items():
         data.append((SYSTEM["images"]["skill_top"].image, (UI_SKILLS_OFFSET + 104 * i,\
-            SCREEN_HEIGHT - 130)))
+            SCREEN_HEIGHT - 100)))
         data.append((SYSTEM["images"][KEY_EVENT[name][0]].image,\
-            (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 82)))
+            (UI_SKILLS_OFFSET + UI_SKILLS_INPUT_OFFSET + 104 * i,SCREEN_HEIGHT - 52)))
         i += 1
     #LIFE AND MANA
-    data.append((SYSTEM["images"]["ui_orb_top_a"].image, (384, SCREEN_HEIGHT - 192)))
-    data.append((SYSTEM["images"]["ui_orb_top"].image, (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192)))
+    data.append((SYSTEM["images"]["ui_orb_top_a"].image, (90, SCREEN_HEIGHT - 201)))
+    data.append((SYSTEM["images"]["ui_orb_top"].image, (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201)))
+    #EXP
+    data.append((SYSTEM["images"]["exp_bar"].image, (264, SCREEN_HEIGHT - 180)))
     #
     SYSTEM["ui_foreground"] = data
 
@@ -91,10 +96,10 @@ def draw_exp_bar():
     """Draws the EXP bar."""
     data = []
     char = SYSTEM["player"]
-    exp_len = char.creature.exp / char.creature.exp_to_next * 1434
-    exp_len = min(max(exp_len, 0), 1433)
+    exp_len = char.creature.exp / char.creature.exp_to_next * 1326
+    exp_len = min(max(exp_len, 0), 1326)
     c = SYSTEM["images"]["exp_jauge"].image.subsurface((0, 0, exp_len, 9))
-    data.append((c, (243, SCREEN_HEIGHT - 39)))
+    data.append((c, (298, SCREEN_HEIGHT - 129)))
     return data
 
 def draw_life_mana():
@@ -105,25 +110,25 @@ def draw_life_mana():
     max_mana = char["mana"].get_value()
     current_mana = max(min(char["mana"].current_value, max_mana), 0)
     reserved_mana = char["mana"].get_reserved_prop()
-    mana_dh = round((current_mana / max_mana) * 128)
-    mana_dy = 128 - mana_dh
-    mana_r_dh = 128 - round((reserved_mana / max_mana) * 128)
-    mana_orb = SYSTEM["images"]["ui_orb_mana"].extracts(0, mana_dy, 128, mana_dh)
-    mana_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 128, 128 - mana_r_dh)
+    mana_dh = round((current_mana / max_mana) * 198)
+    mana_dy = 198 - mana_dh
+    mana_r_dh = 198 - round((reserved_mana / max_mana) * 198)
+    mana_orb = SYSTEM["images"]["ui_orb_mana"].extracts(0, mana_dy, 198, mana_dh)
+    mana_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 198, 198 - mana_r_dh)
 
     max_life = char["life"].get_value()
     current_life = max(min(char["life"].current_value, max_life), 0)
     reserved_life = char["life"].get_reserved_prop()
-    life_dh = round((current_life / max_life) * 128)
-    life_dy = 128 - life_dh
-    life_r_dh = 128 - round((reserved_life / max_life) * 128)
-    life_orb = SYSTEM["images"]["ui_orb_life"].extracts(0, life_dy, 128, life_dh)
-    life_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 128, 128 - life_r_dh)
+    life_dh = round((current_life / max_life) * 198)
+    life_dy = 198 - life_dh
+    life_r_dh = 198 - round((reserved_life / max_life) * 198)
+    life_orb = SYSTEM["images"]["ui_orb_life"].extracts(0, life_dy, 198, life_dh)
+    life_res = SYSTEM["images"]["ui_orb_reserv"].extracts(0, 0, 198, 198 - life_r_dh)
 
-    data.append((life_orb.image, (384, SCREEN_HEIGHT - 192 + life_dy)))
-    data.append((life_res.image, (384, SCREEN_HEIGHT - 192)))
-    data.append((mana_orb.image, (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192 + mana_dy)))
-    data.append((mana_res.image, (SCREEN_WIDTH - 512, SCREEN_HEIGHT - 192)))
+    data.append((life_orb.image, (90, SCREEN_HEIGHT - 201 + life_dy)))
+    data.append((life_res.image, (90, SCREEN_HEIGHT - 201)))
+    data.append((mana_orb.image, (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201 + mana_dy)))
+    data.append((mana_res.image, (SCREEN_WIDTH - 288, SCREEN_HEIGHT - 201)))
     return data
 
 def draw_potions():
@@ -131,11 +136,15 @@ def draw_potions():
     char = SYSTEM["player"]
     if _UI_CACHE['last_potion_counts'] != tuple(char.potions):
         _UI_CACHE['last_potion_counts'] = tuple(char.potions)
-        _UI_CACHE['potion_texts'][0] = Text(f"{int(char.potions[0])}")
-        _UI_CACHE['potion_texts'][1] = Text(f"{int(char.potions[1])}")
+        _UI_CACHE['potion_texts'][0] = Text(f"{int(char.potions[0])}", size=30, font="item_desc")
+        _UI_CACHE['potion_texts'][1] = Text(f"{int(char.potions[1])}", size=30, font="item_desc")
     data = []
-    data.append((_UI_CACHE['potion_texts'][0].surface, (572, SCREEN_HEIGHT - 82)))
-    data.append((_UI_CACHE['potion_texts'][1].surface, (SCREEN_WIDTH - 604, SCREEN_HEIGHT - 82)))
+    life_off = _UI_CACHE['potion_texts'][0].width // 2
+    mana_off = _UI_CACHE['potion_texts'][1].width // 2
+    data.append((_UI_CACHE['potion_texts'][0].surface,
+                 (POTION_OFFSET - life_off, SCREEN_HEIGHT - 42)))
+    data.append((_UI_CACHE['potion_texts'][1].surface,
+                 (POTION_OFFSET_REV + 32 - mana_off, SCREEN_HEIGHT - 42)))
     return data
 
 @lru_cache(maxsize=128)
@@ -192,7 +201,7 @@ def draw_skills():
             oom = bool(char.creature.get_efficient_value(spell.stats["mana_cost"]\
                 .get_value()) > char.creature.stats["mana"].current_value)
             x_pos = UI_SKILLS_OFFSET + 104 * i
-            y_pos = SCREEN_HEIGHT - 130
+            y_pos = SCREEN_HEIGHT - 100
             data.append((spell.icon.get_image(), (x_pos, y_pos)))
             if oom:
                 s2 = Surface(60, 60)
@@ -293,12 +302,11 @@ def draw_ui():
     """Draws the user interface."""
     SYSTEM["images"]["enemy_card"].tick()
     UPDATE_COUNTER[0] += 1
-    if UPDATE_COUNTER[0] < 2:
+    if UPDATE_COUNTER[0] < 5:
         return
     UPDATE_COUNTER[0] = 0
     to_draw = []
     to_draw.extend(draw_life_mana())
-    to_draw.extend(draw_potions())
     to_draw.extend(draw_exp_bar())
     to_draw.extend(draw_skills())
     to_draw.extend(draw_buffs())
@@ -308,3 +316,4 @@ def draw_ui():
     SYSTEM["layers"]["ui"].extend(SYSTEM["ui_background"])
     SYSTEM["layers"]["ui"].extend(to_draw)
     SYSTEM["layers"]["ui"].extend(SYSTEM["ui_foreground"])
+    SYSTEM["layers"]["ui"].extend(draw_potions())

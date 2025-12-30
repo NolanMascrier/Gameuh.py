@@ -2,6 +2,7 @@
 
 import pygame.constants as cs
 from data.api.surface import get_keys
+from data.constants import SYSTEM
 
 K_A       = cs.K_a
 K_B       = cs.K_b
@@ -72,13 +73,21 @@ K_LALT    = cs.K_LALT
 K_RALT    = cs.K_RALT
 QUIT       = cs.QUIT
 MOUSEWHEEL = cs.MOUSEWHEEL
+RMB        = 0
+LMB        = 1
+MMB        = 2
 
 KEY_EVENT = {
+    "spell_L": (LMB, None),
+    "spell_R": (RMB, None),
+    "spell_M": (MMB, None),
     "spell_1": (K_Q, None),
     "spell_2": (K_E, None),
     "spell_3": (K_F, None),
     "spell_4": (K_T, None),
     "spell_5": (K_R, None),
+    "spell_6": (K_X, None),
+    "spell_7": (K_G, None),
     "dash": (K_LSHIFT, None),
     "potion_life": (K_1, None),
     "potion_mana": (K_2, None),
@@ -98,5 +107,11 @@ def get_key_event():
     for k, binds in KEY_EVENT.items():
         if (binds[0] is not None and keys[binds[0]]) or\
             (binds[1] is not None and keys[binds[1]]):
+            events.add(k)
+        if LMB in (binds[0], binds[1]) and SYSTEM["mouse_click"][0]:
+            events.add(k)
+        if MMB in (binds[0], binds[1]) and SYSTEM["mouse_click"][1]:
+            events.add(k)
+        if RMB in (binds[0], binds[1]) and SYSTEM["mouse_click"][2]:
             events.add(k)
     return events

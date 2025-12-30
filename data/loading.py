@@ -10,7 +10,7 @@ import numpy as np
 from data.api.surface import Surface, mouse_position, get_keys, init_engine
 from data.api.clock import Clock
 from data.api.logger import Logger
-from data.api.keycodes import K_Q, K_E, K_R, K_F, K_T, K_1, K_2, K_LSHIFT
+from data.api.keycodes import K_Q, K_E, K_R, K_F, K_T, K_1, K_2, K_LSHIFT, K_G, K_X
 
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, MENU_MAIN, GAME_LEVEL,\
     RESSOURCES, ENNEMY_TRACKER, POWER_UP_TRACKER, trad, Flags,\
@@ -257,9 +257,9 @@ def load_buttons():
 
 def load_images():
     """Loads the basic images."""
-    SYSTEM["images"]["exp_bar"] = Image("exp.png")
+    SYSTEM["images"]["exp_bar"] = Image("ui/exp.png")
     SYSTEM["images"]["exp_bar2"] = Image("exp_back.png")
-    SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png").scale(9, 1434)
+    SYSTEM["images"]["exp_jauge"] = Image("exp_bar.png").scale(9, 1326)
     SYSTEM["images"]["skill_top"] = Image("ui/skill_top.png").scale(64, 64)
     SYSTEM["images"]["skill_bottom"] = Image("ui/skill_bottom.png").scale(64, 64)
     SYSTEM["images"]["item_top"] = Image("ui/item_top.png").scale(64, 64)
@@ -275,9 +275,14 @@ def load_images():
     SYSTEM["images"][K_F] = Image("ui/kb_f.png")
     SYSTEM["images"][K_R] = Image("ui/kb_r.png")
     SYSTEM["images"][K_T] = Image("ui/kb_t.png")
+    SYSTEM["images"][K_G] = Image("ui/kb_g.png")
+    SYSTEM["images"][K_X] = Image("ui/kb_x.png")
     SYSTEM["images"][K_LSHIFT] = Image("ui/kb_shift.png")
     SYSTEM["images"][K_1] = Image("ui/kb_1.png")
     SYSTEM["images"][K_2] = Image("ui/kb_2.png")
+    SYSTEM["images"][0] = Image("ui/mb_r.png")
+    SYSTEM["images"][1] = Image("ui/mb_l.png")
+    SYSTEM["images"][2] = Image("ui/mb_m.png")
     SYSTEM["images"]["btn"] = Image("ui/button.png").scale(55, 280)
     SYSTEM["images"]["btn_fat"] = Image("ui/button.png").scale(55, 100)
     SYSTEM["images"]["btn_fat_pressed"] = Image("ui/button_press.png").scale(55, 100)
@@ -379,13 +384,14 @@ def load_images():
     SYSTEM["images"]["gold_icon"] = Image("icons/gold.png")
     SYSTEM["images"]["exp_orb_big"] = Image("icons/exp.png").scale(64, 64)
     SYSTEM["images"]["loss"] = Image("icons/lost.png").scale(64, 64)
-    SYSTEM["images"]["ui_orb_top"] = Image("ui/orb_empty.png").scale(128, 128)
-    SYSTEM["images"]["ui_orb_top_a"] = Image("ui/orb_empty_alt.png").scale(128, 128)
-    SYSTEM["images"]["ui_orb_life"] = Image("ui/orb_life.png").scale(128, 128)
-    SYSTEM["images"]["ui_orb_life_e"] = Image("ui/orb_life_e.png").scale(128, 128)
-    SYSTEM["images"]["ui_orb_mana"] = Image("ui/orb_mana.png").scale(128, 128)
-    SYSTEM["images"]["ui_orb_mana_e"] = Image("ui/orb_mana_e.png").scale(128, 128)
-    SYSTEM["images"]["ui_orb_reserv"] = Image("ui/orb_reserved.png").scale(128, 128)
+    SYSTEM["images"]["ui_orb_top"] = Image("ui/orb_empty.png").scale(198, 198)
+    SYSTEM["images"]["ui_orb_top_a"] = Image("ui/orb_empty_alt.png").scale(198, 198)
+    SYSTEM["images"]["ui_orb_life"] = Image("ui/orb_life.png").scale(198, 198)
+    SYSTEM["images"]["ui_orb_life_e"] = Image("ui/orb_life_e.png").scale(198, 198)
+    SYSTEM["images"]["ui_orb_mana"] = Image("ui/orb_mana.png").scale(198, 198)
+    SYSTEM["images"]["ui_orb_mana_e"] = Image("ui/orb_mana_e.png").scale(198, 198)
+    SYSTEM["images"]["ui_orb_reserv"] = Image("ui/orb_reserved.png").scale(198, 198)
+    SYSTEM["images"]["ui_background"] = Image("ui/ui_bottom.png")
 
 def load_icons():
     """Loads the icons."""

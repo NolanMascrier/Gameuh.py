@@ -18,7 +18,7 @@ def get_press():
     return pygame.mouse.get_pressed()
 
 def get_keys():
-    """Wrappre to pygame's key event."""
+    """Wrapper to pygame's key event."""
     return pygame.key.get_pressed()
 
 def get_events():
