@@ -444,8 +444,8 @@ def load_others():
     SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000,\
         contains=SYSTEM["images"]["mission_map"].image)
     SYSTEM["images"]["tree_surface"] = Surface(2000, 2000)
-    SYSTEM["images"]["tree_scroller"] = Scrollable(10, 10, SCREEN_WIDTH - 110, SCREEN_HEIGHT - 200,\
-        contains=SYSTEM["images"]["tree_surface"])
+    SYSTEM["images"]["tree_scroller"] = Scrollable(420, 10, SCREEN_WIDTH - 500, SCREEN_HEIGHT - 200,
+                                                   contains=SYSTEM["images"]["tree_surface"])
     generate_tree()
     SYSTEM["ui_surface"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["ui_background"] = []

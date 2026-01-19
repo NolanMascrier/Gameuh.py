@@ -194,7 +194,12 @@
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "tree": {
       "start": "Way of the warrior",
-      "buffa": "Firebolt teaching"
+      "buffa": "Firebolt teaching",
+      "skil_a": "A node",
+      "skil_b": "A branching node",
+      "skil_c": "Top node",
+      "skil_d": "Another node",
+      "skil_e": "Bottom node"
     },
     "loading": {
       "fonts": "Loading fonts ...",

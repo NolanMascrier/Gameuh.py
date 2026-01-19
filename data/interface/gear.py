@@ -64,7 +64,7 @@ def open_gear_screen():
     setup_bottom_bar()
     SYSTEM["gear_tab"] = STATES[0]
     SYSTEM["gear_tabs"] = Tabs(15, 200, STATES, STATES, "gear_tab")
-    x = SCREEN_WIDTH / 2- 32
+    x = SCREEN_WIDTH / 2 - 32
     y = SCREEN_HEIGHT / 2 - 128
     SYSTEM["ui"]["gear_helm"] = Slot(x, y - 32, "gear_helm",\
         equip, unequip, overwrite_gear,\
@@ -128,26 +128,8 @@ def unloader():
     SYSTEM["gear_panel"] = None
     STAT_LIST.clear()
 
-def draw_gear(_):
-    """Draws the gear menu."""
-    renders(SYSTEM["city_back"].as_background)
-    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
-    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
-    SYSTEM["ui"]["gear_weapon"].tick().draw()
-    SYSTEM["ui"]["gear_offhand"].tick().draw()
-    SYSTEM["ui"]["gear_helm"].tick().draw()
-    SYSTEM["ui"]["gear_boots"].tick().draw()
-    SYSTEM["ui"]["gear_hands"].tick().draw()
-    SYSTEM["ui"]["gear_armor"].tick().draw()
-    SYSTEM["ui"]["gear_belt"].tick().draw()
-    SYSTEM["ui"]["gear_ring"].tick().draw()
-    SYSTEM["ui"]["gear_ring2"].tick().draw()
-    SYSTEM["ui"]["gear_amulet"].tick().draw()
-    SYSTEM["ui"]["gear_relic"].tick().draw()
-    SYSTEM["ui"]["gear_life"].tick().draw()
-    SYSTEM["ui"]["gear_mana"].tick().draw()
-    SYSTEM["gear_panel"].tick().draw()
+def draw_stat_panel():
+    """Draws the stat pannel."""
     x = 10
     y = 10
     render(SYSTEM["images"]["char_details"].image, (x, y))
@@ -187,4 +169,26 @@ def draw_gear(_):
                 x_offset += data.width
                 count += 1
             y_offset_tab += data.height
+
+def draw_gear(_):
+    """Draws the gear menu."""
+    renders(SYSTEM["city_back"].as_background)
+    x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
+    y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
+    render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
+    SYSTEM["ui"]["gear_weapon"].tick().draw()
+    SYSTEM["ui"]["gear_offhand"].tick().draw()
+    SYSTEM["ui"]["gear_helm"].tick().draw()
+    SYSTEM["ui"]["gear_boots"].tick().draw()
+    SYSTEM["ui"]["gear_hands"].tick().draw()
+    SYSTEM["ui"]["gear_armor"].tick().draw()
+    SYSTEM["ui"]["gear_belt"].tick().draw()
+    SYSTEM["ui"]["gear_ring"].tick().draw()
+    SYSTEM["ui"]["gear_ring2"].tick().draw()
+    SYSTEM["ui"]["gear_amulet"].tick().draw()
+    SYSTEM["ui"]["gear_relic"].tick().draw()
+    SYSTEM["ui"]["gear_life"].tick().draw()
+    SYSTEM["ui"]["gear_mana"].tick().draw()
+    SYSTEM["gear_panel"].tick().draw()
+    draw_stat_panel()
     draw_bottom_bar()

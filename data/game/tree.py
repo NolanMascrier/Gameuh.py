@@ -9,6 +9,8 @@ from data.numerics.affliction import Affliction
 from data.image.hoverable import Hoverable
 from data.image.button import Button, Text
 
+from data.interface.skilltree import UPDATED
+
 GENERATE_SURFACES = True
 
 class Node:
@@ -118,6 +120,7 @@ class Node:
 
     def action(self):
         """Actions the node."""
+        UPDATED[0] = True
         if self._learned:
             self.unlearn()
         else:

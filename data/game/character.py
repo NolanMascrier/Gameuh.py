@@ -2,7 +2,7 @@
 
 import json
 import numpy
-from data.constants import SCREEN_HEIGHT, SYSTEM, Flags, BLUE, GREEN
+from data.constants import SCREEN_HEIGHT, SYSTEM, Flags, BLUE, GREEN, Classes
 from data.physics.hitbox import HitBox
 from data.physics.entity import Entity
 from data.game.creature import Creature
@@ -37,6 +37,7 @@ class Character():
         self._creature = Creature("hero", self)
         self._cooldown = 0
         self._max_cooldown = 2
+        self._class = Classes.SORCERESS
         self._base_speed = speed
         self._potions = [3, 3]
         self._equipped_spells = {
@@ -257,6 +258,11 @@ class Character():
         for i in data["inventory"]:
             char.inventory.append(Item.imports(json.loads(i)))
         return char
+
+    @property
+    def current_class(self):
+        """Returns the character's current class."""
+        return self._class
 
     @property
     def x(self):

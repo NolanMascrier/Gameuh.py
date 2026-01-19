@@ -152,6 +152,14 @@ TICKER_TIMER = "ticker"
 UPDATE_TIMER = "updoot"
 WAVE_CHECK = "checkcheckcheck"
 
+class Classes(str, Enum):
+    """Enum for player classes"""
+    SORCERESS = "sorceress" # Magical fire/ice/thunder
+    WARRIOR = "warrior" # Pure melee, phys, armor
+    ESSENTIALIST = "essentialist" # Light and darkness
+    ARCANIST = "arcanist" # Pure energy
+    SUMMONER = "summoner" # Pets and shit
+
 class Flags(str, Enum):
     """Flags to use for skills and damage sources."""
     HOT = "heal_over_time"
