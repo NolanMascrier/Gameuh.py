@@ -1,11 +1,12 @@
 """Handles the spellbook tabs of the main menu."""
 
-from data.api.keycodes import K_Q, K_T, K_E, K_R, K_F, K_LSHIFT
+from data.api.keycodes import K_Q, K_T, K_E, K_R, K_F, K_LSHIFT, K_X, K_G, RMB, MMB, LMB
 
 from data.interface.general import draw_bottom_bar, setup_bottom_bar
 from data.constants import SYSTEM, Flags, MENU_SPELLBOOK, SCREEN_HEIGHT, SCREEN_WIDTH,\
     MENU_SPELLBOOK_1, MENU_SPELLBOOK_3, MENU_SPELLBOOK_2, MENU_SPELLBOOK_5,\
-    MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, trad, RED, BLUE, BLACK
+    MENU_SPELLBOOK_DASH, MENU_SPELLBOOK_4, trad, RED, BLUE, BLACK, MENU_SPELLBOOK_6, \
+    MENU_SPELLBOOK_7, MENU_SPELLBOOK_L, MENU_SPELLBOOK_M, MENU_SPELLBOOK_R
 from data.game.spell import Spell
 from data.game.item import Item
 from data.image.slotpanel import SlotPanel
@@ -15,32 +16,41 @@ from data.image.text import Text
 from data.interface.render import render, renders
 
 PAGES = {
-    MENU_SPELLBOOK_1: 0,
-    MENU_SPELLBOOK_2: 1,
-    MENU_SPELLBOOK_3: 2,
-    MENU_SPELLBOOK_4: 3,
-    MENU_SPELLBOOK_5: 4,
-    MENU_SPELLBOOK_DASH: 5
+    MENU_SPELLBOOK_L: 0,
+    MENU_SPELLBOOK_M: 1,
+    MENU_SPELLBOOK_R: 2,
+    MENU_SPELLBOOK_1: 3,
+    MENU_SPELLBOOK_2: 4,
+    MENU_SPELLBOOK_3: 5,
+    MENU_SPELLBOOK_4: 6,
+    MENU_SPELLBOOK_5: 7,
+    MENU_SPELLBOOK_6: 8,
+    MENU_SPELLBOOK_7: 9,
+    MENU_SPELLBOOK_DASH: 10,
 }
 
 INPUT = {
+    MENU_SPELLBOOK_L: "spell_L",
+    MENU_SPELLBOOK_M: "spell_M",
+    MENU_SPELLBOOK_R: "spell_R",
     MENU_SPELLBOOK_1: "spell_1",
     MENU_SPELLBOOK_2: "spell_2",
     MENU_SPELLBOOK_3: "spell_3",
     MENU_SPELLBOOK_4: "spell_4",
     MENU_SPELLBOOK_5: "spell_5",
+    MENU_SPELLBOOK_6: "spell_6",
+    MENU_SPELLBOOK_7: "spell_7",
     MENU_SPELLBOOK_DASH: "dash"
 }
-
-
 
 LEFT_COLUMN = ["crit_r", "cooldown", "aoe", "projs"]
 RIGHT_COLUMN = ["crit_d", "life_cost", "mana_cost"]
 
-STATES = [MENU_SPELLBOOK_1, MENU_SPELLBOOK_2, MENU_SPELLBOOK_3,\
-    MENU_SPELLBOOK_4, MENU_SPELLBOOK_5, MENU_SPELLBOOK_DASH]
+STATES = [MENU_SPELLBOOK_L, MENU_SPELLBOOK_M, MENU_SPELLBOOK_R, MENU_SPELLBOOK_1, MENU_SPELLBOOK_2,
+          MENU_SPELLBOOK_3, MENU_SPELLBOOK_4, MENU_SPELLBOOK_5, MENU_SPELLBOOK_6, 
+          MENU_SPELLBOOK_7, MENU_SPELLBOOK_DASH]
 
-STEPS = [0,1,2,3,4,5]
+STEPS = [0,1,2,3,4,5,6,7,8,9,10]
 
 def refresh():
     """Refreshs the current spell window."""
@@ -205,17 +215,32 @@ def open_spell_screen():
             else:
                 spells.append(spell)
     images = [
+        SYSTEM["images"][LMB],
+        SYSTEM["images"][MMB],
+        SYSTEM["images"][RMB],
         SYSTEM["images"][K_Q],
         SYSTEM["images"][K_E],
         SYSTEM["images"][K_F],
         SYSTEM["images"][K_T],
         SYSTEM["images"][K_R],
+        SYSTEM["images"][K_X],
+        SYSTEM["images"][K_G],
         SYSTEM["images"][K_LSHIFT]
     ]
     x_offset = SCREEN_WIDTH / 2 - 300
     x_offset_slot = SCREEN_WIDTH / 2 - 32
-    SYSTEM["gear_tabs"] = Tabs(x_offset, 100, images, STATES, "spell_page",\
-        SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"], additional_action=refresh)
+    SYSTEM["gear_tabs"] = Tabs(x_offset, 45, images, STATES, "spell_page",\
+        SYSTEM["images"]["btn_fat"], SYSTEM["images"]["btn_fat_pressed"],
+        additional_action=refresh, rows=2)
+    SYSTEM["ui"]["slot_L"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_L"]], flag="spell_L",\
+        accept_only=Spell)
+    SYSTEM["ui"]["slot_M"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_M"]], flag="spell_M",\
+        accept_only=Spell)
+    SYSTEM["ui"]["slot_R"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_R"]], flag="spell_R",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_1"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1",\
         accept_only=Spell)
@@ -231,9 +256,16 @@ def open_spell_screen():
     SYSTEM["ui"]["slot_5"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5",\
         accept_only=Spell)
+    SYSTEM["ui"]["slot_6"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_6"]], flag="spell_6",\
+        accept_only=Spell)
+    SYSTEM["ui"]["slot_7"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_7"]], flag="spell_7",\
+        accept_only=Spell)
     SYSTEM["ui"]["slot_dash"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash")
-    for key in ["spell_1", "spell_2", "spell_3", "spell_4", "spell_5", "dash"]:
+    for key in ["spell_L", "spell_M", "spell_R", "spell_1", "spell_2", "spell_3", "spell_4",
+                "spell_5", "spell_6", "spell_7", "dash"]:
         spell = SYSTEM["spells"][SYSTEM["player"].equipped_spells[key]]\
             if SYSTEM["player"].equipped_spells[key] is not None else None
         make_slot(spell, key)
@@ -250,15 +282,6 @@ def open_spell_screen():
 
 def unloader():
     """Unloads all spellbook-specific data."""
-    SYSTEM["gear_tabs"] = None
-    SYSTEM["spell_panel"] = None
-    SYSTEM["dash_panel"] = None
-    SYSTEM["ui"]["slot_q"] = None
-    SYSTEM["ui"]["slot_e"] = None
-    SYSTEM["ui"]["slot_f"] = None
-    SYSTEM["ui"]["slot_r"] = None
-    SYSTEM["ui"]["slot_t"] = None
-    SYSTEM["ui"]["slot_shift"] = None
 
 def draw_single(spell, y_offset = 0):
     """Draws the details of a single spell."""
@@ -347,19 +370,34 @@ def draw_spells(_):
     SYSTEM["gear_tabs"].tick()
     SYSTEM["gear_panel"].tick().draw()
     match val:
+        case 0:
+            SYSTEM["ui"]["slot_L"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
         case 1:
-            SYSTEM["ui"]["slot_2"].tick().draw()
+            SYSTEM["ui"]["slot_M"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 2:
-            SYSTEM["ui"]["slot_3"].tick().draw()
-            SYSTEM["spell_panel"].tick().draw()
-        case 3:
-            SYSTEM["ui"]["slot_4"].tick().draw()
+            SYSTEM["ui"]["slot_R"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 4:
-            SYSTEM["ui"]["slot_5"].tick().draw()
+            SYSTEM["ui"]["slot_2"].tick().draw()
             SYSTEM["spell_panel"].tick().draw()
         case 5:
+            SYSTEM["ui"]["slot_3"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 6:
+            SYSTEM["ui"]["slot_4"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 7:
+            SYSTEM["ui"]["slot_5"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 8:
+            SYSTEM["ui"]["slot_6"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 9:
+            SYSTEM["ui"]["slot_7"].tick().draw()
+            SYSTEM["spell_panel"].tick().draw()
+        case 10:
             SYSTEM["ui"]["slot_dash"].tick().draw()
             SYSTEM["dash_panel"].tick().draw()
         case _:
