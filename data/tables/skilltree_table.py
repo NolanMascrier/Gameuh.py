@@ -4,20 +4,33 @@ from data.constants import SYSTEM, Flags, Classes
 from data.numerics.affliction import Affliction
 from data.game.tree import Node
 
-STR_NODE = Affliction("tree_str", 5, -1, [Flags.FLAT, Flags.STR], True)
+STR_NODE_1 = Affliction("tree_str", 5, -1, [Flags.FLAT, Flags.STR, Flags.DESC_FLAT], True)
+STR_NODE_2 = Affliction("tree_str", 10, -1, [Flags.FLAT, Flags.STR, Flags.DESC_FLAT], True)
+STR_NODE_3 = Affliction("tree_str", 15, -1, [Flags.FLAT, Flags.STR, Flags.DESC_FLAT], True)
+
+FIRE_NODE_1 = Affliction("tree_fir", 0.05, -1, [Flags.BOON, Flags.FIRE_DMG], True)
+FIRE_NODE_2 = Affliction("tree_fir", 0.1, -1, [Flags.BOON, Flags.FIRE_DMG], True)
+FIRE_NODE_3 = Affliction("tree_fir", 0.15, -1, [Flags.BOON, Flags.FIRE_DMG], True)
+FIRE_NODE_4 = Affliction("tree_fir", 0.25, -1, [Flags.BOON, Flags.FIRE_DMG], True)
+FIRE_NODE_5 = Affliction("tree_fir", 0.35, -1, [Flags.BOON, Flags.FIRE_DMG], True)
+FIRE_NODE_5B = Affliction("tree_firb", 0.05, -1,
+                          [Flags.FLAT, Flags.FIRE_PEN], True)
 
 def generate_tree():
     """Creates the tree."""
 
     #ICI, AJOUTE CHAQUE NODE UNE PAR UNE
     #SI UNE NODE EST UNE FEUILLE, ELLE N'AS PAS BESOIN D'AVOIR DE NOM
-    tree_start = Node("start", "tree_start", 250, 250, [STR_NODE], None)
-    _ = Node("buffa", "tree_a", 500, 250, [], tree_start, ["firebolt2"])
-    tree_b = Node("skil_a", "tree_b", 500, 500, [], tree_start)
-    tree_c = Node("skil_b", "tree_b", 650, 500, [], tree_b)
-    _ = Node("skil_d", "tree_b", 825, 500, [], tree_c)
-    _ = Node("skil_c", "tree_b", 825, 350, [], tree_c)
-    _ = Node("skil_e", "tree_b", 825, 650, [], tree_c)
+    tree_start = Node("start", "tree_start", 250, 250, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
+                      None)
+    _ = Node("buffa", "tree_a", 500, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                           [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_start,
+             [["firebolt2"], [], [], [], []])
+    tree_b = Node("skil_a", "tree_b", 500, 500, [[]], tree_start)
+    tree_c = Node("skil_b", "tree_b", 650, 500, [[]], tree_b)
+    _ = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
+    _ = Node("skil_c", "tree_b", 825, 350, [[]], tree_c)
+    _ = Node("skil_e", "tree_b", 825, 650, [[]], tree_c)
     #ENSUITE, AJOUTE UNE ENTREE DANS LE FICHIER DE LOCALISATION (./ressources/locales/EN_US.json)
     #CORRESPONDANT AU name DE LA NODE DANS tree
 

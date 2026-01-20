@@ -15,22 +15,29 @@ GENERATE_SURFACES = True
 
 class Node:
     """
-    Defines a tree node.
+    Defines a tree node. A node can have multiple levels.
+
+    IMPORTANT - Getting from lvl x to lvl x + 1 removes the buffs learnt from x and replaces them\
+    with those from x + 1 !!!
+
+    This is not the case for spells.
 
     Args:
         name (str): Name of the node.
         icon (Image|Animation): Icon of the node.
-        effects (list[Affliction]): List of effects from the node.
-        previous (Node, optional): Previous node connected to this
+        effects (list[list[Affliction]]): List of effects from the node.
+        previous (Node, optional): Previous node connected to this\
         one in the tree.
-        skills (list[str], optionnal): List of spells taught by this\
+        skills (list[list[str]], optionnal): List of spells taught by this\
         node. Defaults to []
         rarity (int, optional): Rarity of the node. Same rules as items.\
         Defaults to 0 (common).
+        points_to_unlock (int, optional): How many points must be invested into\
+        the previous node to unlock this one. Defaults to 1.
     """
     def __init__(self, name, icon: str, x, y,\
-        effects:list[Affliction], previous = None,\
-        skills:list[str] = None, rarity:int = 0):
+        effects:list[list[Affliction]], previous = None,\
+        skills:list[list[str]] = None, rarity:int = 0, points_to_unlock = 1):
         self._name = name
         self._x = x
         self._y = y
@@ -40,17 +47,28 @@ class Node:
         self._connected = []
         self._learned = False
         self._rarity = rarity
+        self._points_to_unlock = points_to_unlock
+        self._invested = -1
+        self._levels = len(effects)
         if skills is None:
             skills = []
         self._skills = skills
         self._surface = None
+        self._text = None
         if GENERATE_SURFACES:
-            self.generate_surface()
-            if self._previous is not None:
-                self._previous.connected.append(self)
-            self._button = Button(icon, None, self.action)
-            self._hover = Hoverable(x, y, None, None, surface=SYSTEM["images"][self._icon].image,\
-                scrollable=SYSTEM["images"]["tree_scroller"], override=self._surface)
+            self.generate_hoverable(True)
+
+    def generate_hoverable(self, generate_button = False):
+        """Generates the Hoverable."""
+        self.generate_surface()
+        if self._previous is not None:
+            self._previous.connected.append(self)
+        if generate_button:
+            self._button = Button(self._icon, None, self.action, alt_action=self.action_alt)
+        self._hover = Hoverable(self._x, self._y, None, None,
+                                surface=SYSTEM["images"][self._icon].image,\
+                                scrollable=SYSTEM["images"]["tree_scroller"],
+                                override=self._surface)
 
     def generate_surface(self):
         """Generates the hoverable surface."""
@@ -58,17 +76,35 @@ class Node:
         skill_desc = ""
         h = 0
         w = 0
-        for s in self._skills:
-            skill = SYSTEM["spells"][s]
-            if skill is None:
-                continue
-            surfaces.append(skill.surface)
-            h += skill.surface.get_height()
-            skill_desc += f"{trad('meta_words', 'learns')} {trad('spells_name', skill.name)}\n"
-            w = max(w, skill.surface.get_width())
+        l = 0
+        for lvl in self._skills:
+            l += 1
+            for s in lvl:
+                skill = SYSTEM["spells"][s]
+                if skill is None:
+                    continue
+                surfaces.append(skill.surface)
+                h += skill.surface.get_height()
+                skill_desc += f"{l}: {trad('meta_words', 'learns')}" + \
+                              f" {trad('spells_name', skill.name)}\n"
+                w = max(w, skill.surface.get_width())
         effects_desc = ""
-        for e in self._effects:
-            effects_desc += e.tree_describe()
+        print(f"For node {self._name}, invested is {self._invested}")
+        if self._invested < 0:
+            effects_desc += "#s#(15)Learns\n"
+            for e in self._effects[0]:
+                effects_desc += e.tree_describe()
+        elif self._invested + 1 >= self._levels:
+            effects_desc += "#s#(15)Maximum level reached\n"
+            for e in self._effects[self._invested]:
+                effects_desc += e.tree_describe()
+        else:
+            effects_desc += "#c#(201, 201, 201)#s#(15)Current\n"
+            for e in self._effects[self._invested]:
+                effects_desc += "#c#(201, 201, 201)#s#(18)" + e.tree_describe()
+            effects_desc += "#s#(17)Next\n"
+            for e in self._effects[self._invested + 1]:
+                effects_desc += e.tree_describe()
         effects_desc += skill_desc
         desc = Text(effects_desc,  size=20, font="item_desc", centered=True)
         title = Text(f"{trad('tree', self._name)}", size=42, font="item_titles")
@@ -106,6 +142,7 @@ class Node:
         sfc.blit(title.surface, title_pos, True)
         sfc.blit(desc.surface, desc_pos, True)
         self._surface = sfc
+        self._text = Text(f"{self._invested + 1}/{self._levels}", font="item_desc", size=26)
 
     def tick(self):
         """Ticks down the node."""
@@ -121,20 +158,29 @@ class Node:
     def action(self):
         """Actions the node."""
         UPDATED[0] = True
-        if self._learned:
-            self.unlearn()
-        else:
-            self.learn()
+        self.learn()
+        self.generate_hoverable()
+
+    def action_alt(self):
+        """Unleashes the unlearning"""
+        UPDATED[0] = True
+        self.unlearn()
+        self.generate_hoverable()
 
     def can_be_learned(self) -> bool:
         """Checks whether or not the node can be learnt."""
+        if self._learned:
+            return False
         if SYSTEM["player"].creature.ap >= 1 and \
-            (self._previous is None or self._previous.learned):
+            (self._previous is None or self._previous.learned or
+                                       self._previous.invested + 1 >= self._points_to_unlock):
             return True
         return False
 
     def can_be_unlearned(self) -> bool:
         """Checks whether or not the node can be unlearnt."""
+        if self._invested < 0:
+            return False
         if len(self._connected) == 0:
             return True
         for f in self._connected:
@@ -146,32 +192,54 @@ class Node:
         """Attempt to learn the node."""
         if self.can_be_learned():
             SYSTEM["player"].creature.ap -= 1
-            self._learned = True
-            for f in self._effects:
+            #Unlearn new versions
+            if self._invested >= 0:
+                for f in self._effects[self._invested]:
+                    SYSTEM["player"].creature.remove_affliction(f)
+            self._invested += 1
+            #Learn new versions
+            for f in self._effects[self._invested]:
                 SYSTEM["player"].creature.afflict(f)
-            for s in self._skills:
-                SYSTEM["player"].spellbook.append(s)
+            #Spells
+            if self._skills and self._skills[self._invested] is not None:
+                for s in self._skills[self._invested]:
+                    SYSTEM["player"].spellbook.append(s)
+            if self._invested + 1 >= self._levels:
+                self._learned = True
 
     def unlearn(self):
         """Attempt to learn the node."""
         if self.can_be_unlearned():
             SYSTEM["player"].creature.ap += 1
-            self._learned = False
-            for f in self._effects:
+            #Buffs
+            for f in self._effects[self._invested]:
                 SYSTEM["player"].creature.remove_affliction(f)
-            for s in self._skills:
-                SYSTEM["player"].spellbook.remove(s)
+            #Spells
+            if self._skills and self._skills[self._invested] is not None:
+                for s in self._skills[self._invested]:
+                    if s in SYSTEM["player"].spellbook:
+                        SYSTEM["player"].spellbook.remove(s)
+            self._invested -= 1
+            #Gives the previous level buffs
+            if self._invested >= 0:
+                for f in self._effects[self._invested]:
+                    SYSTEM["player"].creature.afflict(f)
+            self._learned = False
 
     def draw(self, surface: Surface):
         """Draws the tree."""
         pos_origin = (self._x + SYSTEM["images"][self._icon].width / 2,\
             self._y + SYSTEM["images"][self._icon].height / 2)
         if self._previous is not None:
-            color = (0, 255, 0) if self._learned else (255, 255, 255) if \
-                self._previous.can_be_learned() else (150, 150, 150)
-            pos_destin = (self._previous.x + SYSTEM["images"][self._previous.icon].width / 2,\
+            if self._learned:
+                color = (0, 255, 0)
+            elif self.can_be_learned():
+                color = (255, 255, 255)
+            else:
+                color = (150, 150, 150)
+            pos_previous = (self._previous.x + SYSTEM["images"][self._previous.icon].width / 2,\
                 self._previous.y + SYSTEM["images"][self._previous.icon].height / 2)
-            surface.draw_line(color, pos_origin, pos_destin, 5)
+            surface.draw_line(color, pos_origin, pos_previous, 5)
         for f in self._connected:
             f.draw(surface)
         self._button.draw(surface)
@@ -192,13 +260,21 @@ class Node:
                 case _:
                     surface.blit(SYSTEM["images"]["slot_empty"].image,\
                         (self._button.x, self._button.y), True)
+        if self._levels <= 1:
+            return
+        pos_text = (self._button.x + self._button.width // 2 - self._text.width // 2,
+            self._button.y + self._button.height // 2 + self._text.height)
+        surface.blit(self._text.image, pos_text)
 
     def export(self) -> str:
         """Serialize the tree as JSON."""
         effects = []
         connected = []
-        for f in self._effects:
-            effects.append(f.export())
+        for lvl in self._effects:
+            add = []
+            for f in lvl:
+                add.append(f.export())
+            effects.append(add)
         for c in self._connected:
             connected.append(c.export())
         data = {
@@ -212,6 +288,7 @@ class Node:
             "skills": self._skills,
             "rarity": self._rarity,
             "connected": connected,
+            "invested": self._invested
         }
         return json.dumps(data)
 
@@ -220,8 +297,11 @@ class Node:
         """Recreates the tree from reading JSON."""
         effects = []
         connected = []
-        for f in data["effects"]:
-            effects.append(Affliction.imports(json.loads(f)))
+        for lvl in data["effects"]:
+            add = []
+            for f in lvl:
+                add.append(Affliction.imports(json.loads(f)))
+            effects.append(add)
         node = Node(
             data["name"],
             data["icon"],
@@ -236,6 +316,7 @@ class Node:
             connex.previous = node
             connected.append(connex)
         node.connected = connected
+        node.invested = int(data["invested"])
         node.learned = bool(data["learned"])
         return node
 
@@ -298,3 +379,12 @@ class Node:
     @connected.setter
     def connected(self, value):
         self._connected = value
+
+    @property
+    def invested(self):
+        """Returns the number of points invested in the node."""
+        return self._invested
+
+    @invested.setter
+    def invested(self, value):
+        self._invested = value

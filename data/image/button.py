@@ -12,9 +12,10 @@ from data.interface.render import render
 class Button(Widget):
     """Defines a button. A button is a clickable image with two states (clicked
     and not clicked), and does an action when clicked."""
-    __slots__ = '_image', '_pressed', '_clicked', '_action', '_scrollable', '_superimage', '_text'
+    __slots__ = '_image', '_pressed', '_clicked', '_action', '_scrollable', '_superimage', '_text',\
+                '_alt_action'
     def __init__(self, image:Image, pressed:Image = None, action = None, text:str|Image = "",\
-        scrollable_area: Scrollable = None, superimage: Surface = None):
+        scrollable_area: Scrollable = None, superimage: Surface = None, alt_action = None):
         if isinstance(image, str):
             image = SYSTEM["images"][image]
         super().__init__()
@@ -26,6 +27,7 @@ class Button(Widget):
         self.height = image.height
         self._scrollable = scrollable_area
         self._superimage = superimage
+        self._alt_action = alt_action
         if text is None:
             self._text = None
         elif isinstance(text, Image):
@@ -114,17 +116,25 @@ class Button(Widget):
         """Ticks the button, checking if is pressed."""
         if SYSTEM["mouse_click"][0] and SYSTEM["dragged"] is None:
             self.press()
+        elif SYSTEM["mouse_click"][2] and SYSTEM["dragged"] is None:
+            self.press(True)
         else:
             self._clicked = False
         return self
 
-    def press(self):
+    def press(self, right_click = False):
         """Checks if the mouse is clicking on the button.
         If it is, executes the action."""
-        if self.mouse_inside() and self._action is not None:
+        if SYSTEM["dragging"]:
+            return
+        if self.mouse_inside() and ((self._action is not None and not right_click) or
+                                    (self._alt_action is not None and right_click)):
             if SYSTEM["cooldown"] > 0:
                 return
-            self._action()
+            if right_click:
+                self._alt_action()
+            else:
+                self._action()
             self._clicked = True
             SYSTEM["cooldown"] = 0.1
             SYSTEM["mouse_click"] = (False, False, False)

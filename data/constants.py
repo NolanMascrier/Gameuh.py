@@ -129,6 +129,7 @@ SYSTEM = {
     "level": None,
     "selected": None,
     "dragged": None,
+    "dragging": False,
     "pop-up": None,
     "mouse": (0,0)
 }

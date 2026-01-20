@@ -267,6 +267,10 @@ def main_loop():
                 SYSTEM["cooldown"] = 0.8
         render_all()
         SYSTEM["post_effects"].tick()
+        if SYSTEM["mouse_click"][0] and not SYSTEM["dragging"]:
+            SYSTEM["dragging"] = True
+        if not SYSTEM["mouse_click"][0] and SYSTEM["dragging"]:
+            SYSTEM["dragging"] = False
 
 if __name__ == "__main__":
     init_game()

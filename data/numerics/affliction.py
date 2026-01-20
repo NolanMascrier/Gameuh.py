@@ -13,8 +13,8 @@ class Affliction():
     Args:
         name (str): Name of the affliction.
         value (float): Value of the affliction.
-        duration (int, optionnal): Duration in turns of the\
-        affliction. Defaults to 1.
+        duration (int, optionnal): Duration in seconds of the\
+        affliction. Set to -1 for permanent afflictions. Defaults to 1.
         flags (list, optionnal): Flags of the afflictions.\
         Defaults to `None`.
         stackable (bool, optionnal): Wether or not the affliction\
@@ -114,13 +114,50 @@ class Affliction():
         return Hoverable(0, 0, name, desc, (0,0,0))
 
     def tree_describe(self):
-        """Returns a text description of the affliction. Used for the tree."""
-        desc = ""
-        for f in self._flags:
-            if f not in META_FLAGS:
-                desc += f"{trad('meta_words', 'grants')} {self._value} " +\
-                    f"{trad('descripts', f.value)} \n"
-        return desc
+        """Generates a description of the affix."""
+        adds = ""
+        if self._value == 0:
+            return "\n"
+        if Flags.DESC_FLAT in self._flags:
+            value = f"{round(self._value)}"
+        elif Flags.DESC_PERCENT in self._flags:
+            value = f"{round(self._value)}%"
+        else:
+            value = f"{round(self._value * 100)}%"
+        if Flags.DESC_NO_SIGN in self._flags:
+            adds = f"{value}"
+        if Flags.POT_MANA_COUNT in self._flags or Flags.POT_HEAL_COUNT in self._flags:
+            return f"{value} {trad('meta_words', 'uses')}"
+        if Flags.DESC_HEAL in self._flags:
+            adds = f"{trad('meta_words', 'desc_heal')} {value} "
+            adds += trad('descripts', 'life') if Flags.DESC_LIFE in self._flags else \
+                    trad('descripts', 'mana')
+        elif Flags.DESC_HEAL_FLAT in self._flags:
+            adds = f"{trad('meta_words', 'desc_heal_flat')} {value} "
+            adds += trad('descripts', 'life') if Flags.DESC_LIFE in self._flags else \
+                    trad('descripts', 'mana')
+        elif Flags.BOON in self._flags:
+            adds = f"{value} {trad('meta_words', 'increased')}"
+        elif Flags.HEX in self._flags:
+            adds = f"{value} {trad('meta_words', 'decreased')} "
+        elif Flags.BLESS in self._flags:
+            adds = f"{value} {trad('meta_words', 'more')}"
+        elif Flags.CURSE in self._flags:
+            adds = f"{value} {trad('meta_words', 'less')}"
+        elif Flags.FLAT in self._flags:
+            adds = f"{value}"
+        affx = []
+        if Flags.DESC_UNIQUE in self._flags:
+            adds = ""
+        if Flags.DESC_HEAL in self._flags or Flags.DESC_HEAL_FLAT in self._flags:
+            return f"{adds} {trad('meta_words', 'on_use')}"
+        for aff in self._flags:
+            if aff not in [Flags.DESC_FLAT, Flags.DESC_PERCENT, Flags.BOON, Flags.HEX,\
+                Flags.BLESS, Flags.CURSE, Flags.FLAT, Flags.DESC_UNIQUE, Flags.TRIGGER,
+                Flags.DESC_NO_SIGN]:
+                affx.append(trad("descripts", aff.value))
+        lst = ", ".join(affx)
+        return f"{trad('meta_words', 'grants')} {adds} {lst}\n"
 
     def export(self):
         """Serializes the affliction as JSON."""
