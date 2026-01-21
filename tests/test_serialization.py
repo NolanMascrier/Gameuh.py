@@ -243,15 +243,17 @@ class TestingImages(unittest.TestCase):
         self.cmp_character(bob, read)
 
     def cmp_nodes(self, a:Node, b:Node):
-        print(a, b)
         self.assertEqual(a.name, b.name)
         self.assertEqual(a.icon, b.icon)
         self.assertEqual(a._skills, b._skills)
         self.assertEqual(a.x, b.x)
         self.assertEqual(a.y, b.y)
         i = 0
-        for _ in a.effects:
-            self.cmp_affliction(a.effects[i], b.effects[i])
+        for lvl in a.effects:
+            j = 0
+            for _ in lvl:
+                self.cmp_affliction(a.effects[i][j], b.effects[i][j])
+                j += 1
             i += 1
         i = 0
         for _ in a.connected:
