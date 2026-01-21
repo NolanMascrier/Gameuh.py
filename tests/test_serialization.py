@@ -243,6 +243,7 @@ class TestingImages(unittest.TestCase):
         self.cmp_character(bob, read)
 
     def cmp_nodes(self, a:Node, b:Node):
+        print(a, b)
         self.assertEqual(a.name, b.name)
         self.assertEqual(a.icon, b.icon)
         self.assertEqual(a._skills, b._skills)
@@ -258,11 +259,11 @@ class TestingImages(unittest.TestCase):
             i+=1
 
     def test_nodes(self):
-        tree = Node("TreeA", "rune_0", 0, 0, [], None, ["firebolt"], 3)
+        tree = Node("TreeA", "rune_0", 0, 0, [[]], None, [["firebolt"]], 3)
         afx1 = Affliction("test1", 3, 5, [Flags.FLAT, Flags.DEF])
         afx2 = Affliction("test2", 5, 3, [Flags.BOON, Flags.DEF])
-        tree2 = Node("TreeB", "rune_1", 10, 0, [afx1], tree, [])
-        tree3 = Node("TreeC", "rune_5", 20, 10 , [afx2], tree, ["icebolt", "voidbolt"])
+        tree2 = Node("TreeB", "rune_1", 10, 0, [[afx1]], tree)
+        tree3 = Node("TreeC", "rune_5", 20, 10 , [[afx2]], tree, [["icebolt", "voidbolt"]])
         json_data = tree.export()
         read = Node.imports(json.loads(json_data))
         self.cmp_nodes(tree, read)

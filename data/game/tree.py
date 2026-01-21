@@ -89,7 +89,6 @@ class Node:
                               f" {trad('spells_name', skill.name)}\n"
                 w = max(w, skill.surface.get_width())
         effects_desc = ""
-        print(f"For node {self._name}, invested is {self._invested}")
         if self._invested < 0:
             effects_desc += "#s#(15)Learns\n"
             for e in self._effects[0]:
@@ -318,6 +317,7 @@ class Node:
         node.connected = connected
         node.invested = int(data["invested"])
         node.learned = bool(data["learned"])
+        node.generate_hoverable()
         return node
 
     @property

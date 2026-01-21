@@ -4,7 +4,7 @@ import json
 
 from data.api.surface import set_screen, Surface
 
-from data.constants import SYSTEM, RESSOURCES
+from data.constants import SYSTEM, RESSOURCES, Classes
 from data.game.character import Character
 from data.game.tree import Node
 from data.game.spell import Spell
@@ -13,6 +13,18 @@ def save(filename = None):
     """Save the character data."""
     if filename is None:
         filename = "default.char"
+    trees = [
+        None if SYSTEM["tree"][Classes.SORCERESS] \
+                                   is None else SYSTEM["tree"][Classes.SORCERESS].export(),
+        None if SYSTEM["tree"][Classes.WARRIOR] \
+                                   is None else SYSTEM["tree"][Classes.WARRIOR].export(),
+        None if SYSTEM["tree"][Classes.ESSENTIALIST] \
+                                   is None else SYSTEM["tree"][Classes.ESSENTIALIST].export(),
+        None if SYSTEM["tree"][Classes.ARCANIST] \
+                                   is None else SYSTEM["tree"][Classes.ARCANIST].export(),
+        None if SYSTEM["tree"][Classes.SUMMONER] \
+                                   is None else SYSTEM["tree"][Classes.SUMMONER].export()
+    ]
     with open(filename, "w", encoding="utf-8") as file:
         spells = {}
         for s in SYSTEM["spells"]:
@@ -22,7 +34,7 @@ def save(filename = None):
                 spells[s] = 'null'
         data = {
             "player": SYSTEM["player"].export(),
-            "tree": SYSTEM["tree"].export(),
+            "tree": trees,
             "spells": spells
         }
         json.dump(data, file)
@@ -33,8 +45,20 @@ def load(filename = None):
         filename = "default.char"
     with open(filename, "r", encoding="utf-8") as file:
         read = json.load(file)
+        trees = {
+            Classes.SORCERESS: None if read["tree"][0] is None \
+                                    else Node.imports(json.loads(read["tree"][0])),
+            Classes.WARRIOR: None if read["tree"][1] is None \
+                                    else Node.imports(json.loads(read["tree"][1])),
+            Classes.ESSENTIALIST: None if read["tree"][2] is None \
+                                    else Node.imports(json.loads(read["tree"][2])),
+            Classes.ARCANIST: None if read["tree"][3] is None \
+                                    else Node.imports(json.loads(read["tree"][3])),
+            Classes.SUMMONER: None if read["tree"][4] is None \
+                                    else Node.imports(json.loads(read["tree"][4]))
+        }
         SYSTEM["player"] = Character.imports(json.loads(read["player"]))
-        SYSTEM["tree"] = Node.imports(json.loads(read["tree"]))
+        SYSTEM["tree"] = trees
         for s in read["spells"]:
             if s != 'null' and SYSTEM["spells"][s] is not None:
                 SYSTEM["spells"][s] = Spell.imports(json.loads(read["spells"][s]))
