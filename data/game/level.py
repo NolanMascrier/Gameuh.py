@@ -318,7 +318,7 @@ class Level():
         SYSTEM["profiler"].enable()
         print("###### LEVEL START #####")
         SYSTEM["gm_background"].fill((0,0,0,0))
-        SYSTEM["gm_background"].blit(self._background.background, (0,0))
+        SYSTEM["gm_background"].blit(self._background.background, (0, self._background.diff_y[0]))
         ENNEMY_TRACKER.clear()
         PROJECTILE_TRACKER.clear()
         POWER_UP_TRACKER.clear()

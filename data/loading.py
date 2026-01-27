@@ -223,7 +223,10 @@ def load_parallaxes():
     SYSTEM["cybercity"] = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
     SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2, 2])
     SYSTEM["ice"] = Parallaxe("icemount.png", 455, 256,\
-                            speeds = [0.1, 0.2, 0.3, 0.3, 0.4, 0.5, 0.5, 0.6, 0.7])
+                            speeds = [0.1, 0.2, 0.3, 0.3, 0.4, 0.5, 0.5, 0.6, 0.7],
+                            cut_pixels=[(0, 91, 455, 98), (0, 72, 455, 132),
+                                        (0, 38, 455, 186), (0, 20, 455, 217),
+                                        (0, 0, 455, 256)])
     SYSTEM["creepy"] = Parallaxe("creepy.png", 400, 300, speeds = [0.0, 0.1, 0.5, 1, 1.2, 1.3, 1.3])
     SYSTEM["space"] = Parallaxe("space.png", 272, 160, speeds = [2.2, 3.3, 3.4, 1.5, 3.6, 2.5])
     SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240,\
