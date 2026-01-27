@@ -8,7 +8,7 @@ from data.api.keycodes import KEY_EVENT, K_1, K_2
 
 from data.image.text import Text
 from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, trad, ENNEMY_TRACKER, \
-    RED_WEAK, YELLOW, ORANGE
+    RED_WEAK, YELLOW, ORANGE, GREEN_TRANSP
 from data.image.textgenerator import make_text
 
 UI_SKILLS_OFFSET = 408
@@ -46,6 +46,7 @@ _UI_CACHE = {
     },
     "red_square": None,
     "yel_square": None,
+    "gre_square": None,
     "orb_hp": None,
     "orb_mp": None,
     "orb_hp_img": None,
@@ -188,10 +189,10 @@ def draw_text():
             _UI_CACHE["last_life"] = rsc["life"]
             if rsc["life"].get_reserved_ressource() > 0:
                 _UI_CACHE["life_text"] = Text(f"{int(rsc['life'].current_value)}/" +
-                                          f"#s#(15){int(rsc['life'].get_value())}\n" +
+                                          f"{int(rsc['life'].get_value())}\n" +
                                           f"{trad('meta_words', 'reserved')}:" +
                                           f" {int(rsc['life'].get_reserved_ressource())}",
-                                          size=20, font="item_desc", centered=True)
+                                          size=17, font="item_desc", centered=True)
             else:
                 _UI_CACHE["life_text"] = Text(f"{int(rsc['life'].current_value)}/" +
                                           f"{int(rsc['life'].get_value())}",
@@ -201,9 +202,9 @@ def draw_text():
             if rsc["mana"].get_reserved_ressource() > 0:
                 _UI_CACHE["mana_text"] = Text(f"{int(rsc['mana'].current_value)}/" +
                                           f"{int(rsc['mana'].get_value())}\n" +
-                                          f"#s#(15){trad('meta_words', 'reserved')}:" +
+                                          f"{trad('meta_words', 'reserved')}:" +
                                           f" {int(rsc['mana'].get_reserved_ressource())}",
-                                          size=20, font="item_desc", centered=True)
+                                          size=17, font="item_desc", centered=True)
             else:
                 _UI_CACHE["mana_text"] = Text(f"{int(rsc['mana'].current_value)}/" +
                                           f"{int(rsc['mana'].get_value())}",
@@ -212,10 +213,12 @@ def draw_text():
             _UI_CACHE["life_text"].width // 2
         mana_offset_x = SCREEN_WIDTH - 288 + SYSTEM["images"]["ui_orb_mana"].width // 2 - \
             _UI_CACHE["mana_text"].width // 2
-        offset_y = SCREEN_HEIGHT - 198 + SYSTEM["images"]["ui_orb_life"].height // 2 - \
+        life_offset_y = SCREEN_HEIGHT - 198 + SYSTEM["images"]["ui_orb_life"].height // 2 - \
             _UI_CACHE["life_text"].height // 2
-        data.append((_UI_CACHE["life_text"].surface, (life_offset_x, offset_y)))
-        data.append((_UI_CACHE["mana_text"].surface, (mana_offset_x, offset_y)))
+        mana_offset_y = SCREEN_HEIGHT - 198 + SYSTEM["images"]["ui_orb_mana"].height // 2 - \
+            _UI_CACHE["mana_text"].height // 2
+        data.append((_UI_CACHE["life_text"].surface, (life_offset_x, life_offset_y)))
+        data.append((_UI_CACHE["mana_text"].surface, (mana_offset_x, mana_offset_y)))
     if SYSTEM["options"]["display_exp"]:
         exp = f"{char.creature.exp}/{char.creature.exp_to_next}"
         if exp != _UI_CACHE["exp"]:
@@ -277,6 +280,10 @@ def draw_skills():
         _UI_CACHE["yel_square"] = Surface(60, 60)
         _UI_CACHE["yel_square"].set_alpha(128)
         _UI_CACHE["yel_square"].fill(YELLOW)
+    if _UI_CACHE["gre_square"] is None:
+        _UI_CACHE["gre_square"] = Surface(60, 60)
+        _UI_CACHE["gre_square"].set_alpha(128)
+        _UI_CACHE["gre_square"].fill(GREEN_TRANSP)
     data = []
     char = SYSTEM["player"]
     skill_items = list(char.equipped_spells.items())
@@ -293,6 +300,8 @@ def draw_skills():
             data.append((spell.icon.get_image(), (x_pos, y_pos)))
             if oom:
                 data.append((_UI_CACHE["red_square"], (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
+            if spell.toggled:
+                data.append((_UI_CACHE["gre_square"], (x_pos + UI_SKILLS_PANEL_OFFSET, y_pos + 2)))
             if cdc > 0:
                 if _UI_CACHE["skills"][slot][0] != cdl:
                     _UI_CACHE["skills"][slot][0] = cdl

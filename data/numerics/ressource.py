@@ -96,6 +96,10 @@ class Ressource(Stat):
             return 0
         return maxi - reservation / efficiency
 
+    def get_free_prop(self):
+        """Returns the percentage of free ressources."""
+        return round(self.get_free_ressource() / self.c_value * 100, 2)
+
     def get_reserved_ressource(self):
         """Returns the amount of ressource reserved."""
         return self.get_value() - self.get_free_ressource()

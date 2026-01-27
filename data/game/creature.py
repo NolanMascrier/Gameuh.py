@@ -416,6 +416,8 @@ class Creature:
             debuff_chance (float, optional): Chance to apply the debuff.\
             Defaults to 1.0.
         """
+        if affliction is None:
+            return
         if isinstance(affliction, tuple):
             for a in affliction:
                 if is_debuff:
@@ -467,6 +469,8 @@ class Creature:
         Args:
             affliction (Affliction): Affliction to remove.
         """
+        if affliction is None:
+            return
         if isinstance(affliction, tuple):
             for a in affliction:
                 self.__remove_afflic(a)

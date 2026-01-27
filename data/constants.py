@@ -277,6 +277,10 @@ class Flags(str, Enum):
     POT_MANA_FLAT = "potion_mana_flat"
     POT_MANA_RELAT = "potion_mana_relative"
     POT_MANA_COUNT = "potion_mana_count"
+    LIFE_RESERVATION = "life_reservation"
+    MANA_RESERVATION = "mana_reservation"
+    LIFE_RESERVATION_EFF = "life_reservation_effi"
+    MANA_RESERVATION_EFF = "mana_reservation_effi"
     #Flags for projectiles
     PROJECTILE = "projectile"
     BOUNCE = "bounce"
@@ -306,6 +310,7 @@ class Flags(str, Enum):
     DEBUFF = "debuff"
     DASH = "dash"
     AURA = "aura"
+    TOGGlEABLE = "toggeable"
     CIRCULAR_BLAST = "spread_all_around"
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"

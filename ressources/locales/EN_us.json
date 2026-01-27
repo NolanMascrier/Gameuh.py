@@ -340,7 +340,8 @@
         "fireball_explosion": "Fireball's Explosion",
         "masterstrike": "Masterstrike",
         "magicmissile": "Magic Missiles",
-        "rip": "Rip"
+        "rip": "Rip",
+        "bloodpact": "Blood Pact"
     },
     "spells_desc": {
         "none": "No spell equipped.",
@@ -357,7 +358,8 @@
         "fireball_explosion": "Deals powerful fire damage in the \narea.",
         "masterstrike": "Deliver a series a quick blows.\nThe third strike is a guaranteed critical hit.",
         "magicmissile": "Periodically release tracking divine energy bolts.\nThis ability cannot crit, but cannot be dodged.",
-        "rip": "Slash the target, dealing physical damage\nand causing them to bleed."
+        "rip": "Slash the target, dealing physical damage\nand causing them to bleed.",
+        "bloodpact": "Reserves most of your life, but greatly \nincreases regeneration and damage done."
     },
     "descripts": {
         "life": "Life",

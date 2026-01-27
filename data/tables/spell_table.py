@@ -58,6 +58,9 @@ FURY_SPEED = Affliction("fury2", 0.05, 1, flags=[Flags.ANIMATION_SPEED, Flags.BL
 FURY_COST = Affliction("fury3", 0.025, 1, flags=[Flags.MANA_COST, Flags.COOLDOWN, Flags.HEX],
                         stackable=True, refreshable=True)
 
+BLOODPACT = Affliction("bloodpact1", 0.75, -1, [Flags.BLESS, Flags.ALL_DAMAGE])
+BLOODPACT_RES = Affliction("bloodpact2", 5, -1, [Flags.LIFE_REGEN, Flags.FLAT])
+
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
     firebolt_icon = Image("icons/firebolt.png").scale(64, 64)
@@ -74,6 +77,7 @@ def generate_spell_list():
     m3_icon = Image("icons/masterstrike_c.png").scale(64, 64)
     magicmissile_icon = Image("icons/magicmissile.png").scale(64, 64)
     rip_icon = Image("icons/rip.png").scale(64, 64)
+    pact_icon = Image("icons/bloodpact.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
@@ -198,6 +202,8 @@ def generate_spell_list():
         debuffs=[BURN], effective_frames=4)
     lazoor = Spell("fslash", fury_icon, "eldritchlaser", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=1064)
+    bloodpact = Spell("bloodpact", pact_icon, None, None, 0, 0.8,\
+        cooldown=1, flags=[Flags.AURA, Flags.TOGGlEABLE], buffs=[BLOODPACT, BLOODPACT_RES])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
@@ -211,6 +217,7 @@ def generate_spell_list():
     SYSTEM["spells"]["fireball"] = fireball
     SYSTEM["spells"]["magicmissile"] = magicmissile
     SYSTEM["spells"]["rip"] = rip
+    SYSTEM["spells"]["bloodpact"] = bloodpact
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

@@ -67,6 +67,7 @@ class Spell():
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
             "life_cost": Stat(life_cost, "life_cost"),
+            "reservation_efficiency": Stat(1, "reservation_efficiency", 5, 0.05),
             "bounces": Stat(bounces, "bounces"),
             "delay": Stat(delay, "delay"),
             "cooldown": Stat(cooldown, "cooldown", min_cap=0.1),
@@ -122,6 +123,8 @@ class Spell():
         self._surface = None
         self._offset = (offset_x, offset_y)
         self._started = False
+        self._toggled = False
+        self._reservations = [None, None]
         self.generate_surface()
         self.update()
         self._counter = 0
@@ -138,7 +141,10 @@ class Spell():
             [Flags.LIFE_COST, Flags.BLESS])
         mana = Affliction("MANA_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
             [Flags.MANA_COST, Flags.BLESS])
-        self.afflict((dmg, hp, mana))
+        if Flags.TOGGlEABLE in self.all_flags:
+            self.afflict((dmg))
+        else:
+            self.afflict((dmg, hp, mana))
         self.recalculate_damage()
         for step in self._sequence:
             step.update()
@@ -487,11 +493,15 @@ class Spell():
     def cast(self, caster: Creature, entity: Entity, evil: bool, aim_right = True, force = False,\
              ignore_team = False):
         """Launches the spell."""
-        if Flags.AURA in self.all_flags:
-            return
         if Flags.TRIGGER in self.all_flags:
             return
-        if Flags.COMBO_SPELL in self.all_flags:
+        elif Flags.TOGGlEABLE in self.all_flags:
+            if not self._toggled:
+                self.toggle(caster)
+            else:
+                self.toggle(caster, False)
+            return
+        elif Flags.COMBO_SPELL in self.all_flags:
             if self._cooldown > 0:
                 return
             if self._sequence[self._sequence_step].on_cast(caster, entity, evil, aim_right, force):
@@ -502,6 +512,40 @@ class Spell():
                     self._sequence[self._sequence_step].start_cooldown(0.5, caster)
         else:
             self.on_cast(caster, entity, evil, aim_right, force, ignore_team)
+
+    def toggle(self, caster: Creature, activate=True):
+        """Toggle a toggleable ability."""
+        if self._cooldown > 0:
+            return
+        if activate:
+            if self._stats["mana_cost"].c_value > 0 and self._stats["mana_cost"].c_value * \
+                caster.stats["mana"].c_value > caster.stats["mana"].get_free_prop():
+                return
+            if self._stats["life_cost"].c_value > 0 and self._stats["life_cost"].c_value * \
+                caster.stats["life"].c_value > caster.stats["life"].get_free_prop():
+                return
+            for d in self._buffs:
+                caster.afflict(d)
+            if self._stats["life_cost"].c_value > 0:
+                value = self._stats["life_cost"].c_value * \
+                        self._stats["reservation_efficiency"].c_value
+                self._reservations[0] = Affliction(f"{self._name}_life_res", value, -1,
+                                      [Flags.LIFE_RESERVATION, Flags.FLAT])
+            if self._stats["mana_cost"].c_value > 0:
+                value = self._stats["mana_cost"].c_value * \
+                        self._stats["reservation_efficiency"].c_value
+                self._reservations[1] = Affliction(f"{self._name}_mana_res", value, -1,
+                                      [Flags.MANA_RESERVATION, Flags.FLAT])
+            caster.afflict(self._reservations[0])
+            caster.afflict(self._reservations[1])
+            self._toggled = True
+        else:
+            for d in self._buffs:
+                caster.remove_affliction(d)
+            caster.remove_affliction(self._reservations[0])
+            caster.remove_affliction(self._reservations[1])
+            self._toggled = False
+        self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
 
     def spawn_projectile(self, entity, caster, evil = False,\
             x_diff = 0, y_diff = 0, delay = 1, angle = 0, ignore_team = False):
@@ -824,3 +868,8 @@ class Spell():
         fl.extend(self._flags)
         fl.extend(self._gathered_flags)
         return fl
+
+    @property
+    def toggled(self):
+        """Returns whether or not the spell is toggled."""
+        return self._toggled

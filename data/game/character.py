@@ -67,6 +67,7 @@ class Character():
             "elefury",
             "furyslash",
             "winddash",
+            "bloodpact",
         ]
         self._inventory = []
         self._runes = [

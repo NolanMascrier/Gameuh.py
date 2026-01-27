@@ -42,7 +42,6 @@ class Parallaxe(Animation):
                 dx = round(seq[2] / frame_x * SCREEN_WIDTH)
                 dy = round(seq[3] / frame_y * SCREEN_HEIGHT)
                 self._diff_y[i] = seq[1] / frame_y * SCREEN_HEIGHT
-                print(seq, dx, dy, self._diff_y[i])
                 self._sequence[i] = self._sequence[i].extracts(seq[0], seq[1], seq[2], seq[3])\
                     .scale(dy, dx)
                 i += 1
@@ -78,8 +77,8 @@ class Parallaxe(Animation):
                         self._speed_factor + shake) % SCREEN_WIDTH
         for layer, _ in enumerate(self._sequence):
             self._render.append(int(-self._diff_x[layer]))
-        layer_blits = [(self._layers[i].subsurface((self._diff_x[i], 0, SCREEN_WIDTH, SCREEN_HEIGHT)),
-                        (0, self._diff_y[(i + 1) % len(self._sequence)])) \
+        layer_blits = [(self._layers[i].subsurface((self._diff_x[i], 0, SCREEN_WIDTH,
+                        SCREEN_HEIGHT)), (0, self._diff_y[(i + 1) % len(self._sequence)])) \
                        for i in range(len(self._sequence))]
         renders(layer_blits)
 
