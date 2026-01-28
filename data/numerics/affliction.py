@@ -113,6 +113,13 @@ class Affliction():
         desc = trad('affliction_desc', self._name)
         return Hoverable(0, 0, name, desc, (0,0,0))
 
+    def aura_describe(self) -> Hoverable:
+        """Returns a hoverable about the affliction. Used for skills description."""
+        name = f"{trad('meta_words', 'grants')} " +\
+            f"{trad('affliction_name', self._name)} "
+        desc = trad('affliction_desc', self._name)
+        return Hoverable(0, 0, name, desc, (0,0,0))
+
     def tree_describe(self):
         """Generates a description of the affix."""
         adds = ""

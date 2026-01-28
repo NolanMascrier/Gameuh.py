@@ -90,22 +90,35 @@ def overwrite_jewel(jewel, slot):
         SYSTEM["gear_panel"].insert(None, None, it)
     refresh()
 
-def single_slot(spell, superspell = None, decoded_data = None):
+def single_slot(spell: Spell, superspell: Spell = None, decoded_data = None):
     """Creates the description data of a single spell."""
     if spell is None and decoded_data is None:
         return None
+    caster = SYSTEM["player"].creature
     data = spell.describe() if decoded_data is None else decoded_data
     data_super = (superspell.describe() if superspell is not None else spell.describe()) if\
         spell is not None else decoded_data
-    cost_l = f"{trad('descripts', 'life_cost')}: {data['costs'][0]}" if\
-        data["costs"][0] > 0 else None
-    cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
+    if Flags.LIFE_RESERVATION in spell.all_flags:
+        true_cost = spell.get_life_reservation() * \
+            (1 / caster.stats["life_reservation_effi"].c_value)
+        cost_l = f"{trad('meta_words', 'reserves')} {round(true_cost * 100)}% " + \
+                 f"{trad('descripts', 'life')}"
+    else:
+        cost_l = f"{trad('descripts', 'life_cost')}: {data['costs'][0]}" if\
+            data["costs"][0] > 0 else None
+    if Flags.MANA_RESERVATION in spell.all_flags:
+        true_cost = spell.get_mana_reservation() * \
+            (1 / caster.stats["mana_reservation_effi"].c_value)
+        cost_m = f"{trad('meta_words', 'reserves')} {round(true_cost * 100)}% " + \
+                 f"{trad('descripts', 'mana')}"
+    else:
+        cost_m = f"{trad('descripts', 'mana_cost')}: {data['costs'][1]}" if\
         data["costs"][1] > 0 else None
-    crit_c = data["crit_rate"] * (1 + SYSTEM["player"].creature.stats["crit_rate"].c_value)\
+    crit_c = data["crit_rate"] * (1 + caster.stats["crit_rate"].c_value)\
         if data["crit_rate"] is not True else (1 if data["crit_rate"] is not None else None)
-    crit_d = 1 + data["crit_dmg"] * SYSTEM["player"].creature.stats["crit_dmg"].c_value\
+    crit_d = 1 + data["crit_dmg"] * caster.stats["crit_dmg"].c_value\
         if data["crit_dmg"] is not None else None
-    area = data["area"] + SYSTEM["player"].creature.stats["area"].c_value\
+    area = data["area"] + caster.stats["area"].c_value\
         if data["area"] is not None else None
     slot = {
         "type": "single",

@@ -309,21 +309,26 @@
         "potion_healing_relative": "Additional recovery",
         "potion_mana_relative": "Additional recovery",
         "uses": "uses",
-        "reserved": "Reserved"
+        "reserved": "Reserved",
+        "reserves": "Reserves"
     },
     "affliction_name":{
         "elemental_fury": "Elemental Fury",
         "fury": "Fury slash",
         "celerity": "Celerity",
         "bleed": "Bleed",
-        "freeze": "Freeze"
+        "freeze": "Freeze",
+        "bloodpact1": "Sacrificial Power",
+        "bloodpact2": "Sacrificial Life"
     },
     "affliction_desc":{
         "elemental_fury": "Grants 35% more elemental damage.",
         "fury": "Grants 15% more damage, 5% reduced cooldown and 5% increased\nMana cost for Furyslash. This effect can stack up to 10 times.",
         "celerity": "Grants 300% increased move speed.",
         "bleed": "Inflicts physical damage every seconds that ignores defenses.",
-        "freeze": "Prevents the target from moving or acting."
+        "freeze": "Prevents the target from moving or acting.",
+        "bloodpact1": "Grants 75% more damage.",
+        "bloodpact2": "Regenerates 20 Life per second."
     },
     "spells_name": {
         "none": "Nothing",

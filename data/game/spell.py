@@ -141,7 +141,7 @@ class Spell():
             [Flags.LIFE_COST, Flags.BLESS])
         mana = Affliction("MANA_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
             [Flags.MANA_COST, Flags.BLESS])
-        if Flags.TOGGlEABLE in self.all_flags:
+        if Flags.TOGGLEABLE in self.all_flags:
             self.afflict((dmg))
         else:
             self.afflict((dmg, hp, mana))
@@ -404,7 +404,10 @@ class Spell():
         buffs = []
         if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
-                buffs.append(afflic.describe(True))
+                if Flags.TOGGLEABLE in self.all_flags:
+                    buffs.append(afflic.aura_describe())
+                else:
+                    buffs.append(afflic.describe(True))
         if Flags.DEBUFF in self.all_flags:
             for afflic in self._debuffs:
                 buffs.append(afflic.describe(False, debuff_chance))
@@ -495,7 +498,7 @@ class Spell():
         """Launches the spell."""
         if Flags.TRIGGER in self.all_flags:
             return
-        elif Flags.TOGGlEABLE in self.all_flags:
+        elif Flags.TOGGLEABLE in self.all_flags:
             if not self._toggled:
                 self.toggle(caster)
             else:
@@ -513,27 +516,35 @@ class Spell():
         else:
             self.on_cast(caster, entity, evil, aim_right, force, ignore_team)
 
+    def get_life_reservation(self):
+        """Returns the life reservation of the spell."""
+        return self._stats["life_cost"].c_value * \
+            (1 / self._stats["reservation_efficiency"].c_value)
+
+    def get_mana_reservation(self):
+        """Returns the mana reservation of the spell."""
+        return self._stats["mana_cost"].c_value * \
+            (1 / self._stats["reservation_efficiency"].c_value)
+
     def toggle(self, caster: Creature, activate=True):
         """Toggle a toggleable ability."""
         if self._cooldown > 0:
             return
         if activate:
-            if self._stats["mana_cost"].c_value > 0 and self._stats["mana_cost"].c_value * \
+            if self._stats["mana_cost"].c_value > 0 and self.get_mana_reservation() * \
                 caster.stats["mana"].c_value > caster.stats["mana"].get_free_prop():
                 return
-            if self._stats["life_cost"].c_value > 0 and self._stats["life_cost"].c_value * \
+            if self._stats["life_cost"].c_value > 0 and self.get_life_reservation() * \
                 caster.stats["life"].c_value > caster.stats["life"].get_free_prop():
                 return
             for d in self._buffs:
                 caster.afflict(d)
             if self._stats["life_cost"].c_value > 0:
-                value = self._stats["life_cost"].c_value * \
-                        self._stats["reservation_efficiency"].c_value
+                value = self.get_life_reservation()
                 self._reservations[0] = Affliction(f"{self._name}_life_res", value, -1,
                                       [Flags.LIFE_RESERVATION, Flags.FLAT])
             if self._stats["mana_cost"].c_value > 0:
-                value = self._stats["mana_cost"].c_value * \
-                        self._stats["reservation_efficiency"].c_value
+                value = self.get_mana_reservation()
                 self._reservations[1] = Affliction(f"{self._name}_mana_res", value, -1,
                                       [Flags.MANA_RESERVATION, Flags.FLAT])
             caster.afflict(self._reservations[0])
@@ -710,7 +721,8 @@ class Spell():
             "exp_next": self._exp_to_next,
             "alterations": alterations,
             "trail": self._trail,
-            "impact": self._impact
+            "impact": self._impact,
+            "toggled": self._toggled
         }
         return json.dumps(data)
 
@@ -766,6 +778,7 @@ class Spell():
         spell.exp_to_next = int(data["exp_next"])
         spell.stats = stats
         spell.jewels = jewels
+        spell.toggled = data["toggled"]
         return spell
 
     @property
@@ -873,3 +886,7 @@ class Spell():
     def toggled(self):
         """Returns whether or not the spell is toggled."""
         return self._toggled
+
+    @toggled.setter
+    def toggled(self, value):
+        self._toggled = value

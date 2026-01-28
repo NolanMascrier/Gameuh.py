@@ -51,9 +51,9 @@ class Ressource(Stat):
             self._reservation = reservation
 
         if reservation_effi is None:
-            self._reservation_efficiency = Stat(0, "reservation_effi", None, -0.95)
+            self._reservation_efficiency = Stat(1, "reservation_effi", None, 0.05)
         elif isinstance(reservation_effi, (float, int)):
-            self._reservation_efficiency = Stat(reservation_effi, "reservation_effi", None, -0.95)
+            self._reservation_efficiency = Stat(reservation_effi, "reservation_effi", None, 0.05)
         else:
             self._reservation_efficiency = reservation_effi
         self._buffs = []
@@ -91,7 +91,7 @@ class Ressource(Stat):
         reservation = maxi * self._reservation.get_value()
         if reservation <= 0:
             return maxi
-        efficiency = 1 + self._reservation_efficiency.get_value()
+        efficiency = self._reservation_efficiency.get_value()
         if efficiency <= 0:
             return 0
         return maxi - reservation / efficiency

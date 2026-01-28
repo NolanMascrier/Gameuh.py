@@ -59,7 +59,7 @@ FURY_COST = Affliction("fury3", 0.025, 1, flags=[Flags.MANA_COST, Flags.COOLDOWN
                         stackable=True, refreshable=True)
 
 BLOODPACT = Affliction("bloodpact1", 0.75, -1, [Flags.BLESS, Flags.ALL_DAMAGE])
-BLOODPACT_RES = Affliction("bloodpact2", 5, -1, [Flags.LIFE_REGEN, Flags.FLAT])
+BLOODPACT_RES = Affliction("bloodpact2", 20, -1, [Flags.LIFE_REGEN, Flags.FLAT])
 
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
@@ -202,8 +202,9 @@ def generate_spell_list():
         debuffs=[BURN], effective_frames=4)
     lazoor = Spell("fslash", fury_icon, "eldritchlaser", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=1064)
-    bloodpact = Spell("bloodpact", pact_icon, None, None, 0, 0.8,\
-        cooldown=1, flags=[Flags.AURA, Flags.TOGGlEABLE], buffs=[BLOODPACT, BLOODPACT_RES])
+    bloodpact = Spell("bloodpact", pact_icon, None, None, 0, 0.9,\
+        cooldown=1, flags=[Flags.AURA, Flags.TOGGLEABLE, Flags.LIFE_RESERVATION, Flags.BUFF],
+        buffs=[BLOODPACT, BLOODPACT_RES])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
