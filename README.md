@@ -26,7 +26,7 @@ Instead, it's now a looter bullet hell. Yeah
 - [x] The same item is sometimes added multiple time to the inventory
 - [x] Items put in the OFFHAND slot will not take effect and crash the game when removed
 - [ ] MINOR: The spell equiped to RMB is automatically launched at the start of a level
-- [ ] MAJOR: Damage buff do not apply when used in battle
+- [x] MAJOR: Damage buff do not apply when used in battle (nevermind test values were too low to notice with the random variance)
 - [x] Saving is broken AGAIN
 - [x] And so is loading
 
