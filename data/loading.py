@@ -275,7 +275,7 @@ def load_images():
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"]["fire_mastery"] = Image("icons/temp/FireMage_5.png").scale(64, 64)
     SYSTEM["images"]["pyrotechnics"] = Image("icons/temp/FireMage_18.png").scale(64, 64)
-    SYSTEM["images"]["fireball"] = Image("icons/temp/FireMage_26.png").scale(64, 64)
+    SYSTEM["images"]["explosion"] = Image("icons/temp/FireMage_26.png").scale(64, 64)
     SYSTEM["images"]["firestorm"] = Image("icons/temp/FireMage_23.png").scale(64, 64)
     SYSTEM["images"]["cone_of_flames"] = Image("icons/temp/FireMage_19.png").scale(64, 64)
     SYSTEM["images"]["meteor"] = Image("icons/temp/FireMage_4.png").scale(64, 64)

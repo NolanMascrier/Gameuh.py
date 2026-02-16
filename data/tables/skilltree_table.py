@@ -39,40 +39,29 @@ def generate_tree():
     sorceress_start = Node("start", "tree_start", 250, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
                       None)
     _ = Node("buffa", "tree_a", 500, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start,
-             [["firebolt2"], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start)
     _fire_mastery = Node("fire_mastery", "fire_mastery", 500, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start,
-             [[], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start)
     _pyrotechnics = Node("pyrotechnics", "pyrotechnics", 700, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,
-             [[], [], [], [], []])
-    _fireball = Node("fireball", "fireball", 650, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,
-             [[], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery)
+    _fireball = Node("fireball", "explosion", 650, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery)
     _firestorm = Node("firestorm", "firestorm", 750, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,
-             [[], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery)
     tree_b = Node("skil_a", "tree_b", 700, 600, [[]], None)
-    _ice_mastery = Node("ice_mastery", "ice_mastery", 700, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], sorceress_start,
-             [[], [], [], [], []])
-    _congelation = Node("congelation", "congelation", 700, 800, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery,
-             [[], [], [], [], []])
+    _ice_mastery = Node("ice_mastery", "ice_mastery", 500, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], sorceress_start)
+    _congelation = Node("congelation", "congelation", 600, 800, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery)
     _icebolt = Node("icebolt", "icebolt", 700, 900, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery,
-             [[], [], [], [], []])
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery)
     tree_c = Node("skil_b", "tree_b", 650, 500, [[]], tree_b)
     _cone_of_flames = Node("cone_of_flames", "cone_of_flames", 500, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b,
-             [[], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b)
     _meteor = Node("meteor", "tree_a", 700, 600, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b,
-             [[], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b)
     _inferno = Node("inferno", "tree_a", 750, 600, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b,
-             [[], [], [], [], []])
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b)
     tree_d = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
     tree_e = Node("skil_e", "tree_b", 825, 650, [[]], tree_d)
     _ = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
