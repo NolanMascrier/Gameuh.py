@@ -195,6 +195,24 @@ class Spell():
         self._surface = sfc
         self._alternate = False
 
+    def gain_level(self):
+        """Grants a level to the spell."""
+        if self._level >= 20:
+            return
+        self._level += 1
+        self.update()
+
+    def lose_level(self):
+        """Removes a level to the spell."""
+        if self._level < 1:
+            return
+        self._level -= 1
+        self.update()
+
+    def set_level(self, lvl):
+        """Sets the spell's level."""
+        self._level = min(20, max(0, lvl))
+
     def gain_exp(self, amount: int):
         """Grants the skill experience."""
         if self._level >= 20:

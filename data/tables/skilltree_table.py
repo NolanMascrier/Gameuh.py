@@ -23,9 +23,8 @@ def generate_tree():
     #SI UNE NODE EST UNE FEUILLE, ELLE N'AS PAS BESOIN D'AVOIR DE NOM
     tree_start = Node("start", "tree_start", 250, 250, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
                       None)
-    _ = Node("buffa", "tree_a", 500, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                           [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_start,
-             [["firebolt2"], [], [], [], []])
+    _ = Node("buffa", "tree_a", 500, 250, 20, tree_start,
+             ["firebolt2"])
     tree_b = Node("skil_a", "tree_b", 500, 500, [[]], tree_start)
     tree_c = Node("skil_b", "tree_b", 650, 500, [[]], tree_b)
     _ = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
