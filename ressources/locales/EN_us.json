@@ -193,13 +193,16 @@
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",
     "tree": {
-      "start": "Way of the warrior",
-      "buffa": "Firebolt teaching",
-      "skil_a": "A node",
-      "skil_b": "A branching node",
-      "skil_c": "Top node",
-      "skil_d": "Another node",
-      "skil_e": "Bottom node"
+      "start": "Sorceress path",
+      "fire_mastery": "Fire Mastery",
+      "fireball": "Fireball",
+      "firestorm": "Firestorm",
+      "pyrotechnics": "Pyrotechnics",
+      "cone_of_flames": "Cone of Flames",
+      "inferno": "Inferno",
+      "ice_mastery": "Ice Mastery",
+      "icebolt": "Icebolt",
+      "congelation": "Congelation"
     },
     "loading": {
       "fonts": "Loading fonts ...",
@@ -319,7 +322,13 @@
         "bleed": "Bleed",
         "freeze": "Freeze",
         "bloodpact1": "Sacrificial Power",
-        "bloodpact2": "Sacrificial Life"
+        "bloodpact2": "Sacrificial Life",
+        "pyrotechnics": "Pyrotechnics",
+        "fire_mastery": "Fire Mastery",
+        "ice_mastery": "Ice Mastery",
+        "congelation": "Congelation",
+        "lightning_mastery": "Lightning Mastery",
+        "conduction": "Conduction"
     },
     "affliction_desc":{
         "elemental_fury": "Grants 35% more elemental damage.",
@@ -328,7 +337,13 @@
         "bleed": "Inflicts physical damage every seconds that ignores defenses.",
         "freeze": "Prevents the target from moving or acting.",
         "bloodpact1": "Grants 75% more damage.",
-        "bloodpact2": "Regenerates 20 Life per second."
+        "bloodpact2": "Regenerates 20 Life per second.",
+        "fire_mastery": "Increases fire damage taken by the target by 10% and grants 10% more fire damage.",
+        "pyrotechnics": "The fourth spell you cast will be empowered, dealing 50% more damage and applying a burn that deals 10% of the initial damage as fire damage every second for 5 seconds.",
+        "ice_mastery": "Increases ice damage taken by the target by 10% and grants 10% more ice damage.",
+        "congelation": "Increase the slow effect of freezing by 50% and freezed targets become vulnerable.",
+        "lightning_mastery": "Increases lightning damage taken by the target by 10% and grants 10% more lightning damage.",
+        "conduction": "Lightning damage can now spread to 2 additional targets, dealing 50% less damage to them."
     },
     "spells_name": {
         "none": "Nothing",
@@ -346,8 +361,17 @@
         "masterstrike": "Masterstrike",
         "magicmissile": "Magic Missiles",
         "rip": "Rip",
-        "bloodpact": "Blood Pact"
+        "bloodpact": "Blood Pact",
+        "meteor": "Meteor",
+        "inferno": "Inferno",
+        "cone_of_flames": "Cone of Flames",
+        "lightning_bolt": "Lightning Bolt",
+        "lightning_arc": "Lightning Arc",
+        "chain_lightning": "Chain Lightning",
+        "circle_of_ice": "Circle of Ice",
+        "ice_nova": "Ice Nova"
     },
+
     "spells_desc": {
         "none": "No spell equipped.",
         "voidbolt": "Shoot a flurry of void spheres, dealing\nminor void damage.",
@@ -364,8 +388,12 @@
         "masterstrike": "Deliver a series a quick blows.\nThe third strike is a guaranteed critical hit.",
         "magicmissile": "Periodically release tracking divine energy bolts.\nThis ability cannot crit, but cannot be dodged.",
         "rip": "Slash the target, dealing physical damage\nand causing them to bleed.",
-        "bloodpact": "Reserves most of your life, but greatly \nincreases regeneration and damage done."
+        "bloodpact": "Reserves most of your life, but greatly \nincreases regeneration and damage done.",
+        "meteor": "Launch a meteor from the sky, dealing\nlarge fire damage in a large area.",
+        "inferno": "Create a large fire field that deals\ndamage over time.",
+        "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you."
     },
+
     "descripts": {
         "life": "Life",
         "mana": "Mana",
@@ -405,7 +433,7 @@
         "phys_flat": "Physical damage",
         "fire_flat": "Fire damage",
         "ice_flat": "Ice damage",
-        "elec_flat": "Thunder damage",
+        "LIGHTNING_FLAT": "Thunder damage",
         "energy_flat": "Energy damage",
         "light_flat": "Divine damage",
         "dark_flat": "Void damage",
@@ -433,7 +461,7 @@
         "elec_tab": "#c#(250, 233, 0)Thunder damage",
         "elec_dmg_tab": "-> Bonus",
         "elec_pen_tab": "-> Penetration",
-        "elec_flat_tab": "-> Flat damage",
+        "LIGHTNING_FLAT_tab": "-> Flat damage",
         "energy_tab": "#c#(156, 0, 5)Energy damage",
         "energy_dmg_tab": "-> Bonus",
         "energy_pen_tab": "-> Penetration",
@@ -795,11 +823,11 @@
       "ICE_FLAT_3": "Blast",
       "ICE_FLAT_4": "Will",
       "ICE_FLAT_5": "Insight",
-      "ELEC_FLAT_1": "Shock",
-      "ELEC_FLAT_2": "Might",
-      "ELEC_FLAT_3": "Torrent",
-      "ELEC_FLAT_4": "Insight",
-      "ELEC_FLAT_5": "Edge",
+      "LIGHTNING_FLAT_1": "Shock",
+      "LIGHTNING_FLAT_2": "Might",
+      "LIGHTNING_FLAT_3": "Torrent",
+      "LIGHTNING_FLAT_4": "Insight",
+      "LIGHTNING_FLAT_5": "Edge",
       "ENERG_FLAT_1": "Clarity",
       "ENERG_FLAT_2": "Might",
       "ENERG_FLAT_3": "Torrent",
@@ -1089,7 +1117,7 @@
         ["Dimensional", "Dimension"],
         ["Tearing", "Tear"]
       ],
-      "elec_flat": [
+      "LIGHTNING_FLAT": [
         ["Arcing", "Arc"],
         ["Thundering", "Thunder"],
         ["Sparking", "Spark"],

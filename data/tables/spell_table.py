@@ -49,7 +49,7 @@ BURN_DMG = Damage(0.33, fire=1, ignore_block=True, ignore_dodge=True)
 BURN = Affliction("burn", 0, 5, [Flags.LIFE, Flags.FLAT], True, False, BURN_DMG, dot_tick=0.1)
 
 ELEFURY = Affliction("elemental_fury", 0.35, 15, flags=[Flags.BLESS, Flags.FIRE_DMG,\
-                                        Flags.ICE_DMG, Flags.ELEC_DMG], stackable=False)
+                                        Flags.ICE_DMG, Flags.LIGHTNING_DMG], stackable=False)
 CELERITY = Affliction("celerity", 3, 0.5, flags=[Flags.BLESS, Flags.SPEED])
 FURY = Affliction("fury", 0.15, 1, flags=[Flags.DAMAGE_MOD, Flags.BLESS],\
                 stackable=True, refreshable=True)
@@ -64,20 +64,22 @@ BLOODPACT_RES = Affliction("bloodpact2", 20, -1, [Flags.LIFE_REGEN, Flags.FLAT])
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
     firebolt_icon = Image("icons/spells/firebolt.png").scale(64, 64)
-    fireball_icon = Image("icons/spells/fireball.png").scale(64, 64)
+    fireball_icon = Image("icons/temp/FireMage_28.png").scale(64, 64)
     icebolt_icon = Image("icons/spells/icebolt.png").scale(64, 64)
     voidbolt_icon = Image("icons/spells/darkbolt.png").scale(64, 64)
-    elefury_icon = Image("icons/spells/elementalfury.png").scale(64, 64)
+    elefury_icon = Image("icons/temp/FireMage_32.png").scale(64, 64)
     heal_icon = Image("icons/spells/heal.png").scale(64, 64)
-    fury_icon = Image("icons/spells/furyslash.png").scale(64, 64)
+    fury_icon = Image("icons/temp/FireMage_17.png").scale(64, 64)
     arc_icon = Image("icons/spells/arc.png").scale(64, 64)
-    exult_icon = Image("icons/spells/exult.png").scale(64, 64)
+    exult_icon = Image("icons/temp/FireMage_39.png").scale(64, 64)
     m1_icon = Image("icons/spells/masterstrike_a.png").scale(64, 64)
     m2_icon = Image("icons/spells/masterstrike_b.png").scale(64, 64)
     m3_icon = Image("icons/spells/masterstrike_c.png").scale(64, 64)
     magicmissile_icon = Image("icons/spells/magicmissile.png").scale(64, 64)
     rip_icon = Image("icons/spells/rip.png").scale(64, 64)
     pact_icon = Image("icons/spells/bloodpact.png").scale(64, 64)
+    meteor_icon = Image("icons/temp/FireMage_4.png").scale(64, 64)
+    inferno_icon = Image("icons/temp/FireMage_5.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)

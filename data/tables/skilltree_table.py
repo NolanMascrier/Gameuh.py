@@ -16,21 +16,69 @@ FIRE_NODE_5 = Affliction("tree_fir", 0.35, -1, [Flags.BOON, Flags.FIRE_DMG], Tru
 FIRE_NODE_5B = Affliction("tree_firb", 0.05, -1,
                           [Flags.FLAT, Flags.FIRE_PEN], True)
 
+ICE_NODE_1 = Affliction("tree_ice", 0.05, -1, [Flags.BOON, Flags.ICE_DMG], True)
+ICE_NODE_2 = Affliction("tree_ice", 0.1, -1, [Flags.BOON, Flags.ICE_DMG], True)
+ICE_NODE_3 = Affliction("tree_ice", 0.15, -1, [Flags.BOON, Flags.ICE_DMG], True)
+ICE_NODE_4 = Affliction("tree_ice", 0.25, -1, [Flags.BOON, Flags.ICE_DMG], True)
+ICE_NODE_5 = Affliction("tree_ice", 0.35, -1, [Flags.BOON, Flags.ICE_DMG], True)
+ICE_NODE_5B = Affliction("tree_iceb", 0.05, -1,
+                          [Flags.FLAT, Flags.ICE_PEN], True)
+
+LIGHTNING_NODE_1 = Affliction("tree_light", 0.05, -1, [Flags.BOON, Flags.LIGHTNING_DMG], True)
+LIGHTNING_NODE_2 = Affliction("tree_light", 0.1, -1, [Flags.BOON, Flags.LIGHTNING_DMG], True)
+LIGHTNING_NODE_3 = Affliction("tree_light", 0.15, -1, [Flags.BOON, Flags.LIGHTNING_DMG], True)
+LIGHTNING_NODE_4 = Affliction("tree_light", 0.25, -1, [Flags.BOON, Flags.LIGHTNING_DMG], True)
+LIGHTNING_NODE_5 = Affliction("tree_light", 0.35, -1, [Flags.BOON, Flags.LIGHTNING_DMG], True)
+LIGHTNING_NODE_5B = Affliction("tree_lightb", 0.05, -1,
+                          [Flags.FLAT, Flags.LIGHTNING_PEN], True)
 def generate_tree():
     """Creates the tree."""
 
     #ICI, AJOUTE CHAQUE NODE UNE PAR UNE
     #SI UNE NODE EST UNE FEUILLE, ELLE N'AS PAS BESOIN D'AVOIR DE NOM
-    tree_start = Node("start", "tree_start", 250, 250, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
+    sorceress_start = Node("start", "tree_start", 250, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
                       None)
     _ = Node("buffa", "tree_a", 500, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                           [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_start,
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start,
              [["firebolt2"], [], [], [], []])
-    tree_b = Node("skil_a", "tree_b", 500, 500, [[]], tree_start)
+    _fire_mastery = Node("fire_mastery", "fire_mastery", 500, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start,
+             [[], [], [], [], []])
+    _pyrotechnics = Node("pyrotechnics", "pyrotechnics", 700, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,
+             [[], [], [], [], []])
+    _fireball = Node("fireball", "fireball", 650, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,
+             [[], [], [], [], []])
+    _firestorm = Node("firestorm", "firestorm", 750, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,
+             [[], [], [], [], []])
+    tree_b = Node("skil_a", "tree_b", 700, 600, [[]], None)
+    _ice_mastery = Node("ice_mastery", "ice_mastery", 700, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], sorceress_start,
+             [[], [], [], [], []])
+    _congelation = Node("congelation", "congelation", 700, 800, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery,
+             [[], [], [], [], []])
+    _icebolt = Node("icebolt", "icebolt", 700, 900, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery,
+             [[], [], [], [], []])
     tree_c = Node("skil_b", "tree_b", 650, 500, [[]], tree_b)
+    _cone_of_flames = Node("cone_of_flames", "cone_of_flames", 500, 500, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b,
+             [[], [], [], [], []])
+    _meteor = Node("meteor", "tree_a", 700, 600, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b,
+             [[], [], [], [], []])
+    _inferno = Node("inferno", "tree_a", 750, 600, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], tree_b,
+             [[], [], [], [], []])
+    tree_d = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
+    tree_e = Node("skil_e", "tree_b", 825, 650, [[]], tree_d)
     _ = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
     _ = Node("skil_c", "tree_b", 825, 350, [[]], tree_c)
     _ = Node("skil_e", "tree_b", 825, 650, [[]], tree_c)
+    _ = Node("skil_f", "tree_b", 825, 800, [[]], tree_c)
     #ENSUITE, AJOUTE UNE ENTREE DANS LE FICHIER DE LOCALISATION (./ressources/locales/EN_US.json)
     #CORRESPONDANT AU name DE LA NODE DANS tree
 
@@ -40,7 +88,7 @@ def generate_tree():
 
     #ICI, AJOUTE LA PREMIERE NODE DE L'ARBRE POUR CHAQUE CLASSE
     SYSTEM["tree"] = {
-        Classes.SORCERESS: tree_start,
+        Classes.SORCERESS: sorceress_start,
         Classes.WARRIOR: None,
         Classes.ESSENTIALIST: None,
         Classes.ARCANIST: None,

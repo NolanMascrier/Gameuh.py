@@ -17,7 +17,7 @@ NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",
     "proj_quantity", "dodge_rating", "precision", "abs_def", "potion_mana_count",
     "potion_healing_count", "potion_healing_flat", "potion_mana_flat"]
 IGNORE_STAT = ["fire_flat", "fire_pen", "phys_flat", "phys_pen",
-    "ice_flat", "ice_pen", "elec_flat", "elec_pen", "energy_flat", "energy_pen"
+    "ice_flat", "ice_pen", "LIGHTNING_FLAT", "elec_pen", "energy_flat", "energy_pen"
     "light_flat", "light_pen", "dark_flat", "dark_pen"]
 DAMAGE_STAT = ["fire_dmg", "phys_dmg", "ice_dmg", "elec_dmg", "energy_dmg",
     "light_dmg", "dark_dmg"]
@@ -110,7 +110,7 @@ class Creature:
             "phys_flat": RangeStat(0, 0, "phys_flat", scaling_value=0.05),
             "fire_flat": RangeStat(0, 0, "fire_flat", scaling_value=0.05),
             "ice_flat": RangeStat(0, 0, "ice_flat", scaling_value=0.05),
-            "elec_flat": RangeStat(0, 0, "elec_flat", scaling_value=0.05),
+            "LIGHTNING_FLAT": RangeStat(0, 0, "LIGHTNING_FLAT", scaling_value=0.05),
             "energy_flat": RangeStat(0, 0, "energy_flat", scaling_value=0.05),
             "light_flat": RangeStat(0, 0, "light_flat", scaling_value=0.05),
             "dark_flat": RangeStat(0, 0, "dark_flat", scaling_value=0.05),

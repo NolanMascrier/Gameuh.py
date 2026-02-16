@@ -475,15 +475,15 @@ AFFIX_POOL = [
     AffixDefinition(
         "electric_damage_flat",
         [
-            (DoubleAffix("ELEC_FLAT_1", 1, 20, [Flags.ELEC_FLAT, Flags.DESC_FLAT,
+            (DoubleAffix("LIGHTNING_FLAT_1", 1, 20, [Flags.LIGHTNING_FLAT, Flags.DESC_FLAT,
                                                  Flags.FLAT], 0.5, 1.5, 0.5, 1.5), 1, 0, 75),
-            (DoubleAffix("ELEC_FLAT_2", 3, 40, [Flags.ELEC_FLAT, Flags.DESC_FLAT,
+            (DoubleAffix("LIGHTNING_FLAT_2", 3, 40, [Flags.LIGHTNING_FLAT, Flags.DESC_FLAT,
                                                  Flags.FLAT], 0.5, 1.5, 0.5, 1.5), 0.8, 20, 80),
-            (DoubleAffix("ELEC_FLAT_3", 5, 75, [Flags.ELEC_FLAT, Flags.DESC_FLAT,
+            (DoubleAffix("LIGHTNING_FLAT_3", 5, 75, [Flags.LIGHTNING_FLAT, Flags.DESC_FLAT,
                                                  Flags.FLAT], 0.5, 1.5, 0.5, 1.5), 0.6, 40, 999),
-            (DoubleAffix("ELEC_FLAT_4", 10, 150, [Flags.ELEC_FLAT, Flags.DESC_FLAT,
+            (DoubleAffix("LIGHTNING_FLAT_4", 10, 150, [Flags.LIGHTNING_FLAT, Flags.DESC_FLAT,
                                                    Flags.FLAT], 0.5, 1.5, 0.5, 1.5), 0.25, 60, 999),
-            (DoubleAffix("ELEC_FLAT_5", 25, 300, [Flags.ELEC_FLAT, Flags.DESC_FLAT,
+            (DoubleAffix("LIGHTNING_FLAT_5", 25, 300, [Flags.LIGHTNING_FLAT, Flags.DESC_FLAT,
                                                    Flags.FLAT], 0.5, 1.5, 0.5, 1.5), 0.1, 75, 999),
         ],
         1.5,
@@ -585,13 +585,13 @@ AFFIX_POOL = [
     ),
 
     AffixDefinition(
-        "electric_damage_increased",
+        "lightning_damage_increased",
         [
-            (Affix("ELEC_DMG_1", 0.1, [Flags.ELEC_DMG, Flags.BOON], 0.5, 1.5), 1, 0, 75),
-            (Affix("ELEC_DMG_2", 0.2, [Flags.ELEC_DMG, Flags.BOON], 0.5, 1.5), 0.8, 20, 80),
-            (Affix("ELEC_DMG_3", 0.4, [Flags.ELEC_DMG, Flags.BOON], 0.5, 1.5), 0.6, 40, 999),
-            (Affix("ELEC_DMG_4", 0.6, [Flags.ELEC_DMG, Flags.BOON], 0.5, 1.5), 0.25, 60, 999),
-            (Affix("ELEC_DMG_5", 1.0, [Flags.ELEC_DMG, Flags.BOON], 0.5, 1.5), 0.1, 75, 999),
+            (Affix("LIGHTNING_DMG_1", 0.1, [Flags.LIGHTNING_DMG, Flags.BOON], 0.5, 1.5), 1, 0, 75),
+            (Affix("LIGHTNING_DMG_2", 0.2, [Flags.LIGHTNING_DMG, Flags.BOON], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("LIGHTNING_DMG_3", 0.4, [Flags.LIGHTNING_DMG, Flags.BOON], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("LIGHTNING_DMG_4", 0.6, [Flags.LIGHTNING_DMG, Flags.BOON], 0.5, 1.5), 0.25, 60, 999),
+            (Affix("LIGHTNING_DMG_5", 1.0, [Flags.LIGHTNING_DMG, Flags.BOON], 0.5, 1.5), 0.1, 75, 999),
         ],
         1.0,
         [Flags.WEAPON, Flags.RING, Flags.AMULET, Flags.BELT, Flags.RELIC, Flags.OFFHAND]
@@ -673,9 +673,9 @@ AFFIX_POOL = [
     AffixDefinition(
         "electric_penetration",
         [
-            (Affix("ELEC_PEN_1", 0.1, [Flags.ELEC_PEN, Flags.FLAT], 0.5, 1.5), 1, 0, 75),
-            (Affix("ELEC_PEN_2", 0.2, [Flags.ELEC_PEN, Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
-            (Affix("ELEC_PEN_3", 0.4, [Flags.ELEC_PEN, Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
+            (Affix("LIGHTNING_PEN_1", 0.1, [Flags.LIGHTNING_PEN, Flags.FLAT], 0.5, 1.5), 1, 0, 75),
+            (Affix("LIGHTNING_PEN_2", 0.2, [Flags.LIGHTNING_PEN, Flags.FLAT], 0.5, 1.5), 0.8, 20, 80),
+            (Affix("LIGHTNING_PEN_3", 0.4, [Flags.LIGHTNING_PEN, Flags.FLAT], 0.5, 1.5), 0.6, 40, 999),
         ],
         0.2,
         [Flags.WEAPON, Flags.RELIC, Flags.OFFHAND]
