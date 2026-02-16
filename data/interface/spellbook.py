@@ -133,8 +133,7 @@ def single_slot(spell: Spell, superspell: Spell = None, decoded_data = None):
         "damage": Text(data["damage"],\
             font="item_desc", size=20, default_color=BLACK),
         "buffs": data["buffs"],
-        "exp": Text(f"{spell.exp}/{spell.exp_to_next}",\
-            font="item_desc", size=20, default_color=BLACK) if spell is not None else None,
+        "exp": None,
         "slots": [Slot(0, 0, "gear_relic", slot_jewel, unslot_jewel, overwrite_jewel,\
             slot, jewel, accept_only=Item) for slot, jewel in spell.jewels.items()]\
                 if spell is not None else None,

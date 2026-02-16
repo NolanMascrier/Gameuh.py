@@ -37,19 +37,25 @@ class Node:
     """
     def __init__(self, name, icon: str, x, y,\
         effects:list[list[Affliction]], previous = None,\
-        skills:list[list[str]] = None, rarity:int = 0, points_to_unlock = 1):
+        skills:list[str] = None, rarity:int = 0, points_to_unlock = 1):
         self._name = name
         self._x = x
         self._y = y
         self._icon = icon
         self._effects = effects
+        self._has_effects = True
+        if isinstance(effects, int):
+            self._effects = []
+            for _ in range(effects):
+                self._effects.append([])
+            self._has_effects = False
         self._previous = previous
         self._connected = []
         self._learned = False
         self._rarity = rarity
         self._points_to_unlock = points_to_unlock
         self._invested = -1
-        self._levels = len(effects)
+        self._levels = len(self._effects)
         if skills is None:
             skills = []
         self._skills = skills
@@ -79,15 +85,14 @@ class Node:
         l = 0
         for lvl in self._skills:
             l += 1
-            for s in lvl:
-                skill = SYSTEM["spells"][s]
-                if skill is None:
-                    continue
-                surfaces.append(skill.surface)
-                h += skill.surface.get_height()
-                skill_desc += f"{l}: {trad('meta_words', 'learns')}" + \
-                              f" {trad('spells_name', skill.name)}\n"
-                w = max(w, skill.surface.get_width())
+            skill = SYSTEM["spells"][lvl]
+            if skill is None:
+                continue
+            surfaces.append(skill.surface)
+            h += skill.surface.get_height()
+            skill_desc += f"{l}: {trad('meta_words', 'learns')}" + \
+                            f" {trad('spells_name', skill.name)}\n"
+            w = max(w, skill.surface.get_width())
         effects_desc = ""
         if self._invested < 0:
             effects_desc += "#s#(15)Learns\n"
@@ -200,9 +205,15 @@ class Node:
             for f in self._effects[self._invested]:
                 SYSTEM["player"].creature.afflict(f)
             #Spells
-            if self._skills and self._skills[self._invested] is not None:
-                for s in self._skills[self._invested]:
-                    SYSTEM["player"].spellbook.append(s)
+            for s in self._skills:
+                print("Attempting to learn spell", s)
+                if self._invested >= 0:
+                    print("Plonk")
+                    if s not in SYSTEM["player"].spellbook:
+                        print("Djadjan")
+                        SYSTEM["player"].spellbook.append(s)
+                    SYSTEM["spells"][s].set_level(self.invested + 1)
+            #Check
             if self._invested + 1 >= self._levels:
                 self._learned = True
 
@@ -214,10 +225,11 @@ class Node:
             for f in self._effects[self._invested]:
                 SYSTEM["player"].creature.remove_affliction(f)
             #Spells
-            if self._skills and self._skills[self._invested] is not None:
-                for s in self._skills[self._invested]:
+            for s in self._skills:
+                if self._invested < 0:
                     if s in SYSTEM["player"].spellbook:
                         SYSTEM["player"].spellbook.remove(s)
+                    SYSTEM["spells"][s].set_level(self.invested + 1)
             self._invested -= 1
             #Gives the previous level buffs
             if self._invested >= 0:
