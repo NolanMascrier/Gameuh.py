@@ -17,11 +17,11 @@ NOT_PERCENT = ["life", "mana", "str", "int", "dex", "def", "chains",
     "proj_quantity", "dodge_rating", "precision", "abs_def", "potion_mana_count",
     "potion_healing_count", "potion_healing_flat", "potion_mana_flat"]
 IGNORE_STAT = ["fire_flat", "fire_pen", "phys_flat", "phys_pen",
-    "ice_flat", "ice_pen", "LIGHTNING_FLAT", "elec_pen", "energy_flat", "energy_pen"
+    "ice_flat", "ice_pen", "lightning_flat", "energy_flat", "energy_pen"
     "light_flat", "light_pen", "dark_flat", "dark_pen"]
 DAMAGE_STAT = ["fire_dmg", "phys_dmg", "ice_dmg", "elec_dmg", "energy_dmg",
     "light_dmg", "dark_dmg"]
-DAMAGE_TYPE = ["phys", "fire", "ice", "elec", "energy", "light", "dark"]
+DAMAGE_TYPE = ["phys", "fire", "ice", "lightning", "energy", "light", "dark"]
 
 WHITE = (255,255,255)
 
@@ -102,7 +102,7 @@ class Creature:
             "phys": Stat(0, "phys", 0.9, -2, scaling_value=0.005),
             "fire": Stat(0, "fire", 0.9, -2, scaling_value=0.005),
             "ice": Stat(0, "ice", 0.9, -2, scaling_value=0.005),
-            "elec": Stat(0, "elec", 0.9, -2, scaling_value=0.005),
+            "lightning": Stat(0, "lightning", 0.9, -2, scaling_value=0.005),
             "energy": Stat(0, "energy", 0.9, -2, scaling_value=0.005),
             "light": Stat(0, "light", 0.9, -2, scaling_value=0.005),
             "dark": Stat(0, "dark", 0.9, -2, scaling_value=0.005),
@@ -110,7 +110,7 @@ class Creature:
             "phys_flat": RangeStat(0, 0, "phys_flat", scaling_value=0.05),
             "fire_flat": RangeStat(0, 0, "fire_flat", scaling_value=0.05),
             "ice_flat": RangeStat(0, 0, "ice_flat", scaling_value=0.05),
-            "LIGHTNING_FLAT": RangeStat(0, 0, "LIGHTNING_FLAT", scaling_value=0.05),
+            "lightning_flat": RangeStat(0, 0, "lightning_flat", scaling_value=0.05),
             "energy_flat": RangeStat(0, 0, "energy_flat", scaling_value=0.05),
             "light_flat": RangeStat(0, 0, "light_flat", scaling_value=0.05),
             "dark_flat": RangeStat(0, 0, "dark_flat", scaling_value=0.05),
@@ -118,7 +118,7 @@ class Creature:
             "phys_dmg": Stat(1, "phys_dmg", scaling_value=0.05),
             "fire_dmg": Stat(1, "fire_dmg", scaling_value=0.05),
             "ice_dmg": Stat(1, "ice_dmg", scaling_value=0.05),
-            "elec_dmg": Stat(1, "elec_dmg", scaling_value=0.05),
+            "lightning_dmg": Stat(1, "lightning_dmg", scaling_value=0.05),
             "energy_dmg": Stat(1, "energy_dmg", scaling_value=0.05),
             "light_dmg": Stat(1, "light_dmg", scaling_value=0.05),
             "dark_dmg": Stat(1, "dark_dmg", scaling_value=0.05),
@@ -126,7 +126,7 @@ class Creature:
             "phys_pen": Stat(0, "phys_pen", 2, 0, scaling_value=0.01),
             "fire_pen": Stat(0, "fire_pen", 2, 0, scaling_value=0.01),
             "ice_pen": Stat(0, "ice_pen", 2, 0, scaling_value=0.01),
-            "elec_pen": Stat(0, "elec_pen", 2, 0, scaling_value=0.01),
+            "lightning_pen": Stat(0, "lightning_pen", 2, 0, scaling_value=0.01),
             "energy_pen": Stat(0, "energy_pen", 2, 0, scaling_value=0.01),
             "light_pen": Stat(0, "light_pen", 2, 0, scaling_value=0.01),
             "dark_pen": Stat(0, "dark_pen", 2, 0, scaling_value=0.01),
@@ -199,12 +199,12 @@ class Creature:
         pp = pen["phys"] + self._stats["phys_pen"].get_value()
         fp = pen["fire"] + self._stats["fire_pen"].get_value()
         ip = pen["ice"] + self._stats["ice_pen"].get_value()
-        ep = pen["elec"] + self._stats["elec_pen"].get_value()
+        ep = pen["lightning"] + self._stats["lightning_pen"].get_value()
         enp = pen["energy"] + self._stats["energy_pen"].get_value()
         lp = pen["light"] + self._stats["light_pen"].get_value()
         dp = pen["dark"] + self._stats["dark_pen"].get_value()
 
-        return Damage(coeff, values["phys"], values["fire"], values["ice"], values["elec"],\
+        return Damage(coeff, values["phys"], values["fire"], values["ice"], values["lightning"],\
                       values["energy"], values["light"], values["dark"], \
                       pp, fp, ip, ep, enp, lp, dp, crit,\
                       crit_mult, flags,\
@@ -380,31 +380,31 @@ class Creature:
                 self._stats["phys"].afflict(affliction)
                 self._stats["fire"].afflict(affliction)
                 self._stats["ice"].afflict(affliction)
-                self._stats["elec"].afflict(affliction)
+                self._stats["lightning"].afflict(affliction)
                 self._stats["energy"].afflict(affliction)
                 self._stats["light"].afflict(affliction)
                 self._stats["dark"].afflict(affliction)
-                self._changed.update({"phys", "fire", "ice", "elec", "energy", "light", "dark"})
+                self._changed.update({"phys", "fire", "ice", "lightning", "energy", "light", "dark"})
             elif stat_key == "all_damage":
                 self._stats["phys_dmg"].afflict(affliction)
                 self._stats["fire_dmg"].afflict(affliction)
                 self._stats["ice_dmg"].afflict(affliction)
-                self._stats["elec_dmg"].afflict(affliction)
+                self._stats["lightning_dmg"].afflict(affliction)
                 self._stats["energy_dmg"].afflict(affliction)
                 self._stats["light_dmg"].afflict(affliction)
                 self._stats["dark_dmg"].afflict(affliction)
-                self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "elec_dmg",\
+                self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "lightning_dmg",\
                     "energy_dmg", "light_dmg", "dark_dmg"})
             elif stat_key == "elemental_resistances":
                 self._stats["fire"].afflict(affliction)
                 self._stats["ice"].afflict(affliction)
-                self._stats["elec"].afflict(affliction)
-                self._changed.update({"fire", "ice", "elec"})
+                self._stats["lightning"].afflict(affliction)
+                self._changed.update({"fire", "ice", "lightning"})
             elif stat_key == "elemental_damage":
                 self._stats["fire_dmg"].afflict(affliction)
                 self._stats["ice_dmg"].afflict(affliction)
-                self._stats["elec_dmg"].afflict(affliction)
-                self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
+                self._stats["lightning_dmg"].afflict(affliction)
+                self._changed.update({"fire_dmg", "ice_dmg", "lightning_dmg"})
 
     def afflict(self, affliction, is_debuff: bool = False, debuff_chance: float = 1.0):
         """Afflicts the creature with an affliction.
@@ -449,14 +449,14 @@ class Creature:
             if stat_key in self._stats:
                 self._changed.add(stat_key)
             elif stat_key == "all_resistances":
-                self._changed.update({"phys", "fire", "ice", "elec", "energy", "light", "dark"})
+                self._changed.update({"phys", "fire", "ice", "lightning", "energy", "light", "dark"})
             elif stat_key == "all_damage":
-                self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "elec_dmg",\
+                self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "lightning_dmg",\
                     "energy_dmg", "light_dmg", "dark_dmg"})
             elif stat_key == "elemental_resistances":
-                self._changed.update({"fire", "ice", "elec"})
+                self._changed.update({"fire", "ice", "lightning"})
             elif stat_key == "elemental_damage":
-                self._changed.update({"fire_dmg", "ice_dmg", "elec_dmg"})
+                self._changed.update({"fire_dmg", "ice_dmg", "lightning_dmg"})
         for d in self._buffs:
             if d == affliction:
                 self._buffs.remove(d)

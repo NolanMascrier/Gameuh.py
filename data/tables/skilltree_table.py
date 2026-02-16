@@ -37,7 +37,7 @@ def generate_tree():
     #ICI, AJOUTE CHAQUE NODE UNE PAR UNE
     #SI UNE NODE EST UNE FEUILLE, ELLE N'AS PAS BESOIN D'AVOIR DE NOM
     sorceress_start = Node("start", "tree_start", 250, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
-                      None)
+                      None, rarity=1)
     _ = Node("buffa", "tree_a", 500, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
                                 [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start)
     _fire_mastery = Node("fire_mastery", "fire_mastery", 500, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],

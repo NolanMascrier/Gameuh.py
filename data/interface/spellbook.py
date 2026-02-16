@@ -98,7 +98,7 @@ def single_slot(spell: Spell, superspell: Spell = None, decoded_data = None):
     data = spell.describe() if decoded_data is None else decoded_data
     data_super = (superspell.describe() if superspell is not None else spell.describe()) if\
         spell is not None else decoded_data
-    if Flags.LIFE_RESERVATION in spell.all_flags:
+    if spell is not None and Flags.LIFE_RESERVATION in spell.all_flags:
         true_cost = spell.get_life_reservation() * \
             (1 / caster.stats["life_reservation_effi"].c_value)
         cost_l = f"{trad('meta_words', 'reserves')} {round(true_cost * 100)}% " + \
@@ -106,7 +106,7 @@ def single_slot(spell: Spell, superspell: Spell = None, decoded_data = None):
     else:
         cost_l = f"{trad('descripts', 'life_cost')}: {data['costs'][0]}" if\
             data["costs"][0] > 0 else None
-    if Flags.MANA_RESERVATION in spell.all_flags:
+    if spell is not None and Flags.MANA_RESERVATION in spell.all_flags:
         true_cost = spell.get_mana_reservation() * \
             (1 / caster.stats["mana_reservation_effi"].c_value)
         cost_m = f"{trad('meta_words', 'reserves')} {round(true_cost * 100)}% " + \
@@ -246,36 +246,37 @@ def open_spell_screen():
         additional_action=refresh, rows=2)
     SYSTEM["ui"]["slot_L"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_L"]], flag="spell_L",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_M"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_M"]], flag="spell_M",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_R"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_R"]], flag="spell_R",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_1"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_1"]], flag="spell_1",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_2"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_2"]], flag="spell_2",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_3"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_3"]], flag="spell_3",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_4"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_4"]], flag="spell_4",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_5"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_5"]], flag="spell_5",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_6"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_6"]], flag="spell_6",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_7"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
         default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["spell_7"]], flag="spell_7",\
-        accept_only=Spell)
+        accept_only=Spell, top_image="skill_top")
     SYSTEM["ui"]["slot_dash"] = Slot(x_offset_slot, 164, "skill_top", slot_in, slot_out,\
-        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash")
+        default=SYSTEM["spells"][SYSTEM["player"].equipped_spells["dash"]], flag="dash",
+        top_image="skill_top")
     for key in ["spell_L", "spell_M", "spell_R", "spell_1", "spell_2", "spell_3", "spell_4",
                 "spell_5", "spell_6", "spell_7", "dash"]:
         spell = SYSTEM["spells"][SYSTEM["player"].equipped_spells[key]]\

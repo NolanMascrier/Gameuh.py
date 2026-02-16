@@ -11,7 +11,7 @@ from data.interface.render import render, renders
 STAT_LIST = {}
 DEFAULT_STATS = ["life", "mana", "int", "str", "dex"]
 DEFENSE_STATS = ["def", "abs_def", "block", "dodge_rating", "crit_res",
-    "phys", "fire", "ice", "elec", "energy", "light", "dark", "heal_factor", "debuff_res"]
+    "phys", "fire", "ice", "lightning", "energy", "light", "dark", "heal_factor", "debuff_res"]
 OFFENSE_STATS = ["crit_rate", "crit_dmg", "mana_efficiency", "cast_speed",
     "melee_dmg", "spell_dmg", "ranged_dmg", "precision", "phys_dmg", "fire_dmg",
     "ice_dmg", "elec_dmg", "energy_dmg", "light_dmg", "dark_dmg"]

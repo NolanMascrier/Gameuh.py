@@ -46,11 +46,15 @@ class Slot(Widget):
     def __init__(self, x, y, back_image = None, on_slot = None,\
         on_remove = None, on_overwrite = None,\
         flag = None, default = None, left = False, immutable = False,\
-        accept_only = None):
+        accept_only = None, top_image = None):
         if back_image is None:
             self._empty_image = SYSTEM["images"]["slot_empty"]
         else:
             self._empty_image = SYSTEM["images"][back_image]
+        if top_image is None:
+            self._top_image = None
+        else:
+            self._top_image = SYSTEM["images"][top_image]
         super().__init__(x, y, self._empty_image.width, self._empty_image.height)
         self._contains = None
         self._on_slot = on_slot
@@ -149,6 +153,8 @@ class Slot(Widget):
         render(self._empty_image.image, (self.x, self.y))
         if self._contains is not None:
             render(self._contains.get_image().image, (self.x, self.y))
+        if self._top_image is not None:
+            render(self._top_image.image, (self.x, self.y))
 
     def draw_alt(self, surface, x, y):
         """Draws the component on the surface at specified position."""

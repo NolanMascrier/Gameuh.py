@@ -190,7 +190,7 @@ class Flags(str, Enum):
     PHYS = "phys"
     FIRE = "fire"
     ICE = "ice"
-    ELEC = "elec"
+    LIGHTNING = "lightning"
     ENERG = "energy"
     LIGHT = "light"
     DARK = "dark"

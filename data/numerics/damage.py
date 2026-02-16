@@ -83,7 +83,7 @@ class Damage():
             "phys": phys,
             "fire": fire,
             "ice": ice,
-            "elec": elec,
+            "lightning": elec,
             "energy": energ,
             "light": light,
             "dark": dark
@@ -92,7 +92,7 @@ class Damage():
             "phys": pp,
             "fire": fp,
             "ice": ip,
-            "elec": ep,
+            "lightning": ep,
             "energy": enp,
             "light": lp,
             "dark": dp
@@ -121,7 +121,7 @@ class Damage():
             "phys": self._types["phys"] * random.uniform(self._bounds[0], self._bounds[1]),
             "fire": self._types["fire"] * random.uniform(self._bounds[0], self._bounds[1]),
             "ice": self._types["ice"] * random.uniform(self._bounds[0], self._bounds[1]),
-            "elec": self._types["elec"] * random.uniform(self._bounds[0], self._bounds[1]),
+            "lightning": self._types["lightning"] * random.uniform(self._bounds[0], self._bounds[1]),
             "energy": self._types["energy"] * random.uniform(self._bounds[0], self._bounds[1]),
             "light": self._types["light"] * random.uniform(self._bounds[0], self._bounds[1]),
             "dark": self._types["dark"] * random.uniform(self._bounds[0], self._bounds[1])
@@ -131,7 +131,7 @@ class Damage():
     def describe(self, caster, is_melee = False, is_ranged = False, is_spell = False):
         """Returns a text description of the damage.
         Simulates the damage from a caster."""
-        types = ["phys", "fire", "ice", "elec", "energy", "light", "dark"]
+        types = ["phys", "fire", "ice", "lightning", "energy", "light", "dark"]
         txt = ""
         mult = 1
         total = [0, 0]

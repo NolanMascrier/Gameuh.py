@@ -260,16 +260,16 @@ class Node:
         else:
             match self._rarity:
                 case 1:
-                    surface.blit(SYSTEM["images"]["slot_magic"].image,\
+                    surface.blit(SYSTEM["images"]["tree_rare"].image,\
                         (self._button.x, self._button.y), True)
                 case 1:
-                    surface.blit(SYSTEM["images"]["slot_rare"].image,\
+                    surface.blit(SYSTEM["images"]["tree_rare"].image,\
                         (self._button.x, self._button.y), True)
                 case 1:
-                    surface.blit(SYSTEM["images"]["slot_exalted"].image,\
+                    surface.blit(SYSTEM["images"]["tree_rare"].image,\
                         (self._button.x, self._button.y), True)
                 case _:
-                    surface.blit(SYSTEM["images"]["slot_empty"].image,\
+                    surface.blit(SYSTEM["images"]["tree_normal"].image,\
                         (self._button.x, self._button.y), True)
         if self._levels <= 1:
             return

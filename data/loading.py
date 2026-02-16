@@ -272,6 +272,8 @@ def load_images():
     SYSTEM["images"]["slot_exalted"] = Image("ui/item_top_e.png").scale(64, 64)
     SYSTEM["images"]["slot_unique"] = Image("ui/item_top_u.png").scale(64, 64)
     SYSTEM["images"]["slot_green"] = Image("ui/item_top_g.png").scale(64, 64)
+    SYSTEM["images"]["tree_normal"] = Image("ui/tree_top.png").scale(64, 64)
+    SYSTEM["images"]["tree_rare"] = Image("ui/tree_top_r.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"]["fire_mastery"] = Image("icons/temp/FireMage_5.png").scale(64, 64)
     SYSTEM["images"]["pyrotechnics"] = Image("icons/temp/FireMage_18.png").scale(64, 64)
@@ -458,7 +460,7 @@ def load_others():
     SYSTEM["images"]["mission_scroller"] = Scrollable(100, 10, 1200, 1000,\
         contains=SYSTEM["images"]["mission_map"].image)
     SYSTEM["images"]["tree_surface"] = Surface(2000, 2000)
-    SYSTEM["images"]["tree_scroller"] = Scrollable(420, 10, SCREEN_WIDTH - 500, SCREEN_HEIGHT - 200,
+    SYSTEM["images"]["tree_scroller"] = Scrollable(420, 10, SCREEN_WIDTH - 500, SCREEN_HEIGHT - 100,
                                                    contains=SYSTEM["images"]["tree_surface"])
     generate_tree()
     SYSTEM["ui_surface"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)

@@ -265,9 +265,9 @@ AFFIX_POOL = [
     AffixDefinition(
         "electric_resistance",
         [
-            (Affix("ELEC_RES_1", 0.10, [Flags.ELEC, Flags.FLAT]), 1, 0, 60),
-            (Affix("ELEC_RES_2", 0.25, [Flags.ELEC, Flags.FLAT]), 0.6, 10, 90),
-            (Affix("ELEC_RES_3", 0.40, [Flags.ELEC, Flags.FLAT]), 0.3, 25, 999),
+            (Affix("ELEC_RES_1", 0.10, [Flags.LIGHTNING, Flags.FLAT]), 1, 0, 60),
+            (Affix("ELEC_RES_2", 0.25, [Flags.LIGHTNING, Flags.FLAT]), 0.6, 10, 90),
+            (Affix("ELEC_RES_3", 0.40, [Flags.LIGHTNING, Flags.FLAT]), 0.3, 25, 999),
         ],
         1.0,
         [Flags.ARMOR, Flags.HELM, Flags.BOOTS, Flags.HANDS, Flags.RING,

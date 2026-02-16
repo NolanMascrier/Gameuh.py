@@ -132,7 +132,7 @@
         "Ice damage is often #c#(89, 219, 255)blue #c#(255, 255, 255)in color. It can",
         "slowdown targets and even outright immobilize them."
     ],
-    "elec": [
+    "lightning": [
         "Thunder damage is often #c#(250, 233, 0)yellow #c#(255, 255, 255)in color. It can spread",
         "between enemies."
     ],
@@ -285,7 +285,7 @@
         "phys": "#c#(180, 180, 180)Physical",
         "fire": "#c#(255, 119, 0)Fire",
         "ice": "#c#(89, 219, 255)Ice",
-        "elec": "#c#(250, 233, 0)Thunder",
+        "lightning": "#c#(250, 233, 0)Thunder",
         "energy": "#c#(156, 0, 5)Energy",
         "light": "#c#(255, 254, 219)Divine",
         "dark": "#c#(71, 0, 125)Dark",
@@ -419,28 +419,28 @@
         "phys": "Physical resistance",
         "fire": "Fire resistance",
         "ice": "Ice resistance",
-        "elec": "Thunder resistance",
+        "lightning": "Thunder resistance",
         "energy": "Energy resistance",
         "light": "Divine resistance",
         "dark": "Void resistance",
         "phys_dmg": "Physical damage",
         "fire_dmg": "Fire damage",
         "ice_dmg": "Ice damage",
-        "elec_dmg": "Thunder damage",
+        "lightning_dmg": "Thunder damage",
         "energy_dmg": "Energy damage",
         "light_dmg": "Divine damage",
         "dark_dmg": "Void damage",
         "phys_flat": "Physical damage",
         "fire_flat": "Fire damage",
         "ice_flat": "Ice damage",
-        "LIGHTNING_FLAT": "Thunder damage",
+        "lightning_flat": "Thunder damage",
         "energy_flat": "Energy damage",
         "light_flat": "Divine damage",
         "dark_flat": "Void damage",
         "phys_pen": "Physical penetration",
         "fire_pen": "Fire penetration",
         "ice_pen": "Ice penetration",
-        "elec_pen": "Thunder penetration",
+        "lightning_pen": "Thunder penetration",
         "energy_pen": "Energy penetration",
         "light_pen": "Divine penetration",
         "dark_pen": "Void penetration",
@@ -458,10 +458,10 @@
         "ice_dmg_tab": "-> Bonus",
         "ice_pen_tab": "-> Penetration",
         "ice_flat_tab": "-> Flat damage",
-        "elec_tab": "#c#(250, 233, 0)Thunder damage",
-        "elec_dmg_tab": "-> Bonus",
-        "elec_pen_tab": "-> Penetration",
-        "LIGHTNING_FLAT_tab": "-> Flat damage",
+        "lightning_tab": "#c#(250, 233, 0)Thunder damage",
+        "lightning_dmg_tab": "-> Bonus",
+        "lightning_pen_tab": "-> Penetration",
+        "lightning_flat_tab": "-> Flat damage",
         "energy_tab": "#c#(156, 0, 5)Energy damage",
         "energy_dmg_tab": "-> Bonus",
         "energy_pen_tab": "-> Penetration",
@@ -1000,7 +1000,7 @@
         ["Shielding", "Shield"],
         ["Barring", "Barrier"]
       ],
-      "elec": [
+      "lightning": [
         ["Walled", "Wall"],
         ["Shielding", "Shield"],
         ["Barring", "Barrier"]
@@ -1105,13 +1105,13 @@
         ["Frosty", "Frost"],
         ["Cold", "Cold"]
       ],
-      "elec_dmg": [
+      "lightning_dmg": [
         ["Arcing", "Arc"],
         ["Thundering", "Thunder"],
         ["Sparking", "Spark"],
         ["Shocking", "Shock"]
       ],
-      "elec_pen": [
+      "lightning_pen": [
         ["Devouring", "Devourer"],
         ["Piercing", "Piercer"],
         ["Dimensional", "Dimension"],

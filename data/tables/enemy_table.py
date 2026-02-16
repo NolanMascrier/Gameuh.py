@@ -119,7 +119,7 @@ MONOLITH = {
             "dark": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
             "fire": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
             "ice": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
-            "elec": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
+            "lightning": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
             "energy": Stat(0.5, "Light resistance", 0.9, scaling_value=0),
             "speed": Stat(0.3, "speed", scaling_value=0),
     },
