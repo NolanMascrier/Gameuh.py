@@ -17,6 +17,7 @@ BLOOD_RED = (89, 10, 10)
 FIREBOLT = Damage(1.5, fire=2, flags=[Flags.SPELL])
 FIREBALL = Damage(2, fire=5, flags=[Flags.SPELL])
 FIREBALL_EXPLOSION = Damage(2, fire=7, flags=[Flags.SPELL])
+FIRE_MASTERY = Affliction("fire_mastery", 0.1, 15, flags=[Flags.BOON, Flags.FIRE_DMG], stackable=True)
 
 KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
 
@@ -63,6 +64,10 @@ FURY_COST = Affliction("fury3", 0.025, 1, flags=[Flags.MANA_COST, Flags.COOLDOWN
 BLOODPACT = Affliction("bloodpact1", 0.75, -1, [Flags.BLESS, Flags.ALL_DAMAGE])
 BLOODPACT_RES = Affliction("bloodpact2", 20, -1, [Flags.LIFE_REGEN, Flags.FLAT])
 
+LIGHTNING_BOLT = Damage(5, 2, elec=1, flags=[Flags.SPELL])
+SHOCK = Damage(5, 2, elec=1, flags=[Flags.SPELL])
+CONDUCTION = Affliction("conduction", 0, 5, flags=[Flags.BLESS, Flags.LIGHTNING_DMG], stackable=False)
+
 def generate_spell_list():
     """Generates the spells and add them to stuff"""
     firebolt_icon = Image("icons/spells/firebolt.png").scale(64, 64)
@@ -80,8 +85,8 @@ def generate_spell_list():
     magicmissile_icon = Image("icons/spells/magicmissile.png").scale(64, 64)
     rip_icon = Image("icons/spells/rip.png").scale(64, 64)
     pact_icon = Image("icons/spells/bloodpact.png").scale(64, 64)
-    meteor_icon = Image("icons/temp/FireMage_4.png").scale(64, 64)
-    inferno_icon = Image("icons/temp/FireMage_5.png").scale(64, 64)
+    meteor_icon = Image("icons/spells/FireMage_4.png").scale(64, 64)
+    inferno_icon = Image("icons/spells/FireMage_5.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
@@ -210,6 +215,14 @@ def generate_spell_list():
     bloodpact = Spell("bloodpact", pact_icon, None, None, 0, 0.9,\
         cooldown=1, flags=[Flags.AURA, Flags.TOGGLEABLE, Flags.LIFE_RESERVATION, Flags.BUFF],
         buffs=[BLOODPACT, BLOODPACT_RES])
+    lightning_bolt = Spell("lightning_bolt", arc_icon, "lightning_bolt", LIGHTNING_BOLT, 3,\
+        cooldown=0.35, projectiles=1, chains=3, flags=[Flags.LIGHT, Flags.SPREAD,\
+        Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS, Flags.ARC_PARTICLE], \
+        anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"])
+    shock = Spell("shock", arc_icon, "lightning_bolt", SHOCK, 3,\
+        cooldown=0.35, projectiles=1, chains=3, flags=[Flags.LIGHT, Flags.SPREAD,\
+        Flags.PROJECTILE, Flags.AIMED_AT_CLOSEST, Flags.CHAINS, Flags.ARC_PARTICLE], \
+        anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"])
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
@@ -224,6 +237,8 @@ def generate_spell_list():
     SYSTEM["spells"]["magicmissile"] = magicmissile
     SYSTEM["spells"]["rip"] = rip
     SYSTEM["spells"]["bloodpact"] = bloodpact
+    SYSTEM["spells"]["lightning_bolt"] = lightning_bolt
+    SYSTEM["spells"]["shock"] = shock
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

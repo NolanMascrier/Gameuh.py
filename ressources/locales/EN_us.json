@@ -202,7 +202,11 @@
       "inferno": "Inferno",
       "ice_mastery": "Ice Mastery",
       "icebolt": "Icebolt",
-      "congelation": "Congelation"
+      "congelation": "Congelation",
+      "lightning_mastery": "Lightning Mastery",
+      "shock": "Shock",
+      "lightning_bolt": "Lightning Bolt",
+      "conduction": "Conduction"
     },
     "loading": {
       "fonts": "Loading fonts ...",
@@ -343,7 +347,7 @@
         "ice_mastery": "Increases ice damage taken by the target by 10% and grants 10% more ice damage.",
         "congelation": "Increase the slow effect of freezing by 50% and freezed targets become vulnerable.",
         "lightning_mastery": "Increases lightning damage taken by the target by 10% and grants 10% more lightning damage.",
-        "conduction": "Lightning damage can now spread to 2 additional targets, dealing 50% less damage to them."
+        "conduction": "Lightning damage can now spread to 2 additional targets, dealing 10% of the initial damage to them."
     },
     "spells_name": {
         "none": "Nothing",
@@ -391,7 +395,9 @@
         "bloodpact": "Reserves most of your life, but greatly \nincreases regeneration and damage done.",
         "meteor": "Launch a meteor from the sky, dealing\nlarge fire damage in a large area.",
         "inferno": "Create a large fire field that deals\ndamage over time.",
-        "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you."
+        "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you.",
+        "lightning_bolt": "Release a lightning bolt in front of you, that pierce through enemies and deal lightning damage.",
+        "shock": "Release small lightning bolts in all directions, dealing lightning damage to nearby enemies."
     },
 
     "descripts": {
