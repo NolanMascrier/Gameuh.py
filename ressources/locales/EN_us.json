@@ -371,7 +371,7 @@
         "cone_of_flames": "Cone of Flames",
         "lightning_bolt": "Lightning Bolt",
         "lightning_arc": "Lightning Arc",
-        "chain_lightning": "Chain Lightning",
+        "shock": "Skittering bolts",
         "circle_of_ice": "Circle of Ice",
         "ice_nova": "Ice Nova"
     },
@@ -395,9 +395,9 @@
         "bloodpact": "Reserves most of your life, but greatly \nincreases regeneration and damage done.",
         "meteor": "Launch a meteor from the sky, dealing\nlarge fire damage in a large area.",
         "inferno": "Create a large fire field that deals\ndamage over time.",
-        "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you.",
-        "lightning_bolt": "Release a lightning bolt in front of you, that pierce through enemies and deal lightning damage.",
-        "shock": "Release small lightning bolts in front of you, dealing lightning damage to enemies."
+        "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you.\nThe cone loses power while traveling.",
+        "lightning_bolt": "Release a lightning bolt in front of \nyou, that pierce through enemies and deal lightning damage.",
+        "shock": "Release small skittering lightning bolts in front \nof you, dealing lightning damage to enemies."
     },
 
     "descripts": {
