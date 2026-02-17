@@ -152,13 +152,19 @@ class Spell():
             if self._level > 0:
                 for a in self._level_list[self._level]:
                     self.afflict(a)
-        self.recalculate_damage()
+        self.tick_update()
         for step in self._sequence:
             step.update()
         self._gathered_flags = []
         for _, j in self._jewels.items():
             if j is not None:
                 self._gathered_flags.extend(j.flags)
+
+    def tick_update(self):
+        """Updates the immediate data of the spell."""
+        self.recalculate_damage()
+        for step in self._sequence:
+            step.tick_update()
 
     def recalculate_damage(self):
         """Recalculates the damage using the spell's stats."""
@@ -260,7 +266,7 @@ class Spell():
         """Ticks down the spell's cooldown."""
         self._cooldown -= 0.016
         self._cooldown = max(self._cooldown, 0)
-        self.update()
+        self.tick_update()
         for _, stat in self._stats.items():
             stat.tick()
         for buff in self._afflicts:

@@ -191,7 +191,7 @@ class Character():
             "up": lambda: self.__set_movement(0, -1),
             "down": lambda: self.__set_movement(0, 1),
         }
-        if Flags.CANNOT_ACT in self.creature.gather_flags():
+        if Flags.CANNOT_ACT in self.creature.gather_flags:
             return
         for k in keys:
             if k in actions:

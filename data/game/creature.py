@@ -36,7 +36,8 @@ class Creature:
     """
     __slots__ = '_name', '_level', '_exp', '_exp_to_next', '_origin', '_life_regen', '_mana_regen',\
                 '_stats', '_gear', '_buffs', '_dots', '_changed', '_ap', '_life_reservation', \
-                '_mana_reservation', "_life_efficacy", '_mana_efficacy'
+                '_mana_reservation', "_life_efficacy", '_mana_efficacy', '_changed_flags', \
+                "_all_flags"
     def __init__(self, name, origin = None):
         self._name = name
         self._level = 1
@@ -163,6 +164,8 @@ class Creature:
         self.__get_bonuses_from_stat()
         self._stats["life"].refill()
         self._stats["mana"].refill()
+        self._all_flags = []
+        self._changed_flags = True
 
     def recalculate_damage(self, damage_source: Damage, is_dot = False) -> Damage:
         """Takes a raw damage source (ie from a spell) and applies the creature's
@@ -230,14 +233,18 @@ class Creature:
         self.afflict(Affliction("int_to_spell", spell, -1, [Flags.SPELL, Flags.BOON], False))
         self.afflict(Affliction("dex_to_ranged", ranged, -1, [Flags.RANGED, Flags.BOON], False))
 
+    @property
     def gather_flags(self) -> list:
         """Gathers all flags from all debuffs and buffs. Used to
         do special effects from unique affixes."""
-        lst = []
-        for afflic in self._buffs:
-            if isinstance(afflic, Affliction):
-                lst.extend(afflic.flags)
-        return lst
+        if self._changed_flags:
+            self._changed_flags = False
+            lst = []
+            for afflic in self._buffs:
+                if isinstance(afflic, Affliction):
+                    lst.extend(afflic.flags)
+            self._all_flags = lst
+        return self._all_flags
 
     def __get_armor_mitigation(self) -> float:
         """Calculate and returns the mitigation from the endurance
@@ -273,7 +280,7 @@ class Creature:
         Args:
             damage (Damage): Source of damage.
         """
-        unique_flags = self.gather_flags()
+        unique_flags = self.gather_flags
         damage = 0
         dmg, pen = damage_source.get_damage()
         mitig = 1 - self.__get_armor_mitigation()
@@ -384,7 +391,8 @@ class Creature:
                 self._stats["energy"].afflict(affliction)
                 self._stats["light"].afflict(affliction)
                 self._stats["dark"].afflict(affliction)
-                self._changed.update({"phys", "fire", "ice", "lightning", "energy", "light", "dark"})
+                self._changed.update({"phys", "fire", "ice", "lightning",
+                                      "energy", "light", "dark"})
             elif stat_key == "all_damage":
                 self._stats["phys_dmg"].afflict(affliction)
                 self._stats["fire_dmg"].afflict(affliction)
@@ -437,6 +445,7 @@ class Creature:
                 if roll > treshold:
                     return
             self.__apply_afflict(affliction.clone(is_debuff))
+        self._changed_flags = True
 
     def __remove_afflic(self, affliction: Affliction):
         """Removes an affliction from the character.
@@ -449,7 +458,8 @@ class Creature:
             if stat_key in self._stats:
                 self._changed.add(stat_key)
             elif stat_key == "all_resistances":
-                self._changed.update({"phys", "fire", "ice", "lightning", "energy", "light", "dark"})
+                self._changed.update({"phys", "fire", "ice", "lightning",
+                                      "energy", "light", "dark"})
             elif stat_key == "all_damage":
                 self._changed.update({"phys_dmg", "fire_dmg", "ice_dmg", "lightning_dmg",\
                     "energy_dmg", "light_dmg", "dark_dmg"})
@@ -476,6 +486,7 @@ class Creature:
                 self.__remove_afflic(a)
         elif isinstance(affliction, Affliction):
             self.__remove_afflic(affliction)
+        self._changed_flags = True
 
     def tick(self):
         """Ticks down all buffs and debuffs."""
