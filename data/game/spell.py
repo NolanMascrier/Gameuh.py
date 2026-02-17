@@ -700,7 +700,7 @@ class Spell():
                 else:
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
-                        self.spawn_projectile(entity, caster, evil, 0, 0, i + 1, -45 + spread * i)
+                        self.spawn_projectile(entity, caster, evil, 0, 0, self._stats["delay"].c_value, -45 + spread * i)
             elif Flags.CIRCULAR_BLAST in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)

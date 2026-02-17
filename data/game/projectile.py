@@ -158,6 +158,9 @@ class Projectile(HitBox):
             dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
             self._immune.append(target)
+            if Flags.REPLICATE in self._behaviours:
+                pass
+
             self._bounced = True
             if self._bounces <= 0 and self._chains <= 0 and Flags.PIERCING not in self._behaviours:
                 self._flagged = True
@@ -335,6 +338,8 @@ class Projectile(HitBox):
                 self._angle = random.randint(225, 315)
             self.move((self.x, self.y))
         if self._bounces <= 0 and Flags.BOUNCE in self._behaviours:
+            self._flagged = True
+        if self._delay <= 0 and Flags.EXPIRE in self._behaviours:
             self._flagged = True
         self._delay -= 0.016
 

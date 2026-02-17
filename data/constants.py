@@ -285,6 +285,7 @@ class Flags(str, Enum):
     PROJECTILE = "projectile"
     BOUNCE = "bounce"
     CURVE = "curve"
+    CONE = "cone"
     CHAINS = "chains"
     ACCELERATE = "accelerate"
     DELAYED = "delayed"
@@ -298,6 +299,7 @@ class Flags(str, Enum):
     AIMED_AT_CLOSEST = "aimed_at_closest"
     HARD_TRACKING = "hard_tracking"
     EXPLODES = "explodes"
+    EXPIRE = "expire"
     UNNATACH = "unnatached_barrage"
     WARN = "warning"
     ARC_PARTICLE = "arc_particles"
@@ -317,6 +319,7 @@ class Flags(str, Enum):
     NOVA = "nova"
     SKITTER = "skitter"
     IMPACT_ANIMATION_RANDOM = "impact_anim_random"
+    REPLICATE = "replicate_on_hit"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
     COMBO_SPELL = "combo_spell"

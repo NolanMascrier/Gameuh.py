@@ -56,6 +56,7 @@ class Character():
         self._immune = []
         self._spellbook = [
             "firebolt",
+            "fireball",
             "voidbolt",
             "arc",
             "icebolt",
@@ -68,7 +69,8 @@ class Character():
             "winddash",
             "bloodpact",
             "lightning_bolt",
-            "shock"
+            "shock",
+            "cone_of_flames"
         ]
         self._inventory = []
         self._runes = [

@@ -15,9 +15,10 @@ from data.tables.particle_table import PARTICLE_CONFIGS
 BLOOD_RED = (89, 10, 10)
 
 FIREBOLT = Damage(1.5, fire=2, flags=[Flags.SPELL])
-FIREBALL = Damage(2, fire=5, flags=[Flags.SPELL])
-FIREBALL_EXPLOSION = Damage(2, fire=7, flags=[Flags.SPELL])
+FIREBALL = Damage(2, fire=7, flags=[Flags.SPELL])
+FIREBALL_EXPLOSION = Damage(2, fire=15, flags=[Flags.SPELL])
 FIRE_MASTERY = Affliction("fire_mastery", 0.1, 15, flags=[Flags.BOON, Flags.FIRE_DMG], stackable=True)
+CONE_OF_FLAMES = Damage(1.2, fire=5, flags=[Flags.SPELL])
 
 KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
 
@@ -148,7 +149,7 @@ def generate_spell_list():
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img",\
               FIREBALL_EXPLOSION, effective_frames=3)
-
+    
     master_1 = Spell("", m1_icon, "master1_img", MASTER_1, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE], offset_x=60, effective_frames=8)
     master_2 = Spell("", m2_icon, "master2_img", MASTER_2, 0, 0,\
@@ -161,8 +162,6 @@ def generate_spell_list():
     firebolt = Spell("firebolt", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3,\
         cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE],\
         trail = PARTICLE_CONFIGS["firebolt_trail"], impact = PARTICLE_CONFIGS["firebolt_impact"])
-    firebolt2 = Spell("firebolt2", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3,\
-        cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 10,\
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3,
@@ -228,9 +227,20 @@ def generate_spell_list():
         cooldown=0.35, projectiles=5, spread=180, flags=[Flags.LIGHTNING, Flags.SPREAD,\
         Flags.PROJECTILE, Flags.SKITTER, Flags.AIMED_AT_MOUSE], \
         anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"], delay=0.05, proj_speed=10)
+    
+    chain_lightning = Spell("chain_lightning", arc_icon, "lightboltanim", LIGHTNING_BOLT, 18,\
+        cooldown=3, projectiles=1, chains=5, flags=[Flags.LIGHTNING, Flags.BARRAGE,\
+        Flags.PROJECTILE, Flags.REPLICATE], \
+        anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"], proj_speed=60)
+    
+    cone_of_flames = Spell("cone_of_flames", inferno_icon, "firebolt_proj_img", CONE_OF_FLAMES, 10,\
+        cooldown=5, projectiles=10, flags=[Flags.FIRE, Flags.EXPIRE, Flags.SPELL, Flags.PROJECTILE,
+                                           Flags.SPREAD, Flags.PIERCING],
+         delay=0.5, proj_speed=10, spread=90)
+
+    
 
     SYSTEM["spells"]["firebolt"] = firebolt
-    SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["exult"] = exult
     SYSTEM["spells"]["voidbolt"] = voidolt
@@ -245,6 +255,9 @@ def generate_spell_list():
     SYSTEM["spells"]["bloodpact"] = bloodpact
     SYSTEM["spells"]["lightning_bolt"] = lightning_bolt
     SYSTEM["spells"]["shock"] = shock
+    SYSTEM["spells"]["chain_lightning"] = chain_lightning
+    SYSTEM["spells"]["cone_of_flames"] = cone_of_flames
+
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

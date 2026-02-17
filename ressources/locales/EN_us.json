@@ -397,7 +397,7 @@
         "inferno": "Create a large fire field that deals\ndamage over time.",
         "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you.",
         "lightning_bolt": "Release a lightning bolt in front of you, that pierce through enemies and deal lightning damage.",
-        "shock": "Release small lightning bolts in all directions, dealing lightning damage to nearby enemies."
+        "shock": "Release small lightning bolts in front of you, dealing lightning damage to enemies."
     },
 
     "descripts": {

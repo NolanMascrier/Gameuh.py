@@ -57,8 +57,10 @@ def generate_tree():
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], sorceress_start)
     _congelation = Node("congelation", "congelation", 600, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery)
-    _icebolt = Node("icebolt", "icebolt", 700, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+    _icebolt = Node("icebolt", "icebolt", 600, 800, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery)
+    #_nova = Node("nova", "nova", 700, 800, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+     #                           [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _icebolt)
     tree_c = Node("skil_b", "tree_b", 650, 500, [[]], tree_b)
     _lightning_mastery = Node("lightning_mastery", "lightning_mastery", 500, 1100, [[LIGHTNING_NODE_1], [LIGHTNING_NODE_2], [LIGHTNING_NODE_3],
                                 [LIGHTNING_NODE_4], [LIGHTNING_NODE_5, LIGHTNING_NODE_5B]], sorceress_start)
