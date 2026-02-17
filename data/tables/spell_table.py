@@ -8,6 +8,8 @@ from data.image.animation import Animation, Image
 from data.numerics.affliction import Affliction
 from data.game.spell import Spell
 
+from data.tables.spelllevel_table import FIREBALL_LEVELS
+
 from data.tables.particle_table import PARTICLE_CONFIGS
 
 BLOOD_RED = (89, 10, 10)
@@ -155,7 +157,8 @@ def generate_spell_list():
         cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
     fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 10,\
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
-        Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3)
+        Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3,
+        level_list=FIREBALL_LEVELS)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)

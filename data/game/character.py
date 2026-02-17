@@ -56,7 +56,6 @@ class Character():
         self._immune = []
         self._spellbook = [
             "firebolt",
-            "fireball",
             "voidbolt",
             "arc",
             "icebolt",
@@ -135,6 +134,14 @@ class Character():
             if self._equipped_spells[keys] is not None:
                 SYSTEM["spells"][self._equipped_spells[keys]]\
                     .on_crit(self._creature, self._entity, False, self._entity.flipped)
+
+    def unlearn(self, spell):
+        """Unlearns the spell and removes it if equipped."""
+        if spell in self._spellbook:
+            self._spellbook.remove(spell)
+        for idx, name in self._equipped_spells.items():
+            if name == spell:
+                self._equipped_spells[idx] = None
 
     def on_dodge(self):
         """Called when the creature dodges."""

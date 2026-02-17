@@ -45,7 +45,8 @@ class Spell():
         `[]` (no flags) but flags SHOULD be given for the spell to work.
         buffs (list, optionnal): List of afflictions that the spell\
         will inflict. Defaults to `[]`.
-        debuffs
+        debuffs: ...
+        level_list: List of buffs per level
     """
     def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,
                  bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,
@@ -53,7 +54,7 @@ class Spell():
                  cooldown = 0.1, projectiles = 1, flags = None, buffs = None,
                  debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,
                  effective_frames = None, anim_on_hit = None, alterations = None,
-                 debuff_chance = 1.0, trail = None, impact = None):
+                 debuff_chance = 1.0, trail = None, impact = None, level_list = None):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -64,6 +65,7 @@ class Spell():
         self._exp_to_next = 3000
         self._effective_frames = effective_frames
         self._afflicts = []
+        self._level_list = level_list
         self._stats = {
             "mana_cost": Stat(mana_cost, "mana_cost"),
             "life_cost": Stat(life_cost, "life_cost"),
@@ -135,16 +137,21 @@ class Spell():
 
     def update(self):
         """Updates the data of the spell."""
-        dmg = Affliction("DAMGE_FROM_LEVEL", 1.02 * (self._level - 1), -1,\
-            [Flags.DAMAGE_MOD, Flags.BOON])
-        hp = Affliction("LIFE_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
-            [Flags.LIFE_COST, Flags.BLESS])
-        mana = Affliction("MANA_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
-            [Flags.MANA_COST, Flags.BLESS])
-        if Flags.TOGGLEABLE in self.all_flags:
-            self.afflict((dmg))
+        if self._level_list is None:
+            dmg = Affliction("DAMGE_FROM_LEVEL", 1 + 0.02 * (self._level - 1), -1,\
+                [Flags.DAMAGE_MOD, Flags.BOON])
+            hp = Affliction("LIFE_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
+                [Flags.LIFE_COST, Flags.BLESS])
+            mana = Affliction("MANA_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
+                [Flags.MANA_COST, Flags.BLESS])
+            if Flags.TOGGLEABLE in self.all_flags:
+                self.afflict((dmg))
+            else:
+                self.afflict((dmg, hp, mana))
         else:
-            self.afflict((dmg, hp, mana))
+            if self._level > 0:
+                for a in self._level_list[self._level]:
+                    self.afflict(a)
         self.recalculate_damage()
         for step in self._sequence:
             step.update()
@@ -212,6 +219,28 @@ class Spell():
     def set_level(self, lvl):
         """Sets the spell's level."""
         self._level = min(20, max(0, lvl))
+        if self._level <= 14:
+            itm = self.unequip(4)
+            if itm is not None:
+                SYSTEM["player"].inventory.append(itm)
+        if self._level <= 11:
+            itm = self.unequip(3)
+            if itm is not None:
+                SYSTEM["player"].inventory.append(itm)
+        if self._level <= 8:
+            itm = self.unequip(2)
+            if itm is not None:
+                SYSTEM["player"].inventory.append(itm)
+        if self._level <= 5:
+            itm = self.unequip(1)
+            if itm is not None:
+                SYSTEM["player"].inventory.append(itm)
+        if self._level <= 2:
+            itm = self.unequip(0)
+            if itm is not None:
+                SYSTEM["player"].inventory.append(itm)
+        self.reset()
+        self.update()
 
     def gain_exp(self, amount: int):
         """Grants the skill experience."""
@@ -394,6 +423,7 @@ class Spell():
         self._afflicts.clear()
         for idx, jewel in self._jewels.items():
             self.equip(idx, jewel)
+        self.update()
 
     def __damage_describe(self, caster):
         """Describes the damage and buffs components."""

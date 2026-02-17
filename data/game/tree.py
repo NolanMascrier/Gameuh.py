@@ -206,11 +206,8 @@ class Node:
                 SYSTEM["player"].creature.afflict(f)
             #Spells
             for s in self._skills:
-                print("Attempting to learn spell", s)
                 if self._invested >= 0:
-                    print("Plonk")
                     if s not in SYSTEM["player"].spellbook:
-                        print("Djadjan")
                         SYSTEM["player"].spellbook.append(s)
                     SYSTEM["spells"][s].set_level(self.invested + 1)
             #Check
@@ -226,10 +223,11 @@ class Node:
                 SYSTEM["player"].creature.remove_affliction(f)
             #Spells
             for s in self._skills:
-                if self._invested < 0:
+                if self._invested - 1 < 0:
                     if s in SYSTEM["player"].spellbook:
-                        SYSTEM["player"].spellbook.remove(s)
-                    SYSTEM["spells"][s].set_level(self.invested + 1)
+                        SYSTEM["player"].unlearn(s)
+                        #SYSTEM["player"].spellbook.remove(s)
+                SYSTEM["spells"][s].set_level(self.invested)
             self._invested -= 1
             #Gives the previous level buffs
             if self._invested >= 0:
