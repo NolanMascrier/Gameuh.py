@@ -140,6 +140,8 @@ class Enemy():
         """Ticks down the entity."""
         if self._exploded:
             return
+        if self._entity.is_inside(SYSTEM["mouse"]):
+            SYSTEM["mouse_target"] = self
         if self._creature.stats["life"].current_value <= 0:
             if Flags.SUICIDER in self._behaviours:
                 self._entity.play("attack")
@@ -147,10 +149,8 @@ class Enemy():
             self._entity.detach("die", True)
             self.explode()
             return
-        if self._entity.is_inside(SYSTEM["mouse"]):
-            SYSTEM["mouse_target"] = self
         self.creature_tick()
-        if Flags.CANNOT_ACT in self.creature.gather_flags():
+        if Flags.CANNOT_ACT in self.creature.gather_flags:
             self._counter += 0.016
             self._attacking = False
             self._stopped = False

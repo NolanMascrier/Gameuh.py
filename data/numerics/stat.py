@@ -5,8 +5,6 @@ Flat increase also exists, but should only be accessed through gear.
 The actual initial value should only be increased through level up, as it's gonna be
 definitive."""
 
-from functools import lru_cache
-
 import json
 from data.numerics.affliction import Affliction
 from data.constants import Flags, trad
@@ -30,7 +28,7 @@ class Stat:
         scales multiplicatively. Defaults to `False` (additive).
     """
     __slots__ = '_value', '_name', '_flats', '_mults', '_incr', '_cap', '_scaling_value', \
-                '_mult_scaling', '_round'
+                '_mult_scaling', '_round', '_has_mods', "_changed"
     def __init__(self, val = 10, name = "stat",\
             max_cap:float = None, min_cap = None, precision:int = 2,\
             scaling_value:float = 0, mult_scaling = False):
@@ -43,6 +41,8 @@ class Stat:
         self._scaling_value = scaling_value
         self._mult_scaling = mult_scaling
         self._round = int(precision)
+        self._has_mods = False
+        self._changed = False
 
     def get_flats(self):
         """Returns the sum of the flat values"""
@@ -128,6 +128,7 @@ class Stat:
             self._handle_affliction_list("_mults", affliction)
         if Flags.FLAT in affliction.flags:
             self._handle_affliction_list("_flats", affliction)
+        self._changed = True
 
     def remove_affliction(self, affliction: Affliction):
         """Removes an affliction.
@@ -144,6 +145,7 @@ class Stat:
         for afflic in self._flats:
             if afflic == affliction:
                 self._flats.remove(afflic)
+        self._changed = True
 
     def tick(self):
         """Ticks down all increases and multipliers durations.
@@ -274,7 +276,10 @@ class Stat:
     @property
     def has_modifier(self):
         """Returns whether or not the stats has active modifiers."""
-        return bool(self._flats or self._incr or self._mults)
+        if self._changed:
+            self._has_mods = bool(self._flats or self._incr or self._mults)
+            self._changed = False
+        return self._has_mods
 
     @property
     def value(self) -> float:
