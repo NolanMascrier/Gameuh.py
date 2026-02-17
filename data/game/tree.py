@@ -262,11 +262,8 @@ class Node:
                 case 1:
                     surface.blit(SYSTEM["images"]["tree_rare"].image,\
                         (self._button.x, self._button.y), True)
-                case 1:
-                    surface.blit(SYSTEM["images"]["tree_rare"].image,\
-                        (self._button.x, self._button.y), True)
-                case 1:
-                    surface.blit(SYSTEM["images"]["tree_rare"].image,\
+                case 2:
+                    surface.blit(SYSTEM["images"]["tree_skill"].image,\
                         (self._button.x, self._button.y), True)
                 case _:
                     surface.blit(SYSTEM["images"]["tree_normal"].image,\

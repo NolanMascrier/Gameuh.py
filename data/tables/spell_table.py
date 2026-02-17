@@ -153,7 +153,7 @@ def generate_spell_list():
         trail = PARTICLE_CONFIGS["firebolt_trail"], impact = PARTICLE_CONFIGS["firebolt_impact"])
     firebolt2 = Spell("firebolt2", firebolt_icon, "firebolt_proj_img", FIREBOLT, 3,\
         cooldown=0.4, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE])
-    fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 0,\
+    fireball = Spell("fireball", fireball_icon, "fireball_proj_img", FIREBALL, 10,\
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\

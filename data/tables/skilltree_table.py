@@ -38,8 +38,8 @@ def generate_tree():
     #SI UNE NODE EST UNE FEUILLE, ELLE N'AS PAS BESOIN D'AVOIR DE NOM
     sorceress_start = Node("start", "tree_start", 250, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
                       None, rarity=1)
-    _ = Node("buffa", "tree_a", 500, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start)
+    _firebolter = Node("fireball", "explosion", 500, 250, 20, sorceress_start, ["fireball"],
+                       rarity=2) #Mets rarity=2 pour dire un skill, c'est purement visuel
     _fire_mastery = Node("fire_mastery", "fire_mastery", 500, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
                                 [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], sorceress_start)
     _pyrotechnics = Node("pyrotechnics", "pyrotechnics", 700, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],

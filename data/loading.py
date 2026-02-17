@@ -274,6 +274,7 @@ def load_images():
     SYSTEM["images"]["slot_green"] = Image("ui/item_top_g.png").scale(64, 64)
     SYSTEM["images"]["tree_normal"] = Image("ui/tree_top.png").scale(64, 64)
     SYSTEM["images"]["tree_rare"] = Image("ui/tree_top_r.png").scale(64, 64)
+    SYSTEM["images"]["tree_skill"] = Image("ui/tree_top_s.png").scale(64, 64)
     SYSTEM["images"]["item_bottom"] = Image("ui/item_bottom.png").scale(64, 64)
     SYSTEM["images"]["fire_mastery"] = Image("icons/temp/FireMage_5.png").scale(64, 64)
     SYSTEM["images"]["pyrotechnics"] = Image("icons/temp/FireMage_18.png").scale(64, 64)

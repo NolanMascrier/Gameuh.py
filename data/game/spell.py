@@ -392,6 +392,8 @@ class Spell():
         for stat in self._stats:
             self._stats[stat].reset()
         self._afflicts.clear()
+        for idx, jewel in self._jewels.items():
+            self.equip(idx, jewel)
 
     def __damage_describe(self, caster):
         """Describes the damage and buffs components."""
