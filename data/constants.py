@@ -314,6 +314,7 @@ class Flags(str, Enum):
     CIRCULAR_BLAST = "spread_all_around"
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"
+    NOVA = "nova"
     IMPACT_ANIMATION_RANDOM = "impact_anim_random"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
