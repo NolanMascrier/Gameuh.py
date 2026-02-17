@@ -302,6 +302,7 @@ class Projectile(HitBox):
                         self._warning = (points, alpha)
                     else:
                         self._warning = None
+                self._delay -= 0.016
                 return
         if Flags.SKITTER in self._behaviours:
             if self._delay <= 0:
