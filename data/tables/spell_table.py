@@ -138,6 +138,7 @@ def generate_spell_list():
         loops=8, plays_once=True, lines=4).scale(720, 1980)
     SYSTEM["images"]["lightboltanim"] = Animation("anims/lightbolt.png", 64, 64, frame_rate=0.25)\
         .rotate(90).scale(64, 128)
+    SYSTEM["images"]["skitterbolt"] = Animation("anims/skitter.png", 64, 64, frame_rate=0.25)
 
     light_strike = Animation("anims/lightningfall.png", 64, 64, frame_rate=0.25,\
         plays_once=True, loops=False).scale(128, 128)
@@ -223,10 +224,11 @@ def generate_spell_list():
         Flags.PROJECTILE, Flags.PIERCING], \
         anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"], proj_speed=60)
 
-    shock = Spell("shock", arc_icon, "furyslash_alt", SHOCK, 3,\
-        cooldown=0.35, projectiles=8, chains=3, flags=[Flags.LIGHT, Flags.SPREAD,\
-        Flags.PROJECTILE, Flags.NOVA], \
-        anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"])
+    shock = Spell("shock", arc_icon, "skitterbolt", SHOCK, 3,\
+        cooldown=0.35, projectiles=5, spread=180, flags=[Flags.LIGHTNING, Flags.SPREAD,\
+        Flags.PROJECTILE, Flags.SKITTER, Flags.AIMED_AT_MOUSE], \
+        anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"], delay=0.05, proj_speed=10)
+
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["firebolt2"] = firebolt2
     SYSTEM["spells"]["icebolt"] = icebolt

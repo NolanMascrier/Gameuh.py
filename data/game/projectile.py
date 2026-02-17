@@ -30,7 +30,7 @@ class Projectile(HitBox):
                 '_initial_delay', '_explosion', '_behaviours', '_debuffs', '_flagged', \
                 '_wandering', '_immune', '_bounced', '_chains', '_warning', '_anim_speed', \
                 '_debuff_chance', '_animation_controller', '_particle_trail', '_particle_impact', \
-                '_particle_timer', '_particle_interval'
+                '_particle_timer', '_particle_interval', '_initial_angle'
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
@@ -68,6 +68,7 @@ class Projectile(HitBox):
                     closest.entity.hitbox.center_y - y) * 180 / pi
                 self._target = closest
         cached = SYSTEM["trans_cache"].get(imagefile, -self._angle, area, False)
+        self._initial_angle = self._angle
         if cached is not None:
             self._real_image = cached
             self._animation_controller = AnimationController(cached)
@@ -298,8 +299,11 @@ class Projectile(HitBox):
                         self._warning = (points, alpha)
                     else:
                         self._warning = None
-                self._delay -= float(0.016)
                 return
+        if Flags.SKITTER in self._behaviours:
+            if self._delay <= 0:
+                self._delay = self._initial_delay
+                self._angle = numpy.random.randint(-60, 60) + self._initial_angle
         self.move()
         if Flags.CHAINS in self._behaviours and self._bounced and self._chains > 0:
             self._bounced = False
@@ -332,6 +336,7 @@ class Projectile(HitBox):
             self.move((self.x, self.y))
         if self._bounces <= 0 and Flags.BOUNCE in self._behaviours:
             self._flagged = True
+        self._delay -= 0.016
 
     def flag(self):
         """Flags the projectile for destruction."""

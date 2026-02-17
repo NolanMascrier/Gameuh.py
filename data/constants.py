@@ -315,6 +315,7 @@ class Flags(str, Enum):
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"
     NOVA = "nova"
+    SKITTER = "skitter"
     IMPACT_ANIMATION_RANDOM = "impact_anim_random"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
