@@ -320,6 +320,8 @@ class Flags(str, Enum):
     SKITTER = "skitter"
     IMPACT_ANIMATION_RANDOM = "impact_anim_random"
     REPLICATE = "replicate_on_hit"
+    DAMAGE_DECAYS = "damage_decays"
+    DAMAGE_GROWS = "damage_grows"
     #Flags for slashes
     CUTS_PROJECTILE = "cuts_proj"
     COMBO_SPELL = "combo_spell"

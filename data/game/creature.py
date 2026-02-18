@@ -167,7 +167,8 @@ class Creature:
         self._all_flags = []
         self._changed_flags = True
 
-    def recalculate_damage(self, damage_source: Damage, is_dot = False) -> Damage:
+    def recalculate_damage(self, damage_source: Damage, is_dot = False,
+                           additional_multiplier: float = 1) -> Damage:
         """Takes a raw damage source (ie from a spell) and applies the creature's
         own multipliers to it."""
         crit_roll = random.uniform(0, 1)
@@ -191,12 +192,12 @@ class Creature:
         values = {}
         for types in DAMAGE_TYPE:
             type_mult = self._stats[f"{types}_dmg"].c_value
-            roll_base = dmg[types] * type_mult
+            roll_base = dmg[types] * type_mult 
             if is_dot:
                 roll_added = 0
             else:
                 roll_added = self._stats[f"{types}_flat"].roll() * type_mult * coeff
-            full_roll = (roll_base + roll_added) * mod
+            full_roll = (roll_base + roll_added) * mod * additional_multiplier
             values[types] = full_roll
 
         pp = pen["phys"] + self._stats["phys_pen"].get_value()

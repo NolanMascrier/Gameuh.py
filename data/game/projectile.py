@@ -30,7 +30,7 @@ class Projectile(HitBox):
                 '_initial_delay', '_explosion', '_behaviours', '_debuffs', '_flagged', \
                 '_wandering', '_immune', '_bounced', '_chains', '_warning', '_anim_speed', \
                 '_debuff_chance', '_animation_controller', '_particle_trail', '_particle_impact', \
-                '_particle_timer', '_particle_interval', '_initial_angle'
+                '_particle_timer', '_particle_interval', '_initial_angle', '_decay'
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
@@ -113,6 +113,7 @@ class Projectile(HitBox):
         self._warning = None
         self._anim_speed = anim_speed
         self._debuff_chance = debuff_chance
+        self._decay = 1
 
     def get_image(self):
         """Returns the projectile image."""
@@ -155,7 +156,11 @@ class Projectile(HitBox):
                 )
             if Flags.CHAINS in self.behaviours:
                 self._immune.clear()
-            dmg = self._origin.recalculate_damage(self._damage)
+            if Flags.DAMAGE_DECAYS in self._behaviours or Flags.DAMAGE_GROWS in self._behaviours:
+                dmg = self._origin.recalculate_damage(self._damage,
+                                                      additional_multiplier=self._decay)
+            else:
+                dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
             self._immune.append(target)
             if Flags.REPLICATE in self._behaviours:
@@ -342,6 +347,10 @@ class Projectile(HitBox):
             self._flagged = True
         if self._delay <= 0 and Flags.EXPIRE in self._behaviours:
             self._flagged = True
+        if Flags.DAMAGE_DECAYS in self._behaviours:
+            self._decay *= 0.98
+        elif Flags.DAMAGE_GROWS in self._behaviours:
+            self._decay *= 1.002
         self._delay -= 0.016
 
     def flag(self):
