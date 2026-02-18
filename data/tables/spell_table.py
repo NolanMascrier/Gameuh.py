@@ -233,7 +233,7 @@ def generate_spell_list():
         Flags.PROJECTILE, Flags.REPLICATE], \
         anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"], proj_speed=60)
     
-    cone_of_flames = Spell("cone_of_flames", inferno_icon, "firebolt_proj_img", CONE_OF_FLAMES, 10,\
+    cone_of_flames = Spell("cone_of_flames", inferno_icon, "firecone", CONE_OF_FLAMES, 10,\
         cooldown=5, projectiles=10, flags=[Flags.FIRE, Flags.EXPIRE, Flags.SPELL, Flags.PROJECTILE,
                                            Flags.SPREAD, Flags.PIERCING],
          delay=0.5, proj_speed=10, spread=90)
