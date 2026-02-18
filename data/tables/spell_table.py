@@ -222,6 +222,10 @@ def generate_spell_list():
         cooldown=1, flags=[Flags.AURA, Flags.TOGGLEABLE, Flags.LIFE_RESERVATION, Flags.BUFF],
         buffs=[BLOODPACT, BLOODPACT_RES])
 
+    ice_bolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
+        cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
+        Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)
+
     lightning_bolt = Spell("lightning_bolt", elecbolt_icon, "lightboltanim", LIGHTNING_BOLT, 15,\
         cooldown=3, projectiles=1, flags=[Flags.LIGHTNING, Flags.BARRAGE,\
         Flags.PROJECTILE, Flags.PIERCING], \
