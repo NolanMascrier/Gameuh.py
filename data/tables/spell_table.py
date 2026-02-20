@@ -29,6 +29,9 @@ VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
 ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
+ICEORB = Damage(5, 2, ice=1, flags=[Flags.SPELL])
+ICEWALL = Damage(0, ice=1, flags=[Flags.SPELL])
+ICESPEAR = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 VOIDSPEAR = Damage(10, dark=15, flags=[Flags.SPELL])
 LIGHTSPEAR = Damage(10, light=25, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=6, fire=4, flags=[Flags.MELEE])
@@ -72,6 +75,9 @@ def generate_spell_list():
     firebolt_icon = Image("icons/spells/firebolt.png").scale(64, 64)
     fireball_icon = Image("icons/spells/fireball.png").scale(64, 64)
     icebolt_icon = Image("icons/spells/icebolt.png").scale(64, 64)
+    ice_spear_icon = Image("icons/spells/ice_spear.png").scale(64, 64)
+    ice_wall_icon = Image("icons/spells/ice_wall.png").scale(64, 64)
+    ice_orb_icon = Image("icons/spells/ice_orb.png").scale(64, 64)
     voidbolt_icon = Image("icons/spells/darkbolt.png").scale(64, 64)
     elefury_icon = Image("icons/spells/elementalfury.png").scale(64, 64)
     heal_icon = Image("icons/spells/heal.png").scale(64, 64)
@@ -173,6 +179,17 @@ def generate_spell_list():
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)
+    
+    ice_orb = Spell("iceorb", ice_orb_icon, "iceorb_img", ICEORB, 10,\
+        cooldown=10, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
+        Flags.DELAYED, Flags.PIERCING], debuffs=[FREEZE], debuff_chance=0.50)
+    ice_wall = Spell("icewall", ice_wall_icon, "icewall_img", ICEWALL, 10,\
+        cooldown=20, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
+        Flags.DELAYED], debuffs=[FREEZE], debuff_chance=0.50)
+    ice_spear = Spell("icespear", ice_spear_icon, "icespear_img", ICESPEAR, 10,\
+        cooldown=15, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
+        Flags.DELAYED, Flags.PIERCING], debuffs=[FREEZE], debuff_chance=0.50)
+
     voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\
         cooldown=0, projectiles=3, delay=2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.UNNATACH, Flags.WARN], offset_y=50)
@@ -244,11 +261,15 @@ def generate_spell_list():
     cone_of_flames = Spell("cone_of_flames", inferno_icon, "firecone", CONE_OF_FLAMES, 10,\
         cooldown=5, projectiles=10, flags=[Flags.FIRE, Flags.EXPIRE, Flags.SPELL, Flags.PROJECTILE,
                                            Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS],
-         delay=0.9, proj_speed=5, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
+         delay=0.9, proj_speed=40, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
          impact=PARTICLE_CONFIGS["firecone_impact"])
+    
 
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["icebolt"] = icebolt
+    SYSTEM["spells"]["ice_spear"] = ice_spear
+    SYSTEM["spells"]["ice_wall"] = ice_wall
+    SYSTEM["spells"]["ice_orb"] = ice_orb
     SYSTEM["spells"]["exult"] = exult
     SYSTEM["spells"]["voidbolt"] = voidolt
     SYSTEM["spells"]["arc"] = arc

@@ -69,12 +69,12 @@ def generate_tree():
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _congelation, rarity=2)
     _blizzard = Node("blizzard", "blizzard", 800, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _nova, rarity=2)
-    _ice_node = Node("ice_node", "tree_a", 600, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery, rarity=2)
-    _ice_node_2 = Node("ice_node_2", "tree_a", 700, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_node, rarity=2)
-    _ice_node_3 = Node("ice_node_3", "tree_a", 800, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3], 
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_node_2, rarity=2)
+    _ice_orb = Node("ice_orb", "ice_orb", 600, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_mastery, ["ice_orb"], rarity=2)
+    _ice_spear = Node("ice_spear", "ice_spear", 700, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_orb,["ice_spear"], rarity=2)
+    _ice_wall = Node("ice_wall", "ice_wall", 800, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3], 
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _ice_spear,["ice_wall"], rarity=2)
     tree_c = Node("skil_b", "tree_b", 650, 500, [[]], tree_b)
     #LIGHTNING
     _lightning_mastery = Node("lightning_mastery", "lightning_mastery", 500, 1100, [[LIGHTNING_NODE_1], [LIGHTNING_NODE_2], [LIGHTNING_NODE_3],

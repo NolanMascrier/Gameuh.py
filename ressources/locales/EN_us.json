@@ -202,6 +202,12 @@
       "inferno": "Inferno",
       "ice_mastery": "Ice Mastery",
       "icebolt": "Icebolt",
+      "blizzard": "Blizzard",
+      "nova": "Ice Nova",
+      "ring_of_ice": "Circle of Ice",
+      "ice_orb": "Ice Orb",
+      "ice_spear": "Ice Spear",
+      "ice_wall": "Ice Wall",
       "congelation": "Congelation",
       "lightning_mastery": "Lightning Mastery",
       "shock": "Shock",
@@ -356,6 +362,9 @@
         "firebolt": "Firebolt",
         "firebolt2": "Also Firebolt",
         "icebolt": "Ice Spears",
+        "ice_orb": "Ice Orb",
+        "ice_wall": "Ice Wall",
+        "ice_spear": "Ice Spear",
         "exult": "Exultation",
         "elefury": "Elemental Fury",
         "wdash": "Wind Dash",
@@ -405,7 +414,11 @@
         "shock": "Release small skittering lightning bolts in front \nof you, dealing lightning damage to enemies.",
         "rising_tempest": "enemies striked by lightning damage get increased chance to be subject to criticals hits",
         "ring_of_frost": "Summon a ring of frost a the designed location, 1 second after its creating, piercing stalagmites erupt from it",
-        "nova": "Exhale a burst of icy energy around you, dealing ice damage and slowing enemies."
+        "nova": "Exhale a burst of icy energy around you, dealing ice damage and slowing enemies.",
+        "ice_orb": "Summon an orb of ice that slowly moves toward the target location, dealing ice damage to enemies it passes through. After a short delay, the orb shatters, dealing ice damage in the area and freezing enemies.",
+        "ice_spear": "Summon a spear of ice that quickly move towards the target location, once it collide with an enemy, ice shards are propelled away behind the strucked enemy",
+        "ice_wall": "Summun a wall of ice that block enemy movement and projectiles, the wall can be destroyed by dealing enough damage to it."
+
     },
 
     "descripts": {
