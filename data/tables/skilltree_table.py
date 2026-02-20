@@ -45,8 +45,8 @@ def generate_tree():
                        rarity=2) #Mets rarity=2 pour dire un skill, c'est purement visuel
     _firestorm = Node("firestorm", "firestorm", 600, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
                                 [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _firebolter, rarity=2)
-    _meteor = Node("meteor", "tree_a", 700, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _firestorm, rarity=2)
+    _meteor = Node("meteor", "meteor", 700, 250, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _firestorm, ["meteor"], rarity=2)
     _pyrotechnics = Node("pyrotechnics", "pyrotechnics", 700, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
                                 [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery)
     _cone_of_flames = Node("cone_of_flames", "cone_of_flames", 500, 450, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
@@ -66,7 +66,7 @@ def generate_tree():
     _nova = Node("nova", "nova", 700, 800, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _icebolt)
     _ring_of_frost = Node("ring_of_frost", "ring_of_frost", 700, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
-                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _congelation, rarity=2)
+                                [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _congelation, ["ring_of_frost"], rarity=2)
     _blizzard = Node("blizzard", "blizzard", 800, 700, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],
                                 [ICE_NODE_4], [ICE_NODE_5, ICE_NODE_5B]], _nova, rarity=2)
     _ice_orb = Node("ice_orb", "ice_orb", 600, 600, [[ICE_NODE_1], [ICE_NODE_2], [ICE_NODE_3],

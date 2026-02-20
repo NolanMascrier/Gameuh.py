@@ -18,6 +18,7 @@ FIREBOLT = Damage(1.5, fire=2, flags=[Flags.SPELL])
 FIREBALL = Damage(2, fire=7, flags=[Flags.SPELL])
 FIREBALL_EXPLOSION = Damage(2, fire=15, flags=[Flags.SPELL])
 CONE_OF_FLAMES = Damage(0.8, fire=3, flags=[Flags.SPELL])
+METEOR = Damage(3, fire=20, flags=[Flags.SPELL])
 
 KAMIKAZE = Damage(3, fire=30, flags=[Flags.MELEE])
 
@@ -74,6 +75,7 @@ def generate_spell_list():
     """Generates the spells and add them to stuff"""
     firebolt_icon = Image("icons/spells/firebolt.png").scale(64, 64)
     fireball_icon = Image("icons/spells/fireball.png").scale(64, 64)
+    meteor_icon = Image("icons/spells/meteor.png").scale(64, 64)
     icebolt_icon = Image("icons/spells/icebolt.png").scale(64, 64)
     ice_spear_icon = Image("icons/spells/ice_spear.png").scale(64, 64)
     ice_wall_icon = Image("icons/spells/ice_wall.png").scale(64, 64)
@@ -90,7 +92,7 @@ def generate_spell_list():
     magicmissile_icon = Image("icons/spells/magicmissile.png").scale(64, 64)
     rip_icon = Image("icons/spells/rip.png").scale(64, 64)
     pact_icon = Image("icons/spells/bloodpact.png").scale(64, 64)
-    #meteor_icon = Image("icons/spells/FireMage_4.png").scale(64, 64)
+    meteor_icon = Image("icons/spells/FireMage_4.png").scale(64, 64)
     inferno_icon = Image("icons/spells/firecone.png").scale(64, 64)
     elecbolt_icon = Image("icons/spells/lightning_bolt.png").scale(64, 64)
     shock_icon = Image("icons/spells/shock.png").scale(64, 64)
@@ -176,19 +178,29 @@ def generate_spell_list():
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3,
         level_list=FIREBALL_LEVELS)
+    meteor = Spell("meteor", meteor_icon, "meteor_img", METEOR, 10,\
+        cooldown=5, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
+        Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=10, effective_frames=3)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)
     
-    ice_orb = Spell("iceorb", ice_orb_icon, "iceorb_img", ICEORB, 10,\
+    ice_orb = Spell("ice_orb", ice_orb_icon, "iceorb_img", ICEORB, 10,\
         cooldown=10, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING], debuffs=[FREEZE], debuff_chance=0.50)
-    ice_wall = Spell("icewall", ice_wall_icon, "icewall_img", ICEWALL, 10,\
+    ice_wall = Spell("ice_wall", ice_wall_icon, "icewall_img", ICEWALL, 10,\
         cooldown=20, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
         Flags.DELAYED], debuffs=[FREEZE], debuff_chance=0.50)
-    ice_spear = Spell("icespear", ice_spear_icon, "icespear_img", ICESPEAR, 10,\
+    ice_spear = Spell("ice_spear", ice_spear_icon, "icespear_img", ICESPEAR, 10,\
         cooldown=15, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING], debuffs=[FREEZE], debuff_chance=0.50)
+    ring_of_frost = Spell("ring_of_frost", icebolt_icon, "ring_of_frost_img", None, 10,\
+        cooldown=20, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE, \
+        Flags.DELAYED, Flags.AIMED_AT_MOUSE],\
+        debuffs=[FREEZE], debuff_chance=0.50)
+    blizzard = Spell("blizzard", icebolt_icon, "blizzard_img", None, 10,\
+        cooldown=30, projectiles=20, delay=0.1, flags=[Flags.ICE, Flags.PROJECTILE, Flags.DELAYED, Flags.RANDOM_POSITION],\
+        debuffs=[FREEZE], debuff_chance=0.50)
 
     voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\
         cooldown=0, projectiles=3, delay=2, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
@@ -266,10 +278,13 @@ def generate_spell_list():
     
 
     SYSTEM["spells"]["firebolt"] = firebolt
+    SYSTEM["spells"]["meteor"] = meteor
     SYSTEM["spells"]["icebolt"] = icebolt
     SYSTEM["spells"]["ice_spear"] = ice_spear
     SYSTEM["spells"]["ice_wall"] = ice_wall
     SYSTEM["spells"]["ice_orb"] = ice_orb
+    SYSTEM["spells"]["ring_of_frost"] = ring_of_frost
+    SYSTEM["spells"]["blizzard"] = blizzard
     SYSTEM["spells"]["exult"] = exult
     SYSTEM["spells"]["voidbolt"] = voidolt
     SYSTEM["spells"]["arc"] = arc

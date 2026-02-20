@@ -280,7 +280,7 @@ def load_images():
     SYSTEM["images"]["pyrotechnics"] = Image("icons/spells/FireMage_18.png").scale(64, 64)
     SYSTEM["images"]["explosion"] = Image("icons/spells/FireMage_26.png").scale(64, 64)
     SYSTEM["images"]["firestorm"] = Image("icons/spells/FireMage_23.png").scale(64, 64)
-    SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/firecone.png").scale(64, 64)
+    SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     SYSTEM["images"]["ring_of_fire"] = Image("icons/spells/ring_of_fire.png").scale(64, 64)
     SYSTEM["images"]["meteor"] = Image("icons/spells/FireMage_4.png").scale(64, 64)
     SYSTEM["images"]["inferno"] = Image("icons/spells/FireMage_15.png").scale(64, 64)
