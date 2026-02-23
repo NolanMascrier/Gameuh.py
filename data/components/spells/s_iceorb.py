@@ -17,7 +17,7 @@ class IceOrb(Spell):
                          level_list, reset_rate)
 
     def spawn_projectile(self, entity, caster, evil=False, x_diff=0, y_diff=0, delay=1,
-                         angle=0, ignore_team=False, at_mouse=False):
+                         angle=0, ignore_team=False):
         area = self._stats["area"].c_value + caster.stats["area"].c_value
         debuffs = []
         debuff_chance = self._stats["debuff_chance"].c_value * caster.stats["debuff_chance"].c_value
