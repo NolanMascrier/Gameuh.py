@@ -97,6 +97,7 @@ def generate_spell_list():
     rip_icon = Image("icons/spells/rip.png").scale(64, 64)
     pact_icon = Image("icons/spells/bloodpact.png").scale(64, 64)
     meteor_icon = Image("icons/spells/FireMage_4.png").scale(64, 64)
+    meteor_det_icon = Image("icons/spells/FireMage_15.png").scale(64, 64)
     inferno_icon = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     elecbolt_icon = Image("icons/spells/lightning_bolt.png").scale(64, 64)
     shock_icon = Image("icons/spells/shock.png").scale(64, 64)
@@ -106,8 +107,8 @@ def generate_spell_list():
     SYSTEM["images"]["meteor_img"] =\
         Animation("anims/meteor.png", 24, 24, frame_rate=0.25).scale(120, 120)
     SYSTEM["images"]["meteor_expl_img"] =\
-        Animation("anims/meteor_explosion.png", 64, 64, frame_rate=0.25,
-                  plays_once=True, loops=False).scale(512, 512)
+        Animation("anims/meteor_explosion.png", 64, 64, frame_rate=0.15,
+                  plays_once=True, loops=False).scale(256, 256)
     SYSTEM["images"]["arc_proj_img"] =\
         Animation("anims/plasma.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["icebolt_proj_img"] =\
@@ -200,8 +201,8 @@ def generate_spell_list():
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3,
         level_list=FIREBALL_LEVELS)
     meteor = Meteor("meteor", meteor_icon, "meteor_img", FIREBOLT, 10,\
-        cooldown=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
-        Flags.PIERCING,Flags.AIMED_AT_MOUSE], explosion=meteor_explosion)
+        cooldown=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE, Flags.UNDESTRUCTIBLE,\
+        Flags.PIERCING,Flags.AIMED_AT_MOUSE], explosion=meteor_explosion, alt_icon=meteor_det_icon)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)

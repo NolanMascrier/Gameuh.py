@@ -290,6 +290,7 @@ class Flags(str, Enum):
     ACCELERATE = "accelerate"
     DECCELERATE = "deccelerate"
     DELAYED = "delayed"
+    UNDESTRUCTIBLE = "cannot_delete"
     WANDER = "delayed_with_wandering"
     FLURRY_RELEASE = "released_flurry"
     PIERCING = "piercing"

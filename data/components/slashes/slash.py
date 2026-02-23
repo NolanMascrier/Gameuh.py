@@ -126,7 +126,8 @@ class Slash(HitBox):
                 if not isinstance(proj, Projectile):
                     return
                 if proj.hitbox.is_colliding(self) and\
-                    proj.evil is not self._evil:
+                    proj.evil is not self._evil and\
+                    Flags.UNDESTRUCTIBLE not in proj.behaviours:
                     proj.flag()
 
     def on_hit(self, target: Creature, _ = None) -> tuple[float|None,bool|None]:
