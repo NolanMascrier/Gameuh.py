@@ -9,6 +9,7 @@ from data.numerics.affliction import Affliction
 from data.components.spells.spell import Spell
 
 from data.components.spells.s_iceorb import IceOrb
+from data.components.spells.s_meteor import Meteor
 
 from data.tables.spelllevel_table import FIREBALL_LEVELS
 
@@ -96,12 +97,17 @@ def generate_spell_list():
     rip_icon = Image("icons/spells/rip.png").scale(64, 64)
     pact_icon = Image("icons/spells/bloodpact.png").scale(64, 64)
     meteor_icon = Image("icons/spells/FireMage_4.png").scale(64, 64)
-    inferno_icon = Image("icons/spells/firecone.png").scale(64, 64)
+    inferno_icon = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     elecbolt_icon = Image("icons/spells/lightning_bolt.png").scale(64, 64)
     shock_icon = Image("icons/spells/shock.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
+    SYSTEM["images"]["meteor_img"] =\
+        Animation("anims/meteor.png", 24, 24, frame_rate=0.25).scale(120, 120)
+    SYSTEM["images"]["meteor_expl_img"] =\
+        Animation("anims/meteor_explosion.png", 64, 64, frame_rate=0.25,
+                  plays_once=True, loops=False).scale(512, 512)
     SYSTEM["images"]["arc_proj_img"] =\
         Animation("anims/plasma.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["icebolt_proj_img"] =\
@@ -169,6 +175,9 @@ def generate_spell_list():
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img",\
               FIREBALL_EXPLOSION, effective_frames=3)
+    meteor_explosion =\
+        Slash(DummyEntity(0,0, None), None, "meteor_expl_img",\
+              METEOR, effective_frames=3)
 
     ice_orb_explosion =\
         Slash(DummyEntity(0,0, None), None, "iceorb_explodes_img",\
@@ -190,9 +199,9 @@ def generate_spell_list():
         cooldown=3, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
         Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=12, effective_frames=3,
         level_list=FIREBALL_LEVELS)
-    meteor = Spell("meteor", meteor_icon, "meteor_img", METEOR, 10,\
-        cooldown=5, flags=[Flags.EXPLODES, Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
-        Flags.AIMED_AT_MOUSE], explosion=fireball_explosion, proj_speed=10, effective_frames=3)
+    meteor = Meteor("meteor", meteor_icon, "meteor_img", FIREBOLT, 10,\
+        cooldown=5, flags=[Flags.FIRE, Flags.SPREAD, Flags.PROJECTILE,\
+        Flags.PIERCING,Flags.AIMED_AT_MOUSE], explosion=meteor_explosion)
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)
@@ -290,7 +299,7 @@ def generate_spell_list():
     cone_of_flames = Spell("cone_of_flames", inferno_icon, "firecone", CONE_OF_FLAMES, 10,\
         cooldown=5, projectiles=10, flags=[Flags.FIRE, Flags.EXPIRE, Flags.SPELL, Flags.PROJECTILE,
                                            Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS],
-         delay=0.9, proj_speed=40, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
+         delay=0.9, proj_speed=10, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
          impact=PARTICLE_CONFIGS["firecone_impact"])
     
 

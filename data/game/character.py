@@ -71,7 +71,8 @@ class Character():
             "lightning_bolt",
             "shock",
             "cone_of_flames",
-            "ice_orb"
+            "ice_orb",
+            "meteor"
         ]
         self._inventory = []
         self._runes = [

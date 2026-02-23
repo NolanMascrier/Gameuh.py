@@ -290,7 +290,7 @@ def load_images():
     SYSTEM["images"]["nova"] = Image("icons/spells/nova.png").scale(64, 64)
     SYSTEM["images"]["blizzard"] = Image("icons/spells/blizzard.png").scale(64, 64)
     SYSTEM["images"]["ring_of_frost"] = Image("icons/spells/ring_of_frost.png").scale(64, 64)
-    SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/FireMage_17.png").scale(64, 64)
+    SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     SYSTEM["images"]["lightning_mastery"] = Image("icons/spells/lightning_mastery.png").scale(64, 64)
     SYSTEM["images"]["lightning_bolt"] = Image("icons/spells/lightning_bolt_2.png").scale(64, 64)
     SYSTEM["images"]["conduction"] = Image("icons/spells/conduction.png").scale(64, 64)

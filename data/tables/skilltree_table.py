@@ -50,7 +50,7 @@ def generate_tree():
     _pyrotechnics = Node("pyrotechnics", "pyrotechnics", 700, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
                                 [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery)
     _cone_of_flames = Node("cone_of_flames", "cone_of_flames", 500, 450, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
-                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery, rarity=2)
+                                [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery,["cone_of_flames"], rarity=2)
     _inferno = Node("inferno", "inferno", 600, 450, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
                                 [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _cone_of_flames, rarity=2)
     _ring_of_fire = Node("ring_of_fire", "ring_of_fire", 800, 350, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
@@ -100,23 +100,39 @@ def generate_tree():
     #MELEE
     warrior_start = Node("start", "warrior_start", 250, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
                         None, rarity=1)
-    _warrior_node_1 = Node("warrior_node_1", "tree_a", 500, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], warrior_start, rarity=2)
-    _warrior_node_2 = Node("warrior_node_2", "tree_a", 600, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_1, rarity=2)
-    _warrior_node_3 = Node("warrior_node_3", "tree_a", 700, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_2, rarity=2)
-    _warrior_node_4 = Node("warrior_node_4", "tree_a", 800, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_3, rarity=2)
-    _warrior_node_5 = Node("warrior_node_5", "tree_a", 900, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_4, rarity=2)
-    _warrior_node_5B = Node("warrior_node_5B", "tree_a", 900, 450, [[STR_NODE_1], [STR_NODE_2   ], [STR_NODE_3]], _warrior_node_4, rarity=2)
-    _warrior_node_6 = Node("warrior_node_6", "tree_a", 1000, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_5, rarity=2)
-    _warrior_node_6B = Node("warrior_node_6B", "tree_a", 1000, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_5B, rarity=2)
-    _warrior_node_7 = Node("warrior_node_7", "tree_a", 1100, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_6, rarity=2)
-    _warrior_node_7B = Node("warrior_node_7B", "tree_a", 1100, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_6B, rarity=2)
-    _warrior_node_8 = Node("warrior_node_8", "tree_a", 1200, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_7, rarity=2)
-    _warrior_node_8B = Node("warrior_node_8B", "tree_a", 1200, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_7B, rarity=2)
-    _warrior_node_9 = Node("warrior_node_9", "tree_a", 1300, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_8, rarity=2)
-    _warrior_node_9B = Node("warrior_node_9B", "tree_a", 1300, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_8B, rarity=2)
-    _warrior_node_10 = Node("warrior_node_10", "tree_a", 1400, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_9, rarity=2)
+    _warrior_node_1 = Node("warrior_node_1", "tree_a", 500, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], warrior_start, rarity=2)
+    _warrior_node_2 = Node("warrior_node_2", "tree_a", 600, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_1, rarity=2)
+    _warrior_node_3 = Node("warrior_node_3", "tree_a", 700, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_2, rarity=2)
+    _warrior_node_4 = Node("warrior_node_4", "tree_a", 800, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_3, rarity=2)
+    _warrior_node_5 = Node("warrior_node_5", "tree_a", 900, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_4, rarity=2)
+    _warrior_node_5B = Node("warrior_node_5B", "tree_a", 900, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_4, rarity=2)
+    _warrior_node_6 = Node("warrior_node_6", "tree_a", 1000, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_5, rarity=2)
+    _warrior_node_6B = Node("warrior_node_6B", "tree_a", 1000, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_5B, rarity=2)
+    _warrior_node_7 = Node("warrior_node_7", "tree_a", 1100, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_6, rarity=2)
+    _warrior_node_7B = Node("warrior_node_7B", "tree_a", 1100, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_6B, rarity=2)
+    _warrior_node_8 = Node("warrior_node_8", "tree_a", 1200, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_7, rarity=2)
+    _warrior_node_8B = Node("warrior_node_8B", "tree_a", 1200, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_7B, rarity=2)
+    _warrior_node_9 = Node("warrior_node_9", "tree_a", 1300, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_8, rarity=2)
+    _warrior_node_9B = Node("warrior_node_9B", "tree_a", 1300, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_8B, rarity=2)
+    _warrior_node_10 = Node("warrior_node_10", "tree_a", 1400, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _warrior_node_9, rarity=2)
     #RANGED
-    _warrior_node_11 = Node("warrior_node_11", "tree_a", 500, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], warrior_start, rarity=2)
+    _warrior_node_11 = Node("warrior_node_11", "tree_a", 500, 700, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], warrior_start, rarity=2)
     _warrior_node_12 = Node("warrior_node_12", "tree_a", 600, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_11, rarity=2)
     _warrior_node_13 = Node("warrior_node_13", "tree_a", 700, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_12, rarity=2)
     _warrior_node_14 = Node("warrior_node_14", "tree_a", 800, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _warrior_node_13, rarity=2)

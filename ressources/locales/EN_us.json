@@ -398,7 +398,7 @@
         "firebolt2": "Kinda like firebolt but not quite so ...",
         "icebolt": "Creates a barrage of ice spears that deals\nmajor ice damage in a straight line,\npiercing enemies.",
         "ice_orb": "Summon an orb of ice that slowly moves toward the target location, \ndealing ice damage to enemies it passes through. \nAfter a short delay, the orb shatters, \ndealing ice damage in the area and freezing enemies.",
-        "ice_spear": "Summon a spear of ice that quickly move towards the target location, \nonce it collide with an enemy, ice shards are \npropelled away behind the struck enemy",
+        "ice_spear": "Summon a spear of ice that quickly move towards the target location, \nonce it collide with an enemy, ice shards are \npropelled away behind the strucked enemy",
         "ice_wall": "Summon a wall of ice that block enemy movement and projectiles, \nthe wall can be destroyed by dealing enough damage to it.",
         "blizzard": "Summon a blizzard at the target location, \ndealing ice damage to enemies in the area and slowing them. \nThe blizzard lasts for a few seconds and can be moved by recasting \nthe spell, up to a maximum distance.",
         "ring_of_frost": "Summon a ring of frost a the designed location, \n1 second after its creating, piercing stalagmites erupt \nfrom it",
