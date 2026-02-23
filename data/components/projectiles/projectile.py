@@ -9,8 +9,8 @@ from data.api.vec2d import Vec2
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM,\
     PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER
 from data.numerics.damage import Damage
-from data.game.creature import Creature
 from data.physics.hitbox import HitBox
+from data.game.creature import Creature
 from data.image.animation import Animation
 from data.image.controller import AnimationController
 
@@ -30,7 +30,8 @@ class Projectile(HitBox):
                 '_initial_delay', '_explosion', '_behaviours', '_debuffs', '_flagged', \
                 '_wandering', '_immune', '_bounced', '_chains', '_warning', '_anim_speed', \
                 '_debuff_chance', '_animation_controller', '_particle_trail', '_particle_impact', \
-                '_particle_timer', '_particle_interval', '_initial_angle', '_decay'
+                '_particle_timer', '_particle_interval', '_initial_angle', '_decay', '_reset_rate',\
+                '_reset_timer'
     def __init__(self, x, y, angle, imagefile: str, damage: Damage, origin:Creature,\
                 evil = False, speed = 20, caster = None,\
                 bounces = 0, delay = 0, chains = 0,\
@@ -83,6 +84,9 @@ class Projectile(HitBox):
         self._particle_interval = 0.05
         self._width = self._real_image.w
         self._height = self._real_image.h
+        if Flags.SPAWN_AT_MOUSE in behaviours:
+            x -= self._width // 2
+            y -= self._height // 2
         super().__init__(x, y, self._width, self._height)
         self._velocity = Vec2(numpy.cos(angle), numpy.sin(angle)) * speed
         self._acceleration = Vec2(0, 0)
@@ -164,7 +168,7 @@ class Projectile(HitBox):
             num, crit = target.damage(dmg)
             self._immune.append(target)
             if Flags.REPLICATE in self._behaviours:
-                pass
+                pass #TODO
 
             self._bounced = True
             if self._bounces <= 0 and self._chains <= 0 and Flags.PIERCING not in self._behaviours:
@@ -182,7 +186,7 @@ class Projectile(HitBox):
                     if debuff.damage is not None:
                         debuff.damage.origin = self._origin
                     target.afflict(debuff.clone(), True, self._debuff_chance)
-            if self._explosion is not None:
+            if Flags.EXPLODES in self._behaviours and self._explosion is not None:
                 sl = self._explosion.clone(DummyEntity(self.x, self.y, self),\
                     self._origin, self._area, True)
                 PROJECTILE_TRACKER.append(sl)
@@ -219,6 +223,8 @@ class Projectile(HitBox):
         angle = numpy.radians(self._angle)
         if Flags.ACCELERATE in self._behaviours:
             self._speed *= 1.1
+        elif Flags.DECCELERATE in self._behaviours:
+            self._speed *= 0.999
         if Flags.WANDER in self._behaviours and self._wandering:
             self.x = self.x + (self._speed / 3) * numpy.cos(self._wander_angle)
             self.y = self.y + (self._speed / 3) * numpy.sin(self._wander_angle)

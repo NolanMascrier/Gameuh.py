@@ -5,7 +5,7 @@ from data.game.item import Item
 from data.constants import SYSTEM
 from data.image.image import Image
 from data.image.hoverable import Hoverable
-from data.game.spell import Spell
+from data.components.spells.spell import Spell
 from data.interface.render import render
 
 class Draggable(Image):

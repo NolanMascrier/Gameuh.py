@@ -398,7 +398,7 @@
         "firebolt2": "Kinda like firebolt but not quite so ...",
         "icebolt": "Creates a barrage of ice spears that deals\nmajor ice damage in a straight line,\npiercing enemies.",
         "ice_orb": "Summon an orb of ice that slowly moves toward the target location, \ndealing ice damage to enemies it passes through. \nAfter a short delay, the orb shatters, \ndealing ice damage in the area and freezing enemies.",
-        "ice_spear": "Summon a spear of ice that quickly move towards the target location, \nonce it collide with an enemy, ice shards are \npropelled away behind the strucked enemy",
+        "ice_spear": "Summon a spear of ice that quickly move towards the target location, \nonce it collide with an enemy, ice shards are \npropelled away behind the struck enemy",
         "ice_wall": "Summon a wall of ice that block enemy movement and projectiles, \nthe wall can be destroyed by dealing enough damage to it.",
         "blizzard": "Summon a blizzard at the target location, \ndealing ice damage to enemies in the area and slowing them. \nThe blizzard lasts for a few seconds and can be moved by recasting \nthe spell, up to a maximum distance.",
         "ring_of_frost": "Summon a ring of frost a the designed location, \n1 second after its creating, piercing stalagmites erupt \nfrom it",
@@ -416,11 +416,11 @@
         "meteor": "Call a meteor from the sky, dealing \nlarge fire damage in a large area.",
         "inferno": "throw a contigonious stream of fire in front of you, dealing\nfire damage every second to enemies caught in it.",
         "cone_of_flames": "Release a cone of flames that deals\nfire damage in front of you.\nThe cone loses power while traveling.",
-        "ring_of_fire": "Surround yourself with a ring of fire, dealing fire damage to nearby enemies every second.",
+        "ring_of_fire": "Surround yourself with a ring of fire\n dealing constant fire damage to nearby enemies.",
         "lightning_bolt": "Release a lightning bolt in front of \nyou, that pierce through enemies and deal lightning damage.",
-        "call_lightning": "Call down a lightning strike on the target location, dealing heavy lightning damage and stunning enemies.",
+        "call_lightning": "Call down a lightning strike on the target \nlocation, dealing heavy lightning damage and stunning enemies.",
         "shock": "Release small skittering lightning bolts in front \nof you, dealing lightning damage to enemies.",
-        "rising_tempest": "enemies striked by lightning damage get increased chance to be subject to criticals hits"
+        "rising_tempest": "enemies striked by lightning damage \nget increased chance to be subject to criticals hits"
         
     },
 

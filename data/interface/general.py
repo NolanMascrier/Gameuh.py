@@ -10,8 +10,8 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACK
     ANIMATION_TRACKER, RED_TRANSP, RED_PURE, RED_WARNING, GREEN_PURE, GREEN_TRANSP, BLUE_PURE,\
     BLUE_TRANSP
 from data.image.tabs import Tabs
-from data.game.projectile import Projectile
-from data.game.slash import Slash
+from data.components.projectiles.projectile import Projectile
+from data.components.slashes.slash import Slash
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""

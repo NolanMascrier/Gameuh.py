@@ -10,7 +10,7 @@ from data.physics.entity import Entity
 from data.game.creature import Creature
 from data.constants import Flags, POWER_UP_TRACKER, SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH
 from data.game.pickup import PickUp
-from data.game.spell import Spell
+from data.components.spells.spell import Spell
 
 VALUE_GROUPS = [5000, 2500, 1000, 500, 250, 100, 50, 20, 5, 1]
 

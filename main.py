@@ -21,8 +21,8 @@ from data.interface.gear import draw_gear
 from data.loading import init_game, init_timers
 from data.interface.render import render_all, render, renders
 from data.interface.endlevel import draw_end
-from data.game.projectile import Projectile
-from data.game.slash import Slash
+from data.components.projectiles.projectile import Projectile
+from data.components.slashes.slash import Slash
 from data.tables.uniques_table import UNIQUES
 from data.game.item import Item
 from data.tables.implicits_table import IMPLICITS

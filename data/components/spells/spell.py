@@ -6,14 +6,14 @@ import numpy
 from data.api.surface import Surface
 
 from data.image.animation import Image
-from data.game.projectile import Projectile
+from data.components.projectiles.projectile import Projectile
+from data.components.slashes.slash import Slash
 from data.game.item import Item
 from data.game.creature import Creature
 from data.physics.entity import Entity
 from data.numerics.stat import Stat
 from data.numerics.rangestat import RangeStat
 from data.numerics.ressource import Ressource
-from data.game.slash import Slash
 from data.numerics.damage import Damage
 from data.constants import Flags, PROJECTILE_TRACKER, SYSTEM, trad, BLACK
 from data.numerics.affliction import Affliction
@@ -54,7 +54,8 @@ class Spell():
                  cooldown = 0.1, projectiles = 1, flags = None, buffs = None,
                  debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,
                  effective_frames = None, anim_on_hit = None, alterations = None,
-                 debuff_chance = 1.0, trail = None, impact = None, level_list = None):
+                 debuff_chance = 1.0, trail = None, impact = None, level_list = None,
+                 reset_rate: float = 1):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -85,7 +86,8 @@ class Spell():
             "crit_dmg": Stat(base_damage.crit_mult if base_damage is not None else 0,\
                             "crit_dmg"),
             "anim_speed": Stat(1, "anim_speed"),
-            "debuff_chance": Stat(debuff_chance, "debuff_chance", 10, 0)
+            "debuff_chance": Stat(debuff_chance, "debuff_chance", 10, 0),
+            "reset_rate": Stat(reset_rate, "reset_rate")
         }
         self._jewels = {
             0: None,
@@ -127,6 +129,8 @@ class Spell():
         self._started = False
         self._toggled = False
         self._reservations = [None, None]
+        self._flags_list = None
+        self._changed_flag = True
         self.generate_surface()
         self.update()
         self._counter = 0
@@ -397,6 +401,7 @@ class Spell():
         for affix in item.implicits:
             self.afflict(affix.as_affliction())
         self.update()
+        self._changed_flag = True
         return old
 
     def unequip(self, slot: int) -> Item | None:
@@ -419,6 +424,7 @@ class Spell():
             for affix in item.implicits :
                 self.remove_affliction(affix.as_affliction())
         self.update()
+        self._changed_flag = True
         return item
 
     def reset(self):
@@ -631,7 +637,9 @@ class Spell():
                 dbf.damage = caster.recalculate_damage(dbf.damage, True)
                 dbf.damage.mod *= caster.stats["debuff_pot"].c_value
             debuffs.append(dbf)
-        proj = Projectile(entity.center[0] + x_diff, entity.center[1] + y_diff, angle,\
+        x = entity.center[0] + x_diff
+        y = entity.center[1] + y_diff
+        proj = Projectile(x, y, angle,\
                         self._attack_anim,\
                         self._real_damage, caster, evil,\
                         speed=self._stats["projectile_speed"].c_value,\
@@ -694,13 +702,18 @@ class Spell():
                 for i in range (0, int(self._stats["projectiles"].c_value)):
                     self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
                                           i + 1, 0, ignore_team)
+            elif Flags.SPAWN_AT_MOUSE in self.all_flags:
+                for i in range (0, int(self._stats["projectiles"].c_value)):
+                    self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
+                                          i + 1, 0, ignore_team)
             elif Flags.SPREAD in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)
                 else:
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
-                        self.spawn_projectile(entity, caster, evil, 0, 0, self._stats["delay"].c_value, -45 + spread * i)
+                        self.spawn_projectile(entity, caster, evil, 0, 0,
+                                              self._stats["delay"].c_value, -45 + spread * i)
             elif Flags.CIRCULAR_BLAST in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)
@@ -933,10 +946,12 @@ class Spell():
     @property
     def all_flags(self):
         """Returns the spell's flags native and from jewels."""
-        fl = []
-        fl.extend(self._flags)
-        fl.extend(self._gathered_flags)
-        return fl
+        if self._changed_flag:
+            self._flags_list = []
+            self._flags_list.extend(self._flags)
+            self._flags_list.extend(self._gathered_flags)
+            self._changed_flag = False
+        return self._flags_list
 
     @property
     def toggled(self):

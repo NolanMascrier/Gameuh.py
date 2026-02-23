@@ -5,10 +5,10 @@ import json
 
 from data.numerics.damage import Damage
 from data.game.creature import Creature
-from data.game.projectile import DummyEntity
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
-from data.game.projectile import Projectile
+from data.components.projectiles.projectile import DummyEntity
+from data.components.projectiles.projectile import Projectile
 from data.numerics.affliction import Affliction
 from data.constants import PROJECTILE_TRACKER, Flags, SYSTEM, ANIMATION_TRACKER
 

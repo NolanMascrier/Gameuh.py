@@ -7,7 +7,7 @@ from data.api.surface import set_screen, Surface
 from data.constants import SYSTEM, RESSOURCES, Classes
 from data.game.character import Character
 from data.game.tree import Node
-from data.game.spell import Spell
+from data.components.spells.spell import Spell
 
 def save(filename = None):
     """Save the character data."""

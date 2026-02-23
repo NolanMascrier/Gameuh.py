@@ -14,7 +14,7 @@ from data.game.item import Item
 from data.game.creature import Creature
 from data.game.character import Character
 from data.numerics.damage import Damage
-from data.game.spell import Spell
+from data.components.spells.spell import Spell
 from data.game.tree import Node
 from data.caching.transformation_cache import TransformCache
 from data.api.surface import init_engine, get_keys

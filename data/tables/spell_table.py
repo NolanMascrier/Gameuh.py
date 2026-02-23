@@ -1,12 +1,14 @@
 """List of damage sources."""
 
-from data.game.slash import Slash
-from data.game.projectile import DummyEntity
+from data.components.slashes.slash import Slash
+from data.components.projectiles.projectile import DummyEntity
 from data.numerics.damage import Damage
 from data.constants import Flags, SYSTEM
 from data.image.animation import Animation, Image
 from data.numerics.affliction import Affliction
-from data.game.spell import Spell
+from data.components.spells.spell import Spell
+
+from data.components.spells.s_iceorb import IceOrb
 
 from data.tables.spelllevel_table import FIREBALL_LEVELS
 
@@ -29,8 +31,9 @@ MAGICMISSILE = Damage(1.25, light=4, flags=[Flags.SPELL], ignore_dodge=True, cri
 VOIDBOLT = Damage(0.1, dark=1, flags=[Flags.SPELL])
 VOIDBOLT_ALT = Damage(2, dark=5, flags=[Flags.SPELL])
 ARC = Damage(0.8, elec=5, flags=[Flags.SPELL], lower_bound=0.1, upper_bound=2)
-ICEBOLT = Damage(5, 2, ice=1, flags=[Flags.SPELL])
-ICEORB = Damage(5, 2, ice=1, flags=[Flags.SPELL])
+ICEBOLT = Damage(5, ice=1, flags=[Flags.SPELL])
+ICEORB = Damage(5, ice=1, flags=[Flags.SPELL])
+ICEORB_EXPLOSION = Damage(3, ice=3, flags=[Flags.SPELL])
 ICEWALL = Damage(0, ice=1, flags=[Flags.SPELL])
 ICESPEAR = Damage(5, 2, ice=1, flags=[Flags.SPELL])
 VOIDSPEAR = Damage(10, dark=15, flags=[Flags.SPELL])
@@ -150,6 +153,11 @@ def generate_spell_list():
     SYSTEM["images"]["skitterbolt"] = Animation("anims/skitter.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["firecone"] = Animation("anims/firecone.png", 64, 64, frame_rate=0.2)\
         .scale(96, 96)
+    SYSTEM["images"]["iceorb_img"] = Animation("anims/ice_orb.png", 24, 21, frame_rate=0.2)\
+        .scale(120, 105)
+    SYSTEM["images"]["iceorb_explodes_img"] = Animation("anims/iceorbexplodes.png", 64, 64,
+        frame_rate=0.2, plays_once=True, loops=False)\
+        .scale(256, 256)
 
     light_strike = Animation("anims/lightningfall.png", 64, 64, frame_rate=0.25,\
         plays_once=True, loops=False).scale(128, 128)
@@ -161,6 +169,10 @@ def generate_spell_list():
     fireball_explosion =\
         Slash(DummyEntity(0,0, None), None, "fireball_expl_img",\
               FIREBALL_EXPLOSION, effective_frames=3)
+
+    ice_orb_explosion =\
+        Slash(DummyEntity(0,0, None), None, "iceorb_explodes_img",\
+              ICEORB_EXPLOSION, effective_frames=3, area=4)
 
     master_1 = Spell("", m1_icon, "master1_img", MASTER_1, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE], offset_x=60, effective_frames=8)
@@ -184,10 +196,14 @@ def generate_spell_list():
     icebolt = Spell("icebolt", icebolt_icon, "icebolt_proj_img", ICEBOLT, 10,\
         cooldown=10, projectiles=3, delay=0.8, flags=[Flags.PHYS, Flags.BARRAGE, Flags.PROJECTILE,\
         Flags.DELAYED, Flags.PIERCING, Flags.DEBUFF], debuffs=[FREEZE], debuff_chance=0.50)
-    
-    ice_orb = Spell("ice_orb", ice_orb_icon, "iceorb_img", ICEORB, 10,\
-        cooldown=10, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
-        Flags.DELAYED, Flags.PIERCING], debuffs=[FREEZE], debuff_chance=0.50)
+
+    ice_orb = IceOrb("ice_orb", ice_orb_icon, "iceorb_img", ICEORB, 10,\
+        cooldown=10, delay=2.8, flags=[Flags.ICE, Flags.PROJECTILE,\
+        Flags.EXPLOSION_ON_EXPIRATION, Flags.AIMED_AT_MOUSE, Flags.PIERCING,
+        Flags.SPAWN_AT_MOUSE, Flags.PIERCE_TICKING],
+        debuffs=[FREEZE], debuff_chance=0.1, explosion=ice_orb_explosion,
+        reset_rate=0.8)
+
     ice_wall = Spell("ice_wall", ice_wall_icon, "icewall_img", ICEWALL, 10,\
         cooldown=20, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
         Flags.DELAYED], debuffs=[FREEZE], debuff_chance=0.50)
@@ -199,7 +215,8 @@ def generate_spell_list():
         Flags.DELAYED, Flags.AIMED_AT_MOUSE],\
         debuffs=[FREEZE], debuff_chance=0.50)
     blizzard = Spell("blizzard", icebolt_icon, "blizzard_img", None, 10,\
-        cooldown=30, projectiles=20, delay=0.1, flags=[Flags.ICE, Flags.PROJECTILE, Flags.DELAYED, Flags.RANDOM_POSITION],\
+        cooldown=30, projectiles=20, delay=0.1, flags=[Flags.ICE, Flags.PROJECTILE, Flags.DELAYED,
+                                                       Flags.RANDOM_POSITION],\
         debuffs=[FREEZE], debuff_chance=0.50)
 
     voidspear = Spell("voidspear", icebolt_icon, "voidspear_proj_img", VOIDSPEAR, 0,\

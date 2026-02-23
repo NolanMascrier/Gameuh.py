@@ -70,7 +70,8 @@ class Character():
             "bloodpact",
             "lightning_bolt",
             "shock",
-            "cone_of_flames"
+            "cone_of_flames",
+            "ice_orb"
         ]
         self._inventory = []
         self._runes = [
