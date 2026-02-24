@@ -159,7 +159,7 @@ class Character():
     def on_damage(self, value):
         """Called when the creature inflicts damage."""
 
-    def gain_exp(self, amount):
+    def gain_exp(self, _):
         """Grants exp to the equipped skills.
         DEPRECATED"""
         return
