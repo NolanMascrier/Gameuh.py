@@ -128,6 +128,9 @@ class Enemy():
     def on_heal(self, value):
         """Called when the creature heals."""
 
+    def on_kill(self, victim, victim_entity):
+        """Called when the creature crits."""
+
     def creature_tick(self):
         """Ticks the creature."""
         self._creature.tick()
@@ -148,6 +151,7 @@ class Enemy():
                 self.attack()
             self._entity.detach("die", True)
             self.explode()
+            self.creature.on_death(self._entity)
             return
         self.creature_tick()
         if Flags.CANNOT_ACT in self.creature.gather_flags:

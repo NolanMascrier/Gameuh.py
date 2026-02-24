@@ -48,6 +48,7 @@ EXULT = Damage(2, phys=7, flags=[Flags.MELEE])
 FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
 RIP = Damage(1.1, phys=4, flags=[Flags.MELEE])
 DARKSHARD = Damage(1, dark=8, flags=[Flags.SPELL])
+BODYDETONATION = Damage(0.8, dark=4, phys=3, fire=3, flags=[Flags.SPELL])
 
 FREEZE = Affliction("freeze", 0, 1, flags=[Flags.CANNOT_ACT], is_debuff=True)
 FIREORB = Damage(1, fire=1, flags=[Flags.SPELL])
@@ -109,6 +110,7 @@ def generate_spell_list():
     inferno_icon = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     elecbolt_icon = Image("icons/spells/lightning_bolt.png").scale(64, 64)
     shock_icon = Image("icons/spells/shock.png").scale(64, 64)
+    bodyexplosion_icon = Image("icons/spells/bodyexplosion.png").scale(64, 64)
 
     SYSTEM["images"]["firebolt_proj_img"] =\
         Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
@@ -173,6 +175,9 @@ def generate_spell_list():
     SYSTEM["images"]["kamikaze_img"] =\
         Animation("anims/kamikaze.png", 64, 64, frame_rate=0.2, loops=False, plays_once=True,
                 lines=4).scale(256, 256)
+    SYSTEM["images"]["bodyboom"] =\
+        Animation("anims/bodyboom.png", 64, 64, frame_rate=0.2, loops=False, plays_once=True)\
+            .scale(256, 256)
     SYSTEM["images"]["lightshards"] = Animation("anims/lightshard.png", 16, 10, frame_rate=0.1)\
         .scale(20, 32)
     SYSTEM["images"]["magicmissile"] = Animation("anims/magicmissile.png", 16, 9, frame_rate=0.1)\
@@ -301,9 +306,6 @@ def generate_spell_list():
         flags=[Flags.MELEE, Flags.DEBUFF], offset_x=120, debuffs=[BLEED_E], debuff_chance=0.75)
     voidbolt_enemy = Spell("VoidboltE", None, "darkbolt_img", DARKBOLT, projectiles=1,
         flags=[Flags.PROJECTILE, Flags.SPREAD, Flags.DARK, Flags.AIMED_AT_PLAYER])
-    kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
-        cooldown=0, flags=[Flags.FIRE, Flags.MELEE, Flags.DEBUFF, Flags.CUTS_PROJECTILE],\
-        debuffs=[BURN], effective_frames=4)
     lazoor = Spell("fslash", fury_icon, "eldritchlaser", FURYSLASH, 5, 0,\
         cooldown=0.5, flags=[Flags.MELEE, Flags.CUTS_PROJECTILE, Flags.CAN_TICK], offset_x=1064)
     bloodpact = Spell("bloodpact", pact_icon, None, None, 0, 0.9,\
@@ -351,6 +353,13 @@ def generate_spell_list():
                                            Flags.CIRCULAR_BLAST],
          delay=0.8, proj_speed=5, spread=360)
 
+    kamikaze = Spell("boom", exult_icon, "kamikaze_img", KAMIKAZE, 0,\
+        cooldown=0, flags=[Flags.FIRE, Flags.MELEE, Flags.DEBUFF, Flags.CUTS_PROJECTILE],\
+        debuffs=[BURN], effective_frames=4)
+    bodyexplosion = Spell("bodyexplosion", bodyexplosion_icon, "bodyboom", BODYDETONATION, 15,\
+        cooldown=-1, flags=[Flags.DARK, Flags.FIRE, Flags.PHYS,\
+        Flags.MELEE, Flags.TRIGGER, Flags.TRIGGER_ON_KILL], spread=360)
+
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["meteor"] = meteor
     SYSTEM["spells"]["icebolt"] = icebolt
@@ -373,6 +382,7 @@ def generate_spell_list():
     SYSTEM["spells"]["lightning_bolt"] = lightning_bolt
     SYSTEM["spells"]["shock"] = shock
     SYSTEM["spells"]["cone_of_flames"] = cone_of_flames
+    SYSTEM["spells"]["bodyexplosion"] = bodyexplosion
     #Enemy spells
     SYSTEM["spells"]["e_charge"] = charge
     SYSTEM["spells"]["e_voidbolt"] = voidbolt_enemy

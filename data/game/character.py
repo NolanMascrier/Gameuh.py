@@ -73,7 +73,8 @@ class Character():
             "cone_of_flames",
             "ice_orb",
             "meteor",
-            "ice_spear"
+            "ice_spear",
+            "bodyexplosion"
         ]
         self._inventory = []
         self._runes = [
@@ -141,6 +142,14 @@ class Character():
             if self._equipped_spells[keys] is not None:
                 SYSTEM["spells"][self._equipped_spells[keys]]\
                     .on_crit(self._creature, self._entity, False, self._entity.flipped)
+
+    def on_kill(self, victim: Creature, victime_entity: Entity):
+        """Called when the creature kills something."""
+        for keys in self._equipped_spells:
+            if self._equipped_spells[keys] is not None:
+                SYSTEM["spells"][self._equipped_spells[keys]]\
+                    .on_kill(self._creature, self._entity, False, self._entity.flipped,
+                             victim=victim, victim_entity=victime_entity)
 
     def unlearn(self, spell):
         """Unlearns the spell and removes it if equipped."""

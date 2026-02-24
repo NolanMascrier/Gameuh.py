@@ -322,6 +322,7 @@ class Flags(str, Enum):
     CIRCULAR_BLAST = "spread_all_around"
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"
+    TRIGGER_ON_KILL = "trigger_on_kill"
     NOVA = "nova"
     SKITTER = "skitter"
     IMPACT_ANIMATION_RANDOM = "impact_anim_random"

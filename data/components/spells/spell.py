@@ -90,6 +90,7 @@ class Spell():
             "reset_rate": Stat(reset_rate, "reset_rate"),
             "repeats": Stat(repeats, "repeats")
         }
+        self._has_cd = cooldown > 0
         self._jewels = {
             0: None,
             1: None,
@@ -143,11 +144,11 @@ class Spell():
     def update(self):
         """Updates the data of the spell."""
         if self._level_list is None:
-            dmg = Affliction("DAMGE_FROM_LEVEL", 1 + 0.02 * (self._level - 1), -1,\
+            dmg = Affliction("DAMGE_FROM_LEVEL", 0 + 0.02 * (self._level - 1), -1,\
                 [Flags.DAMAGE_MOD, Flags.BOON])
-            hp = Affliction("LIFE_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
+            hp = Affliction("LIFE_COST_PER_LEVEL",  0 - 0.01 * (self._level - 1), -1,\
                 [Flags.LIFE_COST, Flags.BLESS])
-            mana = Affliction("MANA_COST_PER_LEVEL",  1 - 0.01 * (self._level - 1), -1,\
+            mana = Affliction("MANA_COST_PER_LEVEL",  0 - 0.01 * (self._level - 1), -1,\
                 [Flags.MANA_COST, Flags.BLESS])
             if Flags.TOGGLEABLE in self.all_flags:
                 self.afflict((dmg))
@@ -521,7 +522,7 @@ class Spell():
             "level": str(self._level),
             "damage": self.__damage_describe(SYSTEM["player"].creature),
             "buffs": self.__describe_afflictions(),
-            "cooldown": str(self._stats["cooldown"].get_value() *\
+            "cooldown": "None" if not self._has_cd else str(self._stats["cooldown"].get_value() *\
                             SYSTEM["player"].creature.stats["cast_speed"].c_value),
             "costs": (self._stats["life_cost"].c_value, self._stats["mana_cost"].c_value),
             "projectiles": self._stats["projectiles"].c_value\
@@ -547,6 +548,14 @@ class Spell():
         """Called when the creature crits."""
         if Flags.TRIGGER_ON_CRIT in self.all_flags:
             self.on_cast(caster, entity, evil, aim_right, force)
+
+    def on_kill(self, caster: Creature, entity: Entity,
+            evil: bool, aim_right = True, force = False,
+            victim: Creature = None, victim_entity: Entity = None):
+        """Called when the creature kills something."""
+        if Flags.TRIGGER_ON_KILL in self.all_flags:
+            self.on_cast(caster, entity, evil, aim_right, force, victim=victim,
+                         victim_entity=victim_entity)
 
     def on_dodge(self):
         """Called when the creature dodges."""
@@ -684,12 +693,13 @@ class Spell():
         PROJECTILE_TRACKER.append(sl)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\
-            aim_right = True, force = False, ignore_team = False):
+            aim_right = True, force = False, ignore_team = False,
+            victim: Creature = None, victim_entity: Entity = None):
         """Shoots the spell."""
         mana_cost = caster.get_efficient_value(self._stats["mana_cost"].c_value)
         life_cost = caster.get_efficient_value(self._stats["life_cost"].c_value)
         if not force:
-            if self._cooldown > 0:
+            if self._has_cd and self._cooldown > 0:
                 return False
             if caster.stats["mana"].current_value < mana_cost:
                 return False
@@ -697,9 +707,10 @@ class Spell():
                 return False
         for b in self._alterations:
             self.afflict(b)
-        self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
+        self.start_cooldown(caster=caster)
         caster.consume_mana(self._stats["mana_cost"].c_value)
         caster.stats["life"].current_value -= life_cost
+        target = victim_entity if victim_entity is not None else entity
         if Flags.FLURRY_RELEASE in self.all_flags:
             self._releasing = True
             self._to_release = self._stats["projectiles"].c_value
@@ -710,29 +721,29 @@ class Spell():
                 angle_mod = int(numpy.random.randint(0, 360))
             if Flags.BARRAGE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
-                    self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
+                    self.spawn_projectile(target, caster, evil, 0, i * (20 + self._offset[1]),\
                                           i + 1, 0 + angle_mod, ignore_team)
             elif Flags.SPAWN_AT_MOUSE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
-                    self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
+                    self.spawn_projectile(target, caster, evil, 0, i * (20 + self._offset[1]),\
                                           i + 1, 0+ angle_mod, ignore_team)
             elif Flags.SPREAD in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
-                    self.spawn_projectile(entity, caster, evil)
+                    self.spawn_projectile(target, caster, evil)
                 else:
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
-                        self.spawn_projectile(entity, caster, evil, 0, 0,
+                        self.spawn_projectile(target, caster, evil, 0, 0,
                                               self._stats["delay"].c_value, -45 + spread * i
                                               + angle_mod, ignore_team)
             elif Flags.CIRCULAR_BLAST in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
-                    self.spawn_projectile(entity, caster, evil)
+                    self.spawn_projectile(target, caster, evil)
                 else:
                     self._counter = (self._counter + 5) % 360
                     spread = 360 / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
-                        self.spawn_projectile(entity, caster, evil,
+                        self.spawn_projectile(target, caster, evil,
                                               0, 0, i + 1, self._counter + -spread * i + angle_mod)
         if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
@@ -746,7 +757,7 @@ class Spell():
         if Flags.DASH in self.all_flags:
             entity.dash(self._stats["distance"].c_value)
         if Flags.MELEE in self.all_flags:
-            self.spawn_slash(entity, caster, evil, aim_right)
+            self.spawn_slash(target, caster, evil, aim_right)
         return True
 
     def start_cooldown(self, reduce_factor = 0, caster = None):

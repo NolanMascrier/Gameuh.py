@@ -316,6 +316,7 @@
         "cut_proj": "Can destroy enemy projectiles",
         "trigger": "This spell cannot be used",
         "trigger_on_crit": "This spell is triggered by critical hits",
+        "trigger_on_kill": "This spell is triggered by kills",
         "enemies": "Enemies have",
         "boss": "Enemy Leader detected",
         "desc_heal_flat": "Recovers",
@@ -396,7 +397,8 @@
         "ice_nova": "Ice Nova",
         "rising_tempest": "Rising Tempest",
         "call_lightning": "Call Lightning",
-        "ride_the_storm": "Ride the Storm"
+        "ride_the_storm": "Ride the Storm",
+        "bodyexplosion": "Explode the Dead"
     },
 
     "spells_desc": {
@@ -432,8 +434,8 @@
         "lightning_bolt": "Release a lightning bolt in front of \nyou, that pierce through enemies and deal lightning damage.",
         "call_lightning": "Call down a lightning strike on the target \nlocation, dealing heavy lightning damage and stunning enemies.",
         "shock": "Release small skittering lightning bolts in front \nof you, dealing lightning damage to enemies.",
-        "rising_tempest": "enemies striked by lightning damage \nget increased chance to be subject to criticals hits"
-        
+        "rising_tempest": "enemies striked by lightning damage \nget increased chance to be subject to criticals hits",
+        "bodyexplosion": "A vile spell that automatically creates explosion\nfrom a victim's body."
     },
 
     "descripts": {
@@ -527,6 +529,7 @@
         "elemental_resistances": "Elemental resistances",
         "armor_mind_over_matter": "Lesser Spirit Shield",
         "trigger_on_crit": "Cast on Critical Hit",
+        "trigger_on_kill": "Cast on Kill",
         "crit_res": "Critical damage resistance",
         "estimate_armor": "Damage reduction",
         "estimate_dodge": "Dodge chance",
@@ -564,7 +567,8 @@
     },
     "descript_alt": {
         "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% of damage is taken on Mana first",
-        "trigger_on_crit":"#c#(150, 150, 150)#s#(15)This spell is triggered by critical hits\n#c#(150, 150, 150)#s#(15)and cannot be used by normal means."
+        "trigger_on_crit":"#c#(150, 150, 150)#s#(15)This spell is triggered by critical hits\n#c#(150, 150, 150)#s#(15)and cannot be used by normal means.",
+        "trigger_on_kill":"#c#(150, 150, 150)#s#(15)This spell is triggered by kills\n#c#(150, 150, 150)#s#(15)and cannot be used by normal means."
     },
     "uniques": {
         "weight_jewel": "The Weight of Creation",
