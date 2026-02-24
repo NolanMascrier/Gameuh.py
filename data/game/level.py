@@ -26,7 +26,7 @@ from data.numerics.affix import Affix
 from data.image.text import Text
 from data.game.item import Item
 from data.tables.area_table import MODIFIERS
-from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE
+from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE, LOSTSOUL
 from data.interface.endlevel import generate_victory, generate_defeat
 
 RUNE_ORDER = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
@@ -239,11 +239,14 @@ class Level():
         min_monsters = (1 + random.randint(0, 2)) * (wave + 1)
         max_monsters = (4 + random.randint(0, 2)) * (wave + 1)
         monsters = round(max(random.randint(min_monsters, max_monsters + 1), 1) * self._pack_size)
-        choice = [VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE]
-        chance = [0.05, 0.25, 0.45, 0.125, 0.125]
+        choice = [VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE, LOSTSOUL]
+        chance = [1, 10, 12, 11, 11, 7]
+        tot = sum(chance)
+        rchance = [c/tot for c in chance]
+        #chance = [0, 0, 0, 0, 0, 1]
         wave_data = []
         for _ in range(monsters):
-            monster = np.random.choice(choice, p=chance)
+            monster = np.random.choice(choice, p=rchance)
             mob = self.generate_enemy(monster, level)
             wave_data.append(mob)
         self._wave_tracker.append(wave_data)

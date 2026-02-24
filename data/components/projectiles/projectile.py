@@ -58,7 +58,7 @@ class Projectile(HitBox):
             self._angle = 90 - numpy.arctan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
         if Flags.AIMED_AT_MOUSE in behaviours:
-            self._angle = 90 - numpy.arctan2(SYSTEM["mouse"][0] - x,\
+            self._angle = angle + 90 - numpy.arctan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
         if Flags.AIMED_AT_CLOSEST in behaviours:
             closest = SYSTEM["level"].closest_enemy()

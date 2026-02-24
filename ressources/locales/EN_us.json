@@ -191,7 +191,7 @@
       "monolith": "The Monolith",
       "fairy": "Fallen Fae",
       "herald": "The Herald",
-      "soul": "Lost One"
+      "lostsoul": "Lost One"
     },
     "estimate_armor": "This value cannot go beyond 90%.",
     "estimate_dodge": "This value cannot go beyond 90%\nand assumes no Precision from the enemy.",

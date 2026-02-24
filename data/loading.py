@@ -214,7 +214,7 @@ def load_animations():
     SYSTEM["images"]["soul_flipped"] = Sprite("sprites/soul.png", 96, 96, ["idle", "dash",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1], \
         [5, 8, 10, 8], [True, True, False, False],\
-        [-1, -1, -1, 1]).scale(2, 2, False).flip(False, True).flip(False, True)
+        [-1, -1, -1, 1]).scale(2, 2, False).flip(False, False)
 
 def load_tiles():
     """Load the tiles."""

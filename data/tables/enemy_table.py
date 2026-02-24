@@ -28,6 +28,32 @@ DEMONBAT = {
     "hitbox": None
 }
 
+LOSTSOUL = {
+    "image": "soul",
+    "name": "lostsoul",
+    "stats": {
+            "life": Ressource(35, "Life"),
+            "mana": Ressource(10, "Mana"),
+            "life_regen": Stat(0, "life_regen"),
+            "mana_regen": Stat(0, "mana_regen"),
+            "str": Stat(2, "Strength"),
+            "dex": Stat(2, "Dexterity"),
+            "int": Stat(2, "Intelligence"),
+            "def": Stat(1, "Endurance"),
+            "light": Stat(-0.5, "Light resistance", 0.9, scaling_value=0.005),
+            "fire": Stat(0.2, "Dark resistance", 0.9, scaling_value=0.005),
+            "fire_dmg": Stat(1.2, "Dark damage", scaling_value=0.05),
+            "speed": Stat(1.8, "speed", scaling_value=0),
+    },
+    "flags": [Flags.CHASER],
+    "cooldown": 0,
+    "exp": 10,
+    "gold": 10,
+    "spelllist": [("e_deflagration", 1)],
+    "delay": 0,
+    "hitbox": (0.35, 0.55, -25, -15)
+}
+
 NECROMANCER = {
     "image": "necromancer",
     "name": "voidsniper",

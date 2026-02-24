@@ -56,6 +56,8 @@ MASTER_1 = Damage(1.2, phys=6, flags=[Flags.MELEE])
 MASTER_2 = Damage(1.2, phys=8, flags=[Flags.MELEE])
 MASTER_3 = Damage(1.2, phys=12, flags=[Flags.MELEE], is_crit=True)
 
+DARKCLOUD = Damage(1, ice=2, dark=2, phys=1, flags=[Flags.SPELL, Flags.MELEE])
+
 BLEED_DMG = Damage(1, pp=0.5, phys=5, ignore_block=True, ignore_dodge=True)
 BLEED = Affliction("bleed", 0, 3, [Flags.LIFE, Flags.FLAT], False, False, BLEED_DMG,
                    dot_color=BLOOD_RED, is_debuff=True, dot_tick=0.5)
@@ -119,6 +121,8 @@ def generate_spell_list():
 
     SYSTEM["images"]["darkvortex"] =\
         Animation("anims/vortex.png", 24, 24, frame_rate=0.35).scale(72, 72)
+
+    SYSTEM["images"]["darkcloud"] = Animation("anims/darkcloud.png", 64, 64, frame_rate=0.2)
 
     SYSTEM["images"]["meteor_img"] =\
         Animation("anims/meteor.png", 24, 24, frame_rate=0.25).scale(120, 120)
@@ -327,7 +331,8 @@ def generate_spell_list():
 
     cone_of_flames = Spell("cone_of_flames", inferno_icon, "firecone", CONE_OF_FLAMES, 10,\
         cooldown=5, projectiles=10, flags=[Flags.FIRE, Flags.EXPIRE, Flags.SPELL, Flags.PROJECTILE,
-                                           Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS],
+                                           Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS,
+                                           Flags.AIMED_AT_MOUSE],
          delay=0.9, proj_speed=10, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
          impact=PARTICLE_CONFIGS["firecone_impact"])
 
@@ -339,6 +344,12 @@ def generate_spell_list():
                     flags=[Flags.PIERCE_TICKING, Flags.PIERCING, Flags.PROJECTILE, Flags.DARK,
                            Flags.SPREAD, Flags.AIMED_AT_PLAYER], reset_rate=0.2,
                            proj_damage=DARKSHARD, subprojectile="darkmissile_img")
+
+    deflagration = Spell("cone_of_flames", inferno_icon, "darkcloud", DARKCLOUD, 10,\
+        cooldown=5, projectiles=12, flags=[Flags.FIRE, Flags.EXPIRE, Flags.SPELL, Flags.PROJECTILE,
+                                           Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS,
+                                           Flags.CIRCULAR_BLAST],
+         delay=0.8, proj_speed=5, spread=360)
 
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["meteor"] = meteor
@@ -370,6 +381,7 @@ def generate_spell_list():
     SYSTEM["spells"]["e_voidspear"] = voidspear
     SYSTEM["spells"]["e_lightshard"] = lightshard
     SYSTEM["spells"]["e_lightnova"] = lightnova
+    SYSTEM["spells"]["e_deflagration"] = deflagration
     SYSTEM["spells"]["e_darknova"] = darknova
     SYSTEM["spells"]["e_darkmissile"] = darkmissile
     SYSTEM["spells"]["e_lightspear"] = lightspear
