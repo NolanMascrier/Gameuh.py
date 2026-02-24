@@ -203,11 +203,18 @@ class Level():
 
     def generate_enemy(self, reference: list, level:int):
         """Creates a single enemy."""
-        y_pos = random.randint(0, SCREEN_HEIGHT - 300)
+        if Flags.GROUNDED in reference["flags"]:
+            y_pos = SCREEN_HEIGHT - SYSTEM["images"][reference["image"]].height * 3
+        else:
+            y_pos = random.randint(0, SCREEN_HEIGHT - 300)
         x_pos = random.randint(100, 300)
+        if Flags.GROUNDED in reference["flags"]:
+            x_pos = 550
         enemy_type = reference["flags"]
         img = reference["image"]
         x_start = SCREEN_WIDTH + 200 if Flags.AMBUSHER not in reference["flags"] else -200
+        if Flags.GROUNDED in reference["flags"]:
+            x_start *= 2
         ent = Entity(x_start, y_pos, img, hitbox_mod=reference["hitbox"])
         exp_value = random.randint(int(reference["exp"]*(level + 1) *0.9),\
                                    int(reference["exp"]*(level + 1) * 1.1))

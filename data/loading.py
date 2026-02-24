@@ -53,7 +53,7 @@ def generate_random_level():
     """Creates a random level."""
     area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 1)
     bosses = [VOIDBOSS, HERALD, None]
-    chance = [0.4, 0.4, 0.2]
+    chance = [0.5, 0.1, 0.4]
     has_boss = np.random.choice(bosses, p=chance)
     zone = random.randint(0, 6)
     diff_level = [0,1,2,3]
@@ -152,7 +152,7 @@ def load_animations():
     SYSTEM["images"]["boss_a"] = Animation("sprites/boss.png", 128, 150, frame_rate=0.1)\
         .scale(300, 256)
     SYSTEM["images"]["boss_b"] = Animation("sprites/boss2.png", 224, 240, frame_rate=0.1)\
-        .scale(480, 448)
+        .scale(672, 720)
     SYSTEM["images"]["bouncer"] = Animation("bounce.png", 8, 8, frame_rate=0.25).scale(64, 64)
     SYSTEM["images"]["generator"] = Animation("generator.png", 8, 8, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["lazer"] = Animation("lazor.png", 16, 10, frame_rate=0.25).scale(16, 64)

@@ -55,7 +55,7 @@ class Spell():
                  debuffs = None, offset_x = 0, offset_y = 0, proj_speed = 20,
                  effective_frames = None, anim_on_hit = None, alterations = None,
                  debuff_chance = 1.0, trail = None, impact = None, level_list = None,
-                 reset_rate: float = 1):
+                 reset_rate: float = 1, repeats: float = 1):
         self._name = name
         self._icon = icon
         self._attack_anim = attack_anim
@@ -87,7 +87,8 @@ class Spell():
                             "crit_dmg"),
             "anim_speed": Stat(1, "anim_speed"),
             "debuff_chance": Stat(debuff_chance, "debuff_chance", 10, 0),
-            "reset_rate": Stat(reset_rate, "reset_rate")
+            "reset_rate": Stat(reset_rate, "reset_rate"),
+            "repeats": Stat(repeats, "repeats")
         }
         self._jewels = {
             0: None,
@@ -704,14 +705,17 @@ class Spell():
             self._to_release = self._stats["projectiles"].c_value
             self._counter = 0.1
         if Flags.PROJECTILE in self.all_flags:
+            angle_mod = 0
+            if Flags.RANDOM_ANGLE in self._flags:
+                angle_mod = int(numpy.random.randint(0, 360))
             if Flags.BARRAGE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
                     self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
-                                          i + 1, 0, ignore_team)
+                                          i + 1, 0 + angle_mod, ignore_team)
             elif Flags.SPAWN_AT_MOUSE in self.all_flags:
                 for i in range (0, int(self._stats["projectiles"].c_value)):
                     self.spawn_projectile(entity, caster, evil, 0, i * (20 + self._offset[1]),\
-                                          i + 1, 0, ignore_team)
+                                          i + 1, 0+ angle_mod, ignore_team)
             elif Flags.SPREAD in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)
@@ -719,7 +723,8 @@ class Spell():
                     spread = self._stats["spread"].c_value / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
                         self.spawn_projectile(entity, caster, evil, 0, 0,
-                                              self._stats["delay"].c_value, -45 + spread * i)
+                                              self._stats["delay"].c_value, -45 + spread * i
+                                              + angle_mod, ignore_team)
             elif Flags.CIRCULAR_BLAST in self.all_flags:
                 if self._stats["projectiles"].c_value == 1:
                     self.spawn_projectile(entity, caster, evil)
@@ -728,7 +733,7 @@ class Spell():
                     spread = 360 / self._stats["projectiles"].c_value
                     for i in range(0, int(self._stats["projectiles"].c_value)):
                         self.spawn_projectile(entity, caster, evil,
-                                              0, 0, i + 1, self._counter + -spread * i)
+                                              0, 0, i + 1, self._counter + -spread * i + angle_mod)
         if Flags.BUFF in self.all_flags:
             for afflic in self._buffs:
                 aff = afflic.clone()

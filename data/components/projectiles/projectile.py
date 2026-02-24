@@ -46,7 +46,7 @@ class Projectile(HitBox):
                 x = int(numpy.random.choice([0, SCREEN_WIDTH]))
                 y = numpy.random.randint(0, SCREEN_HEIGHT)
         self._speed = speed
-        self._angle = angle
+        self._angle = angle % 360
         self._wander_angle = angle
         self._target = None
         self._image = imagefile
@@ -217,6 +217,11 @@ class Projectile(HitBox):
             else:
                 self._angle = 90 - numpy.arctan2(self._target.entity.hitbox.x - SYSTEM["player.x"],\
                     self._target.entity.hitbox.y - SYSTEM["player.y"]) * 180 / pi
+        if Flags.TRACK_PLAYER in self._behaviours:
+            if self._target is None and not self._wandering:
+                angle = 90 - numpy.arctan2(SYSTEM["player.x"] - self.x,\
+                    SYSTEM["player.y"] - self.y) * 180 / pi
+                self._target = SYSTEM["player"]
         angle = numpy.radians(self._angle)
         if Flags.ACCELERATE in self._behaviours:
             self._speed *= 1.1

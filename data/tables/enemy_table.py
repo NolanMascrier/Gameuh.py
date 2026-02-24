@@ -170,13 +170,13 @@ HERALD = {
             "fire_dmg": Stat(2, "Dark damage", scaling_value=0.05),
             "speed": Stat(1, "speed", scaling_value=0),
     },
-    "flags": [Flags.BOSS],
-    "cooldown": 0.25,
+    "flags": [Flags.BOSS, Flags.GROUNDED, Flags.SHOOTER],
+    "cooldown": 2,
     "exp": 15,
     "gold": 25,
-    "spelllist": [("e_voidflurry", 1), ("e_voidspear", 0.7)],
+    "spelllist": [("e_darknova", 1), ("e_darkmissile", 0.7)],
     "delay": 0,
-    "hitbox": None
+    "hitbox": (0.4, 0.8, -0.32, -0.18)
 }
 
 MONOLITH = {

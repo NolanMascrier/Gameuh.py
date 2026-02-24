@@ -170,6 +170,7 @@ class Enemy():
         if not self._started:
             self._entity.move(self._destination)
             if self.distance_to_destination() < 1000 or self._counter >= 3:
+                print(f"{self.creature.name} has started")
                 self._started = True
                 self._entity.play("idle")
                 self._counter = 0
