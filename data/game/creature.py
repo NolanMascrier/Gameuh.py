@@ -501,6 +501,7 @@ class Creature:
             buff.tick()
             if buff.expired:
                 self._buffs.pop(i)
+                self._changed_flags = True
             elif buff.damage is not None:
                 dt = buff.dot_amount
                 for _ in range(dt):

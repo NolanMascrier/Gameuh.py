@@ -338,6 +338,7 @@ class Flags(str, Enum):
     SHOOTER = "shooter"
     CHASER = "chaser"
     SUICIDER = "suicider"
+    AMBUSHER = "ambusher"
     PINNACLE = "unique_boss"
     MONOLITH = "monolith_boss"
     #Flags for levels

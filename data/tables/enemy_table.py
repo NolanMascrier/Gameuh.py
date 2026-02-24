@@ -53,6 +53,57 @@ NECROMANCER = {
     "hitbox": (0.2, 0.4, -60, -60)
 }
 
+FAIRY = {
+    "image": "fairy",
+    "name": "fairy",
+    "stats": {
+            "life": Ressource(12, "Life"),
+            "mana": Ressource(10, "Mana"),
+            "life_regen": Stat(1, "life_regen"),
+            "mana_regen": Stat(0, "mana_regen"),
+            "str": Stat(2, "Strength"),
+            "dex": Stat(2, "Dexterity"),
+            "int": Stat(2, "Intelligence"),
+            "def": Stat(1, "Endurance"),
+            "light": Stat(0.5, "Light resistance", 0.9, scaling_value=0.005),
+            "dark": Stat(-0.7, "Dark resistance", 0.9, scaling_value=0.005),
+            "light_dmg": Stat(1.2, "Dark damage", scaling_value=0.05),
+    },
+    "flags": [Flags.SHOOTER],
+    "cooldown": 1.3,
+    "exp": 6,
+    "gold": 12,
+    "delay": 0,
+    "spelllist": [("e_lightnova", 1)],
+    "hitbox": None
+}
+
+FAIRYFIRE = {
+    "image": "fairyfire",
+    "name": "fairy",
+    "stats": {
+            "life": Ressource(9, "Life"),
+            "mana": Ressource(10, "Mana"),
+            "life_regen": Stat(1, "life_regen"),
+            "mana_regen": Stat(0, "mana_regen"),
+            "str": Stat(2, "Strength"),
+            "dex": Stat(2, "Dexterity"),
+            "int": Stat(2, "Intelligence"),
+            "def": Stat(1, "Endurance"),
+            "light": Stat(0.5, "Light resistance", 0.9, scaling_value=0.005),
+            "dark": Stat(-0.7, "Dark resistance", 0.9, scaling_value=0.005),
+            "light_dmg": Stat(1.2, "Dark damage", scaling_value=0.05),
+    },
+    "flags": [Flags.SHOOTER, Flags.AMBUSHER],
+    "cooldown": 0.8,
+    "exp": 6,
+    "gold": 12,
+    "delay": 0,
+    "spelllist": [("e_fireorb", 1)],
+    "hitbox": None
+}
+
+
 VOIDBOMBER = {
     "image": "badguy",
     "name": "voidbomber",
@@ -95,6 +146,31 @@ VOIDBOSS = {
             "speed": Stat(1, "speed", scaling_value=0),
     },
     "flags": [Flags.BOSS, Flags.RANDOM_MOVE],
+    "cooldown": 0.25,
+    "exp": 15,
+    "gold": 25,
+    "spelllist": [("e_voidflurry", 1), ("e_voidspear", 0.7)],
+    "delay": 0,
+    "hitbox": None
+}
+
+HERALD = {
+    "image": "boss_b",
+    "name": "herald",
+    "stats": {
+            "life": Ressource(350, "Life"),
+            "mana": Ressource(1, "Mana"),
+            "life_regen": Stat(0, "life_regen"),
+            "mana_regen": Stat(0, "mana_regen"),
+            "str": Stat(10, "Strength"),
+            "dex": Stat(10, "Dexterity"),
+            "int": Stat(10, "Intelligence"),
+            "def": Stat(10, "Endurance"),
+            "light": Stat(-0.5, "Light resistance", 0.9, scaling_value=0.005),
+            "fire_dmg": Stat(2, "Dark damage", scaling_value=0.05),
+            "speed": Stat(1, "speed", scaling_value=0),
+    },
+    "flags": [Flags.BOSS],
     "cooldown": 0.25,
     "exp": 15,
     "gold": 25,

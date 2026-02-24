@@ -39,7 +39,7 @@ from data.game.character import Character
 from data.tables.spell_table import generate_spell_list
 from data.tables.skilltree_table import generate_tree
 from data.tables.uniques_table import load_uniques
-from data.tables.enemy_table import VOIDBOSS, MONOLITH
+from data.tables.enemy_table import VOIDBOSS, MONOLITH, HERALD
 
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
@@ -52,7 +52,9 @@ from data.physics.particle import ParticleEmitter
 def generate_random_level():
     """Creates a random level."""
     area_lvl = max(SYSTEM["player"].creature.level + random.randint(-3, 5), 1)
-    has_boss = VOIDBOSS if random.randint(0, 3) == 0 else None
+    bosses = [VOIDBOSS, HERALD, None]
+    chance = [0.4, 0.4, 0.2]
+    has_boss = np.random.choice(bosses, p=chance)
     zone = random.randint(0, 6)
     diff_level = [0,1,2,3]
     diff_weight = [0.4, 0.25, 0.2, 0.15]
@@ -147,7 +149,10 @@ def load_animations():
     """Load the animations."""
     SYSTEM["images"]["fireball"] = Animation("fireball.png", 32, 19, frame_rate=0.25).scale(38, 64)
     SYSTEM["images"]["energyball"] = Animation("pew.png", 13, 13, frame_rate=0.25).scale(32, 32)
-    SYSTEM["images"]["boss_a"] = Animation("boss.png", 128, 150, frame_rate=0.1).scale(300, 256)
+    SYSTEM["images"]["boss_a"] = Animation("sprites/boss.png", 128, 150, frame_rate=0.1)\
+        .scale(300, 256)
+    SYSTEM["images"]["boss_b"] = Animation("sprites/boss2.png", 224, 240, frame_rate=0.1)\
+        .scale(480, 448)
     SYSTEM["images"]["bouncer"] = Animation("bounce.png", 8, 8, frame_rate=0.25).scale(64, 64)
     SYSTEM["images"]["generator"] = Animation("generator.png", 8, 8, frame_rate=0.25).scale(32, 32)
     SYSTEM["images"]["lazer"] = Animation("lazor.png", 16, 10, frame_rate=0.25).scale(16, 64)
@@ -160,40 +165,53 @@ def load_animations():
         frame_rate=0.2, lines=3).scale(64, 64)
     SYSTEM["images"]["enemy_card"] = Animation("anims/mob_background.png",\
                                                96, 64, frame_rate = 0.15).scale(192, 288)
-    SYSTEM["images"]["monolith"] = Animation("monolith.png", 200, 400, frame_rate=0.1)
+    SYSTEM["images"]["monolith"] = Animation("sprites/monolith.png", 200, 400, frame_rate=0.1)
     SYSTEM["images"]["buffanim_burn"] = Animation("anims/burning.png", 64, 64, frame_rate = 0.25)
     SYSTEM["images"]["buffanim_bleed"] = Animation("anims/bleeding.png", 100, 100,
                                                    frame_rate = 0.25, lines=2)
     SYSTEM["images"]["buffanim_freeze"] = Animation("anims/freezing.png", 64, 64, frame_rate = 0.25)
     SYSTEM["images"]["mana_potion"] = Animation("manapot.png", 16, 16, frame_max=7,\
         frame_rate=0.2, lines=3).scale(64, 64)
-    SYSTEM["images"]["badguy"] = Animation("badguy.png", 60, 130, frame_rate=0.25).flip(False, True)
-    SYSTEM["images"]["badguy_flipped"] = Animation("badguy.png", 60, 130, frame_rate=0.25)
-    SYSTEM["images"]["witch_flipped"] = Animation("witch.png", 64, 64, frame_rate = 0.25)\
+    SYSTEM["images"]["badguy"] = Animation("sprites/badguy.png", 60, 130, frame_rate=0.25)\
         .flip(False, True)
-    SYSTEM["images"]["witch"] = Animation("witch.png", 64, 64, frame_rate = 0.25)
-    SYSTEM["images"]["necromancer"] = Sprite("necro_old.png", 160, 128, ["idle", "dash", "attack",\
-        "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
+    SYSTEM["images"]["badguy_flipped"] = Animation("sprites/badguy.png", 60, 130, frame_rate=0.25)
+    SYSTEM["images"]["witch"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)
+    SYSTEM["images"]["witch_flipped"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)\
+        .flip(False, True)
+    SYSTEM["images"]["fairy"] = Animation("sprites/fairy.png", 32, 32, frame_rate = 0.25)\
+        .scale(64,64).flip(False, True)
+    SYSTEM["images"]["fairy_flipped"] = Animation("sprites/fairy.png", 32, 32, frame_rate = 0.25)\
+        .scale(64,64)
+    SYSTEM["images"]["fairyfire"] = Animation("sprites/fairyfire.png", 32, 32, frame_rate = 0.25)\
+        .scale(64,64)
+    SYSTEM["images"]["fairyfire_flipped"] = Animation("sprites/fairyfire.png", 32, 32,
+                                            frame_rate = 0.25).scale(64,64).flip(False, True)
+    SYSTEM["images"]["fairydoom"] = Animation("sprites/fairydoom.png", 32, 32, frame_rate = 0.25)\
+        .scale(128, 128).flip(False, True)
+    SYSTEM["images"]["fairydoom_flipped"] = Animation("sprites/fairydoom.png", 32, 32,
+                                                      frame_rate = 0.25).scale(128, 128)
+    SYSTEM["images"]["necromancer"] = Sprite("sprites/necro_old.png", 160, 128, ["idle",
+        "dash", "attack", "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25],
         [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
         [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False)
-    SYSTEM["images"]["necromancer_flipped"] = Sprite("necro_old.png", 160, 128,
+    SYSTEM["images"]["necromancer_flipped"] = Sprite("sprites/necro_old.png", 160, 128,
         ["idle", "dash", "attack",\
         "attack_alt", "cast", "hit", "die"], [0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.25], \
         [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
         [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False).flip(False, True)
-    SYSTEM["images"]["demon"] = Sprite("demon.png", 79, 69, ["idle", "dash", "hit",\
+    SYSTEM["images"]["demon"] = Sprite("sprites/demon.png", 79, 69, ["idle", "dash", "hit",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1, 0.1], \
         [4, 4, 4, 8, 6], [True, True, False, False, False],\
         [-1, -1, -1, -1, 1]).scale(2, 2, False)
-    SYSTEM["images"]["demon_flipped"] = Sprite("demon.png", 79, 69, ["idle", "dash", "hit",\
+    SYSTEM["images"]["demon_flipped"] = Sprite("sprites/demon.png", 79, 69, ["idle", "dash", "hit",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1, 0.1], \
         [4, 4, 4, 8, 6], [True, True, False, False, False],\
         [-1, -1, -1, -1, 1]).scale(2, 2, False).flip(False, True)
-    SYSTEM["images"]["soul"] = Sprite("soul.png", 96, 96, ["idle", "dash",\
+    SYSTEM["images"]["soul"] = Sprite("sprites/soul.png", 96, 96, ["idle", "dash",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1], \
         [5, 8, 10, 8], [True, True, False, False],\
         [-1, -1, -1, 1]).scale(2, 2, False).flip(False, True)
-    SYSTEM["images"]["soul_flipped"] = Sprite("soul.png", 96, 96, ["idle", "dash",\
+    SYSTEM["images"]["soul_flipped"] = Sprite("sprites/soul.png", 96, 96, ["idle", "dash",\
         "attack", "die"], [0.1, 0.1, 0.15, 0.1], \
         [5, 8, 10, 8], [True, True, False, False],\
         [-1, -1, -1, 1]).scale(2, 2, False).flip(False, True).flip(False, True)
@@ -557,7 +575,7 @@ def init_game():
     SYSTEM["warnings"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["particles"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
     SYSTEM["text_generator"] = TextGenerator()
-    SYSTEM["images"]["load_orb"] = Animation("darkcristal.png", 64, 64, frame_rate=0.25)\
+    SYSTEM["images"]["load_orb"] = Animation("sprites/darkcristal.png", 64, 64, frame_rate=0.25)\
         .scale(128, 128)
     SYSTEM["images"]["load_back"] = Image("life_boss_back.png").scale(30, 1500)
     SYSTEM["images"]["load_jauge"] = Image("life_boss.png").scale(30, 1500)

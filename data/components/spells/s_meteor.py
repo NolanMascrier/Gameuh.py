@@ -66,7 +66,7 @@ class Meteor(Spell):
 
     def describe(self):
         desc = super().describe()
-        desc["explosion_tab"] = trad('buttons', 'detonates'),
+        desc["explosion_tab"] = trad('buttons', 'detonates')
         return desc
 
     @property

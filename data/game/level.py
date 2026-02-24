@@ -26,7 +26,7 @@ from data.numerics.affix import Affix
 from data.image.text import Text
 from data.game.item import Item
 from data.tables.area_table import MODIFIERS
-from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER
+from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE
 from data.interface.endlevel import generate_victory, generate_defeat
 
 RUNE_ORDER = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
@@ -207,7 +207,8 @@ class Level():
         x_pos = random.randint(100, 300)
         enemy_type = reference["flags"]
         img = reference["image"]
-        ent = Entity(SCREEN_WIDTH + 200, y_pos, img, hitbox_mod=reference["hitbox"])
+        x_start = SCREEN_WIDTH + 200 if Flags.AMBUSHER not in reference["flags"] else -200
+        ent = Entity(x_start, y_pos, img, hitbox_mod=reference["hitbox"])
         exp_value = random.randint(int(reference["exp"]*(level + 1) *0.9),\
                                    int(reference["exp"]*(level + 1) * 1.1))
         gold_value = random.randint(int(reference["gold"]*(level + 1) *0.9),\
@@ -219,7 +220,8 @@ class Level():
             crea.afflict(mod.as_affliction())
         crea.scale(level)
         crea.reset()
-        dest = (SCREEN_WIDTH - x_pos, y_pos)
+        dest = (SCREEN_WIDTH - x_pos, y_pos) if Flags.AMBUSHER not in reference["flags"] else \
+            (x_pos, y_pos)
         enemy = Enemy(ent, crea, reference["spelllist"], behaviours=enemy_type,\
             timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay,\
             destination=dest)
@@ -230,8 +232,8 @@ class Level():
         min_monsters = (1 + random.randint(0, 2)) * (wave + 1)
         max_monsters = (4 + random.randint(0, 2)) * (wave + 1)
         monsters = round(max(random.randint(min_monsters, max_monsters + 1), 1) * self._pack_size)
-        choice = [VOIDBOMBER, DEMONBAT, NECROMANCER]
-        chance = [0.1, 0.4, 0.5]
+        choice = [VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE]
+        chance = [0.05, 0.25, 0.45, 0.125, 0.125]
         wave_data = []
         for _ in range(monsters):
             monster = np.random.choice(choice, p=chance)

@@ -11,6 +11,7 @@ from data.components.spells.spell import Spell
 from data.components.spells.s_iceorb import IceOrb
 from data.components.spells.s_meteor import Meteor
 from data.components.spells.s_icespear import IceSpear
+from data.components.spells.s_fireorb import FireOrb
 
 from data.tables.spelllevel_table import FIREBALL_LEVELS
 
@@ -47,6 +48,7 @@ FURYSLASH = Damage(0.8, phys=5, flags=[Flags.MELEE])
 RIP = Damage(1.1, phys=4, flags=[Flags.MELEE])
 
 FREEZE = Affliction("freeze", 0, 1, flags=[Flags.CANNOT_ACT], is_debuff=True)
+FIREORB = Damage(1, fire=1, flags=[Flags.SPELL])
 
 MASTER_1 = Damage(1.2, phys=6, flags=[Flags.MELEE])
 MASTER_2 = Damage(1.2, phys=8, flags=[Flags.MELEE])
@@ -166,6 +168,8 @@ def generate_spell_list():
     SYSTEM["images"]["skitterbolt"] = Animation("anims/skitter.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["firecone"] = Animation("anims/firecone.png", 64, 64, frame_rate=0.2)\
         .scale(96, 96)
+    SYSTEM["images"]["fireorb_img"] = Animation("anims/fireorb.png", 24, 24, frame_rate=0.2)\
+        .scale(120, 120)
     SYSTEM["images"]["iceorb_img"] = Animation("anims/ice_orb.png", 24, 21, frame_rate=0.2)\
         .scale(120, 105)
     SYSTEM["images"]["iceorb_explodes_img"] = Animation("anims/iceorbexplodes.png", 64, 64,
@@ -257,6 +261,9 @@ def generate_spell_list():
     lightshard = Spell("lightshard", arc_icon, "lightshards", LIGHTSHARD, 3,\
         cooldown=0.01, projectiles=64, flags=[Flags.LIGHT, Flags.CIRCULAR_BLAST,\
         Flags.PROJECTILE])
+    lightnova = Spell("lightnova", arc_icon, "lightshards", LIGHTSHARD, 3,\
+        cooldown=0.01, projectiles=8, flags=[Flags.LIGHT, Flags.CIRCULAR_BLAST,\
+        Flags.PROJECTILE])
     magicmissile = Spell("magicmissile", magicmissile_icon, "magicmissile", MAGICMISSILE, 20,\
         cooldown=4, projectiles=4, delay=0.2, flags=[Flags.LIGHT, Flags.WANDER,\
         Flags.PROJECTILE, Flags.HARD_TRACKING, Flags.AIMED_AT_CLOSEST, Flags.FLURRY_RELEASE,
@@ -297,7 +304,7 @@ def generate_spell_list():
         cooldown=0.35, projectiles=5, spread=180, flags=[Flags.LIGHTNING, Flags.SPREAD,\
         Flags.PROJECTILE, Flags.SKITTER, Flags.AIMED_AT_MOUSE], \
         anim_on_hit=light_strike, trail=PARTICLE_CONFIGS["arc_line"], delay=0.05, proj_speed=10)
-    
+
     chain_lightning = Spell("chain_lightning", arc_icon, "lightboltanim", LIGHTNING_BOLT, 18,\
         cooldown=3, projectiles=1, chains=5, flags=[Flags.LIGHTNING, Flags.BARRAGE,\
         Flags.PROJECTILE, Flags.REPLICATE], \
@@ -308,6 +315,10 @@ def generate_spell_list():
                                            Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS],
          delay=0.9, proj_speed=10, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
          impact=PARTICLE_CONFIGS["firecone_impact"])
+
+    fireorb_evil = FireOrb("Fireorb", inferno_icon, "fireorb_img", FIREORB,
+                    flags=[Flags.PIERCE_TICKING, Flags.PIERCING, Flags.PROJECTILE, Flags.FIRE,
+                           Flags.SPREAD, Flags.AIMED_AT_PLAYER], reset_rate=0.2)
 
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["meteor"] = meteor
@@ -338,6 +349,8 @@ def generate_spell_list():
     SYSTEM["spells"]["e_voidflurry"] = voidoltflurry
     SYSTEM["spells"]["e_voidspear"] = voidspear
     SYSTEM["spells"]["e_lightshard"] = lightshard
+    SYSTEM["spells"]["e_lightnova"] = lightnova
     SYSTEM["spells"]["e_lightspear"] = lightspear
     SYSTEM["spells"]["e_lazer"] = lazoor
+    SYSTEM["spells"]["e_fireorb"] = fireorb_evil
     SYSTEM["spells"][None] = None
