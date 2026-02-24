@@ -169,7 +169,7 @@ def make_slot(spell: Spell, key):
     if data["sequence"] is None and data["explosion"] is None:
         SYSTEM["ui"][key] = single_slot(spell)
     elif data["sequence"] is None:
-        values = [trad('descripts', 'projectile'), trad('descripts', 'explosion')]
+        values = [trad('descripts', 'projectile'), data["explosion_tab"]]
         SYSTEM["ui"][key] = {
             "type": "explosion",
             "proj": single_slot(spell),

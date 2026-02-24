@@ -13,3 +13,4 @@ frakassets for the flying cristal
 Eddie's workshop for the flying Soul
 Stealthix for the fireballs
 Immunity's for the diablo-like UI
+Papoycore for the Agis and the fairy sprites

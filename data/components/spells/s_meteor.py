@@ -2,7 +2,7 @@
 
 import numpy
 
-from data.constants import SYSTEM, PROJECTILE_TRACKER, SCREEN_WIDTH
+from data.constants import SYSTEM, PROJECTILE_TRACKER, SCREEN_WIDTH, trad
 from data.components.spells.spell import Spell
 from data.components.projectiles.p_meteor import MeteorProjectile
 from data.game.creature import Creature
@@ -63,6 +63,11 @@ class Meteor(Spell):
         self._safety_timer -= 0.016
         if len(self._active_meteor) > 0 and self._cooldown <= 0:
             self.detonate()
+
+    def describe(self):
+        desc = super().describe()
+        desc["explosion_tab"] = trad('buttons', 'detonates'),
+        return desc
 
     @property
     def icon(self):

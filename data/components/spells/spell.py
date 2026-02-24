@@ -533,6 +533,7 @@ class Spell():
                 (self._real_damage is not None and not self._real_damage.is_crit) else True,
             "crit_dmg": self._stats['crit_dmg'].c_value,
             "sequence": sequence,
+            "explosion_tab": trad('buttons', 'explosion'),
             "explosion": explosion
         }
         return data
@@ -641,7 +642,7 @@ class Spell():
         if evil and entity.x > SYSTEM["player"].entity.x:
             angle += 180
         area = self._stats["area"].c_value + caster.stats["area"].c_value
-        debuffs, debuff_chance = self.generate_debuff_list
+        debuffs, debuff_chance = self.generate_debuff_list(caster)
         x = entity.center[0] + x_diff
         y = entity.center[1] + y_diff
         proj = Projectile(x, y, angle,\
