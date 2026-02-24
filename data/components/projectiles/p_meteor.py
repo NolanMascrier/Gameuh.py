@@ -1,6 +1,6 @@
 """Projectile definition for meteor."""
 
-from data.constants import PROJECTILE_TRACKER, SCREEN_HEIGHT
+from data.constants import PROJECTILE_TRACKER, SCREEN_HEIGHT, SYSTEM
 from data.components.projectiles.projectile import Projectile, DummyEntity
 
 class MeteorProjectile(Projectile):
@@ -9,7 +9,8 @@ class MeteorProjectile(Projectile):
                  delay=0, behaviours=None, debuffs=None,
                  explosion=None, area=1, ignore_team=False, debuff_chance=1,
                  reset_rate=0, dest_y = SCREEN_HEIGHT):
-        super().__init__(x, y, 90, imagefile, damage, origin, evil, 5, caster, 0,
+        speed_factor = 6 * (SYSTEM["mouse"][1] / SCREEN_HEIGHT) + 4
+        super().__init__(x, y, 0, imagefile, damage, origin, evil, speed_factor, caster, 0,
                          delay, 0, behaviours, debuffs, explosion, area, ignore_team,
                          0, 0, None, 1, debuff_chance, None, None)
         self._reset_rate = reset_rate
