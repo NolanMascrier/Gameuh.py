@@ -167,9 +167,6 @@ class Projectile(HitBox):
                 dmg = self._origin.recalculate_damage(self._damage)
             num, crit = target.damage(dmg)
             self._immune.append(target)
-            if Flags.REPLICATE in self._behaviours:
-                pass #TODO
-
             self._bounced = True
             if self._bounces <= 0 and self._chains <= 0 and Flags.PIERCING not in self._behaviours:
                 self._flagged = True
@@ -455,3 +452,12 @@ class Projectile(HitBox):
     def finished(self):
         """Returns whether or not the projectile is finished."""
         return self.can_be_destroyed()
+
+    @property
+    def immune(self) -> Animation:
+        """Returns the projectile's immune."""
+        return self._immune
+
+    @immune.setter
+    def immune(self, value):
+        self._immune = value

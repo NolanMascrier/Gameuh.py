@@ -27,17 +27,7 @@ class Meteor(Spell):
     def spawn_projectile(self, entity, caster, evil=False, x_diff=0, y_diff=0, delay=1,
                          angle=90, ignore_team=False):
         area = self._stats["area"].c_value + caster.stats["area"].c_value
-        debuffs = []
-        debuff_chance = self._stats["debuff_chance"].c_value * caster.stats["debuff_chance"].c_value
-        for d in self._debuffs:
-            dbf = d.clone()
-            dbf.duration *= caster.stats["debuff_len"].c_value
-            dbf.tick_rate *= caster.stats["debuff_rte"].c_value
-            dbf.value *= caster.stats["debuff_pot"].c_value
-            if dbf.damage is not None:
-                dbf.damage = caster.recalculate_damage(dbf.damage, True)
-                dbf.damage.mod *= caster.stats["debuff_pot"].c_value
-            debuffs.append(dbf)
+        debuffs, debuff_chance = self.generate_debuff_list(caster)
         x = int(numpy.random.randint(0, SCREEN_WIDTH)) - 64
         y = SYSTEM["mouse"][1]
         proj = MeteorProjectile(x, -64,\

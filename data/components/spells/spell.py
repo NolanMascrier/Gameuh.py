@@ -620,12 +620,8 @@ class Spell():
             self._toggled = False
         self._cooldown = self._stats["cooldown"].c_value * caster.stats["cast_speed"].c_value
 
-    def spawn_projectile(self, entity, caster, evil = False,\
-            x_diff = 0, y_diff = 0, delay = 1, angle = 0, ignore_team = False):
-        """Spanws a projectile."""
-        if evil and entity.x > SYSTEM["player"].entity.x:
-            angle += 180
-        area = self._stats["area"].c_value + caster.stats["area"].c_value
+    def generate_debuff_list(self, caster: Creature) -> tuple[list, float]:
+        """Creates the debuff list."""
         debuffs = []
         debuff_chance = self._stats["debuff_chance"].c_value * caster.stats["debuff_chance"].c_value
         for d in self._debuffs:
@@ -637,6 +633,15 @@ class Spell():
                 dbf.damage = caster.recalculate_damage(dbf.damage, True)
                 dbf.damage.mod *= caster.stats["debuff_pot"].c_value
             debuffs.append(dbf)
+        return debuffs, debuff_chance
+
+    def spawn_projectile(self, entity: Entity, caster: Creature, evil: bool = False,\
+            x_diff = 0, y_diff = 0, delay = 1, angle = 0, ignore_team = False):
+        """Spanws a projectile."""
+        if evil and entity.x > SYSTEM["player"].entity.x:
+            angle += 180
+        area = self._stats["area"].c_value + caster.stats["area"].c_value
+        debuffs, debuff_chance = self.generate_debuff_list
         x = entity.center[0] + x_diff
         y = entity.center[1] + y_diff
         proj = Projectile(x, y, angle,\

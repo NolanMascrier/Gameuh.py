@@ -10,6 +10,7 @@ from data.components.spells.spell import Spell
 
 from data.components.spells.s_iceorb import IceOrb
 from data.components.spells.s_meteor import Meteor
+from data.components.spells.s_icespear import IceSpear
 
 from data.tables.spelllevel_table import FIREBALL_LEVELS
 
@@ -36,7 +37,8 @@ ICEBOLT = Damage(5, ice=1, flags=[Flags.SPELL])
 ICEORB = Damage(5, ice=1, flags=[Flags.SPELL])
 ICEORB_EXPLOSION = Damage(3, ice=3, flags=[Flags.SPELL])
 ICEWALL = Damage(0, ice=1, flags=[Flags.SPELL])
-ICESPEAR = Damage(5, 2, ice=1, flags=[Flags.SPELL])
+ICESPEAR = Damage(1.2, ice=5, flags=[Flags.SPELL])
+ICESPEAR_SHARD = Damage(1.2, ice=5, flags=[Flags.SPELL])
 VOIDSPEAR = Damage(10, dark=15, flags=[Flags.SPELL])
 LIGHTSPEAR = Damage(10, light=25, flags=[Flags.SPELL])
 CHARGE = Damage(1.5, phys=6, fire=4, flags=[Flags.MELEE])
@@ -113,6 +115,10 @@ def generate_spell_list():
         Animation("anims/plasma.png", 64, 64, frame_rate=0.25)
     SYSTEM["images"]["icebolt_proj_img"] =\
         Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(18, 48)
+    SYSTEM["images"]["icespear_proj_img"] =\
+        Animation("icespear.png", 24, 9, frame_rate=0.05, loops=False).scale(36, 96)
+    SYSTEM["images"]["iceshard_proj_img"] =\
+        Animation("anims/iceshard.png", 24, 24, frame_rate=0.21).scale(48, 48)
     SYSTEM["images"]["voidspear_proj_img"] =\
         Animation("anims/voidspear.png", 24, 9, frame_rate=0.05, loops=False).scale(54, 144)
     SYSTEM["images"]["lightspear_proj_img"] =\
@@ -217,9 +223,9 @@ def generate_spell_list():
     ice_wall = Spell("ice_wall", ice_wall_icon, "icewall_img", ICEWALL, 10,\
         cooldown=20, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
         Flags.DELAYED], debuffs=[FREEZE], debuff_chance=0.50)
-    ice_spear = Spell("ice_spear", ice_spear_icon, "icespear_img", ICESPEAR, 10,\
-        cooldown=15, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE,\
-        Flags.DELAYED, Flags.PIERCING], debuffs=[FREEZE], debuff_chance=0.50)
+    ice_spear = IceSpear("ice_spear", ice_spear_icon, "icespear_proj_img", ICESPEAR, 8,\
+        cooldown=2, flags=[Flags.ICE, Flags.PROJECTILE, Flags.AIMED_AT_MOUSE,\
+        Flags.SPREAD], secondary_damage=ICESPEAR_SHARD, secondary_anim="iceshard_proj_img")
     ring_of_frost = Spell("ring_of_frost", icebolt_icon, "ring_of_frost_img", None, 10,\
         cooldown=20, projectiles=1, delay=0.8, flags=[Flags.ICE, Flags.PROJECTILE, \
         Flags.DELAYED, Flags.AIMED_AT_MOUSE],\
@@ -302,7 +308,6 @@ def generate_spell_list():
                                            Flags.SPREAD, Flags.PIERCING, Flags.DAMAGE_DECAYS],
          delay=0.9, proj_speed=10, spread=90, trail=PARTICLE_CONFIGS["firecone_trail"],
          impact=PARTICLE_CONFIGS["firecone_impact"])
-    
 
     SYSTEM["spells"]["firebolt"] = firebolt
     SYSTEM["spells"]["meteor"] = meteor
