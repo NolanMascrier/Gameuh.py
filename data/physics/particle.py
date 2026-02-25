@@ -1,8 +1,11 @@
 """Particle system for visual effects."""
 
+import math
+
 import numpy as np
+from data.api import surface
 from data.api.vec2d import Vec2
-from data.constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from data.constants import SCREEN_WIDTH, SCREEN_HEIGHT, PARTICULE_TRACKER
 
 class Particle:
     """Single particle instance."""
@@ -36,6 +39,16 @@ class Particle:
         """Check if particle is visible."""
         return (0 <= self.pos.x <= SCREEN_WIDTH and
                 0 <= self.pos.y <= SCREEN_HEIGHT)
+    
+
+class Segment:
+    """Line segment for arc effects."""
+    __slots__ = ('start', 'end')
+
+    def __init__(self, x1, y1, x2, y2):
+        self.start = Vec2(x1, y1)
+        self.end = Vec2(x2, y2)
+    
 
 
 class ParticleEmitter:
@@ -131,6 +144,7 @@ class ParticleEmitter:
             return
         self._particles = [p for p in self._particles if p.tick()]
 
+
     def draw(self, surface):
         """Render all particles.
 
@@ -150,10 +164,77 @@ class ParticleEmitter:
                     surface.set_at((x, y), color)
             else:
                 surface.draw_circle(color, (x, y), int(particle.size))
+        for i in PARTICULE_TRACKER:
+            self.draw_lightning(i[0], i[1], i[2], i[3], surface)
+            i[4] -= 0.016
+        PARTICULE_TRACKER[:] = [i for i in PARTICULE_TRACKER if i[4] > 0]
+
+    def rotate(x1, y1, x2, y2, angle):
+        """Rotate a point counterclockwise by a given angle around a given origin.  
+        The angle should be given in radians."""
+        ox, oy = x1, y1
+        px, py = x2, y2   
+        qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
+        qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
+        return (qx, qy)
+
+    #def draw_lightning(self, x1, y1, x2, y2, surface):
+    #    segment_list = [Segment(x1, y1, x2, y2)]
+    #    offset_amount = 10
+    #    for segment in segment_list[:]:
+    #        mid_x = (segment.start.x + segment.end.x) / 2
+    #        mid_y = (segment.start.y + segment.end.y) / 2
+    #        offset_x = np.random.uniform(-offset_amount, offset_amount)
+    #        offset_y = np.random.uniform(-offset_amount, offset_amount)
+    #        mid_x += offset_x
+    #        mid_y += offset_y
+    #        new_segment1 = Segment(segment.start.x, segment.start.y, mid_x, mid_y)
+    #        new_segment2 = Segment(mid_x, mid_y, segment.end.x, segment.end.y)
+    #        segment_list.append(new_segment1)
+    #        segment_list.append(new_segment2)
+    #        surface.draw_line((255, 255, 0), (segment.start.x, segment.start.y), (segment.end.x, segment.end.y), 2)
+    #    offset_amount /= 2
+    
+    def draw_lightning(self, x1, y1, x2, y2, surface):
+        """Draw a lightning arc between two points."""
+        # Start with the single segment and iteratively subdivide it.
+        segments = [Segment(x1, y1, x2, y2)]
+        offset_amount = max(6.0, np.hypot(x2 - x1, y2 - y1) * 0.25)
+        iterations = 4
+        for _ in range(iterations):
+            new_segs = []
+            for seg in segments:
+                mid_x = (seg.start.x + seg.end.x) / 2.0
+                mid_y = (seg.start.y + seg.end.y) / 2.0
+                dx = seg.end.x - seg.start.x
+                dy = seg.end.y - seg.start.y
+                #direction = midPoint - startPoint;
+                #splitEnd = Rotate(direction, randomSmallAngle)*lengthScale + midPoint; // lengthScale is, for best results, < 1.  0.7 is a good value.
+                #segmentList.Add(new Segment(midPoint, splitEnd));
+                #direction = np.arctan2(mid_x - seg.start.x, mid_y - seg.start.y) * 180 / np.pi
+                #splitEnd = self.rotate(x1, y1, x2, y2, direction)
+                length = np.hypot(dx, dy)
+                if length != 0:
+                    perp_x = -dy / length
+                    perp_y = dx / length
+                else:
+                    perp_x = perp_y = 0
+                displacement = np.random.uniform(-offset_amount, offset_amount)
+                mid_x += perp_x * displacement
+                mid_y += perp_y * displacement
+                new_segs.append(Segment(seg.start.x, seg.start.y, mid_x, mid_y))
+                new_segs.append(Segment(mid_x, mid_y, seg.end.x, seg.end.y))
+            segments = new_segs
+            offset_amount /= 2.0
+
+        # Draw the final subdivided segments
+        for seg in segments:
+            surface.draw_line((255, 255, 0), (seg.start.x, seg.start.y), (seg.end.x, seg.end.y), 2)
 
     def clear(self):
         """Remove all particles."""
         self._particles.clear()
+        PARTICULE_TRACKER.clear()
 
     @property
     def enabled(self):

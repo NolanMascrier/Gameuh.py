@@ -7,7 +7,7 @@ import numpy
 from data.api.vec2d import Vec2
 
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM,\
-    PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER
+    PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER, PARTICULE_TRACKER
 from data.numerics.damage import Damage
 from data.physics.hitbox import HitBox
 from data.game.creature import Creature
@@ -118,6 +118,12 @@ class Projectile(HitBox):
         self._anim_speed = anim_speed
         self._debuff_chance = debuff_chance
         self._decay = 1
+        if Flags.LIGHTNING in self._behaviours:
+            point_list = [x,y, SCREEN_WIDTH, y, 1]
+            PARTICULE_TRACKER.append(point_list)
+
+
+
 
     def get_image(self):
         """Returns the projectile image."""
