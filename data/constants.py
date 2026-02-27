@@ -306,6 +306,7 @@ class Flags(str, Enum):
     UNNATACH = "unnatached_barrage"
     WARN = "warning"
     ARC_PARTICLE = "arc_particles"
+    LIGHTNING_BOLT = "lightning_bolt"
     #Flags for spells
     BARRAGE = "barrage"
     SPREAD = "spread"

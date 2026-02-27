@@ -30,6 +30,9 @@ def render_all():
         all_blits = []
         shake = SYSTEM["post_effects"].shake_factor
         all_blits.append((SYSTEM["gm_background"], shake))
+        #effects = SYSTEM.get("effects_persistent")
+        #if effects:
+        #    all_blits.append((effects, (0, 0)))
         if RENDER_LIST:
             all_blits.extend(RENDER_LIST)
             RENDER_LIST.clear()

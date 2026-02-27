@@ -6,6 +6,7 @@ import os
 import random
 import cProfile
 import numpy as np
+import pygame
 
 from data.api.surface import Surface, mouse_position, get_keys, init_engine
 from data.api.clock import Clock
@@ -282,7 +283,7 @@ def load_images():
     SYSTEM["images"]["firestorm"] = Image("icons/spells/FireMage_23.png").scale(64, 64)
     SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     SYSTEM["images"]["ring_of_fire"] = Image("icons/spells/ring_of_fire.png").scale(64, 64)
-    SYSTEM["images"]["meteor"] = Image("icons/spells/FireMage_4.png").scale(64, 64)
+    SYSTEM["images"]["meteor"] = Image("icons/spells/meteor.png").scale(64, 64)
     SYSTEM["images"]["inferno"] = Image("icons/spells/FireMage_15.png").scale(64, 64)
     SYSTEM["images"]["ice_mastery"] = Image("icons/spells/FrostMage_25.png").scale(64, 64)
     SYSTEM["images"]["congelation"] = Image("icons/spells/FrostMage_8.png").scale(64, 64)
@@ -568,6 +569,7 @@ def init_game():
     SYSTEM["trans_cache"] = TransformCache()
     SYSTEM["logger"] = Logger()
     SYSTEM["particle_emitter"] = ParticleEmitter(max_particles=2000)
+    #SYSTEM["effects_persistent"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None

@@ -3,6 +3,7 @@
 from math import pi
 import random
 import numpy
+import pygame
 
 from data.api.vec2d import Vec2
 
@@ -118,6 +119,15 @@ class Projectile(HitBox):
         self._anim_speed = anim_speed
         self._debuff_chance = debuff_chance
         self._decay = 1
+        if Flags.LIGHTNING_BOLT in self._behaviours:
+            SYSTEM["particle_emitter"].draw_lightning(
+            start=Vec2(self._origin.origin.x, self._origin.origin.y),
+            end=Vec2(SCREEN_WIDTH, self._origin.origin.y),
+            color=(255, 255, 40),
+            maximum_offset=20,
+            minimum_segment_length=10,
+            thickness=3,
+            surface=SYSTEM["particles"].surface)
 
     def get_image(self):
         """Returns the projectile image."""
@@ -274,6 +284,7 @@ class Projectile(HitBox):
                     fade=config.get('fade', True),
                     gravity=config.get('gravity', 0)
                 )
+        
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:

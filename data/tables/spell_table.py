@@ -98,7 +98,7 @@ def generate_spell_list():
     magicmissile_icon = Image("icons/spells/magicmissile.png").scale(64, 64)
     rip_icon = Image("icons/spells/rip.png").scale(64, 64)
     pact_icon = Image("icons/spells/bloodpact.png").scale(64, 64)
-    meteor_icon = Image("icons/spells/FireMage_4.png").scale(64, 64)
+    meteor_icon = Image("icons/spells/meteor.png").scale(64, 64)
     meteor_det_icon = Image("icons/spells/FireMage_15.png").scale(64, 64)
     inferno_icon = Image("icons/spells/cone_of_flames.png").scale(64, 64)
     elecbolt_icon = Image("icons/spells/lightning_bolt.png").scale(64, 64)
@@ -290,8 +290,8 @@ def generate_spell_list():
 
     lightning_bolt = Spell("lightning_bolt", elecbolt_icon, "lightboltanim", LIGHTNING_BOLT, 15,\
         cooldown=3, projectiles=1, flags=[Flags.LIGHTNING, Flags.BARRAGE,\
-        Flags.PROJECTILE, Flags.PIERCING], \
-        anim_on_hit=bolt_strike, proj_speed=60, trail=PARTICLE_CONFIGS["arc_trail"])
+        Flags.PROJECTILE, Flags.PIERCING, Flags.LIGHTNING_BOLT], \
+        anim_on_hit=bolt_strike, proj_speed=60, trail=PARTICLE_CONFIGS["lightning_bolt_trail"])
 
     shock = Spell("shock", shock_icon, "skitterbolt", SHOCK, 3,\
         cooldown=0.35, projectiles=5, spread=180, flags=[Flags.LIGHTNING, Flags.SPREAD,\

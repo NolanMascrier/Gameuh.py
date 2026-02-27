@@ -68,4 +68,14 @@ PARTICLE_CONFIGS = {
         'fade': True,
         'gravity': 0
     },
+    'lightning_bolt_trail': {
+        'count': 5,
+        'vel_range': (-1, 1),
+        'color': [(255, 255, 40), (255, 255, 100), (255, 255, 200)],
+        'size_range': (0.5, 2),
+        'life_range': (0.1, 0.3),
+        'spread_angle': 360,
+        'fade': False,
+        'gravity': 0
+    }
 }

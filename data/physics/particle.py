@@ -1,6 +1,12 @@
 """Particle system for visual effects."""
 
+from hashlib import new
+from random import random
+
 import numpy as np
+import matplotlib.pyplot as plt
+import pygame
+
 from data.api.vec2d import Vec2
 from data.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
@@ -36,7 +42,18 @@ class Particle:
         """Check if particle is visible."""
         return (0 <= self.pos.x <= SCREEN_WIDTH and
                 0 <= self.pos.y <= SCREEN_HEIGHT)
-
+    
+class Segment:
+       """class to represent a line betzween two points"""
+       def __init__(self, start, end):
+           self.start = start
+           self.end = end
+       def length(self):
+           """calculate the length of the segment"""
+           return np.sqrt((self.end.x - self.start.x) ** 2 + (self.end.y - self.start.y) ** 2)
+       def midpoint(self):
+           """calculate the midpoint of the segment"""
+           return Vec2((self.start.x + self.end.x) / 2, (self.start.y + self.end.y) / 2)
 
 class ParticleEmitter:
     """Manages a collection of particles."""
@@ -150,6 +167,36 @@ class ParticleEmitter:
                     surface.set_at((x, y), color)
             else:
                 surface.draw_circle(color, (x, y), int(particle.size))
+
+    def draw_lightning(self, surface, start, end, color, maximum_offset, minimum_segment_length, thickness):
+        """Draw a lightning effect between two points."""
+        segment_list = []
+        segment_list.append(Segment(start, end))
+        offset_amount =  maximum_offset
+        for i in range(20):
+            for segment in segment_list[:]:  # Iterate over a copy of the list
+                if segment.length() > minimum_segment_length:
+                    mid_point = segment.midpoint()
+                    mid_point.x += np.random.uniform(-offset_amount, offset_amount)
+                    mid_point.y += np.random.uniform(-offset_amount, offset_amount)
+                    segment_list.append(Segment(segment.start, mid_point))
+                    segment_list.append(Segment(mid_point, segment.end))
+                    segment_list.remove(segment)
+            offset_amount *= 0.5
+        if surface is not None:
+            for segment in segment_list:
+                pygame.draw.line(surface, color,
+                    (int(segment.start.x), int(segment.start.y)),
+                    (int(segment.end.x), int(segment.end.y)),
+                    thickness)
+    
+        #if self._enabled:
+        #    for segment in segment_list:
+        #        pygame.draw.line(surface, color,
+        #            start_pos=(int(segment.start.x), int(segment.start.y)),
+        #            end_pos=(int(segment.end.x), int(segment.end.y)),
+        #            width=thickness,
+        #            )
 
     def clear(self):
         """Remove all particles."""

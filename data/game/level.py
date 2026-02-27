@@ -231,7 +231,7 @@ class Level():
         max_monsters = (4 + random.randint(0, 2)) * (wave + 1)
         monsters = round(max(random.randint(min_monsters, max_monsters + 1), 1) * self._pack_size)
         choice = [VOIDBOMBER, DEMONBAT, NECROMANCER]
-        chance = [0.1, 0.4, 0.5]
+        chance = [0, 0.5, 0.5]
         wave_data = []
         for _ in range(monsters):
             monster = np.random.choice(choice, p=chance)
