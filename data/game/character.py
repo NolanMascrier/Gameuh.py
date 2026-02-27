@@ -44,7 +44,7 @@ class Character():
             "spell_L": "firebolt",
             "spell_R": None,
             "spell_M": None,
-            "spell_1": "voidbolt",
+            "spell_1": "lightning_bolt",
             "spell_2": "arc",
             "spell_3": "icebolt",
             "spell_4": "elefury",

@@ -119,24 +119,12 @@ class Projectile(HitBox):
         self._anim_speed = anim_speed
         self._debuff_chance = debuff_chance
         self._decay = 1
-<<<<<<< HEAD
-        if Flags.LIGHTNING_BOLT in self._behaviours:
-            SYSTEM["particle_emitter"].draw_lightning(
-            start=Vec2(self._origin.origin.x, self._origin.origin.y),
-            end=Vec2(SCREEN_WIDTH, self._origin.origin.y),
-            color=(255, 255, 40),
-            maximum_offset=20,
-            minimum_segment_length=10,
-            thickness=3,
-            surface=SYSTEM["particles"].surface)
-=======
         if Flags.LIGHTNING in self._behaviours:
             point_list = [x,y, SCREEN_WIDTH, y, 1]
             PARTICULE_TRACKER.append(point_list)
 
 
 
->>>>>>> eb5a779dae25bf3d38847fc9c907fa648a4c15ee
 
     def get_image(self):
         """Returns the projectile image."""

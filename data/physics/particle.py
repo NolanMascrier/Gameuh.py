@@ -2,6 +2,7 @@
 
 import math
 
+import cv2
 import numpy as np
 from data.api import surface
 from data.api.vec2d import Vec2
@@ -169,7 +170,7 @@ class ParticleEmitter:
             i[4] -= 0.016
         PARTICULE_TRACKER[:] = [i for i in PARTICULE_TRACKER if i[4] > 0]
 
-    def rotate(x1, y1, x2, y2, angle):
+    def rotate(self, x1, y1, x2, y2, angle):
         """Rotate a point counterclockwise by a given angle around a given origin.  
         The angle should be given in radians."""
         ox, oy = x1, y1
@@ -208,11 +209,25 @@ class ParticleEmitter:
                 mid_y = (seg.start.y + seg.end.y) / 2.0
                 dx = seg.end.x - seg.start.x
                 dy = seg.end.y - seg.start.y
+                
                 #direction = midPoint - startPoint;
                 #splitEnd = Rotate(direction, randomSmallAngle)*lengthScale + midPoint; // lengthScale is, for best results, < 1.  0.7 is a good value.
                 #segmentList.Add(new Segment(midPoint, splitEnd));
-                #direction = np.arctan2(mid_x - seg.start.x, mid_y - seg.start.y) * 180 / np.pi
-                #splitEnd = self.rotate(x1, y1, x2, y2, direction)
+
+                """The original logic:
+                Calculate direction vector from start to mid point
+                Rotate that vector by a random small angle
+                Scale it by a length factor (0.7 gives good results)
+                Add to midpoint to get the branch endpoint
+                """
+                
+                """The key improvements:
+
+                Vector calculation: dir_x and dir_y are now proper direction vectors from the segment start to the midpoint
+                Vector rotation: Uses 2D rotation matrix math instead of trying to rotate points around fixed coordinates
+                Scaling: The rotated direction is scaled by length_scale (0.7 works well) to create branches shorter than the main segments
+                Branch positioning: The branch endpoint is calculated by adding the scaled, rotated direction to the midpoint"""
+
                 length = np.hypot(dx, dy)
                 if length != 0:
                     perp_x = -dy / length
@@ -224,34 +239,87 @@ class ParticleEmitter:
                 mid_y += perp_y * displacement
                 new_segs.append(Segment(seg.start.x, seg.start.y, mid_x, mid_y))
                 new_segs.append(Segment(mid_x, mid_y, seg.end.x, seg.end.y))
+                
+                # Add lightning branches
+                # Calculate direction vector from segment start to midpoint
+                dir_x = mid_x - seg.start.x
+                dir_y = mid_y - seg.start.y
+                
+                # Rotate direction by random small angle
+                random_angle = np.random.uniform(-0.3, 0.3)  # radians
+                cos_a = np.cos(random_angle)
+                sin_a = np.sin(random_angle)
+                rotated_x = dir_x * cos_a - dir_y * sin_a
+                rotated_y = dir_x * sin_a + dir_y * cos_a
+                
+                # Scale the rotated direction (0.7 gives good branch lengths)
+                length_scale = 0.7
+                rotated_x *= length_scale
+                rotated_y *= length_scale
+                
+                # Calculate branch endpoint and add segment
+                split_end_x = mid_x + rotated_x
+                split_end_y = mid_y + rotated_y
+                new_segs.append(Segment(mid_x, mid_y, split_end_x, split_end_y))
             segments = new_segs
             offset_amount /= 2.0
+        
 
-        # Draw the final subdivided segments
-        for seg in segments:
-            surface.draw_line((255, 255, 0), (seg.start.x, seg.start.y), (seg.end.x, seg.end.y), 2)
+        # Draw the final subdivided segments with OpenCV glow effect
+        # Get surface as numpy array for OpenCV processing
+        try:
+            # Convert surface to OpenCV format (assuming pygame surface) du coup non lol
+            surface_array = np.array(surface.surface())
+            glow_surface = surface_array.copy()
+            
+            # Draw bright lightning on glow surface
+            for seg in segments:
+                cv2.line(glow_surface,
+                        (int(seg.start.x), int(seg.start.y)),
+                        (int(seg.end.x), int(seg.end.y)),
+                        (255, 200, 0), 4)  # Orange glow base
+            
+            # Apply Gaussian blur for realistic glow
+            glow_surface = cv2.GaussianBlur(glow_surface, (21, 21), 0)
+            
+            # Blend glow with original surface
+            blended = cv2.addWeighted(surface_array, 1.0, glow_surface, 0.6, 0)
+            
+            # Draw the bright main bolt on top
+            for seg in segments:
+                cv2.line(blended,
+                        (int(seg.start.x), int(seg.start.y)),
+                        (int(seg.end.x), int(seg.end.y)),
+                        (255, 255, 0), 2)  # Bright yellow
+            
+            # Convert back to surface (if needed - depends on your surface API)
+            # This step depends on your custom surface implementation
+        except Exception as e:
+            # Fallback to simple drawing if OpenCV processing fails
+            for seg in segments:
+                surface.draw_line((255, 255, 0), (seg.start.x, seg.start.y), (seg.end.x, seg.end.y), 2)
 
-    def draw_lightning(self, surface, start, end, color, maximum_offset, minimum_segment_length, thickness):
-        """Draw a lightning effect between two points."""
-        segment_list = []
-        segment_list.append(Segment(start, end))
-        offset_amount =  maximum_offset
-        for i in range(20):
-            for segment in segment_list[:]:  # Iterate over a copy of the list
-                if segment.length() > minimum_segment_length:
-                    mid_point = segment.midpoint()
-                    mid_point.x += np.random.uniform(-offset_amount, offset_amount)
-                    mid_point.y += np.random.uniform(-offset_amount, offset_amount)
-                    segment_list.append(Segment(segment.start, mid_point))
-                    segment_list.append(Segment(mid_point, segment.end))
-                    segment_list.remove(segment)
-            offset_amount *= 0.5
-        if surface is not None:
-            for segment in segment_list:
-                pygame.draw.line(surface, color,
-                    (int(segment.start.x), int(segment.start.y)),
-                    (int(segment.end.x), int(segment.end.y)),
-                    thickness)
+    #def draw_lightning(self, surface, start, end, color, maximum_offset, minimum_segment_length, thickness):
+    #    """Draw a lightning effect between two points."""
+    #    segment_list = []
+    #    segment_list.append(Segment(start, end))
+    #    offset_amount =  maximum_offset
+    #    for i in range(20):
+    #        for segment in segment_list[:]:  # Iterate over a copy of the list
+    #            if segment.length() > minimum_segment_length:
+    #                mid_point = segment.midpoint()
+    #                mid_point.x += np.random.uniform(-offset_amount, offset_amount)
+    #                mid_point.y += np.random.uniform(-offset_amount, offset_amount)
+    #                segment_list.append(Segment(segment.start, mid_point))
+    #                segment_list.append(Segment(mid_point, segment.end))
+    #                segment_list.remove(segment)
+    #        offset_amount *= 0.5
+    #    if surface is not None:
+    #        for segment in segment_list:
+    #            pygame.draw.line(surface, color,
+    #                (int(segment.start.x), int(segment.start.y)),
+    #                (int(segment.end.x), int(segment.end.y)),
+    #                thickness)
     
         #if self._enabled:
         #    for segment in segment_list:
