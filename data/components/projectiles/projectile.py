@@ -47,7 +47,7 @@ class Projectile(HitBox):
                 x = int(numpy.random.choice([0, SCREEN_WIDTH]))
                 y = numpy.random.randint(0, SCREEN_HEIGHT)
         self._speed = speed
-        self._angle = angle
+        self._angle = angle % 360
         self._wander_angle = angle
         self._target = None
         self._image = imagefile
@@ -59,7 +59,7 @@ class Projectile(HitBox):
             self._angle = 90 - numpy.arctan2(SYSTEM["player.x"] - x,\
                     SYSTEM["player.y"] - y) * 180 / pi
         if Flags.AIMED_AT_MOUSE in behaviours:
-            self._angle = 90 - numpy.arctan2(SYSTEM["mouse"][0] - x,\
+            self._angle = angle + 90 - numpy.arctan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
         if Flags.AIMED_AT_CLOSEST in behaviours:
             closest = SYSTEM["level"].closest_enemy()
@@ -119,6 +119,7 @@ class Projectile(HitBox):
         self._anim_speed = anim_speed
         self._debuff_chance = debuff_chance
         self._decay = 1
+<<<<<<< HEAD
         if Flags.LIGHTNING_BOLT in self._behaviours:
             SYSTEM["particle_emitter"].draw_lightning(
             start=Vec2(self._origin.origin.x, self._origin.origin.y),
@@ -128,6 +129,14 @@ class Projectile(HitBox):
             minimum_segment_length=10,
             thickness=3,
             surface=SYSTEM["particles"].surface)
+=======
+        if Flags.LIGHTNING in self._behaviours:
+            point_list = [x,y, SCREEN_WIDTH, y, 1]
+            PARTICULE_TRACKER.append(point_list)
+
+
+
+>>>>>>> eb5a779dae25bf3d38847fc9c907fa648a4c15ee
 
     def get_image(self):
         """Returns the projectile image."""
@@ -227,6 +236,11 @@ class Projectile(HitBox):
             else:
                 self._angle = 90 - numpy.arctan2(self._target.entity.hitbox.x - SYSTEM["player.x"],\
                     self._target.entity.hitbox.y - SYSTEM["player.y"]) * 180 / pi
+        if Flags.TRACK_PLAYER in self._behaviours:
+            if self._target is None and not self._wandering:
+                angle = 90 - numpy.arctan2(SYSTEM["player.x"] - self.x,\
+                    SYSTEM["player.y"] - self.y) * 180 / pi
+                self._target = SYSTEM["player"]
         angle = numpy.radians(self._angle)
         if Flags.ACCELERATE in self._behaviours:
             self._speed *= 1.1
