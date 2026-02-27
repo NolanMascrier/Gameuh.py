@@ -1,3 +1,1333 @@
 {
-    "fire_dot": "Brulures"
+    "fire_dot": "Brûlure",
+    "life": [
+        "Les PV représentent la vie de votre personnage.",
+        "S'ils tombent à 0, votre personnage mourra",
+        "Et vous serez renvoyé à la carte du monde."
+    ],
+    "mana": [
+        "Le mana représente l'esprit de votre personnage.",
+        "Il est utilisé pour lancer des sorts et des attaques."
+    ],
+    "life_regen": [
+        "La régénération de vie détermine combien de vie vous récupérez",
+        "à chaque tick (60 fois par seconde)."
+    ],
+    "mana_regen": [
+        "La régénération de mana détermine combien de mana vous récupérez",
+        "à chaque tick (60 fois par seconde)."
+    ],
+    "str": [
+        "La FOR représente la force de votre personnage.",
+        "La force vous accorde plus de vie et de dégâts",
+        "de mêlée."
+    ],
+    "dex": [
+        "La DEX représente la dextérité de votre personnage.",
+        "La dextérité augmente vos chances de coup critique,",
+        "les dégâts critiques et les dégâts à distance."
+    ],
+    "int": [
+        "L'INT représente l'intelligence de votre personnage.",
+        "L'intelligence vous accorde plus de mana et de dégâts",
+        "de sort."
+    ],
+    "def": [
+        "L'endurance représente la capacité de votre personnage",
+        "à encaisser les dégâts. Plus elle est élevée,",
+        "moins vous subissez de dégâts. Réduction maximale de 90%."
+    ],
+    "exp_mult": [
+        "Le multiplicateur d'expérience représente la quantité",
+        "d'expérience supplémentaire obtenue via les",
+        "orbes d'expérience."
+    ],
+    "abs_def": [
+        "La défense absolue réduit les dégâts reçus",
+        "d'un montant fixe."
+    ],
+    "heal_factor": [
+        "Le facteur de soin représente l'efficacité des soins",
+        "sur votre personnage. Il agit comme un multiplicateur",
+        "pour toutes les capacités de soin."
+    ],
+    "mana_efficiency": [
+        "L'efficacité du mana représente l'optimisation",
+        "de votre personnage pour lancer des sorts.",
+        "Plus elle est élevée, plus le coût des capacités est réduit."
+    ],
+    "crit_rate": [
+        "Le taux de critique est votre chance d'infliger un coup critique.",
+        "Il ne peut pas dépasser 100%. Par défaut, les coups critiques",
+        "infligent 150% des dégâts."
+    ],
+    "crit_dmg": [
+        "Les dégâts critiques sont le multiplicateur",
+        "appliqué aux coups critiques."
+    ],
+    "item_quant": [
+        "Les PV représentent la vie de votre personnage.",
+        "S'ils tombent à 0, votre personnage mourra",
+        "Et vous serez renvoyé à la carte du monde."
+    ],
+    "item_qual": [
+        "Les PV représentent la vie de votre personnage.",
+        "S'ils tombent à 0, votre personnage mourra",
+        "Et vous serez renvoyé à la carte du monde."
+    ],
+    "speed": [
+        "La vitesse détermine la rapidité avec laquelle votre personnage",
+        "peut voler et se déplacer. Les compétences de type ruée",
+        "sont également affectées par votre vitesse."
+    ],
+    "cast_speed": [
+        "La vitesse d'incantation représente la rapidité avec laquelle",
+        "votre personnage lance des attaques. Plus elle est faible,",
+        "plus vos temps de recharge seront courts. Minimum : 5%."
+    ],
+    "melee_dmg": [
+        "Les dégâts de mêlée modifient les dégâts",
+        "de vos attaques physiques comme Furyslash.",
+        "Ils sont influencés par votre Force."
+    ],
+    "spell_dmg": [
+        "Les dégâts de sort modifient les dégâts",
+        "de vos sorts comme Firebolt.",
+        "Ils sont influencés par votre Intelligence."
+    ],
+    "ranged_dmg": [
+        "Les dégâts à distance modifient les dégâts",
+        "de vos attaques à distance comme Shuriken.",
+        "Ils sont influencés par votre Dextérité."
+    ],
+    "res": [
+        "La résistance réduit les dégâts subis d'une attaque",
+        "élémentaire. Les types sont : Physique, Feu, Glace, Foudre,",
+        "Ténèbres et Lumière. Maximum : 90%. Les résistances peuvent être négatives."
+    ],
+        "dmg": [
+        "Les dégâts élémentaires augmentent les dégâts",
+        "de l'élément concerné. Les types élémentaires sont :",
+        "Physique, Feu, Glace, Foudre, Ténèbres et Lumière."
+    ],
+    "pen": [
+        "La pénétration élémentaire permet à vos attaques d'ignorer",
+        "une partie de la résistance de la cible. Maximum : 100%."
+    ],
+    "exp": [
+        "L'expérience détermine le niveau de votre personnage.",
+        "Lorsque vous gagnez suffisamment d'expérience, il monte de niveau.",
+        "En montant de niveau, il est entièrement soigné et gagne",
+        "un point de statistique et un point d'arbre."
+    ],
+    "phys": [
+        "Les dégâts physiques sont souvent de couleur #c#(168, 168, 168)grise #c#(255, 255, 255). Ils peuvent laisser",
+        "de profondes blessures saignantes."
+    ],
+    "fire": [
+        "Les dégâts de feu sont souvent de couleur #c#(255, 119, 0)rouge #c#(255, 255, 255). Ils peuvent laisser",
+        "de puissantes brûlures."
+    ],
+    "ice": [
+        "Les dégâts de glace sont souvent de couleur #c#(89, 219, 255)bleue #c#(255, 255, 255). Ils peuvent",
+        "ralentir les cibles et même les immobiliser."
+    ],
+    "lightning": [
+        "Les dégâts de foudre sont souvent de couleur #c#(250, 233, 0)jaune #c#(255, 255, 255). Ils peuvent se propager",
+        "entre les ennemis."
+    ],
+    "energy": [
+        "Les dégâts d'énergie sont souvent #c#(156, 0, 5)très vifs et colorés#c#(255, 255, 255). Ils peuvent traverser",
+        "les armures."
+    ],
+    "light": [
+        "Les dégâts divins sont souvent de couleur #c#(255, 254, 219)blanche #c#(255, 255, 255). Ils sont extrêmement",
+        "puissants contre les créatures du néant et les morts-vivants."
+    ],
+    "dark": [
+        "Les dégâts du néant sont souvent de couleur #c#(71, 0, 125)noire et violette #c#(255, 255, 255). Ils perturbent",
+        "les lois mêmes de l'univers."
+    ],
+    "dmg_effic": [
+        "L'effet des dégâts ajoutés détermine l'impact des dégâts supplémentaires",
+        "de votre équipement sur les dégâts du sort. Plus le multiplicateur est élevé,",
+        "plus votre équipement augmente les dégâts du sort."
+    ],
+    "debuff_res": [
+        "Certaines altérations peuvent être résistées.",
+        "Plus votre évitement est élevé, plus la chance de les résister augmente."
+    ],
+    "debuff_len": [
+        "La durée des altérations détermine combien de temps",
+        "durent celles que vous infligez et subissez."
+    ],
+    "debuff_rte": [
+        "La vitesse des altérations détermine l'intervalle",
+        "entre deux effets des altérations que vous infligez et subissez."
+    ],
+    "debuff_pot": [
+        "La puissance des altérations influence les dégâts et les effets",
+        "des altérations que vous infligez et subissez."
+    ],
+    "area":[
+        "La zone d'effet influence la taille de vos compétences."
+    ],
+    "debuff_chance": [
+        "La chance d'altération est la probabilité d'infliger une altération à la cible."
+    ],
+    "life_pots": [
+        "Les potions de vie permettent de récupérer rapidement des PV.",
+        "Les potions sont rechargées au début d'un niveau."
+    ],
+    "mana_pots": [
+        "Les potions de mana permettent de récupérer rapidement du mana.",
+        "Les potions sont rechargées au début d'un niveau."
+    ],
+    "enemies": {
+        "voidboss": "Norcus le Faux",
+        "voidbomber": "Bombardier du Néant",
+        "voidsniper": "Nécromancien",
+        "voidling": "Chauve-souris infernale",
+        "monolith": "Le Monolithe"
+    },
+    "estimate_armor": "Cette valeur ne peut pas dépasser 90%.",
+    "estimate_dodge": "Cette valeur ne peut pas dépasser 90%\net suppose qu'il n'y ait aucune Précision de l'ennemi.",
+    "tree": {
+        "start": "Voie de la Sorcière",
+        "fire_mastery": "Maîtrise du Feu",
+        "fireball": "Boule de feu",
+        "firestorm": "Tempête de feu",
+        "pyrotechnics": "Pyrotechnie",
+        "cone_of_flames": "Cône de flammes",
+        "inferno": "Inferno",
+        "ice_mastery": "Maîtrise de la Glace",
+        "icebolt": "Éclair de glace",
+        "blizzard": "Blizzard",
+        "nova": "Nova de glace",
+        "ring_of_ice": "Anneau de glace",
+        "ice_orb": "Orbe de glace",
+        "ice_spear": "Lance de glace",
+        "ice_wall": "Mur de glace",
+        "congelation": "Congélation",
+        "lightning_mastery": "Maîtrise de la Foudre",
+        "shock": "Choc",
+        "lightning_bolt": "Éclair",
+        "conduction": "Conduction"
+    },
+    "loading": {
+        "fonts": "Chargement des polices...",
+        "images": "Chargement des images...",
+        "icons": "Chargement des icônes d'objets...",
+        "animations": "Chargement des animations...",
+        "tiles": "Chargement des tuiles...",
+        "parallaxes": "Chargement des parallaxes...",
+        "spells": "Génération de la liste des sorts...",
+        "others": "Génération des gestionnaires...",
+        "buttons": "Génération des boutons...",
+        "player": "Génération des données du joueur...",
+        "start": "Finalisation...",
+        "level": "Préparation du niveau..."
+    },
+    "options": {
+        "fullscreen": "Plein écran",
+        "vsync": "Synchronisation verticale",
+        "hitboxes": "Afficher les hitboxes",
+        "show_fps": "Afficher le compteur FPS",
+        "show_bars": "Afficher les PV des ennemis",
+        "show_cards": "Afficher les cartes ennemies",
+        "particles_enabled": "Activer les particules",
+        "display_hp": "Afficher Vie et Mana",
+        "display_exp": "Afficher l'Expérience",
+        "display_cd": "Afficher les temps de recharge"
+    },
+    "options_desc": {
+        "fullscreen": "Active ou désactive le mode plein écran.",
+        "vsync": "Active ou désactive la synchronisation verticale (Vsync).",
+        "hitboxes": "Afficher ou masquer les hitboxes du joueur, des ennemis et des projectiles.\n(Peut impacter les performances)",
+        "show_fps": "Afficher ou masquer le compteur FPS en haut à gauche de l'écran.",
+        "show_bars": "Afficher ou masquer les barres de PV au-dessus des ennemis.\n(Peut impacter les performances)",
+        "show_cards": "Afficher ou masquer les cartes ennemies en haut de l'écran.\n(Peut impacter les performances)",
+        "particles_enabled": "Activer les effets de particules.\n(Peut impacter les performances)",
+        "display_hp": "Afficher les valeurs numériques de la vie et du mana dans leurs orbes.",
+        "display_exp": "Afficher la valeur numérique de l'expérience dans sa jauge.",
+        "display_cd": "Afficher les valeurs numériques des temps de recharge."
+    },
+        "langs": {
+        "EN_us": "Anglais (Américain)",
+        "FR_fr": "Français"
+    },
+    "buttons":{
+        "map": "Carte du monde",
+        "gear": "Équipement",
+        "tree": "Arbre de compétences",
+        "spells": "Grimoire",
+        "inventory": "Inventaire",
+        "options": "Options",
+        "sort": "Trier",
+        "by_name": "par nom",
+        "by_rarity": "par rareté",
+        "by_value": "par prix",
+        "by_date": "par date",
+        "resolution": "Résolution",
+        "accept": "Accepter",
+        "cancel": "Annuler",
+        "lang": "Langue",
+        "fps": "FPS",
+        "explosion": "Explosion",
+        "shards": "Éclats",
+        "detonates": "Détonation"
+    },
+    "meta_words": {
+        "more": "plus",
+        "less": "moins",
+        "increased": "augmenté",
+        "decreased": "réduit",
+        "remove":"Supprime",
+        "adds": "Ajoute",
+        "to": "à",
+        "base": "Base",
+        "flat": "Bonus fixe",
+        "increase": "Augmente",
+        "mult": "Multiplicateur",
+        "refresh": "Régénération",
+        "level": "Niveau",
+        "deal": "Inflige",
+        "damage": "dégâts",
+        "grants":"Confère",
+        "learns": "Apprendre la compétence",
+        "phys": "#c#(180, 180, 180)Physique",
+        "fire": "#c#(255, 119, 0)Feu",
+        "ice": "#c#(89, 219, 255)Glace",
+        "lightning": "#c#(250, 233, 0)Foudre",
+        "energy": "#c#(156, 0, 5)Énergie",
+        "light": "#c#(255, 254, 219)Divin",
+        "dark": "#c#(71, 0, 125)Néant",
+        "dash": "Déplace l'utilisateur",
+        "meters": "mètres",
+        "teleport": "Téléporte l'utilisateur à la position de la souris.",
+        "buffs": "Applique un effet positif",
+        "debuffs": "Inflige un effet négatif",
+        "for": "pendant",
+        "total": "Total",
+        "seconds": "secondes",
+        "cut_proj": "Peut détruire les projectiles ennemis",
+        "trigger": "Ce sort ne peut pas être utilisé",
+        "trigger_on_crit": "Ce sort se déclenche sur coup critique",
+        "enemies": "Les ennemis ont",
+        "boss": "Chef ennemi détecté",
+        "desc_heal_flat": "Récupère",
+        "desc_heal": "Récupère un montant supplémentaire de",
+        "on_use": "à l'utilisation",
+        "potion_healing_count": "utilisations",
+        "potion_mana_count": "utilisations",
+        "potion_healing_flat": "Récupération",
+        "potion_mana_flat": "Récupération",
+        "potion_healing_relative": "Récupération supplémentaire",
+        "potion_mana_relative": "Récupération supplémentaire",
+        "uses": "utilisations",
+        "reserved": "Réservé",
+        "reserves": "Réserve"
+    },
+        "affliction_name":{
+        "elemental_fury": "Furie élémentaire",
+        "fury": "Furie",
+        "celerity": "Célérité",
+        "bleed": "Saignement",
+        "freeze": "Gel",
+        "bloodpact1": "Puissance sacrificielle",
+        "bloodpact2": "Vie sacrificielle",
+        "pyrotechnics": "Pyrotechnie",
+        "fire_mastery": "Maîtrise du Feu",
+        "ice_mastery": "Maîtrise de la Glace",
+        "congelation": "Congélation",
+        "lightning_mastery": "Maîtrise de la Foudre",
+        "conduction": "Conduction"
+    },
+    "affliction_desc":{
+        "elemental_fury": "Confère 35% de dégâts élémentaires supplémentaires.",
+        "fury": "Confère 15% de dégâts supplémentaires, 5% de temps de recharge réduit et 5% de coût en mana augmenté\npour Entaille furieuse. Cet effet peut se cumuler jusqu'à 10 fois.",
+        "celerity": "Confère 300% de vitesse de déplacement supplémentaire.",
+        "bleed": "Inflige des dégâts physiques chaque seconde qui ignorent les défenses.",
+        "freeze": "Empêche la cible de se déplacer ou d'agir.",
+        "bloodpact1": "Confère 75% de dégâts supplémentaires.",
+        "bloodpact2": "Régénère 20 points de vie par seconde.",
+        "fire_mastery": "Augmente les dégâts de feu subis par la cible de 10% et confère 10% de dégâts de feu supplémentaires.",
+        "pyrotechnics": "Le quatrième sort que vous lancez est renforcé, infligeant 50% de dégâts supplémentaires et appliquant une brûlure infligeant 10% des dégâts initiaux en dégâts de feu chaque seconde pendant 5 secondes.",
+        "ice_mastery": "Augmente les dégâts de glace subis par la cible de 10% et confère 10% de dégâts de glace supplémentaires.",
+        "congelation": "Augmente l'effet de ralentissement du gel de 50% et rend les cibles gelées vulnérables.",
+        "lightning_mastery": "Augmente les dégâts de foudre subis par la cible de 10% et confère 10% de dégâts de foudre supplémentaires.",
+        "conduction": "Les dégâts de foudre peuvent désormais se propager à 2 cibles supplémentaires, leur infligeant 10% des dégâts initiaux."
+    },
+    "spells_name": {
+        "none": "Aucun",
+        "voidbolt": "Éclair du Néant",
+        "arc": "Arc électrique",
+        "firebolt": "Éclair de feu",
+        "firebolt2": "Encore Éclair de feu",
+        "icebolt": "Lances de glace",
+        "ice_orb": "Orbe de glace",
+        "ice_orb_explosion": "Effondrement",
+        "ice_wall": "Mur de glace",
+        "ice_spear": "Lance de glace",
+        "ice_spear_explosion": "Éclats",
+        "ring_of_frost": "Anneau de givre",
+        "blizzard": "Blizzard",
+        "exult": "Exultation",
+        "elefury": "Furie élémentaire",
+        "wdash": "Ruée du vent",
+        "fslash": "Entaille furieuse",
+        "fireball": "Boule de feu",
+        "fireball_explosion": "Explosion de la Boule de feu",
+        "masterstrike": "Frappe maîtresse",
+        "magicmissile": "Projectiles magiques",
+        "rip": "Déchirure",
+        "bloodpact": "Pacte de sang",
+        "meteor": "Météore",
+        "meteor_explosion": "Détonation du Météore",
+        "inferno": "Inferno",
+        "cone_of_flames": "Cône de flammes",
+        "lightning_bolt": "Éclair",
+        "lightning_arc": "Arc de foudre",
+        "shock": "Éclairs rampants",
+        "circle_of_ice": "Cercle de glace",
+        "ice_nova": "Nova de glace",
+        "rising_tempest": "Tempête montante",
+        "call_lightning": "Appel de la foudre",
+        "ride_the_storm": "Cavaliers de la Tempete"
+    },
+
+    "spells_desc": {
+        "none": "Aucun sort équipé.",
+        "voidbolt": "Tire une rafale de sphères du Néant, infligeant\nlégers dégâts du Néant.",
+        "arc": "Libère un éclair traqueur,\ninfligeant de légers dégâts de foudre et se propageant 3 fois.",
+        "firebolt": "Tire un éclair de feu vers la souris,\ninfligeant des dégâts de feu.",
+        "firebolt2": "Un peu comme Éclair de feu, mais pas tout à fait...",
+        "icebolt": "Crée un barrage de lances de glace infligeant\nd'importants dégâts de glace en ligne droite,\ntransperçant les ennemis.",
+        "ice_orb": "Invoque un orbe de glace à l'emplacement ciblé,\ninfligeant des dégâts de glace constants.\nAprès un court délai, l'orbe se brise,\ninfligeant des dégâts de zone et gelant les ennemis.",
+        "ice_orb_explosion": "L'orbe de glace s'effondre et inflige des dégâts de glace dans une zone.",
+        "ice_spear": "Invoque une lance de glace qui se déplace rapidement vers la cible.\nLorsqu'elle touche un ennemi, des éclats de glace\nsont projetés derrière lui.",
+        "ice_spear_explosion": "Un groupe de trois éclats qui transpercent les ennemis.",
+        "ice_wall": "Invoque un mur de glace qui bloque les ennemis et les projectiles.\nLe mur peut être détruit en lui infligeant suffisamment de dégâts.",
+        "blizzard": "Invoque un blizzard à l'emplacement ciblé,\ninfligeant des dégâts de glace aux ennemis dans la zone et les ralentissant.\nLe blizzard dure quelques secondes et peut être déplacé en relançant\nle sort, dans une distance maximale.",
+        "ring_of_frost": "Invoque un anneau de givre à l'emplacement désigné.\n1 seconde après sa création, des stalagmites perforantes\némergent de celui-ci.",
+        "nova": "Libère une explosion d'énergie glaciale autour de vous,\ninfligeant des dégâts de glace et ralentissant les ennemis.",
+        "exult": "Ce sort ne peut pas être lancé.\nLors d'un coup critique, libère une onde de choc sanglante.",
+        "elefury": "Déchaîne la furie des éléments,\naugmentant les dégâts élémentaires infligés.",
+        "wdash": "Effectue une ruée rapide dans la direction du mouvement\net augmente votre vitesse de déplacement.",
+        "fslash": "Inflige une puissante attaque de mêlée.\nRéutiliser l'attaque rapidement\naugmente considérablement ses dégâts.",
+        "fireball": "Lance une puissante boule de feu vers la souris,\ninfligeant des dégâts de feu moyens.\nÀ l'impact, crée une explosion dévastatrice.",
+        "fireball_explosion": "Inflige d'importants dégâts de feu\ndans la zone.",
+        "masterstrike": "Porte une série de coups rapides.\nLe troisième coup est un coup critique garanti.",
+        "magicmissile": "Libère périodiquement des projectiles divins traqueurs.\nCette compétence ne peut pas infliger de critique,\nmais ne peut pas être esquivée.",
+        "rip": "Entaille la cible, infligeant des dégâts physiques\net provoquant un saignement.",
+        "bloodpact": "Réserve la majeure partie de votre vie,\nmais augmente fortement la régénération et les dégâts infligés.",
+        "meteor": "Invoque un météore depuis le ciel,\ninfligeant des dégâts de feu pendant sa chute.",
+        "meteor_explosion": "Relance le météore pour le faire exploser,\ninfligeant d'énormes dégâts de feu de zone.",
+        "inferno": "Projette un flux continu de feu devant vous,\ninfligeant des dégâts de feu chaque seconde aux ennemis touchés.",
+        "cone_of_flames": "Libère un cône de flammes infligeant\ndes dégâts de feu devant vous.\nLe cône perd en puissance en avançant.",
+        "ring_of_fire": "Vous entoure d'un anneau de feu\ninfligeant des dégâts de feu constants aux ennemis proches.",
+        "lightning_bolt": "Libère un éclair devant vous,\nqui transperce les ennemis et inflige des dégâts de foudre.",
+        "call_lightning": "Fait tomber un éclair à l'emplacement ciblé,\ninfligeant d'importants dégâts de foudre et étourdissant les ennemis.",
+        "shock": "Libère de petits éclairs rampants devant vous,\ninfligeant des dégâts de foudre aux ennemis.",
+        "rising_tempest": "Les ennemis frappés par des dégâts de foudre\nont une chance accrue de subir des coups critiques."
+    },
+
+    "descripts": {
+        "life": "Vie",
+        "mana": "Mana",
+        "life_regen": "Régénération de vie",
+        "mana_regen": "Régénération de mana",
+        "str": "Force",
+        "dex": "Dextérité",
+        "int": "Intelligence",
+        "def": "Endurance",
+        "exp_mult": "Multiplicateur d'expérience",
+        "abs_def": "Défense absolue",
+        "heal_factor": "Efficacité des soins",
+        "mana_efficiency": "Efficacité du mana",
+        "crit_rate": "Chance de critique",
+        "crit_dmg": "Dégâts critiques",
+        "item_quant": "Quantité d'objets",
+        "item_qual": "Qualité des objets",
+        "speed": "Vitesse de déplacement",
+        "cast_speed": "Temps de recharge",
+        "melee_dmg": "Dégâts de mêlée",
+        "spell_dmg": "Dégâts de sort",
+        "ranged_dmg": "Dégâts à distance",
+        "phys": "Résistance physique",
+        "fire": "Résistance au feu",
+        "ice": "Résistance à la glace",
+        "lightning": "Résistance à la foudre",
+        "energy": "Résistance à l'énergie",
+        "light": "Résistance divine",
+        "dark": "Résistance au néant",
+        "phys_dmg": "Dégâts physiques",
+        "fire_dmg": "Dégâts de feu",
+        "ice_dmg": "Dégâts de glace",
+        "lightning_dmg": "Dégâts de foudre",
+        "energy_dmg": "Dégâts d'énergie",
+        "light_dmg": "Dégâts divins",
+        "dark_dmg": "Dégâts du néant",
+        "phys_flat": "Dégâts physiques",
+        "fire_flat": "Dégâts de feu",
+        "ice_flat": "Dégâts de glace",
+        "lightning_flat": "Dégâts de foudre",
+        "energy_flat": "Dégâts d'énergie",
+        "light_flat": "Dégâts divins",
+        "dark_flat": "Dégâts du néant",
+        "phys_pen": "Pénétration physique",
+        "fire_pen": "Pénétration de feu",
+        "ice_pen": "Pénétration de glace",
+        "lightning_pen": "Pénétration de foudre",
+        "energy_pen": "Pénétration d'énergie",
+        "light_pen": "Pénétration divine",
+        "dark_pen": "Pénétration du néant",
+        "proj_quant": "Projectiles",
+        "proj_speed": "Vitesse des projectiles",
+        "phys_tab": "#c#(150, 150, 150)Dégâts physiques",
+        "phys_dmg_tab": "-> Bonus",
+        "phys_pen_tab": "-> Pénétration",
+        "phys_flat_tab": "-> Dégâts fixes",
+        "fire_tab": "#c#(255, 119, 0)Dégâts de feu",
+        "fire_dmg_tab": "-> Bonus",
+        "fire_pen_tab": "-> Pénétration",
+        "fire_flat_tab": "-> Dégâts fixes",
+        "ice_tab": "#c#(89, 219, 255)Dégâts de glace",
+        "ice_dmg_tab": "-> Bonus",
+        "ice_pen_tab": "-> Pénétration",
+        "ice_flat_tab": "-> Dégâts fixes",
+        "lightning_tab": "#c#(250, 233, 0)Dégâts de foudre",
+        "lightning_dmg_tab": "-> Bonus",
+        "lightning_pen_tab": "-> Pénétration",
+        "lightning_flat_tab": "-> Dégâts fixes",
+        "energy_tab": "#c#(156, 0, 5)Dégâts d'énergie",
+        "energy_dmg_tab": "-> Bonus",
+        "energy_pen_tab": "-> Pénétration",
+        "energy_flat_tab": "-> Dégâts fixes",
+        "dark_tab": "#c#(71, 0, 125)Dégâts du néant",
+        "dark_dmg_tab": "-> Bonus",
+        "dark_pen_tab": "-> Pénétration",
+        "dark_flat_tab": "-> Dégâts fixes",
+        "light_tab": "#c#(255, 254, 219)Dégâts divins",
+        "light_dmg_tab": "-> Bonus",
+        "light_pen_tab": "-> Pénétration",
+        "light_flat_tab": "-> Dégâts fixes",
+        "chains":"Chaînes",
+        "dodge": "Chance d'esquive",
+        "dodge_rating": "Évasion",
+        "block": "Chance de blocage",
+        "precision": "Précision",
+        "all_damage": "Tous les dégâts",
+        "elemental_damage": "Dégâts élémentaires",
+        "all_resistances": "Toutes les résistances",
+        "elemental_resistances": "Résistances élémentaires",
+        "armor_mind_over_matter": "Bouclier spirituel mineur",
+        "trigger_on_crit": "Lancé sur coup critique",
+        "crit_res": "Résistance aux dégâts critiques",
+        "estimate_armor": "Réduction des dégâts",
+        "estimate_dodge": "Chance d'esquive",
+        "damage_mod": "Dégâts de base",
+        "life_cost": "Coût en vie",
+        "mana_cost": "Coût en mana",
+        "cooldown": "Temps de recharge",
+        "projectiles": "Projectiles",
+        "projectile": "Projectile",
+        "explosion": "Explosion",
+        "step": "Étape",
+        "dmg_effic": "Puissance des dégâts ajoutés",
+        "area": "Zone d'effet",
+        "difficulty": "Niveau de menace",
+        "amount": "Obtenu x",
+        "stolen": "Perdu",
+        "victory": "Vous avez triomphé",
+        "defeat": "Vous avez succombé",
+        "abandon": "Vous avez fui",
+        "pack_size": "Présence ennemie",
+        "waves": "{w} vagues",
+        "debuff_res": "Évitement des altérations",
+        "debuff_len": "Durée des altérations",
+        "debuff_rte": "Vitesse des altérations",
+        "debuff_chance": "Taux d'altération",
+        "debuff_pot": "Puissance des altérations",
+        "potion_healing_count": "Utilisations de potion de vie",
+        "potion_mana_count": "Utilisations de potion de mana",
+        "potion_healing_flat": "-> Récupération",
+        "potion_mana_flat": "-> Récupération",
+        "potion_healing_relative": "-> Récupération supplémentaire",
+        "potion_mana_relative": "-> Récupération supplémentaire",
+        "heal_uses": "Utilisations de potion de vie",
+        "mana_uses": "Utilisations de potion de mana"
+    },
+    "descript_alt": {
+        "armor_mind_over_matter": "#c#(150, 150, 150)#s#(15)35% des dégâts sont d'abord subis par le Mana",
+        "trigger_on_crit":"#c#(150, 150, 150)#s#(15)Ce sort se déclenche sur coup critique\n#c#(150, 150, 150)#s#(15)et ne peut pas être utilisé normalement."
+    },
+
+    "uniques": {
+        "weight_jewel": "Le Poids de la Création",
+        "coc_jewel": "Essence d'Alacrité"
+    },
+    "uniques_desc": {
+        "weight_jewel": "#s#(12)#i#(1)#c#(212, 163, 19)Ressens la pression, déchire\n#s#(12)#i#(1)#c#(212, 163, 19)ton corps et tes ennemis à la fois.",
+        "coc_jewel": "#s#(12)#i#(1)#c#(212, 163, 19)Ne laisse jamais une frappe parfaite se perdre."
+    },
+    "difficulties": {
+      "0": "Bénin",
+      "1": "Moyen",
+      "2": "Élevé",
+      "3": "Alpha",
+      "4": "Oméga" 
+    },
+    "runes": {
+        "blank": [
+            "#s#(35)Rune vierge",
+            "Supprime tous les modificateurs d'un objet."
+        ],
+        "thurisaz": [
+            "#s#(35)Rune de Thurisaz",
+            "Transforme un objet vierge en objet rare, en ajoutant 3 à 6 modificateurs."
+        ],
+        "ansuz": [
+            "#s#(35)Rune d'Ansuz",
+            "Ajoute un modificateur aléatoire à un objet.\nLes objets vierges peuvent avoir un modificateur, les objets enchantés deux,\nles objets bénis jusqu'à 6 et les objets exaltés jusqu'à 8."
+        ],
+        "ingwaz": [
+            "#s#(35)Rune d'Ingwaz",
+            "Relance toutes les valeurs des modificateurs d'un objet."
+        ],
+        "othalan": [
+            "#s#(35)Rune d'Othalan",
+            "Scelle un modificateur aléatoire d'un objet, le rendant impossible à modifier.\nCette rune ne peut être utilisée que sur des objets sans sceaux."
+        ],
+        "uruz": [
+            "#s#(35)Rune d'Uruz",
+            "Exalte un objet béni ou le détruit."
+        ],
+        "raido": [
+            "#s#(35)Rune de Raido",
+            "Modifie les modificateurs d'un objet béni."
+        ],
+        "tiwaz": [
+            "#s#(35)Rune de Tiwaz",
+            "Enchante un objet vierge."
+        ],
+        "eihwaz": [
+            "#s#(35)Rune d'Eihwaz",
+            "Bénit un objet enchanté."
+        ],
+        "algiz": [
+            "#s#(35)Rune d'Algiz",
+            "Modifie aléatoirement les modificateurs d'un objet enchanté."
+        ],
+        "gold": [
+          "#s#(35)Or",
+          "L'or peut être utilisé pour acheter des runes et des objets."
+        ],
+        "exp": [
+          "#s#(35)Expérience",
+          "L'expérience détermine le niveau de votre personnage.",
+          "Lorsque vous gagnez suffisamment d'expérience, votre personnage monte de niveau.",
+          "En montant de niveau, il est entièrement soigné et gagne",
+          "un point de statistique et un point d'arbre."
+        ],
+        "stolen": [
+          "#s#(35)Objet {rarity}perdu",
+          "Cet objet a été perdu lors de votre défaite."
+        ],
+        "stolen_rune": [
+          "#s#(35)Rune perdue",
+          "Cette rune a été perdue lors de votre défaite."
+        ]
+    },
+    "rarities": [
+        "",
+        "Enchanted ",
+        "Blessed ",
+        "Exalted ",
+        "Avowed "
+    ],
+  "item_names": {
+    "0": [
+      "Weathered",
+      "Dull",
+      "Rusty",
+      "Broken",
+      "Cracked",
+      "Chipped",
+      "Worn",
+      "Old",
+      "Fractured",
+      "Bent",
+      "Scuffed",
+      "Used",
+      "Bashed",
+      "Mossy",
+      "Dusty"
+    ],
+    "1": {
+      "STR_1": "Vigor",
+      "STR_2": "Storm",
+      "STR_3": "Wrath",
+      "STR_4": "Shock",
+      "STR_5": "Clarity",
+      "STR_6": "Grace",
+      "STR_7": "Insight",
+      "DEX_1": "Force",
+      "DEX_2": "Edge",
+      "DEX_3": "Storm",
+      "DEX_4": "Surge",
+      "DEX_5": "Fury",
+      "DEX_6": "Insight",
+      "DEX_7": "Wit",
+      "INT_1": "Wrath",
+      "INT_2": "Might",
+      "INT_3": "Grace",
+      "INT_4": "Edge",
+      "INT_5": "Rage",
+      "INT_6": "Vigor",
+      "INT_7": "Strike",
+      "LIFE_1": "Grace",
+      "LIFE_2": "Clarity",
+      "LIFE_3": "Force",
+      "LIFE_4": "Roar",
+      "LIFE_5": "Edge",
+      "LIFE_6": "Will",
+      "LIFE_7": "Strike",
+      "LIFE_INCR_1": "Grace",
+      "LIFE_INCR_2": "Flame",
+      "LIFE_INCR_3": "Blast",
+      "LIFE_INCR_4": "Will",
+      "LIFE_INCR_5": "Shock",
+      "LIFE_MORE_1": "Blast",
+      "LIFE_MORE_2": "Wit",
+      "LIFE_MORE_3": "Power",
+      "MANA_1": "Wit",
+      "MANA_2": "Shock",
+      "MANA_3": "Might",
+      "MANA_4": "Torrent",
+      "MANA_5": "Wisdom",
+      "MANA_6": "Focus",
+      "MANA_7": "Edge",
+      "MANA_INCR_1": "Insight",
+      "MANA_INCR_2": "Focus",
+      "MANA_INCR_3": "Roar",
+      "MANA_INCR_4": "Will",
+      "MANA_INCR_5": "Might",
+      "MANA_MORE_1": "Flame",
+      "MANA_MORE_2": "Vigor",
+      "MANA_MORE_3": "Shock",
+      "DEF_1": "Shock",
+      "DEF_2": "Wisdom",
+      "DEF_3": "Wrath",
+      "DEF_4": "Fury",
+      "DEF_5": "Flame",
+      "DEF_6": "Might",
+      "DEF_7": "Roar",
+      "DODGE_RATING_1": "Will",
+      "DODGE_RATING_2": "Strike",
+      "DODGE_RATING_3": "Clarity",
+      "DODGE_RATING_4": "Edge",
+      "DODGE_RATING_5": "Storm",
+      "DODGE_RATING_6": "Grace",
+      "DODGE_RATING_7": "Might",
+      "DODGE_1": "Grace",
+      "DODGE_2": "Howl",
+      "DODGE_3": "Power",
+      "PHYS_RES_1": "Surge",
+      "PHYS_RES_2": "Insight",
+      "PHYS_RES_3": "Grace",
+      "FIRE_RES_1": "Wrath",
+      "FIRE_RES_2": "Shock",
+      "FIRE_RES_3": "Will",
+      "ICE_RES_1": "Might",
+      "ICE_RES_2": "Torrent",
+      "ICE_RES_3": "Power",
+      "ELEC_RES_1": "Edge",
+      "ELEC_RES_2": "Torrent",
+      "ELEC_RES_3": "Wisdom",
+      "LIGHT_RES_1": "Rage",
+      "LIGHT_RES_2": "Will",
+      "LIGHT_RES_3": "Shock",
+      "DARK_RES_1": "Howl",
+      "DARK_RES_2": "Clarity",
+      "DARK_RES_3": "Grace",
+      "ENERG_RES_1": "Shock",
+      "ENERG_RES_2": "Might",
+      "ENERG_RES_3": "Wrath",
+      "ELEMENTAL_RESISTANCES_1": "Rage",
+      "ELEMENTAL_RESISTANCES_2": "Clarity",
+      "ELEMENTAL_RESISTANCES_3": "Roar",
+      "CRIT_RES_1": "Shock",
+      "CRIT_RES_2": "Focus",
+      "CRIT_RES_3": "Surge",
+      "ALL_RESISTANCES_1": "Will",
+      "ALL_RESISTANCES_2": "Power",
+      "ALL_RESISTANCES_3": "Roar",
+      "PRECISION_1": "Power",
+      "PRECISION_2": "Clarity",
+      "PRECISION_3": "Wit",
+      "PRECISION_4": "Rage",
+      "PRECISION_5": "Blast",
+      "PRECISION_6": "Force",
+      "PRECISION_7": "Might",
+      "SPEED_1": "Flame",
+      "SPEED_2": "Rage",
+      "SPEED_3": "Grace",
+      "SPEED_4": "Edge",
+      "SPEED_5": "Fury",
+      "SPEED_6": "Power",
+      "SPEED_7": "Vigor",
+      "CSPEED_1": "Focus",
+      "CSPEED_2": "Might",
+      "CSPEED_3": "Shock",
+      "CSPEED_4": "Torrent",
+      "CSPEED_5": "Insight",
+      "PHYS_DMG_1": "Might",
+      "PHYS_DMG_2": "Rage",
+      "PHYS_DMG_3": "Clarity",
+      "PHYS_DMG_4": "Force",
+      "PHYS_DMG_5": "Insight",
+      "FIRE_DMG_1": "Power",
+      "FIRE_DMG_2": "Shock",
+      "FIRE_DMG_3": "Howl",
+      "FIRE_DMG_4": "Blast",
+      "FIRE_DMG_5": "Might",
+      "ICE_DMG_1": "Force",
+      "ICE_DMG_2": "Strike",
+      "ICE_DMG_3": "Focus",
+      "ICE_DMG_4": "Roar",
+      "ICE_DMG_5": "Rage",
+      "ELEC_DMG_1": "Torrent",
+      "ELEC_DMG_2": "Storm",
+      "ELEC_DMG_3": "Will",
+      "ELEC_DMG_4": "Vigor",
+      "ELEC_DMG_5": "Rage",
+      "ENERG_DMG_1": "Clarity",
+      "ENERG_DMG_2": "Power",
+      "ENERG_DMG_3": "Flame",
+      "ENERG_DMG_4": "Wit",
+      "ENERG_DMG_5": "Howl",
+      "LIGHT_DMG_1": "Edge",
+      "LIGHT_DMG_2": "Force",
+      "LIGHT_DMG_3": "Shock",
+      "LIGHT_DMG_4": "Power",
+      "LIGHT_DMG_5": "Howl",
+      "DARK_DMG_1": "Grace",
+      "DARK_DMG_2": "Howl",
+      "DARK_DMG_3": "Power",
+      "DARK_DMG_4": "Roar",
+      "DARK_DMG_5": "Torrent",
+      "ELEMENTAL_DMG_1": "Blast",
+      "ELEMENTAL_DMG_2": "Edge",
+      "ELEMENTAL_DMG_3": "Torrent",
+      "ALL_DMG_1": "Storm",
+      "ALL_DMG_2": "Edge",
+      "ALL_DMG_3": "Wrath",
+      "ABS_DEF_1": "Vigor",
+      "ABS_DEF_2": "Focus",
+      "ABS_DEF_3": "Wit",
+      "PHYS_PEN_1": "Shock",
+      "PHYS_PEN_2": "Force",
+      "PHYS_PEN_3": "Focus",
+      "FIRE_PEN_1": "Shock",
+      "FIRE_PEN_2": "Insight",
+      "FIRE_PEN_3": "Edge",
+      "ICE_PEN_1": "Storm",
+      "ICE_PEN_2": "Wit",
+      "ICE_PEN_3": "Fury",
+      "ELEC_PEN_1": "Roar",
+      "ELEC_PEN_2": "Force",
+      "ELEC_PEN_3": "Wit",
+      "ENERG_PEN_1": "Vigor",
+      "ENERG_PEN_2": "Insight",
+      "ENERG_PEN_3": "Wrath",
+      "LIGHT_PEN_1": "Wrath",
+      "LIGHT_PEN_2": "Roar",
+      "LIGHT_PEN_3": "Focus",
+      "DARK_PEN_1": "Force",
+      "DARK_PEN_2": "Shock",
+      "DARK_PEN_3": "Howl",
+      "PHYS_FLAT_1": "Power",
+      "PHYS_FLAT_2": "Grace",
+      "PHYS_FLAT_3": "Surge",
+      "PHYS_FLAT_4": "Flame",
+      "PHYS_FLAT_5": "Fury",
+      "FIRE_FLAT_1": "Focus",
+      "FIRE_FLAT_2": "Flame",
+      "FIRE_FLAT_3": "Insight",
+      "FIRE_FLAT_4": "Might",
+      "FIRE_FLAT_5": "Howl",
+      "ICE_FLAT_1": "Fury",
+      "ICE_FLAT_2": "Wrath",
+      "ICE_FLAT_3": "Blast",
+      "ICE_FLAT_4": "Will",
+      "ICE_FLAT_5": "Insight",
+      "LIGHTNING_FLAT_1": "Shock",
+      "LIGHTNING_FLAT_2": "Might",
+      "LIGHTNING_FLAT_3": "Torrent",
+      "LIGHTNING_FLAT_4": "Insight",
+      "LIGHTNING_FLAT_5": "Edge",
+      "ENERG_FLAT_1": "Clarity",
+      "ENERG_FLAT_2": "Might",
+      "ENERG_FLAT_3": "Torrent",
+      "ENERG_FLAT_4": "Wit",
+      "ENERG_FLAT_5": "Force",
+      "LIGHT_FLAT_1": "Wit",
+      "LIGHT_FLAT_2": "Roar",
+      "LIGHT_FLAT_3": "Storm",
+      "LIGHT_FLAT_4": "Force",
+      "LIGHT_FLAT_5": "Strike",
+      "DARK_FLAT_1": "Clarity",
+      "DARK_FLAT_2": "Howl",
+      "DARK_FLAT_3": "Vigor",
+      "DARK_FLAT_4": "Surge",
+      "DARK_FLAT_5": "Rage",
+      "MELEE_1": "Will",
+      "MELEE_2": "Edge",
+      "MELEE_3": "Wrath",
+      "MELEE_4": "Storm",
+      "MELEE_5": "Focus",
+      "RANGED_1": "Vigor",
+      "RANGED_2": "Torrent",
+      "RANGED_3": "Focus",
+      "RANGED_4": "Wit",
+      "RANGED_5": "Wisdom",
+      "SPELL_1": "Clarity",
+      "SPELL_2": "Shock",
+      "SPELL_3": "Power",
+      "SPELL_4": "Fury",
+      "SPELL_5": "Wisdom",
+      "CRIT_CHANCE_1": "Torrent",
+      "CRIT_CHANCE_2": "Blast",
+      "CRIT_CHANCE_3": "Wrath",
+      "CRIT_CHANCE_4": "Howl",
+      "CRIT_CHANCE_5": "Roar",
+      "CRIT_DAMAGE_1": "Blast",
+      "CRIT_DAMAGE_2": "Vigor",
+      "CRIT_DAMAGE_3": "Shock",
+      "CRIT_DAMAGE_4": "Might",
+      "CRIT_DAMAGE_5": "Wrath",
+      "BLOCK_1": "Vigor",
+      "BLOCK_2": "Grace",
+      "BLOCK_3": "Power",
+      "DAMAGE_1": "Strength",
+      "DAMAGE_2": "Might",
+      "DAMAGE_3": "Power",
+      "DAMAGE_4": "Dominance",
+      "DAMAGE_5": "Ultimate power",
+      "CD_1": "Reusing",
+      "CD_2": "Swiftness",
+      "CD_3": "Recovery",
+      "CD_4": "Utmost Swiftness",
+      "LIFE_COST_1": "Economy",
+      "LIFE_COST_2": "Clarity",
+      "LIFE_COST_3": "Humility",
+      "LIFE_COST_4": "Lucidity",
+      "LIFE_COST_5": "Transcendance",
+      "MANA_COST_1": "Economy",
+      "MANA_COST_2": "Clarity",
+      "MANA_COST_3": "Humility",
+      "MANA_COST_4": "Lucidity",
+      "MANA_COST_5": "Transcendance",
+      "PROJECTILE_1": "Forking",
+      "PROJECTILE_2": "Hosing",
+      "PROJECTILE_3": "Spreading",
+      "AREA_1": "Width",
+      "AREA_2": "Area",
+      "AREA_3": "Fielding",
+      "AREA_4": "Reaching",
+      "AREA_5": "Giantness",
+      "LIFE_REGEN_1": "Flow",
+      "LIFE_REGEN_2": "Abundance",
+      "LIFE_REGEN_3": "Vitality",
+      "LIFE_REGEN_4": "Youth",
+      "LIFE_REGEN_5": "Cornucopia",
+      "DEBUFF_RES_1": "Resistance",
+      "DEBUFF_RES_2": "Health",
+      "DEBUFF_RES_3": "Cure",
+      "DEBUFF_RTE_1": "Affliction",
+      "DEBUFF_RTE_2": "Infection",
+      "DEBUFF_RTE_3": "Pandemy",
+      "DEBUFF_POT_1": "Affliction",
+      "DEBUFF_POT_2": "Infection",
+      "DEBUFF_POT_3": "Pandemy",
+      "DEBUFF_CHANCE_1": "Affliction",
+      "DEBUFF_CHANCE_2": "Infection",
+      "DEBUFF_CHANCE_3": "Pandemy",
+      "LIFE_COUNT_1": "Bounty",
+      "LIFE_COUNT_2": "Ressource",
+      "LIFE_COUNT_3": "Abundance",
+      "MANA_COUNT_1": "Bounty",
+      "MANA_COUNT_2": "Ressource",
+      "MANA_COUNT_3": "Abundance",
+      "LIFE_FLAT_1": "Recovery",
+      "LIFE_FLAT_2": "Healing",
+      "LIFE_FLAT_3": "Renewing",
+      "LIFE_FLAT_4": "Rebirth",
+      "LIFE_FLAT_5": "Absolution",
+      "MANA_FLAT_1": "Recovery",
+      "MANA_FLAT_2": "Spirit",
+      "MANA_FLAT_3": "Refreshment",
+      "MANA_FLAT_4": "Understanding",
+      "MANA_FLAT_5": "Absolution",
+      "LIFE_RELA_1": "Recovery",
+      "LIFE_RELA_2": "Healing",
+      "LIFE_RELA_3": "Renewing",
+      "LIFE_RELA_4": "Rebirth",
+      "LIFE_RELA_5": "Absolution",
+      "MANA_RELA_1": "Recovery",
+      "MANA_RELA_2": "Spirit",
+      "MANA_RELA_3": "Refreshment",
+      "MANA_RELA_4": "Understanding",
+      "MANA_RELA_5": "Absolution"
+    },
+    "2": {
+      "str": [
+        ["Body", "Body"],
+        ["Force", "Might"],
+        ["Dominating", "Dominance"]
+      ],
+      "dex": [
+        ["Agile", "Agility"],
+        ["Graceful", "Grace"],
+        ["Striding", "Stride"]
+      ],
+      "int": [
+        ["Intelligent", "Intelligence"],
+        ["Mindful", "Mind"],
+        ["Witty", "Wit"]
+      ],
+      "life": [
+        ["Lively", "Life"],
+        ["Breathing", "Breath"],
+        ["Vigorous", "Vigor"],
+        ["Soul", "Blood"]
+      ],
+      "abs_def": [
+        ["Impassible", "Fortress"]
+      ],
+      "mana": [
+        ["Mana", "Mana"],
+        ["Willful", "Will"],
+        ["Mystical", "Mystic"],
+        ["Arcanic", "Arcana"],
+        ["Wise", "Wisdom"]
+      ],
+      "def": [
+        ["Stone", "Stone"],
+        ["Iron", "Bastion"],
+        ["Steel", "Steel"]
+      ],
+      "dodge": [
+        ["Slippery", "Slip"],
+        ["Spectral", "Ghost"],
+        ["Mist", "Wisp"],
+        ["Unreachable", "Untouched"]
+      ],
+      "phys": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"]
+      ],
+      "fire": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"]
+      ],
+      "ice": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"]
+      ],
+      "lightning": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"]
+      ],
+      "energy": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"]
+      ],
+      "light": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"],
+        ["Radiant", "Radiance"]
+      ],
+      "dark": [
+        ["Walled", "Wall"],
+        ["Shielding", "Shield"],
+        ["Barring", "Barrier"],
+        ["Gazing", "Gaze"]
+      ],
+      "elemental_resistances": [
+        ["Sacred", "Sanctuary"],
+        ["Warding", "Ward"],
+        ["Tricolor", "Tricolor"]
+      ],
+      "all_resistances": [
+        ["Aegis", "Aegis"],
+        ["Unshakeable", "Fortress"],
+        ["Bastion", "Bulwark"]
+      ],
+      "crit_res": [
+        ["Balanced", "Balance"],
+        ["Steadfast", "Resolve"],
+        ["Unwavering", "Stance"],
+        ["Focal", "Focus"],
+        ["Unbreakable", "Calm"]
+      ],
+      "speed": [
+        ["Fast", "Speed"],
+        ["Darting", "Dart"],
+        ["Flight", "Fly"],
+        ["Racing", "Race"]
+      ],
+      "cspeed": [
+        ["Torrential", "Torrent"],
+        ["Waving", "Wave"],
+        ["Pulsing", "Pulse"],
+        ["Cascading", "Cascade"]
+      ],
+      "phys_dmg": [
+        ["Strinking", "Strike"],
+        ["Smashing", "Smash"],
+        ["Rending", "Rend"],
+        ["Smiting", "Smite"]
+      ],
+      "phys_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "phys_flat": [
+        ["Strinking", "Strike"],
+        ["Smashing", "Smash"],
+        ["Rending", "Rend"],
+        ["Smiting", "Smite"]
+      ],
+      "fire_dmg": [
+        ["Scorching", "Scorcher"],
+        ["Flaming", "Flame"],
+        ["Blazing", "Blaze"],
+        ["Infernal", "Inferno"]
+      ],
+      "fire_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "fire_flat": [
+        ["Scorching", "Scorcher"],
+        ["Flaming", "Flame"],
+        ["Blazing", "Blaze"],
+        ["Infernal", "Inferno"]
+      ],
+      "ice_dmg": [
+        ["Freezing", "Freeze"],
+        ["Glaciating", "Glacier"],
+        ["Frosty", "Frost"],
+        ["Cold", "Cold"]
+      ],
+      "ice_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "ice_flat": [
+        ["Freezing", "Freeze"],
+        ["Glaciating", "Glacier"],
+        ["Frosty", "Frost"],
+        ["Cold", "Cold"]
+      ],
+      "lightning_dmg": [
+        ["Arcing", "Arc"],
+        ["Thundering", "Thunder"],
+        ["Sparking", "Spark"],
+        ["Shocking", "Shock"]
+      ],
+      "lightning_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "LIGHTNING_FLAT": [
+        ["Arcing", "Arc"],
+        ["Thundering", "Thunder"],
+        ["Sparking", "Spark"],
+        ["Shocking", "Shock"]
+      ],
+      "energy_dmg": [
+        ["Essential", "Essence"],
+        ["Disintegrating", "Disintegration"],
+        ["Energy", "Energy"]
+      ],
+      "energy_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "energy_flat": [
+        ["Essential", "Essence"],
+        ["Disintegrating", "Disintegration"],
+        ["Energy", "Energy"]
+      ],
+      "light_dmg": [
+        ["Radiant", "Radiance"],
+        ["Glowing", "Glow"],
+        ["Shining", "Shine"],
+        ["Flaring", "Flare"],
+        ["Sun", "Sun"]
+      ],
+      "light_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "light_flat": [
+        ["Radiant", "Radiance"],
+        ["Glowing", "Glow"],
+        ["Shining", "Shine"],
+        ["Flaring", "Flare"],
+        ["Sun", "Sun"]
+      ],
+      "dark_dmg": [
+        ["Nocturnal", "Night"],
+        ["Abyssal", "Abyss"],
+        ["Void", "Void"],
+        ["Obsidian", "Obsidian"],
+        ["Gloomy", "Gloom"]
+      ],
+      "dark_pen": [
+        ["Devouring", "Devourer"],
+        ["Piercing", "Piercer"],
+        ["Dimensional", "Dimension"],
+        ["Tearing", "Tear"]
+      ],
+      "dark_flat": [
+        ["Nocturnal", "Night"],
+        ["Abyssal", "Abyss"],
+        ["Void", "Void"],
+        ["Obsidian", "Obsidian"],
+        ["Gloomy", "Gloom"]
+      ],
+      "elemental_damage": [
+        ["Rainbow", "Rainbow"],
+        ["Elemental", "Elemental"],
+        ["Primordial", "Primal"],
+        ["Equilibrium", "Equilibrium"]
+      ],
+      "precision": [
+        ["Precise", "Precision"],
+        ["Atomic", "Atom"]
+      ],
+      "all_damage": [
+        ["Overlord", "Overlord"],
+        ["All-Seeing", "All-Seer"],
+        ["Supreme", "Supremacy"],
+        ["Ultimate", "Ultimate"]
+      ],
+      "dodge_rating": [
+        ["Swift", "Swiftness"],
+        ["Gale", "Gale"],
+        ["Wind", "Wind"],
+        ["Flashy", "Flash"]
+      ],
+      "melee_dmg": [
+        ["Violent", "Violence"],
+        ["Bloody", "Blood"],
+        ["Goring", "Gore"],
+        ["Crushing", "Crusher"]
+      ],
+      "spell_dmg": [
+        ["Weaving", "Weave"],
+        ["Transcendental", "Transcendent"],
+        ["Magical", "Magic"],
+        ["Spell", "Spell"]
+      ],
+      "ranged_dmg": [
+        ["Sniping", "Sniper"],
+        ["Feather", "Feather"],
+        ["Fang", "Fang"]
+      ],
+      "life_regen": [
+        ["Sanguine", "Baste"],
+        ["Flowing", "Flow"],
+        ["Circulating", "Circulation"]
+      ],
+      "mana_regen": [
+        ["Sanguine", "Baste"],
+        ["Flowing", "Flow"],
+        ["Circulating", "Circulation"]
+      ],
+      "damage_mod": [
+        ["Powerful", "Power"],
+        ["Dominating", "Dominance"],
+        ["Powering", "Power"]
+      ],
+      "cooldown": [
+        ["Swift", "Promptitude"]
+      ],
+      "life_cost": [
+        ["Quarting", "Quarter"],
+        ["Clear", "Clarity"],
+        ["Opaque", "Opacity"]
+      ],
+      "mana_cost": [
+        ["Quarting", "Quarter"],
+        ["Clear", "Clarity"],
+        ["Opaque", "Opacity"]
+      ],
+      "projs": [
+        ["Forking", "Fork"],
+        ["Barraging", "Barrage"]
+      ],
+      "area": [
+        ["Reaching", "Reach"],
+        ["Wide", "Width"],
+        ["Humongous", "Gigantomany"]
+      ],
+      "crit_rate": [
+        ["Piercing", "Piercer"],
+        ["Critical", "Alacricity"],
+        ["Perfected", "Perfection"]
+      ],
+      "crit_dmg": [
+        ["Piercing", "Piercer"],
+        ["Critical", "Alacricity"],
+        ["Perfected", "Perfection"]
+      ],
+      "item_quant": [
+        ["Abundant", "Abundance"],
+        ["Plentiful", "Plenitude"],
+        ["Fullfilling", "Fill"]
+      ],
+      "item_qual": [
+        ["Quality", "Quality"]
+      ],
+      "debuff_res": [
+        ["Immune", "Immunity"],
+        ["Curated", "Cure"]
+      ],
+      "debuff_rte": [
+        ["Afflicting", "Affliction"],
+        ["Prompt", "Promptitude"]
+      ],
+      "debuff_pot": [
+        ["Endemic", "Pandemy"],
+        ["Potent", "Potential"]
+      ],
+      "debuff_chance": [
+        ["Afflicting", "Affliction"],
+        ["Infecting", "Infection"]
+      ]
+    }
+  }
 }

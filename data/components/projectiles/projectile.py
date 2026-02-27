@@ -8,7 +8,7 @@ import pygame
 from data.api.vec2d import Vec2
 
 from data.constants import Flags, SCREEN_HEIGHT, SCREEN_WIDTH, SYSTEM,\
-    PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER
+    PROJECTILE_TRACKER, ENNEMY_TRACKER, ANIMATION_TRACKER, PARTICULE_TRACKER
 from data.numerics.damage import Damage
 from data.physics.hitbox import HitBox
 from data.game.creature import Creature

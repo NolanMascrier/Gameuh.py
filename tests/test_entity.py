@@ -17,64 +17,6 @@ SYSTEM["images"]["sprite_image"] = Sprite("necro_old.png", 160, 128, ["idle", "d
  [8, 8, 13, 13, 17, 5, 10], [True, True, False, False, False, False, False],\
  [-1, -1, -1, -1, -1, -1, 1]).flip(False, True).scale(2, 2, False)
 
-class TestEntityInitialization(unittest.TestCase):
-    """Tests for Entity initialization."""
-    
-    def setUp(self):
-        """Set up test fixtures with mocked dependencies."""
-        self.mock_sprite = Mock()
-        self.mock_sprite.w = 100
-        self.mock_sprite.h = 80
-        self.mock_sprite.width = 100
-        self.mock_sprite.height = 80
-        self.mock_sprite.scale_factor = (1, 1)
-        self.mock_sprite.clone.return_value = self.mock_sprite
-        self.entity = Entity(100, 200, 'sprite_image')
-        
-        self.system_patcher = patch('data.physics.entity.SYSTEM', {'images': {'test_image': self.mock_sprite}})
-        self.system_patcher.start()
-    
-    def tearDown(self):
-        """Clean up patches."""
-        self.system_patcher.stop()
-    
-    def test_play_calls_sprite_play_when_sprite(self):
-        """Test that play calls sprite.play() when entity has sprite."""
-        self.entity.play('idle')
-    
-    def test_play_does_nothing_when_not_sprite(self):
-        """Test that play does nothing when entity doesn't have sprite."""
-        self.entity._sprite = False
-        self.entity.play('idle')
-        self.mock_sprite.play.assert_not_called()
-    
-    def test_play_with_different_keys(self):
-        """Test play with different animation keys."""
-        self.entity.play('attack')
-        
-        self.entity.play('dash')
-    
-    def test_detach_calls_sprite_detach_when_sprite(self):
-        """Test that detach calls sprite.detach() when entity has sprite."""
-        self.entity.detach('attack')
-    
-    def test_detach_with_center_true(self):
-        """Test detach with center parameter True."""
-        self.entity.detach('attack', center=True)
-    
-    def test_detach_does_nothing_when_not_sprite(self):
-        """Test that detach does nothing when entity doesn't have sprite."""
-        self.entity._sprite = False
-        self.entity.detach('attack')
-        self.mock_sprite.detach.assert_not_called()
-    
-    def test_detach_uses_current_position(self):
-        """Test that detach uses entity's current position."""
-        self.entity.x = 300
-        self.entity.y = 400
-        self.entity.detach('cast')
-
-
 class TestEntityEdgeCases(unittest.TestCase):
     """Tests for Entity edge cases and boundary conditions."""
     

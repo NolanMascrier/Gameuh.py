@@ -16,7 +16,7 @@ class TestConstants(unittest.TestCase):
         change_language("DD_dd")
         self.assertIsNone(SYSTEM["lang"])
         change_language("FR_fr")
-        self.assertEqual(SYSTEM["lang"]["fire_dot"], "Brulures")
+        self.assertEqual(SYSTEM["lang"]["fire_dot"], "Brûlure")
         change_language("EN_us")
         self.assertEqual(SYSTEM["lang"]["fire_dot"], "Burning")
 

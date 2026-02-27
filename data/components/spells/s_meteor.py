@@ -43,7 +43,8 @@ class Meteor(Spell):
         PROJECTILE_TRACKER.append(proj)
 
     def on_cast(self, caster: Creature, entity: Entity, evil: bool,\
-            aim_right = True, force = False, ignore_team = False):
+            aim_right = True, force = False, ignore_team = False,
+            victim: Creature = None, victim_entity: Entity = None):
         if len(self._active_meteor) > 0:
             if self._safety_timer > 0:
                 return
@@ -66,7 +67,7 @@ class Meteor(Spell):
 
     def describe(self):
         desc = super().describe()
-        desc["explosion_tab"] = trad('buttons', 'detonates'),
+        desc["explosion_tab"] = trad('buttons', 'detonates')
         return desc
 
     @property

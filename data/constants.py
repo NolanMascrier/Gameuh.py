@@ -12,6 +12,7 @@ SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 
 PROJECTILE_TRACKER = []
+PARTICULE_TRACKER = []
 ENNEMY_TRACKER = []
 POWER_UP_TRACKER = []
 TEXT_TRACKER = []
@@ -297,6 +298,7 @@ class Flags(str, Enum):
     PIERCE_TICKING = "pierce_every_tick"
     TRACK_STRICT = "tracking_strict"
     TRACK_LOOSE = "tracking_loose"
+    TRACK_PLAYER = "track_player"
     AIMED_AT_PLAYER = "aimed_at_player"
     AIMED_AT_MOUSE = "aimed_at_mouse"
     AIMED_AT_CLOSEST = "aimed_at_closest"
@@ -313,6 +315,7 @@ class Flags(str, Enum):
     CHANNELED = "channeled"
     SPAWN_AT_MOUSE = "spawns_at_mouse"
     RANDOM_POSITION = "spawns_at_random_position"
+    RANDOM_ANGLE = "random_angle"
     BUFF = "buff"
     DEBUFF = "debuff"
     DASH = "dash"
@@ -321,6 +324,7 @@ class Flags(str, Enum):
     CIRCULAR_BLAST = "spread_all_around"
     TRIGGER = "triggered"
     TRIGGER_ON_CRIT = "trigger_on_crit"
+    TRIGGER_ON_KILL = "trigger_on_kill"
     NOVA = "nova"
     SKITTER = "skitter"
     IMPACT_ANIMATION_RANDOM = "impact_anim_random"
@@ -335,10 +339,12 @@ class Flags(str, Enum):
     CAN_TICK = "can_tick"
     #Flags for ennemies
     BOSS = "boss"
+    GROUNDED = "grounded"
     RANDOM_MOVE = "move_randomly"
     SHOOTER = "shooter"
     CHASER = "chaser"
     SUICIDER = "suicider"
+    AMBUSHER = "ambusher"
     PINNACLE = "unique_boss"
     MONOLITH = "monolith_boss"
     #Flags for levels

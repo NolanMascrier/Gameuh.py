@@ -37,7 +37,7 @@ class Creature:
     __slots__ = '_name', '_level', '_exp', '_exp_to_next', '_origin', '_life_regen', '_mana_regen',\
                 '_stats', '_gear', '_buffs', '_dots', '_changed', '_ap', '_life_reservation', \
                 '_mana_reservation', "_life_efficacy", '_mana_efficacy', '_changed_flags', \
-                "_all_flags"
+                "_all_flags", '_last_source_of_damage'
     def __init__(self, name, origin = None):
         self._name = name
         self._level = 1
@@ -166,6 +166,7 @@ class Creature:
         self._stats["mana"].refill()
         self._all_flags = []
         self._changed_flags = True
+        self._last_source_of_damage = None
 
     def recalculate_damage(self, damage_source: Damage, is_dot = False,
                            additional_multiplier: float = 1) -> Damage:
@@ -281,6 +282,7 @@ class Creature:
         Args:
             damage (Damage): Source of damage.
         """
+        self._last_source_of_damage = damage_source.origin
         unique_flags = self.gather_flags
         damage = 0
         dmg, pen = damage_source.get_damage()
@@ -501,6 +503,7 @@ class Creature:
             buff.tick()
             if buff.expired:
                 self._buffs.pop(i)
+                self._changed_flags = True
             elif buff.damage is not None:
                 dt = buff.dot_amount
                 for _ in range(dt):
@@ -626,6 +629,11 @@ class Creature:
         if self._origin is not None:
             self._origin.on_crit()
 
+    def on_kill(self, victim, victim_entity):
+        """Called when the creature crits."""
+        if self._origin is not None:
+            self._origin.on_kill(victim, victim_entity)
+
     def on_dodge(self):
         """Called when the creature dodges."""
         if self._origin is not None:
@@ -645,6 +653,11 @@ class Creature:
         """Called when the creature heals."""
         if self._origin is not None:
             self._origin.on_heal(value)
+
+    def on_death(self, entity):
+        """Called when the creature dies."""
+        if self._last_source_of_damage is not None:
+            self._last_source_of_damage.on_kill(self, entity)
 
     #Metadata for importing and exporting
 

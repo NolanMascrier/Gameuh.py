@@ -1,5 +1,7 @@
 """Generic spell class for channeling spells."""
 
+from data.game.creature import Creature
+from data.physics.entity import Entity
 from data.components.spells.spell import Spell
 
 class Channel(Spell):
@@ -18,9 +20,11 @@ class Channel(Spell):
         self._channeled = 0
         self._is_channeling = False
 
-    def on_cast(self, caster, entity, evil, aim_right=True, force=False, ignore_team=False):
+    def on_cast(self, caster, entity, evil, aim_right=True, force=False, ignore_team=False,
+            victim: Creature = None, victim_entity: Entity = None):
         self._is_channeling = True
-        return super().on_cast(caster, entity, evil, aim_right, force, ignore_team)
+        return super().on_cast(caster, entity, evil, aim_right, force, ignore_team,
+                               victim, victim_entity)
 
     def tick(self, caster=None):
         if not self._is_channeling:
