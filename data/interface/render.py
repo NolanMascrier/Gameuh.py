@@ -19,7 +19,7 @@ def renders(lst):
     RENDER_LIST.extend(lst)
 
 def render_all():
-    """Renders the screen - OPTIMIZED."""
+    """Renders the screen."""
     game_state = SYSTEM["game_state"]
     if game_state == LOADING:
         SYSTEM["windows"].fill(BLACK_TRANSP)
@@ -30,9 +30,6 @@ def render_all():
         all_blits = []
         shake = SYSTEM["post_effects"].shake_factor
         all_blits.append((SYSTEM["gm_background"], shake))
-        #effects = SYSTEM.get("effects_persistent")
-        #if effects:
-        #    all_blits.append((effects, (0, 0)))
         if RENDER_LIST:
             all_blits.extend(RENDER_LIST)
             RENDER_LIST.clear()
