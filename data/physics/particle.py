@@ -54,12 +54,13 @@ class Segment:
 
 class ParticleEmitter:
     """Manages a collection of particles."""
-    __slots__ = ('_particles', '_max_particles', '_enabled')
+    __slots__ = ('_particles', '_max_particles', '_enabled', '_lightning_cache')
 
     def __init__(self, max_particles=1000):
         self._particles = []
         self._max_particles = max_particles
         self._enabled = True
+        self._lightning_cache = {}  # Cache lightning segments by (x1, y1, x2, y2) key
 
     def emit(self, x, y, count, vel_range, color, size_range, life_range,
              spread_angle=360, fade=True, gravity=0):
@@ -170,8 +171,8 @@ class ParticleEmitter:
             else:
                 surface.draw_circle(color, (screen_x, screen_y), int(particle.size))
         for i in PARTICULE_TRACKER:
-            x1, y1, x2, y2 = i[0] - camera_x, i[1] - camera_y, i[2] - camera_x, i[3] - camera_y
-            self.draw_lightning(x1, y1, x2, y2, surface)
+            # i = [x1, y1, x2, y2, remaining_lifetime, max_lifetime]
+            self.draw_lightning(i[0], i[1], i[2], i[3], surface, camera_x, camera_y, i[4], i[5])
             i[4] -= 0.016
         PARTICULE_TRACKER[:] = [i for i in PARTICULE_TRACKER if i[4] > 0]
 
@@ -184,62 +185,92 @@ class ParticleEmitter:
         qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
         return (qx, qy)
 
-    def draw_lightning(self, x1, y1, x2, y2, surface):
-        """Draw a lightning arc between two points."""
-        # Start with the single segment and iteratively subdivide it.
-        segments = [Segment(x1, y1, x2, y2)]
-        offset_amount = max(6.0, np.hypot(x2 - x1, y2 - y1) * 0.25)
-        iterations = 4
-        for _ in range(iterations):
-            new_segs = []
-            for seg in segments:
-                mid_x = (seg.start.x + seg.end.x) / 2.0
-                mid_y = (seg.start.y + seg.end.y) / 2.0
-                dx = seg.end.x - seg.start.x
-                dy = seg.end.y - seg.start.y
+    def draw_lightning(self, x1, y1, x2, y2, surface, camera_x=0, camera_y=0, remaining_lifetime=1.0, max_lifetime=1.0):
+        """Draw a lightning arc between two points (cached for stability).
+        
+        Args:
+            x1, y1, x2, y2: World space coordinates
+            surface: Surface to draw on
+            camera_x, camera_y: Camera offset for screen space conversion
+            remaining_lifetime: Current lifetime remaining
+            max_lifetime: Maximum lifetime for fade calculation
+        """
+        # Create a cache key using exact coordinates to avoid precision issues
+        # Convert to int for better cache consistency across the map
+        cache_key = (int(x1), int(y1), int(x2), int(y2))
+        
+        # Generate segments once and cache them (in world space)
+        if cache_key not in self._lightning_cache:
+            # Use coordinates as seed for deterministic randomization
+            seed_value = (int(x1) * 73856093 ^ int(y1) * 19349663 ^ int(x2) * 83492791 ^ int(y2) * 42451971) & 0xffffffff
+            np.random.seed(seed_value)
+            
+            segments = [Segment(x1, y1, x2, y2)]
+            offset_amount = max(3.0, np.hypot(x2 - x1, y2 - y1) * 0.1)  # Reduced from 0.25 to 0.1
+            iterations = 4
+            for _ in range(iterations):
+                new_segs = []
+                for seg in segments:
+                    mid_x = (seg.start.x + seg.end.x) / 2.0
+                    mid_y = (seg.start.y + seg.end.y) / 2.0
+                    dx = seg.end.x - seg.start.x
+                    dy = seg.end.y - seg.start.y
 
-                length = np.hypot(dx, dy)
-                if length != 0:
-                    perp_x = -dy / length
-                    perp_y = dx / length
-                else:
-                    perp_x = perp_y = 0
-                displacement = np.random.uniform(-offset_amount, offset_amount)
-                mid_x += perp_x * displacement
-                mid_y += perp_y * displacement
-                new_segs.append(Segment(seg.start.x, seg.start.y, mid_x, mid_y))
-                new_segs.append(Segment(mid_x, mid_y, seg.end.x, seg.end.y))
+                    length = np.hypot(dx, dy)
+                    if length != 0:
+                        perp_x = -dy / length
+                        perp_y = dx / length
+                    else:
+                        perp_x = perp_y = 0
+                    # Reduced displacement factor for straighter main line
+                    displacement = np.random.uniform(-offset_amount, offset_amount) * 0.5
+                    mid_x += perp_x * displacement
+                    mid_y += perp_y * displacement
+                    new_segs.append(Segment(seg.start.x, seg.start.y, mid_x, mid_y))
+                    new_segs.append(Segment(mid_x, mid_y, seg.end.x, seg.end.y))
 
-                # Add lightning branches
-                # Calculate direction vector from segment start to midpoint
-                dir_x = mid_x - seg.start.x
-                dir_y = mid_y - seg.start.y
+                    # Add lightning branches (keep these more prominent for visual interest)
+                    dir_x = mid_x - seg.start.x
+                    dir_y = mid_y - seg.start.y
 
-                # Rotate direction by random small angle
-                random_angle = np.random.uniform(-0.3, 0.3)  # radians
-                cos_a = np.cos(random_angle)
-                sin_a = np.sin(random_angle)
-                rotated_x = dir_x * cos_a - dir_y * sin_a
-                rotated_y = dir_x * sin_a + dir_y * cos_a
+                    random_angle = np.random.uniform(-0.3, 0.3)
+                    cos_a = np.cos(random_angle)
+                    sin_a = np.sin(random_angle)
+                    rotated_x = dir_x * cos_a - dir_y * sin_a
+                    rotated_y = dir_x * sin_a + dir_y * cos_a
 
-                # Scale the rotated direction (0.7 gives good branch lengths)
-                length_scale = 0.7
-                rotated_x *= length_scale
-                rotated_y *= length_scale
+                    length_scale = 0.7
+                    rotated_x *= length_scale
+                    rotated_y *= length_scale
 
-                # Calculate branch endpoint and add segment
-                split_end_x = mid_x + rotated_x
-                split_end_y = mid_y + rotated_y
-                new_segs.append(Segment(mid_x, mid_y, split_end_x, split_end_y))
-            segments = new_segs
-            offset_amount /= 2.0
+                    split_end_x = mid_x + rotated_x
+                    split_end_y = mid_y + rotated_y
+                    new_segs.append(Segment(mid_x, mid_y, split_end_x, split_end_y))
+                segments = new_segs
+                offset_amount /= 2.0
+            self._lightning_cache[cache_key] = segments
+        
+        # Calculate alpha based on lifetime
+        if max_lifetime > 0:
+            alpha = int(255 * (remaining_lifetime / max_lifetime))
+        else:
+            alpha = 255
+        alpha = max(0, min(255, alpha))  # Clamp to 0-255
+        
+        # Draw cached segments with camera offset and fade applied
+        segments = self._lightning_cache[cache_key]
         for seg in segments:
-            surface.draw_line((255, 255, 0), (seg.start.x, seg.start.y), (seg.end.x, seg.end.y), 2)
+            screen_x1 = seg.start.x - camera_x
+            screen_y1 = seg.start.y - camera_y
+            screen_x2 = seg.end.x - camera_x
+            screen_y2 = seg.end.y - camera_y
+            surface.draw_line((255, 255, 0, alpha), (screen_x1, screen_y1), (screen_x2, screen_y2), 2)
 
     def clear(self):
         """Remove all particles."""
         self._particles.clear()
         PARTICULE_TRACKER.clear()
+        self._lightning_cache.clear()
 
     @property
     def enabled(self):

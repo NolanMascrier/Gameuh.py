@@ -319,7 +319,7 @@ def generate_spell_list():
     lightning_bolt = Spell("lightning_bolt", elecbolt_icon, "lightboltanim", LIGHTNING_BOLT, 15,\
         cooldown=3, projectiles=1, flags=[Flags.LIGHTNING, Flags.BARRAGE,\
         Flags.PROJECTILE, Flags.PIERCING, Flags.LIGHTNING_BOLT], \
-        anim_on_hit=bolt_strike, proj_speed=60, trail=PARTICLE_CONFIGS["lightning_bolt_trail"])
+        anim_on_hit=bolt_strike, proj_speed=240, trail=PARTICLE_CONFIGS["lightning_bolt_trail"])
 
     shock = Spell("shock", shock_icon, "skitterbolt", SHOCK, 3,\
         cooldown=0.35, projectiles=5, spread=180, flags=[Flags.LIGHTNING, Flags.SPREAD,\
