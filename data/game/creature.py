@@ -48,10 +48,10 @@ class Creature:
         self._mana_reservation = Stat(0, "mana_reservation", 1, 0, 4)
         self._life_efficacy = Stat(1, "life_reservation_effi", None, 0.05)
         self._mana_efficacy = Stat(1, "mana_reservation_effi", None, 0.05)
-        self._life_regen = Stat(1, "life_regen", precision=0)
+        self._life_regen = Stat(1000, "life_regen", precision=0)
         self._mana_regen = Stat(5, "mana_regen", precision=0)
         self._stats = {
-            "life": Ressource(90, "life", self._life_regen, reservation=self._life_reservation,
+            "life": Ressource(9000, "life", self._life_regen, reservation=self._life_reservation,
                               reservation_effi=self._life_efficacy),
             "mana": Ressource(40, "mana", self._mana_regen, reservation=self._mana_reservation,
                               reservation_effi=self._mana_efficacy),

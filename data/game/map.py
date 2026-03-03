@@ -14,7 +14,7 @@ class Map():
         height (int): Amount of vertical tiles in the map.
     """
     __slots__ = ('_tileset', '_width', '_height', '_max_x', '_max_y', '_surface', '_camera_x',
-                 '_camera_y')
+                 '_camera_y', "_cached_cuts")
     def __init__(self, tileset: Tileset, width: int, height: int):
         self._tileset = tileset
         self._width = width
@@ -24,6 +24,7 @@ class Map():
         self._surface = Surface(self._max_x, self._max_y)
         self._camera_x = 0
         self._camera_y = 0
+        self._cached_cuts = {}
         for y in range(height):
             for x in range(width):
                 tile = tileset.get_at(0, 0) #TODO: Replace with a real map generation algorithm ...
@@ -32,13 +33,15 @@ class Map():
 
     def draw(self, x, y) -> Surface:
         """Draws the map using the x.y pos as a camera."""
-        w = SCREEN_WIDTH
-        h = SCREEN_HEIGHT
-        x = min(max(0, x - w // 2), self._max_x - SCREEN_WIDTH)
-        y = min(max(0, y - h // 2), self._max_y - SCREEN_HEIGHT)
-        self._camera_x = x
-        self._camera_y = y
-        return self._surface.subsurface((x, y, w, h))
+        if (x, y) not in self._cached_cuts:
+            w = SCREEN_WIDTH
+            h = SCREEN_HEIGHT
+            x = min(max(0, x - w // 2), self._max_x - SCREEN_WIDTH)
+            y = min(max(0, y - h // 2), self._max_y - SCREEN_HEIGHT)
+            self._camera_x = x
+            self._camera_y = y
+            self._cached_cuts[(x, y)] = self._surface.subsurface((x, y, w, h))
+        return self._cached_cuts[(x, y)]
 
     @property
     def camera_offset(self):

@@ -1,13 +1,12 @@
 """Handles the loading."""
 
-import psutil
 import threading
 import re
 import os
 import random
 import cProfile
 import numpy as np
-import pygame
+import psutil
 
 from data.api.surface import Surface, mouse_position, get_keys, init_engine
 from data.api.clock import Clock
@@ -580,7 +579,6 @@ def init_game():
     SYSTEM["trans_cache"] = TransformCache()
     SYSTEM["logger"] = Logger()
     SYSTEM["particle_emitter"] = ParticleEmitter(max_particles=2000)
-    #SYSTEM["effects_persistent"] = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     loading_thread = threading.Thread(target=load)
     loading_thread.start()
     SYSTEM["unloader"] = None

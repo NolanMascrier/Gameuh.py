@@ -8,10 +8,12 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, POWER_UP_TRACKER, ENNEMY_TRACK
     PROJECTILE_TRACKER, TEXT_TRACKER, trad,\
     MENU_MAIN, MENU_GEAR, MENU_SPELLBOOK, MENU_TREE, MENU_INVENTORY, MENU_OPTIONS,\
     ANIMATION_TRACKER, RED_TRANSP, RED_PURE, RED_WARNING, GREEN_PURE, GREEN_TRANSP, BLUE_PURE,\
-    BLUE_TRANSP
+    BLUE_TRANSP, SCREEN_WIDTH
 from data.image.tabs import Tabs
 from data.components.projectiles.projectile import Projectile
 from data.components.slashes.slash import Slash
+
+CULL_MARGIN = 200
 
 def setup_bottom_bar():
     """Sets up the bottom bar."""
@@ -39,6 +41,24 @@ def setup_bottom_bar():
 def draw_bottom_bar():
     """Draws the bottom bar, quick access to the menus."""
     SYSTEM["ui"]["bottom_bar"].tick()
+
+def is_on_screen(x, y, width, height, camera_x, camera_y):
+    """Check if an entity with given bounds is on screen.
+    
+    Args:
+        x, y: World position
+        width, height: Entity dimensions
+        camera_x, camera_y: Camera position
+        
+    Returns:
+        True if entity should be rendered, False otherwise
+    """
+    screen_x = x - camera_x
+    screen_y = y - camera_y
+    return (screen_x + width > -CULL_MARGIN and 
+            screen_x < SCREEN_WIDTH + CULL_MARGIN and
+            screen_y + height > -CULL_MARGIN and
+            screen_y < SCREEN_HEIGHT + CULL_MARGIN)
 
 @lru_cache(maxsize=256)
 def draw_hitbox(hitbox, color, color_border):
@@ -99,30 +119,34 @@ def draw_game(show_player = True, show_enemies = True,\
     if show_loot:
         loot_count = len(POWER_UP_TRACKER)
         if loot_count > 0:
-            if show_hitboxes:
-                for b in POWER_UP_TRACKER:
+            loot_blits = []
+            for b in POWER_UP_TRACKER:
+                if not is_on_screen(b.x, b.y, b.width, b.height, camera_x, camera_y):
+                    continue
+                if show_hitboxes:
                     loot_rect = b.hitbox.get_rect()
                     pickup_layer.append(draw_hitbox((loot_rect[0] - camera_x, loot_rect[1] -
                                                      camera_y, loot_rect[2], loot_rect[3]),
                                                      BLUE_TRANSP, BLUE_PURE))
-            loot_blits = [(b.get_image(), (b.x - camera_x, b.y - camera_y)) for b in
-                          POWER_UP_TRACKER]
+                loot_blits.append((b.get_image(), (b.x - camera_x, b.y - camera_y)))
             if loot_blits:
                 pickup_layer.extend(loot_blits)
-
     if show_enemies:
         enemy_count = len(ENNEMY_TRACKER)
         if enemy_count > 0:
-            if show_hitboxes:
-                for b in ENNEMY_TRACKER:
-                    enemy_rect = b.hitbox.get_rect()
+            enemy_blits = []
+            enemy_jauge_back = SYSTEM["images"]["enemy_jauge_mini_back"].image \
+                if show_bars else None
+            for b in ENNEMY_TRACKER:
+                enemy_rect = b.hitbox.get_rect()
+                if not is_on_screen(enemy_rect[0], enemy_rect[1], enemy_rect[2], enemy_rect[3],
+                                   camera_x, camera_y):
+                    continue
+                if show_hitboxes:
                     chars_layer.append(draw_hitbox((enemy_rect[0] - camera_x, enemy_rect[1] -
                                                     camera_y, enemy_rect[2], enemy_rect[3]),
                                                     RED_TRANSP, RED_PURE))
-            enemy_blits = []
-            if show_bars:
-                enemy_jauge_back = SYSTEM["images"]["enemy_jauge_mini_back"].image
-                for b in ENNEMY_TRACKER:
+                if show_bars:
                     bar_x = b.entity.center_x - camera_x - 50
                     bar_y = b.y - camera_y - 25
                     enemy_blits.append((enemy_jauge_back, (bar_x, bar_y)))
@@ -133,43 +157,35 @@ def draw_game(show_player = True, show_enemies = True,\
                         life_bar = SYSTEM["images"]["enemy_jauge_mini"].image\
                             .subsurface((0, 0, life_width, 20))
                         enemy_blits.append((life_bar, (bar_x, bar_y)))
-                    enemy_pos = b.get_pos()
-                    enemy_blits.append((b.get_image(), (enemy_pos[0] - camera_x,
-                                                        enemy_pos[1] - camera_y)))
-                    for buff in b.creature.buffs:
-                        if f"buffanim_{buff.name}" in SYSTEM["images"]:
-                            buff_anim = SYSTEM["images"][f"buffanim_{buff.name}"]
-                            buff_anim.tick()
-                            enemy_blits.append((buff_anim.get_image(),\
-                                (b.entity.center_x - camera_x - buff_anim.width // 2,\
-                                 b.entity.center_y - camera_y - buff_anim.height // 2)))
-            else:
-                for b in ENNEMY_TRACKER:
-                    enemy_pos = b.get_pos()
-                    enemy_blits.append((b.get_image(), (enemy_pos[0] - camera_x,
-                                                        enemy_pos[1] - camera_y)))
-                    for buff in b.creature.buffs:
-                        if f"buffanim_{buff.name}" in SYSTEM["images"]:
-                            buff_anim = SYSTEM["images"][f"buffanim_{buff.name}"]
-                            buff_anim.tick()
-                            enemy_blits.append((buff_anim.get_image(),\
-                                (b.entity.center_x - camera_x - buff_anim.width // 2,\
-                                 b.entity.center_y - camera_y - buff_anim.height // 2)))
+                enemy_pos = b.get_pos()
+                enemy_blits.append((b.get_image(), (enemy_pos[0] - camera_x,
+                                                    enemy_pos[1] - camera_y)))
+                for buff in b.creature.buffs:
+                    if f"buffanim_{buff.name}" in SYSTEM["images"]:
+                        buff_anim = SYSTEM["images"][f"buffanim_{buff.name}"]
+                        buff_anim.tick()
+                        enemy_blits.append((buff_anim.get_image(),\
+                            (b.entity.center_x - camera_x - buff_anim.width // 2,\
+                             b.entity.center_y - camera_y - buff_anim.height // 2)))
             if enemy_blits:
                 chars_layer.extend(enemy_blits)
-
     if show_animations:
         anim_count = len(ANIMATION_TRACKER)
         if anim_count > 0:
-            anim_blits = [(p[0].get_image(), (p[1] - camera_x, p[2] - camera_y))
-                          for p in ANIMATION_TRACKER]
+            anim_blits = []
+            for p in ANIMATION_TRACKER:
+                if not is_on_screen(p[1], p[2], 64, 64, camera_x, camera_y):
+                    continue
+                anim_blits.append((p[0].get_image(), (p[1] - camera_x, p[2] - camera_y)))
             if anim_blits:
                 chars_layer.extend(anim_blits)
-
     if show_projectiles:
         proj_count = len(PROJECTILE_TRACKER)
         if proj_count > 0:
+            proj_blits = []
             for p in PROJECTILE_TRACKER:
+                if not is_on_screen(p.x, p.y, p.width, p.height, camera_x, camera_y):
+                    continue
                 if show_hitboxes:
                     if p.effective:
                         proj_rect = p.hitbox.get_rect()
@@ -179,16 +195,16 @@ def draw_game(show_player = True, show_enemies = True,\
                 if p.warning is not None:
                     warning_points = [(pt[0] - camera_x, pt[1] - camera_y) for pt in p.warning[0]]
                     draw_warning(warning_points, RED_WARNING, p.warning[1])
-            proj_blits = [(p.get_image(), (p.x - camera_x, p.y - camera_y))
-                          for p in PROJECTILE_TRACKER if \
-                          hasattr(p, 'get_image')]
+                if hasattr(p, 'get_image'):
+                    proj_blits.append((p.get_image(), (p.x - camera_x, p.y - camera_y)))
             if proj_blits:
                 bullets_layer.extend(proj_blits)
-
     if show_text:
         text_count = len(TEXT_TRACKER)
         if text_count > 0:
-            text_blits = [(t[0].image, (t[1] - camera_x, t[2] - camera_y)) for t in TEXT_TRACKER]
+            text_blits = []
+            for t in TEXT_TRACKER:
+                text_blits.append((t[0].image, (t[1] - camera_x, t[2] - camera_y)))
             if text_blits:
                 texts_layer.extend(text_blits)
 
