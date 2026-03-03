@@ -26,12 +26,7 @@ from data.components.slashes.slash import Slash
 from data.tables.uniques_table import UNIQUES
 from data.game.item import Item
 from data.tables.implicits_table import IMPLICITS
-
-def get_memory_usage():
-    """Get current memory usage in MB."""
-    process = psutil.Process(os.getpid())
-    mem = process.memory_info().rss / 1024 / 1024
-    return mem
+from data.loading import get_memory_usage
 
 DAMAGE_COLOR = (255, 30, 30)
 
@@ -247,13 +242,13 @@ def main_loop():
             draw_options(events)
 
         if SYSTEM["pop_up"] is not None:
-            x = SYSTEM["mouse"][0] - SYSTEM["pop_up"][1]
+            x = SYSTEM["real_mouse"][0] - SYSTEM["pop_up"][1]
             if x < 0:
                 x += SYSTEM["pop_up"][1]
-            y = SYSTEM["mouse"][1]
+            y = SYSTEM["real_mouse"][1]
             if y + SYSTEM["pop_up"][2] > SCREEN_HEIGHT:
                 y -= y + SYSTEM["pop_up"][2] - SCREEN_HEIGHT
-            render(SYSTEM["pop_up"][0], (x, y))
+            SYSTEM["layers"]["ui"].append((SYSTEM["pop_up"][0], (x, y)))
 
         SYSTEM["cooldown"] -= 0.032
         SYSTEM["cooldown"] = max(SYSTEM["cooldown"], 0)

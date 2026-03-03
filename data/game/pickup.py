@@ -20,10 +20,14 @@ COLORS = [
 class PickUp(HitBox):
     """Creates a pickup"""
     __slots__ = '_value', '_flags', '_to_delete', '_max_speed', '_max_force', '_arrival_threshold',\
-                '_arrival_threshold_sq', '_delay', '_velocity', '_contains', '_cached_image'
+                '_arrival_threshold_sq', '_delay', '_velocity', '_contains', '_cached_image',\
+                '_activated'
     def __init__(self, x, y, value = 0, w = 16, h = 16, speed_mod = 1,\
                 flags = None, contained = None):
-        super().__init__(x, y, w, h)
+        if Flags.ITEM in flags:
+            super().__init__(x, y, w * 2, h * 2)
+        else:
+            super().__init__(x, y, w, h)
         self._value = value
         if flags is None:
             self._flags = []
@@ -40,6 +44,7 @@ class PickUp(HitBox):
         self._velocity = Vec2(math.cos(angle), math.sin(angle)) * speed
         self._contains = contained
         self._cached_image = None
+        self._activated = False
 
     def get_image(self):
         """Returns the pickup image - CACHED VERSION."""
@@ -91,8 +96,10 @@ class PickUp(HitBox):
         dx = player_x - self.x
         dy = player_y - self.y
         dist_squared = dx * dx + dy * dy
-        if dist_squared > 100000:
+        if dist_squared > 100000 and not self._activated:
             return
+        if not self._activated:
+            self._activated = True
         if dist_squared < self._arrival_threshold_sq:
             self._velocity.x *= 0.9
             self._velocity.y *= 0.9
@@ -169,8 +176,14 @@ class PickUp(HitBox):
             self.move(player)
         elif Flags.ITEM not in self._flags:
             self.move(player)
-        if self.is_colliding(SYSTEM["player"].hitbox):
+        if self.is_colliding(SYSTEM["player"].hitbox) and Flags.ITEM not in self._flags:
             self.pickup(player)
+        if Flags.ITEM in self._flags:
+            if SYSTEM["mouse"][0] >= self.x and SYSTEM["mouse"][0] <= self.x + self.width \
+                and SYSTEM["mouse"][1] >= self.y and SYSTEM["mouse"][1] <= self.y + self.height:
+                SYSTEM["pop_up"] = (self._contains.popup, 200, 200)
+                if SYSTEM["mouse_click"][0]:
+                    self.pickup(player)
 
     @property
     def hitbox(self):

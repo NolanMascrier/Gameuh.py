@@ -524,7 +524,7 @@ def get_memory_usage():
     """Get current memory usage in MB."""
     process = psutil.Process(os.getpid())
     mem = process.memory_info().rss / 1024 / 1024
-    return mem
+    return round(mem)
 
 def load():
     """Loads everything inside the system.
