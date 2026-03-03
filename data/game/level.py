@@ -21,7 +21,6 @@ from data.game.enemy_monolith import Monolith
 from data.physics.entity import Entity
 from data.physics.hitbox import HitBox
 from data.image.animation import Animation, Image
-from data.image.parallaxe import Parallaxe
 from data.numerics.affix import Affix
 from data.image.text import Text
 from data.game.item import Item
@@ -115,15 +114,13 @@ class DummyItems(Item):
 class Level():
     """A level."""
     def __init__(self, name: str, area_lvl:int, icon: Animation,\
-                    wave_timer = 5000,\
-                    background: Animation|Parallaxe|None = None,\
+                    wave_timer = 5000,
                     waves: int = 5, difficulty = 0,\
                     flags = None, boss = None):
         self._name = name
         self._area_level = area_lvl
         self._difficulty = difficulty
         self._icon = icon
-        self._background = background
         self._started = False
         self._finished = False
         self._current_wave = 0
@@ -316,7 +313,7 @@ class Level():
     def load_level(self):
         """Loading function of the level."""
         SYSTEM["game_state"] = LOADING
-        self._map = Map(SYSTEM["images"]["grass_tileset"], 300, 300)
+        self._map = Map(SYSTEM["images"]["grass_tileset"], 40, 30)
         progress = 0
         if Flags.PINNACLE in self._flags:
             total, tasks = self.load_pinnacle()
@@ -337,8 +334,6 @@ class Level():
         """Sets up the background of the level."""
         SYSTEM["profiler"].enable()
         print("###### LEVEL START #####")
-        SYSTEM["gm_background"].fill((0,0,0,0))
-        SYSTEM["gm_background"].blit(self._background.background, (0, self._background.diff_y[0]))
         ENNEMY_TRACKER.clear()
         PROJECTILE_TRACKER.clear()
         POWER_UP_TRACKER.clear()
@@ -521,15 +516,6 @@ class Level():
         self._icon = value
 
     @property
-    def background(self):
-        """Returns the level's background image."""
-        return self._background
-
-    @background.setter
-    def background(self, value):
-        self._background = value
-
-    @property
     def finished(self):
         """Returns whether or not the level is finished."""
         return self._finished
@@ -600,3 +586,8 @@ class Level():
     @boss.setter
     def boss(self, value):
         self._boss_stat = value
+
+    @property
+    def map(self) -> Map:
+        """Returns the level's map."""
+        return self._map

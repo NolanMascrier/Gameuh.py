@@ -47,6 +47,7 @@ from data.tables.enemy_table import VOIDBOSS, MONOLITH, HERALD
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
 from data.game.deltatime import DeltaTime
+from data.game.camera import Camera
 
 from data.caching.transformation_cache import TransformCache
 
@@ -66,27 +67,21 @@ def generate_random_level():
     flags = []
     match zone:
         case 0:
-            area = SYSTEM["sunrise"]
             icon = SYSTEM["images"]["sunrise_icon"]
             name = "Red mountain of Doom"
         case 1:
-            area = SYSTEM["cybercity"]
             icon = SYSTEM["images"]["city_icon"]
             name = "City of the Night"
         case 2:
-            area = SYSTEM["forest"]
             icon = SYSTEM["images"]["forest_icon"]
             name = "Forest of things"
         case 3:
-            area = SYSTEM["mountains"]
             icon = SYSTEM["images"]["mount_icon"]
             name = "Above the sky"
         case 4:
-            area = SYSTEM["ice"]
             icon = SYSTEM["images"]["ice_icon"]
             name = "Frozen Hollow"
         case 5:
-            area = SYSTEM["space"]
             icon = SYSTEM["images"]["space_icon"]
             name = "Transcending All"
             flags = [Flags.PINNACLE, Flags.MONOLITH]
@@ -95,11 +90,9 @@ def generate_random_level():
             diff = 4
             area_lvl = 85
         case 6:
-            area = SYSTEM["creepy"]
             icon = SYSTEM["images"]["creepy_icon"]
             name = "Murderforest of Murderbourgh"
-    level = Level(name, area_lvl, icon, 6000, area, waves,\
-                  difficulty=diff, boss=has_boss, flags=flags)
+    level = Level(name, area_lvl, icon, 6000, waves, difficulty=diff, boss=has_boss, flags=flags)
     return level
 
 def reset():
@@ -238,22 +231,7 @@ def load_tiles():
 
 def load_parallaxes():
     """Load the parallaxes."""
-    SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180,\
-        speeds = [0.2, 0.6, 1.0, 2.0, 2])
     SYSTEM["city_back"] = Parallaxe("city.png", 576, 324, speeds = [0.1, 0.0])
-    SYSTEM["mount"] = Parallaxe("icemount.png", 360, 189,\
-        speeds = [0.2, 0.6, 1.0, 2.0, 1, 2.5, 3, 3])
-    SYSTEM["cybercity"] = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
-    SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2, 2])
-    SYSTEM["ice"] = Parallaxe("icemount.png", 455, 256,\
-                            speeds = [0.1, 0.2, 0.3, 0.3, 0.4, 0.5, 0.5, 0.6, 0.7],
-                            cut_pixels=[(0, 91, 455, 98), (0, 72, 455, 132),
-                                        (0, 38, 455, 186), (0, 20, 455, 217),
-                                        (0, 0, 455, 256)])
-    SYSTEM["creepy"] = Parallaxe("creepy.png", 400, 300, speeds = [0.0, 0.1, 0.5, 1, 1.2, 1.3, 1.3])
-    SYSTEM["space"] = Parallaxe("space.png", 272, 160, speeds = [2.2, 3.3, 3.4, 1.5, 3.6, 2.5])
-    SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240,\
-        speeds = [0.0, 0.1, 0.2, 0.9, 1.0, 1.5, 1.5], scroll_left=False)
 
 def load_buttons():
     """Load the buttons"""
@@ -583,6 +561,7 @@ def init_game():
     SYSTEM["clock"] = Clock()
     SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])
+    SYSTEM["camera"] = Camera(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     SYSTEM["post_effects"] = PostEffects()
     SYSTEM["windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)
     SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)
