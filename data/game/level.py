@@ -207,19 +207,16 @@ class Level():
 
     def generate_enemy(self, reference: list, level:int):
         """Creates a single enemy."""
-        if Flags.GROUNDED in reference["flags"]:
-            y_pos = SCREEN_HEIGHT - SYSTEM["images"][reference["image"]].height * 3
+        if random.random() < 0.5:
+            y_pos = random.randint(0, SCREEN_HEIGHT)
+            x_pos = random.randint(0, 1) * SCREEN_WIDTH
         else:
-            y_pos = random.randint(0, SCREEN_HEIGHT - 300)
-        x_pos = random.randint(100, 300)
-        if Flags.GROUNDED in reference["flags"]:
-            x_pos = 550
+            x_pos = random.randint(0, SCREEN_WIDTH)
+            y_pos = random.randint(0, 1) * SCREEN_HEIGHT
+        x_dest = random.randint(100, 300)
         enemy_type = reference["flags"]
         img = reference["image"]
-        x_start = SCREEN_WIDTH + 200 if Flags.AMBUSHER not in reference["flags"] else -200
-        if Flags.GROUNDED in reference["flags"]:
-            x_start *= 2
-        ent = Entity(x_start, y_pos, img, hitbox_mod=reference["hitbox"])
+        ent = Entity(x_pos, y_pos, img, hitbox_mod=reference["hitbox"])
         exp_value = random.randint(int(reference["exp"]*(level + 1) *0.9),\
                                    int(reference["exp"]*(level + 1) * 1.1))
         gold_value = random.randint(int(reference["gold"]*(level + 1) *0.9),\
@@ -231,8 +228,7 @@ class Level():
             crea.afflict(mod.as_affliction())
         crea.scale(level)
         crea.reset()
-        dest = (SCREEN_WIDTH - x_pos, y_pos) if Flags.AMBUSHER not in reference["flags"] else \
-            (x_pos, y_pos)
+        dest = (SCREEN_WIDTH - x_dest, y_pos)
         enemy = Enemy(ent, crea, reference["spelllist"], behaviours=enemy_type,\
             timer=2, exp_value=exp_value, gold_value=gold_value, delay=attack_delay,\
             destination=dest)
@@ -434,10 +430,39 @@ class Level():
         """Checks if the wave can be started."""
         mx = MAX_ENTITY_SCREEN[self._difficulty]
         i = 0
+        camera_x, camera_y = self._map.camera_offset
         for e in self._ready:
             if len(ENNEMY_TRACKER) >= mx:
                 self._ready = self._ready[i:]
                 return
+            spawn_edge = random.randint(0, 3)
+            spawn_margin = 300
+            if spawn_edge == 0:
+                spawn_x = camera_x + random.randint(0, SCREEN_WIDTH)
+                spawn_y = camera_y - spawn_margin
+            elif spawn_edge == 1:
+                spawn_x = camera_x + random.randint(0, SCREEN_WIDTH)
+                spawn_y = camera_y + SCREEN_HEIGHT + spawn_margin
+            elif spawn_edge == 2:
+                spawn_x = camera_x - spawn_margin
+                spawn_y = camera_y + random.randint(0, SCREEN_HEIGHT)
+            else:
+                spawn_x = camera_x + SCREEN_WIDTH + spawn_margin
+                spawn_y = camera_y + random.randint(0, SCREEN_HEIGHT)
+            e.entity.x = spawn_x
+            e.entity.y = spawn_y
+            e.entity.move((spawn_x, spawn_y))
+            approach_distance = random.randint(100, 300)
+            dx = SYSTEM["player"].x - spawn_x
+            dy = SYSTEM["player"].y - spawn_y
+            distance = (dx**2 + dy**2)**0.5
+            if distance > 0:
+                dest_x = spawn_x + (dx / distance) * approach_distance
+                dest_y = spawn_y + (dy / distance) * approach_distance
+            else:
+                dest_x = spawn_x
+                dest_y = spawn_y
+            e.destination = (dest_x, dest_y)
             ENNEMY_TRACKER.append(e)
             i += 1
         self._ready = self._ready[i:]

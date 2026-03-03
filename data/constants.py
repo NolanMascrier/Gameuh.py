@@ -132,7 +132,8 @@ SYSTEM = {
     "dragged": None,
     "dragging": False,
     "pop-up": None,
-    "mouse": (0,0)
+    "mouse": (0,0),
+    "real_mouse": (0, 0)
 }
 
 def get_mouse_pos():
@@ -142,6 +143,7 @@ def get_mouse_pos():
     x, y = mouse_position()
     x *= x_factor
     y *= y_factor
+    SYSTEM["real_mouse"] = (x, y)
     if SYSTEM["level"] is None or SYSTEM["game_state"] in [GAME_PAUSE, GAME_VICTORY, GAME_DEATH]:
         SYSTEM["mouse"] = (x, y)
     else:
