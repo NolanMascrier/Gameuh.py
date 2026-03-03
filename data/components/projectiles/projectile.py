@@ -120,7 +120,7 @@ class Projectile(HitBox):
         self._debuff_chance = debuff_chance
         self._decay = 1
         if Flags.LIGHTNING in self._behaviours:
-            point_list = [x,y, SCREEN_WIDTH, y, 1]
+            point_list = [x,y, SCREEN_WIDTH, y, 0.3, 0.3]
             PARTICULE_TRACKER.append(point_list)
 
     def get_image(self):
