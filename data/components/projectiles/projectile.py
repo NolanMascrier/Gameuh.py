@@ -56,8 +56,8 @@ class Projectile(HitBox):
         self._offset_barrage = (offset_x, offset_y)
         self._anim_on_hit = anim_on_hit
         if Flags.AIMED_AT_PLAYER in behaviours:
-            self._angle = 90 - numpy.arctan2(SYSTEM["player.x"] - x,\
-                    SYSTEM["player.y"] - y) * 180 / pi
+            self._angle = 90 - numpy.arctan2(SYSTEM["player"].x - x,\
+                    SYSTEM["player"].y - y) * 180 / pi
         if Flags.AIMED_AT_MOUSE in behaviours:
             self._angle = angle + 90 - numpy.arctan2(SYSTEM["mouse"][0] - x,\
                     SYSTEM["mouse"][1] - y) * 180 / pi
@@ -123,9 +123,6 @@ class Projectile(HitBox):
             point_list = [x,y, SCREEN_WIDTH, y, 1]
             PARTICULE_TRACKER.append(point_list)
 
-
-
-
     def get_image(self):
         """Returns the projectile image."""
         if self._animation_controller:
@@ -135,15 +132,17 @@ class Projectile(HitBox):
     def can_be_destroyed(self):
         """Checks whether or not the projectile is out of the screen
         and can be garbage collected."""
+        max_x = SCREEN_WIDTH if SYSTEM["level"] is None else SYSTEM["level"].map.width
+        max_y = SCREEN_HEIGHT if SYSTEM["level"] is None else SYSTEM["level"].map.height
         if self._flagged:
             return True
         if self.y < 0 - self.height:
             return True
-        if self.y > SCREEN_HEIGHT + self.height:
+        if self.y > max_y + self.height:
             return True
         if self.x < 0 - self.width:
             return True
-        if self.x > SCREEN_WIDTH + self.width:
+        if self.x > max_x + self.width:
             return True
         return False
 

@@ -112,7 +112,12 @@ def game_loop(keys, time_event):
             SYSTEM["level"].check_wave()
         if event == TICKER_TIMER:
             logic_tick()
-    SYSTEM["level"].background.draw()
+    player_x = SYSTEM["player"].x
+    player_y = SYSTEM["player"].y
+    world_width = SYSTEM["level"].map.width
+    world_height = SYSTEM["level"].map.height
+    SYSTEM["camera"].update(player_x, player_y, world_width, world_height)
+    SYSTEM["level"].draw()
     draw_game()
     draw_ui()
     #Handle logic
@@ -125,7 +130,7 @@ def draw_pause(_):
     """Draws the pause menu."""
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
-    SYSTEM["level"].background.draw()
+    SYSTEM["level"].draw()
     draw_game()
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
     SYSTEM["buttons"]["button_resume"].set(x_offset + 200, y_offset + 100)

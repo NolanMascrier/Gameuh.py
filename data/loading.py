@@ -1,5 +1,6 @@
 """Handles the loading."""
 
+import psutil
 import threading
 import re
 import os
@@ -26,6 +27,7 @@ from data.image.scrollable import Scrollable
 from data.image.textgenerator import TextGenerator, Text
 from data.image.slotpanel import SlotPanel
 from data.image.posteffects import PostEffects
+from data.image.tileset import Tileset
 
 from data.interface.general import setup_bottom_bar
 from data.interface.gear import open_gear_screen
@@ -45,6 +47,7 @@ from data.tables.enemy_table import VOIDBOSS, MONOLITH, HERALD
 from data.game.level import Level
 from data.game.lootgenerator import LootGenerator
 from data.game.deltatime import DeltaTime
+from data.game.camera import Camera
 
 from data.caching.transformation_cache import TransformCache
 
@@ -64,27 +67,21 @@ def generate_random_level():
     flags = []
     match zone:
         case 0:
-            area = SYSTEM["sunrise"]
             icon = SYSTEM["images"]["sunrise_icon"]
             name = "Red mountain of Doom"
         case 1:
-            area = SYSTEM["cybercity"]
             icon = SYSTEM["images"]["city_icon"]
             name = "City of the Night"
         case 2:
-            area = SYSTEM["forest"]
             icon = SYSTEM["images"]["forest_icon"]
             name = "Forest of things"
         case 3:
-            area = SYSTEM["mountains"]
             icon = SYSTEM["images"]["mount_icon"]
             name = "Above the sky"
         case 4:
-            area = SYSTEM["ice"]
             icon = SYSTEM["images"]["ice_icon"]
             name = "Frozen Hollow"
         case 5:
-            area = SYSTEM["space"]
             icon = SYSTEM["images"]["space_icon"]
             name = "Transcending All"
             flags = [Flags.PINNACLE, Flags.MONOLITH]
@@ -93,11 +90,9 @@ def generate_random_level():
             diff = 4
             area_lvl = 85
         case 6:
-            area = SYSTEM["creepy"]
             icon = SYSTEM["images"]["creepy_icon"]
             name = "Murderforest of Murderbourgh"
-    level = Level(name, area_lvl, icon, 6000, area, waves,\
-                  difficulty=diff, boss=has_boss, flags=flags)
+    level = Level(name, area_lvl, icon, 6000, waves, difficulty=diff, boss=has_boss, flags=flags)
     return level
 
 def reset():
@@ -176,9 +171,10 @@ def load_animations():
     SYSTEM["images"]["badguy"] = Animation("sprites/badguy.png", 60, 130, frame_rate=0.25)\
         .flip(False, True)
     SYSTEM["images"]["badguy_flipped"] = Animation("sprites/badguy.png", 60, 130, frame_rate=0.25)
-    SYSTEM["images"]["witch"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)
+    SYSTEM["images"]["witch"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)\
+        .scale(128, 128)
     SYSTEM["images"]["witch_flipped"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)\
-        .flip(False, True)
+        .scale(128, 128).flip(False, True)
     SYSTEM["images"]["fairy"] = Animation("sprites/fairy.png", 32, 32, frame_rate = 0.25)\
         .scale(64,64).flip(False, True)
     SYSTEM["images"]["fairy_flipped"] = Animation("sprites/fairy.png", 32, 32, frame_rate = 0.25)\
@@ -231,25 +227,11 @@ def load_tiles():
     SYSTEM["images"]["dropdown"] = Tile("ui/inventory_back.png")
     SYSTEM["images"]["dropdown_menu"] = Tile("ui/border_unique.png")
     SYSTEM["images"]["item_desc"] = Tile("ui/hoverable.png", scale_factor=2)
+    SYSTEM["images"]["grass_tileset"] = Tileset("tiles/Island_24x24.png", 24, 24).scale(64, 64)
 
 def load_parallaxes():
     """Load the parallaxes."""
-    SYSTEM["mountains"] = Parallaxe("parallax_field.png", 320, 180,\
-        speeds = [0.2, 0.6, 1.0, 2.0, 2])
     SYSTEM["city_back"] = Parallaxe("city.png", 576, 324, speeds = [0.1, 0.0])
-    SYSTEM["mount"] = Parallaxe("icemount.png", 360, 189,\
-        speeds = [0.2, 0.6, 1.0, 2.0, 1, 2.5, 3, 3])
-    SYSTEM["cybercity"] = Parallaxe("cybercity.png", 576, 324, speeds = [0.2, 0.5, 1, 1.2, 2])
-    SYSTEM["forest"] = Parallaxe("forest.png", 680, 429, speeds = [0.0, 0.1, 0.5, 1, 1.2, 2, 2])
-    SYSTEM["ice"] = Parallaxe("icemount.png", 455, 256,\
-                            speeds = [0.1, 0.2, 0.3, 0.3, 0.4, 0.5, 0.5, 0.6, 0.7],
-                            cut_pixels=[(0, 91, 455, 98), (0, 72, 455, 132),
-                                        (0, 38, 455, 186), (0, 20, 455, 217),
-                                        (0, 0, 455, 256)])
-    SYSTEM["creepy"] = Parallaxe("creepy.png", 400, 300, speeds = [0.0, 0.1, 0.5, 1, 1.2, 1.3, 1.3])
-    SYSTEM["space"] = Parallaxe("space.png", 272, 160, speeds = [2.2, 3.3, 3.4, 1.5, 3.6, 2.5])
-    SYSTEM["sunrise"] = Parallaxe("sunrise.png", 320, 240,\
-        speeds = [0.0, 0.1, 0.2, 0.9, 1.0, 1.5, 1.5], scroll_left=False)
 
 def load_buttons():
     """Load the buttons"""
@@ -310,7 +292,8 @@ def load_images():
     SYSTEM["images"]["blizzard"] = Image("icons/spells/blizzard.png").scale(64, 64)
     SYSTEM["images"]["ring_of_frost"] = Image("icons/spells/ring_of_frost.png").scale(64, 64)
     SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/cone_of_flames.png").scale(64, 64)
-    SYSTEM["images"]["lightning_mastery"] = Image("icons/spells/lightning_mastery.png").scale(64, 64)
+    SYSTEM["images"]["lightning_mastery"] = Image("icons/spells/lightning_mastery.png")\
+        .scale(64, 64)
     SYSTEM["images"]["lightning_bolt"] = Image("icons/spells/lightning_bolt_2.png").scale(64, 64)
     SYSTEM["images"]["conduction"] = Image("icons/spells/conduction.png").scale(64, 64)
     SYSTEM["images"]["shock"] = Image("icons/spells/shock.png").scale(64, 64)
@@ -415,7 +398,8 @@ def load_images():
     SYSTEM["images"]["loot_icon"] = Image("loot.png").scale(32, 32)
     SYSTEM["images"]["sorceress_start"] = Image("icons/temp/BloodMage_3.png").scale(64, 64)
     SYSTEM["images"]["warrior_start"] = Image("icons/spells/warrior_start.png").scale(64, 64)
-    SYSTEM["images"]["essentialist_start"] = Image("icons/spells/essentialist_start.png").scale(64, 64)
+    SYSTEM["images"]["essentialist_start"] = Image("icons/spells/essentialist_start.png")\
+        .scale(64, 64)
     SYSTEM["images"]["arcanist_start"] = Image("icons/spells/arcanist_start.png").scale(64, 64)
     SYSTEM["images"]["summoner_start"] = Image("icons/spells/summoner_start.png").scale(64, 64)
     SYSTEM["images"]["tree_a"] = Image("tree/node2.png").scale(64, 64)
@@ -537,6 +521,12 @@ def create_character():
     """Creates the player character."""
     SYSTEM["player"] = Character(imagefile="witch")
 
+def get_memory_usage():
+    """Get current memory usage in MB."""
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / 1024 / 1024
+    return mem
+
 def load():
     """Loads everything inside the system.
     Made to be threaded."""
@@ -554,11 +544,13 @@ def load():
     ]
     total = sum(weight for _, weight, _ in tasks)
     progress = 0
+    print(f"Memory in use before loading: {get_memory_usage()} MB")
     for t, w, x in tasks:
         SYSTEM["loading_text"] = Text(trad('loading', x), font="item_titles", size=30)
         t()
         progress += w
         SYSTEM["progress"] = progress / total * 100
+        print(f"{x} loaded: {get_memory_usage()} MB")
     SYSTEM["loaded"] = True
 
 def init_game():
@@ -569,6 +561,7 @@ def init_game():
     SYSTEM["clock"] = Clock()
     SYSTEM["deltatime"] = DeltaTime()
     change_language(SYSTEM["options"]["lang_selec"])
+    SYSTEM["camera"] = Camera(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     SYSTEM["post_effects"] = PostEffects()
     SYSTEM["windows"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)
     SYSTEM["gm_background"] = Surface(SCREEN_WIDTH, SCREEN_HEIGHT, is_alpha=False)

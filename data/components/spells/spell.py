@@ -48,6 +48,15 @@ class Spell():
         debuffs: ...
         level_list: List of buffs per level
     """
+    __slots__ = (
+        '_name', '_icon', '_attack_anim', '_base_damage', '_real_damage', '_level', '_exp', 
+        '_exp_to_next', '_effective_frames', '_afflicts', '_level_list', '_stats', '_has_cd',
+        '_jewels', '_modifiers', '_changed', '_cooldown', '_anim_on_hit', '_flags', '_buffs',
+        '_debuffs', '_alterations', '_sequence', '_gathered_flags', '_sequence_timer',
+        '_sequence_step', '_explosion', '_surface', '_offset', '_started', '_toggled',
+        '_reservations', '_flags_list', '_changed_flag', '_counter', '_releasing',
+        '_to_release', '_trail', '_impact', '_alternate'
+    )
     def __init__(self, name, icon, attack_anim, base_damage:Damage, mana_cost = 0, life_cost = 0,
                  bounces = 0, delay = 0, distance = 0, chains = 0, spread = 90,
                  explosion = None, sequence = None,

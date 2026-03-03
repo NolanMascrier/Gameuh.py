@@ -64,6 +64,8 @@ class Entity(HitBox):
         """Ticks down the entity."""
         self._animation_controller.tick()
         base_speed = character.creature.stats["speed"].c_value * speed_mod
+        max_x = SCREEN_WIDTH if SYSTEM["level"] is None else SYSTEM["level"].map.width
+        max_y = SCREEN_HEIGHT if SYSTEM["level"] is None else SYSTEM["level"].map.height
         self._move_speed = base_speed
         if self._dashing:
             if self._dash_time <= 0:
@@ -71,11 +73,11 @@ class Entity(HitBox):
             self._dash_time -= float(0.016)
             self.x += self._dash_dx
             self.y += self._dash_dy
-        if self.x < 0 or self.x > SCREEN_WIDTH - SYSTEM["images"][self._image].width or\
-            self.y < 0 or self.y > SCREEN_HEIGHT - SYSTEM["images"][self._image].height:
+        if self.x < 0 or self.x > max_x - SYSTEM["images"][self._image].width or\
+            self.y < 0 or self.y > max_y - SYSTEM["images"][self._image].height:
             self._dashing = False
-        self.x = max(0, min(self.x, SCREEN_WIDTH - SYSTEM["images"][self._image].width))
-        self.y = max(0, min(self.y, SCREEN_HEIGHT - SYSTEM["images"][self._image].height))
+        self.x = max(0, min(self.x, max_x - SYSTEM["images"][self._image].width))
+        self.y = max(0, min(self.y, max_y - SYSTEM["images"][self._image].height))
         self.move_center(self.center)
 
     def reset(self):

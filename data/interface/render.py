@@ -5,21 +5,32 @@ from data.constants import SYSTEM, SCREEN_HEIGHT, SCREEN_WIDTH, GAME_LEVEL, MENU
 
 RENDER_LIST = []
 
-def render(image, pos):
-    """Prepares the image to be rendered at position pos."""
-    x, y = pos
+def render(image, pos, world_space=False):
+    """Prepares the image to be rendered at position pos.
+    
+    Args:
+        image: The image to render
+        pos: (x, y) position
+        world_space: If True, pos is in world coordinates. If False, screen coordinates.
+    """
+    if world_space:
+        camera = SYSTEM["camera"]
+        screen_pos = camera.world_to_screen(pos[0], pos[1])
+    else:
+        screen_pos = pos
+    x, y = screen_pos
     if x < -200 or x > SCREEN_WIDTH + 200:
         return
     if y < -200 or y > SCREEN_HEIGHT + 200:
         return
-    RENDER_LIST.append((image, pos))
+    RENDER_LIST.append((image, screen_pos))
 
-def renders(lst):
+def renders(lst, world_space=False):
     """Prepares a list of tuple (image:pos) to be rendered."""
     RENDER_LIST.extend(lst)
 
 def render_all():
-    """Renders the screen - OPTIMIZED."""
+    """Renders the screen."""
     game_state = SYSTEM["game_state"]
     if game_state == LOADING:
         SYSTEM["windows"].fill(BLACK_TRANSP)
@@ -30,9 +41,6 @@ def render_all():
         all_blits = []
         shake = SYSTEM["post_effects"].shake_factor
         all_blits.append((SYSTEM["gm_background"], shake))
-        #effects = SYSTEM.get("effects_persistent")
-        #if effects:
-        #    all_blits.append((effects, (0, 0)))
         if RENDER_LIST:
             all_blits.extend(RENDER_LIST)
             RENDER_LIST.clear()

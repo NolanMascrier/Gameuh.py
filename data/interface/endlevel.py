@@ -36,11 +36,8 @@ def draw_end(events):
     for event in events:
         if event.type == TICKER_TIMER:
             logic_tick()
-    SYSTEM["level"].background.draw(True)
+    SYSTEM["level"].draw()
     draw_game()
-    renders([b.get_image(), b.get_pos()] for b in ENNEMY_TRACKER)
-    renders([p[0].get_image(), (p[1], p[2])] for p in ANIMATION_TRACKER)
-    renders([p.get_image(), p.get_pos()] for p in PROJECTILE_TRACKER)
     x_offset = SCREEN_WIDTH / 2 - SYSTEM["images"]["menu_bg"].width / 2
     y_offset = SCREEN_HEIGHT / 2 - SYSTEM["images"]["menu_bg"].height / 2
     render(SYSTEM["images"]["menu_bg"].image, (x_offset, y_offset))
