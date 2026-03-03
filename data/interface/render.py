@@ -25,7 +25,7 @@ def render(image, pos, world_space=False):
         return
     RENDER_LIST.append((image, screen_pos))
 
-def renders(lst, world_space=False):
+def renders(lst):
     """Prepares a list of tuple (image:pos) to be rendered."""
     RENDER_LIST.extend(lst)
 

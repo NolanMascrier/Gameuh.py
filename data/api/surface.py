@@ -2,7 +2,6 @@
 
 import os
 import pygame
-import random
 from pygame.constants import DOUBLEBUF, HWSURFACE
 from data.api.widget import Widget
 
@@ -150,27 +149,6 @@ class Surface(Widget):
     def draw_arc(self, color, rect, start_angle, end_angle, width: int = 1):
         """Draw an arc on the surface."""
         return pygame.draw.arc(self._surface, color, rect, start_angle, end_angle, width)
-    
-    #def draw_lightning(self, start, end, color, maximum_offset, minimum_segment_length, thickness):
-    #    """Draw a lightning effect between two points."""
-    #    segment_list = []
-    #    segment_list.append((start, end))
-    #    offset_amount =  maximum_offset
-    #    for i in range(20):
-    #        new_segments = []
-    #        for segment in segment_list:
-    #            if pygame.Vector2(segment[0]).distance_to(segment[1]) > minimum_segment_length:
-    #                mid_point = pygame.Vector2(segment[0]).lerp(segment[1], 0.5)
-    #                mid_point.x += random.uniform(-offset_amount, offset_amount)
-    #                mid_point.y += random.uniform(-offset_amount, offset_amount)
-    #                new_segments.append((segment[0], mid_point))
-    #                new_segments.append((mid_point, segment[1]))
-    #            else:
-    #                new_segments.append(segment)
-    #        segment_list = new_segments
-    #        offset_amount *= 0.9
-    #    for segment in segment_list:
-    #        self.draw_line(color, segment[0], segment[1], thickness)
 
     def scale(self, size: tuple[int, int] | None = None,
               width: int | None = None, height: int | None = None) -> "Surface":
