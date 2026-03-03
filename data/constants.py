@@ -136,13 +136,17 @@ SYSTEM = {
 }
 
 def get_mouse_pos():
-    """Updates the mouse position."""
+    """Updates the mouse position in world coordinates."""
     x_factor = SCREEN_WIDTH / SYSTEM["options"]["screen_resolution"][0]
     y_factor = SCREEN_HEIGHT / SYSTEM["options"]["screen_resolution"][1]
     x, y = mouse_position()
     x *= x_factor
     y *= y_factor
-    SYSTEM["mouse"] = (x, y)
+    if SYSTEM["level"] is None or SYSTEM["game_state"] in [GAME_PAUSE, GAME_VICTORY, GAME_DEATH]:
+        SYSTEM["mouse"] = (x, y)
+    else:
+        camera_x, camera_y = SYSTEM["level"].map.camera_offset
+        SYSTEM["mouse"] = (x + camera_x, y + camera_y)
 
 def trad(keys, subkey = None) -> str:
     """Returns the translation data for the given key."""

@@ -80,6 +80,7 @@ class PickUp(HitBox):
 
     def move(self, pos):
         """Gravitates toward the player - HIGHLY OPTIMIZED VERSION."""
+        super().move((self.x, self.y))
         if self._delay > 0:
             self._delay -= 1
             self._position.x += self._velocity.x
@@ -90,6 +91,8 @@ class PickUp(HitBox):
         dx = player_x - self.x
         dy = player_y - self.y
         dist_squared = dx * dx + dy * dy
+        if dist_squared > 100000:
+            return
         if dist_squared < self._arrival_threshold_sq:
             self._velocity.x *= 0.9
             self._velocity.y *= 0.9
@@ -162,8 +165,10 @@ class PickUp(HitBox):
 
     def tick(self, player):
         """Ticks down the pickup"""
-        self.move(player)
-        super().move((self.x, self.y))
+        if self._delay > 0:
+            self.move(player)
+        elif Flags.ITEM not in self._flags:
+            self.move(player)
         if self.is_colliding(SYSTEM["player"].hitbox):
             self.pickup(player)
 

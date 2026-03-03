@@ -4,7 +4,7 @@ import math
 
 import numpy as np
 from data.api.vec2d import Vec2
-from data.constants import SCREEN_WIDTH, SCREEN_HEIGHT, PARTICULE_TRACKER
+from data.constants import SCREEN_WIDTH, SCREEN_HEIGHT, PARTICULE_TRACKER, SYSTEM
 
 class Particle:
     """Single particle instance."""
@@ -36,8 +36,12 @@ class Particle:
 
     def is_on_screen(self):
         """Check if particle is visible."""
-        return (0 <= self.pos.x <= SCREEN_WIDTH and
-                0 <= self.pos.y <= SCREEN_HEIGHT)
+        if "level" not in SYSTEM or SYSTEM["level"] is None:
+            return True
+        camera_x, camera_y = SYSTEM["level"].map.camera_offset
+        screen_x = self.pos.x - camera_x
+        screen_y = self.pos.y - camera_y
+        return -50 <= screen_x <= SCREEN_WIDTH + 50 and -50 <= screen_y <= SCREEN_HEIGHT + 50
 
 class Segment:
     """Line segment for arc effects."""
@@ -150,19 +154,24 @@ class ParticleEmitter:
         """
         if not self._enabled:
             return
+        if "level" in SYSTEM and SYSTEM["level"] is not None:
+            camera_x, camera_y = SYSTEM["level"].map.camera_offset
+        else:
+            camera_x, camera_y = 0, 0
         for particle in self._particles:
             if not particle.is_on_screen():
                 continue
             color = list(particle.color) + [particle.get_alpha()]
-            x = int(particle.pos.x)
-            y = int(particle.pos.y)
+            screen_x = int(particle.pos.x - camera_x)
+            screen_y = int(particle.pos.y - camera_y)
             if particle.size <= 1:
-                if 0 <= x < surface.get_width() and 0 <= y < surface.get_height():
-                    surface.set_at((x, y), color)
+                if 0 <= screen_x < surface.get_width() and 0 <= screen_y < surface.get_height():
+                    surface.set_at((screen_x, screen_y), color)
             else:
-                surface.draw_circle(color, (x, y), int(particle.size))
+                surface.draw_circle(color, (screen_x, screen_y), int(particle.size))
         for i in PARTICULE_TRACKER:
-            self.draw_lightning(i[0], i[1], i[2], i[3], surface)
+            x1, y1, x2, y2 = i[0] - camera_x, i[1] - camera_y, i[2] - camera_x, i[3] - camera_y
+            self.draw_lightning(x1, y1, x2, y2, surface)
             i[4] -= 0.016
         PARTICULE_TRACKER[:] = [i for i in PARTICULE_TRACKER if i[4] > 0]
 

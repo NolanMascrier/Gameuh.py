@@ -223,7 +223,7 @@
       "icons": "Loading item icons ...",
       "animations": "Loading animations ...",
       "tiles": "Loading tiles ...",
-      "parallaxes": "Loading parallaxes ...",
+      "tileset": "Loading tilesets ...",
       "spells": "Generating spell list ...",
       "others": "Generating handlers ...",
       "buttons": "Generating buttons ...",

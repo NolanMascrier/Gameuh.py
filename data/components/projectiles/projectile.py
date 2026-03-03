@@ -86,8 +86,8 @@ class Projectile(HitBox):
         self._width = self._real_image.w
         self._height = self._real_image.h
         if Flags.SPAWN_AT_MOUSE in behaviours:
-            x -= self._width // 2
-            y -= self._height // 2
+            x = SYSTEM["mouse"][0] - self._width // 2
+            y = SYSTEM["mouse"][1] - self._height // 2
         super().__init__(x, y, self._width, self._height)
         self._velocity = Vec2(numpy.cos(angle), numpy.sin(angle)) * speed
         self._acceleration = Vec2(0, 0)

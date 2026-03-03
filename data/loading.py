@@ -227,11 +227,11 @@ def load_tiles():
     SYSTEM["images"]["dropdown"] = Tile("ui/inventory_back.png")
     SYSTEM["images"]["dropdown_menu"] = Tile("ui/border_unique.png")
     SYSTEM["images"]["item_desc"] = Tile("ui/hoverable.png", scale_factor=2)
-    SYSTEM["images"]["grass_tileset"] = Tileset("tiles/Island_24x24.png", 24, 24).scale(64, 64)
 
-def load_parallaxes():
+def load_tilesets():
     """Load the parallaxes."""
     SYSTEM["city_back"] = Parallaxe("city.png", 576, 324, speeds = [0.1, 0.0])
+    SYSTEM["images"]["grass_tileset"] = Tileset("tiles/Island_24x24.png", 24, 24).scale(64, 64)
 
 def load_buttons():
     """Load the buttons"""
@@ -535,7 +535,7 @@ def load():
         (load_icons, 3, "icons"),
         (load_animations, 3, "animations"),
         (load_tiles, 2, "tiles"),
-        (load_parallaxes, 4, "parallaxes"),
+        (load_tilesets, 4, "tileset"),
         (generate_spell_list, 3, "spells"),
         (load_others, 1, "others"),
         (load_buttons, 2, "buttons"),
