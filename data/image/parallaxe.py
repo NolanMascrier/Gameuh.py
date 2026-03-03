@@ -24,6 +24,8 @@ class Parallaxe(Animation):
         cut_factor(list, optionnal): list of points for each frame. Will be used to cut 'dead' \
         pixels from the parallaxes, aka those that are never displayed. Defaults to None.
     """
+    __slots__ = ('_scroll_left', '_speeds', '_diff_x', '_diff_y', '_speed_factor', '_background',
+                 '_cut_pixels', '_layers', '_surface', '_render')
     def __init__(self, uri: str, frame_x:int, frame_y:int, scroll_left = True,\
         speeds = None, speed_factor = 5, cut_pixels = None):
         super().__init__(uri, frame_x, frame_y, animated=False)

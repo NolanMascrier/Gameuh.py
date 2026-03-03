@@ -31,8 +31,8 @@ class Character():
         if imagefile is None:
             box = None
         else:
-            box = HitBox(x, y, SYSTEM["images"][imagefile].width / 3,\
-                        SYSTEM["images"][imagefile].height / 2)
+            box = HitBox(x, y, SYSTEM["images"][imagefile].width / 1.5,\
+                        SYSTEM["images"][imagefile].height / 1.1)
         self._entity = Entity(x, y, imagefile, box, speed)
         self._creature = Creature("hero", self)
         self._cooldown = 0
@@ -87,8 +87,8 @@ class Character():
         """Returns the position of the character as a
         rect tuple."""
         x, y, w, h = self._entity.get_rect()
-        x -= 20
-        y -= 10
+        x -= 46
+        y -= 46
         return (x, y, w, h)
 
     def get_image(self):

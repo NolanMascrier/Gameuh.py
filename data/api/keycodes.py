@@ -91,7 +91,7 @@ KEY_EVENT = {
     "dash": (K_LSHIFT, None),
     "potion_life": (K_1, None),
     "potion_mana": (K_2, None),
-    "up": (K_UP, K_Z),
+    "up": (K_UP, K_W),
     "down": (K_DOWN, K_S),
     "left": (K_LEFT, K_A),
     "right": (K_RIGHT, K_D),

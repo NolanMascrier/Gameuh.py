@@ -1,5 +1,6 @@
 """Handles the loading."""
 
+import psutil
 import threading
 import re
 import os
@@ -176,9 +177,10 @@ def load_animations():
     SYSTEM["images"]["badguy"] = Animation("sprites/badguy.png", 60, 130, frame_rate=0.25)\
         .flip(False, True)
     SYSTEM["images"]["badguy_flipped"] = Animation("sprites/badguy.png", 60, 130, frame_rate=0.25)
-    SYSTEM["images"]["witch"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)
+    SYSTEM["images"]["witch"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)\
+        .scale(128, 128)
     SYSTEM["images"]["witch_flipped"] = Animation("sprites/witch.png", 64, 64, frame_rate = 0.25)\
-        .flip(False, True)
+        .scale(128, 128).flip(False, True)
     SYSTEM["images"]["fairy"] = Animation("sprites/fairy.png", 32, 32, frame_rate = 0.25)\
         .scale(64,64).flip(False, True)
     SYSTEM["images"]["fairy_flipped"] = Animation("sprites/fairy.png", 32, 32, frame_rate = 0.25)\
@@ -310,7 +312,8 @@ def load_images():
     SYSTEM["images"]["blizzard"] = Image("icons/spells/blizzard.png").scale(64, 64)
     SYSTEM["images"]["ring_of_frost"] = Image("icons/spells/ring_of_frost.png").scale(64, 64)
     SYSTEM["images"]["cone_of_flames"] = Image("icons/spells/cone_of_flames.png").scale(64, 64)
-    SYSTEM["images"]["lightning_mastery"] = Image("icons/spells/lightning_mastery.png").scale(64, 64)
+    SYSTEM["images"]["lightning_mastery"] = Image("icons/spells/lightning_mastery.png")\
+        .scale(64, 64)
     SYSTEM["images"]["lightning_bolt"] = Image("icons/spells/lightning_bolt_2.png").scale(64, 64)
     SYSTEM["images"]["conduction"] = Image("icons/spells/conduction.png").scale(64, 64)
     SYSTEM["images"]["shock"] = Image("icons/spells/shock.png").scale(64, 64)
@@ -415,7 +418,8 @@ def load_images():
     SYSTEM["images"]["loot_icon"] = Image("loot.png").scale(32, 32)
     SYSTEM["images"]["sorceress_start"] = Image("icons/temp/BloodMage_3.png").scale(64, 64)
     SYSTEM["images"]["warrior_start"] = Image("icons/spells/warrior_start.png").scale(64, 64)
-    SYSTEM["images"]["essentialist_start"] = Image("icons/spells/essentialist_start.png").scale(64, 64)
+    SYSTEM["images"]["essentialist_start"] = Image("icons/spells/essentialist_start.png")\
+        .scale(64, 64)
     SYSTEM["images"]["arcanist_start"] = Image("icons/spells/arcanist_start.png").scale(64, 64)
     SYSTEM["images"]["summoner_start"] = Image("icons/spells/summoner_start.png").scale(64, 64)
     SYSTEM["images"]["tree_a"] = Image("tree/node2.png").scale(64, 64)
@@ -537,6 +541,12 @@ def create_character():
     """Creates the player character."""
     SYSTEM["player"] = Character(imagefile="witch")
 
+def get_memory_usage():
+    """Get current memory usage in MB."""
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / 1024 / 1024
+    return mem
+
 def load():
     """Loads everything inside the system.
     Made to be threaded."""
@@ -554,11 +564,13 @@ def load():
     ]
     total = sum(weight for _, weight, _ in tasks)
     progress = 0
+    print(f"Memory in use before loading: {get_memory_usage()} MB")
     for t, w, x in tasks:
         SYSTEM["loading_text"] = Text(trad('loading', x), font="item_titles", size=30)
         t()
         progress += w
         SYSTEM["progress"] = progress / total * 100
+        print(f"{x} loaded: {get_memory_usage()} MB")
     SYSTEM["loaded"] = True
 
 def init_game():
