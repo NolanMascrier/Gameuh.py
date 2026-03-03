@@ -28,6 +28,8 @@ from data.game.item import Item
 from data.tables.area_table import MODIFIERS
 from data.tables.enemy_table import VOIDBOMBER, DEMONBAT, NECROMANCER, FAIRY, FAIRYFIRE, LOSTSOUL
 from data.interface.endlevel import generate_victory, generate_defeat
+from data.interface.render import render
+from data.game.map import Map
 
 RUNE_ORDER = [0, 7, 9, 8, 6, 1, 2, 3, 5, 4]
 
@@ -145,6 +147,11 @@ class Level():
         self._boss_stat = None
         self._can_spawn = True
         self._ready = []
+        self._map = None
+
+    def draw(self):
+        """Renders the map in background."""
+        render(self._map.draw(SYSTEM["player"].x, SYSTEM["player"].y).surface, (0, 0))
 
     def generate_modifiers(self):
         """Generates a list of modifiers for the level."""
@@ -309,6 +316,7 @@ class Level():
     def load_level(self):
         """Loading function of the level."""
         SYSTEM["game_state"] = LOADING
+        self._map = Map(SYSTEM["images"]["grass_tileset"], 300, 300)
         progress = 0
         if Flags.PINNACLE in self._flags:
             total, tasks = self.load_pinnacle()

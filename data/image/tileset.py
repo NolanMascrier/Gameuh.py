@@ -12,6 +12,8 @@ class Tileset():
     """
     def __init__(self, base_image: str, frame_x: int, frame_y: int):
         self._base_image = Image(base_image)
+        self._base_w = self._base_image.width
+        self._base_h = self._base_image.height
         self._frame_x = frame_x
         self._frame_y = frame_y
         self._tile = {}
@@ -28,10 +30,21 @@ class Tileset():
             return self._tile[(x, y)]
         return None
 
-    def scale(self, width, height) -> None:
+    def scale(self, width, height) -> "Tileset":
         """Rescales the tileset."""
-        self._base_image.scale(height, width)
-        self._frame_x = width // self._max_x
-        self._frame_y = height // self._max_y
+        self._base_image.scale(self._base_h * height, self._base_w * width)
+        self._frame_x = width
+        self._frame_y = height
         for tile in self._tile.values():
             tile.scale(self._frame_y, self._frame_x)
+        return self
+
+    @property
+    def width(self):
+        """Returns the tileset's tile width."""
+        return self._frame_x
+
+    @property
+    def height(self):
+        """Returns the tileset's tile height."""
+        return self._frame_y

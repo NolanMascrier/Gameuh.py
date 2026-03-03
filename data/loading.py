@@ -27,6 +27,7 @@ from data.image.scrollable import Scrollable
 from data.image.textgenerator import TextGenerator, Text
 from data.image.slotpanel import SlotPanel
 from data.image.posteffects import PostEffects
+from data.image.tileset import Tileset
 
 from data.interface.general import setup_bottom_bar
 from data.interface.gear import open_gear_screen
@@ -233,6 +234,7 @@ def load_tiles():
     SYSTEM["images"]["dropdown"] = Tile("ui/inventory_back.png")
     SYSTEM["images"]["dropdown_menu"] = Tile("ui/border_unique.png")
     SYSTEM["images"]["item_desc"] = Tile("ui/hoverable.png", scale_factor=2)
+    SYSTEM["images"]["grass_tileset"] = Tileset("tiles/Island_24x24.png", 24, 24).scale(64, 64)
 
 def load_parallaxes():
     """Load the parallaxes."""
