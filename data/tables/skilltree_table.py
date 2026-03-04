@@ -50,7 +50,7 @@ def generate_tree():
         [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _firestorm, ["meteor"], rarity=2)
     _pyrotechnics = Node("pyrotechnics", "pyrotechnics", 700, 350, [[FIRE_NODE_1], [FIRE_NODE_2], \
         [FIRE_NODE_3], [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], _fire_mastery)
-    _cone_of_flames = Node("cone_of_flames", "cone_of_flames", 500, 450, [[FIRE_NODE_1], 
+    _cone_of_flames = Node("cone_of_flames", "cone_of_flames", 500, 450, [[FIRE_NODE_1],
         [FIRE_NODE_2], [FIRE_NODE_3], [FIRE_NODE_4], [FIRE_NODE_5, FIRE_NODE_5B]], \
         _fire_mastery,["cone_of_flames"], rarity=2)
     _inferno = Node("inferno", "inferno", 600, 450, [[FIRE_NODE_1], [FIRE_NODE_2], [FIRE_NODE_3],
@@ -189,7 +189,7 @@ def generate_tree():
         [STR_NODE_3]], _warrior_node_29, rarity=2)
 
     #ESSENTIALIST 
-    essentialist_start = Node("start", "essentialist_start", 250, 700, [[STR_NODE_1], [STR_NODE_2], 
+    essentialist_start = Node("start", "essentialist_start", 250, 700, [[STR_NODE_1], [STR_NODE_2],
         [STR_NODE_3]], None, rarity=1)
     #LIGHT
     _essentialist_node_1 = Node("essentialist_node_1", "tree_a", 500, 350, [[STR_NODE_1], \
@@ -269,8 +269,8 @@ def generate_tree():
 
     #ARCANIST
 
-    arcanist_start = Node("start", "arcanist_start", 250, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]],
-                      None, rarity=1)
+    arcanist_start = Node("start", "arcanist_start", 250, 700, [[STR_NODE_1], \
+        [STR_NODE_2], [STR_NODE_3]], None, rarity=1)
     
     #INVENTIVE
 
@@ -303,29 +303,49 @@ def generate_tree():
 
     #MENTALISM
 
-    _arcanist_node_11 = Node("arcanist_node_11", "tree_a", 500, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], arcanist_start, rarity=2)
-    _arcanist_node_12 = Node("arcanist_node_12", "tree_a", 600, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_11, rarity=2)
-    _arcanist_node_13 = Node("arcanist_node_13", "tree_a", 700, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_12, rarity=2)
-    _arcanist_node_14 = Node("arcanist_node_14", "tree_a", 800, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_13, rarity=2)
-    _arcanist_node_15 = Node("arcanist_node_15", "tree_a", 900, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_14, rarity=2)
-    _arcanist_node_16 = Node("arcanist_node_16", "tree_a", 1000, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_15, rarity=2)
-    _arcanist_node_17 = Node("arcanist_node_17", "tree_a", 1100, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_16, rarity=2)
-    _arcanist_node_18 = Node("arcanist_node_18", "tree_a", 1200, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_17, rarity=2)
-    _arcanist_node_19 = Node("arcanist_node_19", "tree_a", 1300, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_18, rarity=2)
-    _arcanist_node_20 = Node("arcanist_node_20", "tree_a", 1400, 700, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_19, rarity=2)
+    _arcanist_node_11 = Node("arcanist_node_11", "tree_a", 500, 700, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], arcanist_start, rarity=2)
+    _arcanist_node_12 = Node("arcanist_node_12", "tree_a", 600, 700, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_11, rarity=2)
+    _arcanist_node_13 = Node("arcanist_node_13", "tree_a", 700, 700, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_12, rarity=2)
+    _arcanist_node_14 = Node("arcanist_node_14", "tree_a", 800, 700, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_13, rarity=2)
+    _arcanist_node_15 = Node("arcanist_node_15", "tree_a", 900, 700, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_14, rarity=2)
+    _arcanist_node_16 = Node("arcanist_node_16", "tree_a", 1000, 700, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_15, rarity=2)
+    _arcanist_node_17 = Node("arcanist_node_17", "tree_a", 1100, 700, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_16, rarity=2)
+    _arcanist_node_18 = Node("arcanist_node_18", "tree_a", 1200, 700, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_17, rarity=2)
+    _arcanist_node_19 = Node("arcanist_node_19", "tree_a", 1300, 700, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_18, rarity=2)
+    _arcanist_node_20 = Node("arcanist_node_20", "tree_a", 1400, 700, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_19, rarity=2)
 
     #VARIATION
 
-    _arcanist_node_21 = Node("arcanist_node_21", "tree_a", 500, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], arcanist_start, rarity=2)
-    _arcanist_node_22 = Node("arcanist_node_22", "tree_a", 600, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_21, rarity=2)
-    _arcanist_node_23 = Node("arcanist_node_23", "tree_a", 700, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_22, rarity=2)
-    _arcanist_node_24 = Node("arcanist_node_24", "tree_a", 800, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_23, rarity=2)
-    _arcanist_node_25 = Node("arcanist_node_25", "tree_a", 900, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_24, rarity=2)
-    _arcanist_node_26 = Node("arcanist_node_26", "tree_a", 1000, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_25, rarity=2)
-    _arcanist_node_27 = Node("arcanist_node_27", "tree_a", 1100, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_26, rarity=2)
-    _arcanist_node_28 = Node("arcanist_node_28", "tree_a", 1200, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_27, rarity=2)
-    _arcanist_node_29 = Node("arcanist_node_29", "tree_a", 1300, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_28, rarity=2)
-    _arcanist_node_30 = Node("arcanist_node_30", "tree_a", 1400, 1000, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _arcanist_node_29, rarity=2)
+    _arcanist_node_21 = Node("arcanist_node_21", "tree_a", 500, 1000, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], arcanist_start, rarity=2)
+    _arcanist_node_22 = Node("arcanist_node_22", "tree_a", 600, 1000, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_21, rarity=2)
+    _arcanist_node_23 = Node("arcanist_node_23", "tree_a", 700, 1000, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_22, rarity=2)
+    _arcanist_node_24 = Node("arcanist_node_24", "tree_a", 800, 1000, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_23, rarity=2)
+    _arcanist_node_25 = Node("arcanist_node_25", "tree_a", 900, 1000, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _arcanist_node_24, rarity=2)
+    _arcanist_node_26 = Node("arcanist_node_26", "tree_a", 1000, 1000, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_25, rarity=2)
+    _arcanist_node_27 = Node("arcanist_node_27", "tree_a", 1100, 1000, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_26, rarity=2)
+    _arcanist_node_28 = Node("arcanist_node_28", "tree_a", 1200, 1000, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_27, rarity=2)
+    _arcanist_node_29 = Node("arcanist_node_29", "tree_a", 1300, 1000, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_28, rarity=2)
+    _arcanist_node_30 = Node("arcanist_node_30", "tree_a", 1400, 1000, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _arcanist_node_29, rarity=2)
 
     #SUMMONER
     
@@ -334,47 +354,82 @@ def generate_tree():
     
     #CELESTIAL SUMMONING
 
-    summoner_node_1 = Node("summoner_node_1", "tree_a", 500, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_start, rarity=2)
-    summoner_node_2 = Node("summoner_node_2", "tree_a", 600, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_1, rarity=2)
-    summoner_node_3 = Node("summoner_node_3", "tree_a", 700, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_2, rarity=2)
-    summoner_node_4 = Node("summoner_node_4", "tree_a", 800, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_3, rarity=2)
-    summoner_node_5 = Node("summoner_node_5", "tree_a", 900, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_4, rarity=2)
-    summoner_node_5B = Node("summoner_node_5B", "tree_a", 900, 450, [[STR_NODE_1], [STR_NODE_2   ], [STR_NODE_3]], summoner_node_4, rarity=2)
-    summoner_node_6 = Node("summoner_node_6", "tree_a", 1000, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_5, rarity=2)
-    summoner_node_6B = Node("summoner_node_6B", "tree_a", 1000, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_5B, rarity=2)
-    summoner_node_7 = Node("summoner_node_7", "tree_a", 1100, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_6, rarity=2)
-    summoner_node_7B = Node("summoner_node_7B", "tree_a", 1100, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_6B, rarity=2)
-    summoner_node_8 = Node("summoner_node_8", "tree_a", 1200, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_7, rarity=2)
-    summoner_node_8B = Node("summoner_node_8B", "tree_a", 1200, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_7B, rarity=2)
-    summoner_node_9 = Node("summoner_node_9", "tree_a", 1300, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_8, rarity=2)
-    summoner_node_9B = Node("summoner_node_9B", "tree_a", 1300, 450, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_8B, rarity=2)
-    summoner_node_10 = Node("summoner_node_10", "tree_a", 1400, 350, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_9, rarity=2)
+    summoner_node_1 = Node("summoner_node_1", "tree_a", 500, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_start, rarity=2)
+    summoner_node_2 = Node("summoner_node_2", "tree_a", 600, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_1, rarity=2)
+    summoner_node_3 = Node("summoner_node_3", "tree_a", 700, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_2, rarity=2)
+    summoner_node_4 = Node("summoner_node_4", "tree_a", 800, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_3, rarity=2)
+    summoner_node_5 = Node("summoner_node_5", "tree_a", 900, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_4, rarity=2)
+    summoner_node_5B = Node("summoner_node_5B", "tree_a", 900, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_4, rarity=2)
+    summoner_node_6 = Node("summoner_node_6", "tree_a", 1000, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_5, rarity=2)
+    summoner_node_6B = Node("summoner_node_6B", "tree_a", 1000, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_5B, rarity=2)
+    summoner_node_7 = Node("summoner_node_7", "tree_a", 1100, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_6, rarity=2)
+    summoner_node_7B = Node("summoner_node_7B", "tree_a", 1100, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_6B, rarity=2)
+    summoner_node_8 = Node("summoner_node_8", "tree_a", 1200, 350, [[STR_NODE_1], [STR_NODE_2],
+        [STR_NODE_3]], summoner_node_7, rarity=2)
+    summoner_node_8B = Node("summoner_node_8B", "tree_a", 1200, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_7B, rarity=2)
+    summoner_node_9 = Node("summoner_node_9", "tree_a", 1300, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_8, rarity=2)
+    summoner_node_9B = Node("summoner_node_9B", "tree_a", 1300, 450, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_8B, rarity=2)
+    summoner_node_10 = Node("summoner_node_10", "tree_a", 1400, 350, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_9, rarity=2)
 
     #DEMON_SUMMONING
 
-    summoner_node_11 = Node("summoner_node_11", "tree_b", 500, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_start, rarity=2)
-    summoner_node_12 = Node("summoner_node_12", "tree_b", 600, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_11, rarity=2)
-    summoner_node_13 = Node("summoner_node_13", "tree_b", 700, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_12, rarity=2)
-    summoner_node_14 = Node("summoner_node_14", "tree_b", 800, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_13, rarity=2)
-    summoner_node_15 = Node("summoner_node_15", "tree_b", 900, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_14, rarity=2)
-    summoner_node_16 = Node("summoner_node_16", "tree_b", 1000, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_15, rarity=2)
-    summoner_node_17 = Node("summoner_node_17", "tree_b", 1100, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_16, rarity=2)
-    summoner_node_18 = Node("summoner_node_18", "tree_b", 1200, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_17, rarity=2)
-    summoner_node_19 = Node("summoner_node_19", "tree_b", 1300, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_18, rarity=2)
-    summoner_node_20 = Node("summoner_node_20", "tree_b", 1400, 500, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_node_19, rarity=2)
+    summoner_node_11 = Node("summoner_node_11", "tree_b", 500, 500, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_start, rarity=2)
+    summoner_node_12 = Node("summoner_node_12", "tree_b", 600, 500, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_11, rarity=2)
+    summoner_node_13 = Node("summoner_node_13", "tree_b", 700, 500, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_12, rarity=2)
+    summoner_node_14 = Node("summoner_node_14", "tree_b", 800, 500, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_13, rarity=2)
+    summoner_node_15 = Node("summoner_node_15", "tree_b", 900, 500, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_node_14, rarity=2)
+    summoner_node_16 = Node("summoner_node_16", "tree_b", 1000, 500, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], summoner_node_15, rarity=2)
+    summoner_node_17 = Node("summoner_node_17", "tree_b", 1100, 500, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], summoner_node_16, rarity=2)
+    summoner_node_18 = Node("summoner_node_18", "tree_b", 1200, 500, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], summoner_node_17, rarity=2)
+    summoner_node_19 = Node("summoner_node_19", "tree_b", 1300, 500, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], summoner_node_18, rarity=2)
+    summoner_node_20 = Node("summoner_node_20", "tree_b", 1400, 500, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], summoner_node_19, rarity=2)
     
     #UNDEAD_SUMMONING
 
-    _summoner_node_21 = Node("summoner_node_21", "tree_b", 500, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], summoner_start, rarity=2)
-    _summoner_node_22 = Node("summoner_node_22", "tree_b", 600, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_21, rarity=2)
-    _summoner_node_23 = Node("summoner_node_23", "tree_b", 700, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_22, rarity=2)
-    _summoner_node_24 = Node("summoner_node_24", "tree_b", 800, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_23, rarity=2)
-    _summoner_node_25 = Node("summoner_node_25", "tree_b", 900, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_24, rarity=2)
-    _summoner_node_26 = Node("summoner_node_26", "tree_b", 1000, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_25, rarity=2)
-    _summoner_node_27 = Node("summoner_node_27", "tree_b", 1100, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_26, rarity=2)
-    _summoner_node_28 = Node("summoner_node_28", "tree_b", 1200, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_27, rarity=2)
-    _summoner_node_29 = Node("summoner_node_29", "tree_b", 1300, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_28, rarity=2)
-    _summoner_node_30 = Node("summoner_node_30", "tree_b", 1400, 650, [[STR_NODE_1], [STR_NODE_2], [STR_NODE_3]], _summoner_node_29, rarity=2)
+    _summoner_node_21 = Node("summoner_node_21", "tree_b", 500, 650, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], summoner_start, rarity=2)
+    _summoner_node_22 = Node("summoner_node_22", "tree_b", 600, 650, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _summoner_node_21, rarity=2)
+    _summoner_node_23 = Node("summoner_node_23", "tree_b", 700, 650, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _summoner_node_22, rarity=2)
+    _summoner_node_24 = Node("summoner_node_24", "tree_b", 800, 650, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _summoner_node_23, rarity=2)
+    _summoner_node_25 = Node("summoner_node_25", "tree_b", 900, 650, [[STR_NODE_1], [STR_NODE_2], \
+        [STR_NODE_3]], _summoner_node_24, rarity=2)
+    _summoner_node_26 = Node("summoner_node_26", "tree_b", 1000, 650, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _summoner_node_25, rarity=2)
+    _summoner_node_27 = Node("summoner_node_27", "tree_b", 1100, 650, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _summoner_node_26, rarity=2)
+    _summoner_node_28 = Node("summoner_node_28", "tree_b", 1200, 650, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _summoner_node_27, rarity=2)
+    _summoner_node_29 = Node("summoner_node_29", "tree_b", 1300, 650, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _summoner_node_28, rarity=2)
+    _summoner_node_30 = Node("summoner_node_30", "tree_b", 1400, 650, [[STR_NODE_1], [STR_NODE_2],\
+         [STR_NODE_3]], _summoner_node_29, rarity=2)
     tree_d = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)
     tree_e = Node("skil_e", "tree_b", 825, 650, [[]], tree_d)
     _ = Node("skil_d", "tree_b", 825, 500, [[]], tree_c)

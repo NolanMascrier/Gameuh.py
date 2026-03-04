@@ -120,7 +120,56 @@ class Projectile(HitBox):
         self._debuff_chance = debuff_chance
         self._decay = 1
         if Flags.LIGHTNING in self._behaviours:
-            point_list = [x,y, SCREEN_WIDTH, y, 0.3, 0.3]
+            cursor_x, cursor_y = pygame.mouse.get_pos()
+
+            camera_x, camera_y = 0, 0
+            if SYSTEM.get("level") is not None:
+                camera_x, camera_y = SYSTEM["level"].map.camera_offset
+
+            # Convert origin to screen space
+            origin_screen_x = x - camera_x
+            origin_screen_y = y - camera_y
+
+            # Direction from origin to cursor (in screen space)
+            dir_x = cursor_x - origin_screen_x
+            dir_y = cursor_y - origin_screen_y
+
+            # Normalize direction
+            dist = (dir_x**2 + dir_y**2) ** 0.5
+            if dist > 0:
+                dir_x /= dist
+                dir_y /= dist
+
+            # Find intersection with screen border
+            t_max = float('inf')
+
+            # Check left/right borders
+            if dir_x > 0:
+                t = (SCREEN_WIDTH - origin_screen_x) / dir_x
+            elif dir_x < 0:
+                t = -origin_screen_x / dir_x
+            else:
+                t = float('inf')
+            t_max = min(t_max, t)
+
+            # Check top/bottom borders
+            if dir_y > 0:
+                t = (SCREEN_HEIGHT - origin_screen_y) / dir_y
+            elif dir_y < 0:
+                t = -origin_screen_y / dir_y
+            else:
+                t = float('inf')
+            t_max = min(t_max, t)
+
+            # Calculate endpoint in screen space
+            end_screen_x = origin_screen_x + dir_x * t_max
+            end_screen_y = origin_screen_y + dir_y * t_max
+
+            # Convert back to world space
+            end_x = end_screen_x + camera_x
+            end_y = end_screen_y + camera_y
+
+            point_list = [x, y, end_x, end_y, 0.3, 0.3]
             PARTICULE_TRACKER.append(point_list)
 
     def get_image(self):
