@@ -3,7 +3,6 @@
 from math import pi
 import random
 import numpy
-import pygame
 
 from data.api.vec2d import Vec2
 
@@ -334,7 +333,7 @@ class Projectile(HitBox):
                     fade=config.get('fade', True),
                     gravity=config.get('gravity', 0)
                 )
-        
+
         if Flags.DELAYED in self._behaviours:
             if self._delay > 0:
                 if self._caster is not None and Flags.UNNATACH not in self._behaviours:

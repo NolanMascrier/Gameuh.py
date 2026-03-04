@@ -55,7 +55,7 @@ def is_on_screen(x, y, width, height, camera_x, camera_y):
     """
     screen_x = x - camera_x
     screen_y = y - camera_y
-    return (screen_x + width > -CULL_MARGIN and 
+    return (screen_x + width > -CULL_MARGIN and
             screen_x < SCREEN_WIDTH + CULL_MARGIN and
             screen_y + height > -CULL_MARGIN and
             screen_y < SCREEN_HEIGHT + CULL_MARGIN)

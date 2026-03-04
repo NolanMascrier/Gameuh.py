@@ -1,11 +1,10 @@
 """Handles the defeat and the victory screen."""
 
 from data.constants import SYSTEM, GAME_VICTORY, SCREEN_HEIGHT,\
-    SCREEN_WIDTH, TICKER_TIMER, GAME_DEATH, trad, ENNEMY_TRACKER, ANIMATION_TRACKER,\
-    PROJECTILE_TRACKER, RED_WARNING, GREEN_WEAK
+    SCREEN_WIDTH, TICKER_TIMER, GAME_DEATH, trad, RED_WARNING, GREEN_WEAK
 from data.image.showcase import ShowCase
 from data.image.text import Text
-from data.interface.render import render, renders
+from data.interface.render import render
 from data.interface.general import draw_game, logic_tick
 
 def generate_victory():

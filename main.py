@@ -1,8 +1,6 @@
 """Game launcher."""
 
-import os
 import random
-import psutil
 
 from data.api.surface import Surface, get_press, get_events
 from data.api.keycodes import get_key_event, MOUSEWHEEL, QUIT

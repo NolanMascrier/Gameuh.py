@@ -193,7 +193,7 @@ class Creature:
         values = {}
         for types in DAMAGE_TYPE:
             type_mult = self._stats[f"{types}_dmg"].c_value
-            roll_base = dmg[types] * type_mult 
+            roll_base = dmg[types] * type_mult
             if is_dot:
                 roll_added = 0
             else:
