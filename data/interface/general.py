@@ -82,10 +82,10 @@ def enemy_life(life):
 def draw_game(show_player = True, show_enemies = True,\
               show_loot = True, show_projectiles = True,\
               show_text = True, show_animations = True):
-    """Draws the main game component - HIGHLY OPTIMIZED VERSION."""
+    """Draws the main game component"""
     show_hitboxes = SYSTEM["options"]["show_hitboxes"]
     show_bars = SYSTEM["options"]["show_bars"]
-    camera_x, camera_y = SYSTEM["level"].map.camera_offset
+    camera_x, camera_y = SYSTEM["level"].camera_offset if SYSTEM["level"] is not None else (0, 0)
 
     if show_player or show_enemies or show_animations:
         chars_layer = SYSTEM["layers"]["characters"]

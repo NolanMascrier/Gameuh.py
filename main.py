@@ -246,7 +246,7 @@ def main_loop():
             y = SYSTEM["real_mouse"][1]
             if y + SYSTEM["pop_up"][2] > SCREEN_HEIGHT:
                 y -= y + SYSTEM["pop_up"][2] - SCREEN_HEIGHT
-            SYSTEM["layers"]["ui"].append((SYSTEM["pop_up"][0], (x, y)))
+            render(SYSTEM["pop_up"][0], (x, y))
 
         SYSTEM["cooldown"] -= 0.032
         SYSTEM["cooldown"] = max(SYSTEM["cooldown"], 0)
