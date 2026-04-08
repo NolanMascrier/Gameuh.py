@@ -83,7 +83,6 @@ class TestingNumerics(unittest.TestCase):
         self.assertIsNotNone(i.describe_details())
         self.assertEqual(type(a.as_affliction()), Affliction)
 
-
     def test_doubleaffix(self):
         a = DoubleAffix("test", 10, 15, [Flags.STR], 0.5, 1.5, 0.5, 1.5)
         b = DoubleAffix("testa", 10, 15, [Flags.STR], 0.5, 1.5, 0.5, 1.5)
